@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/guru_dakshina_layout">
+
+    <RelativeLayout
+        android:id="@+id/search_fields_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding5"
+        android:background="@drawable/edittext_round"
+        android:layout_marginTop="@dimen/padding10"
+        android:layout_marginStart="@dimen/padding10"
+        android:layout_marginEnd="@dimen/padding10" >
+
+        <ImageView
+            android:layout_width="@dimen/padding20"
+            android:layout_height="@dimen/padding20"
+            android:src="@drawable/search_icon"
+            android:layout_centerVertical="true"
+            app:tint="@color/grayColorColor" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/guru_dakshinasearch_fields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding10"
+            android:imeOptions="actionDone"
+            android:textColor="@color/black"
+            android:hint="Search..."
+            android:textColorHint="@color/grayColorColor"
+            android:layout_centerVertical="true"
+            android:background="@color/white"
+            android:layout_marginStart="@dimen/padding30" />
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/guru_dakshina_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_fields_layout"
+        android:layout_above="@+id/view_view"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gray_round_border"
+        android:text="Load more"
+        android:visibility="invisible"
+        android:textSize="@dimen/padding15"
+        android:textColor="@color/black"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/view_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:id="@+id/one_time_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:background="@color/orangeColor" >
+
+                <ImageView
+                    android:layout_width="@dimen/padding25"
+                    android:layout_height="@dimen/padding25"
+                    android:src="@drawable/one_time_plus_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="@string/one_time_dakshina"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size15" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/regular_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:background="@color/primaryColor" >
+
+                <ImageView
+                    android:layout_width="@dimen/padding25"
+                    android:layout_height="@dimen/padding25"
+                    android:src="@drawable/regular_plus_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="@string/regular_dakshina"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size15" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_below="@+id/submit_layout"
+        android:layout_height="@dimen/padding20" />
+
+</RelativeLayout>

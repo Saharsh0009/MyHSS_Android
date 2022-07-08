@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/registration_success_layout"
+    android:visibility="gone"
+    android:background="@color/transparentColor">
+
+    <ImageView
+        android:layout_width="@dimen/padding110"
+        android:layout_height="@dimen/padding110"
+        android:elevation="2dp"
+        android:layout_marginBottom="-50dp"
+        android:layout_above="@+id/bottom_view"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/right_green" />
+
+    <RelativeLayout
+        android:id="@+id/bottom_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding200"
+        android:layout_marginEnd="@dimen/padding200"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/toprounded" >
+
+        <TextView
+            android:id="@+id/success_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/padding50"
+            android:theme="@style/StyleTextView"
+            android:textStyle="bold"
+            android:textColor="@color/greenColor"
+            android:textSize="@dimen/font_size40"
+            android:text="@string/Success"/>
+
+        <TextView
+            android:id="@+id/check_emal_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/padding20"
+            android:textSize="@dimen/font_size25"
+            android:theme="@style/StyleTextView"
+            android:layout_below="@+id/success_txt"
+            android:text="@string/Please_check_your_email"/>
+
+        <!--<LinearLayout
+            android:id="@+id/emal_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/check_emal_txt"
+            android:orientation="horizontal" >-->
+
+        <TextView
+            android:id="@+id/emal_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding5"
+            android:theme="@style/StyleTextView"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/check_emal_txt"
+            android:textSize="@dimen/font_size25"
+            android:textColor="@color/orangeColor"
+            android:text="@string/shobha_com"/>
+
+            <TextView
+                android:id="@+id/emaltxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding5"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/emal_txt"
+                android:theme="@style/StyleTextView"
+                android:textSize="@dimen/font_size25"
+                android:text="@string/to_verify_your_account"/>
+
+
+        <ImageView
+            android:id="@+id/close_layout"
+            android:layout_width="@dimen/padding30"
+            android:layout_height="@dimen/padding30"
+            android:src="@drawable/close_img"
+            android:layout_marginTop="@dimen/padding5"
+            android:layout_marginEnd="@dimen/padding30"
+            android:layout_alignParentRight="true"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/submit_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/emaltxt"
+            android:layout_marginStart="@dimen/font_size20"
+            android:layout_marginEnd="@dimen/font_size20"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/padding25">
+
+            <TextView
+                android:id="@+id/registration_success_btn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_round"
+                android:gravity="center"
+                android:padding="12dp"
+                android:paddingStart="@dimen/padding100"
+                android:paddingEnd="@dimen/padding100"
+                android:text="@string/ok"
+                android:fontFamily="@font/sourcesanspro_regular"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size25" />
+
+        </androidx.cardview.widget.CardView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_below="@+id/submit_layout"
+            android:layout_height="@dimen/padding20" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

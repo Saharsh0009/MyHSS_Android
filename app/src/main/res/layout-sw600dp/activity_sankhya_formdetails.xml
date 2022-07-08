@@ -1,0 +1,1293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/action_bar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:layout_above="@+id/bottom_btn_view"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding50"
+                android:background="@color/primaryColor" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-30dp"
+                android:layout_marginStart="@dimen/padding15"
+                android:layout_marginEnd="@dimen/padding15"
+                android:background="@drawable/edittext_round"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding15" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding5">
+
+                        <TextView
+                            android:id="@+id/shakha_name_txt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/sourcesanspro_bold"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/frequency" />
+
+                        <TextView
+                            android:id="@+id/user_name_txt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/frequency"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_semibold"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/lightOrangeColor" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/total_member_count"
+                        android:layout_width="@dimen/padding35"
+                        android:layout_height="@dimen/padding35"
+                        android:padding="@dimen/padding5"
+                        android:text="0"
+                        android:fontFamily="@font/sourcesanspro_bold"
+                        android:textAlignment="center"
+                        android:theme="@style/StyleTextView"
+                        android:textSize="@dimen/font_size18"
+                        android:background="@drawable/orange_white_circle" />
+
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/active_inactive_view"
+                    android:layout_width="@dimen/padding45"
+                    android:layout_height="@dimen/padding25"
+                    android:visibility="invisible"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="-10dp"
+                    android:background="@drawable/baal_background"
+                    tools:ignore="ObsoleteLayoutParam">
+
+                    <TextView
+                        android:id="@+id/active_inactive_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/StyleTextView"
+                        android:text="@string/app_name"
+                        android:fontFamily="@font/sourcesanspro_semibold"
+                        android:layout_centerInParent="true"
+                        android:textSize="@dimen/font_size9"
+                        android:textColor="@color/black" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:layout_marginStart="@dimen/padding20"
+                android:visibility="visible"
+                android:layout_marginEnd="@dimen/padding20"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/members_listview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:textAllCaps="true"
+                    android:padding="@dimen/padding5"
+                    android:text="@string/member_view" />
+
+                <ListView
+                    android:id="@+id/sankhya_list_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/padding5"
+                    android:animationCache="false"
+                    android:divider="@null"
+                    android:scrollingCache="false"
+                    android:smoothScrollbar="true"
+                    android:visibility="gone"
+                    android:background="@color/light_gray_background"
+                    tools:ignore="NestedScrolling" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:layout_marginStart="@dimen/padding20"
+                android:layout_marginEnd="@dimen/padding20"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:textAllCaps="true"
+                    android:padding="@dimen/padding5"
+                    android:text="@string/guest_information" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:fontFamily="@font/sourcesanspro_bold"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:textSize="@dimen/font_size15"
+                    android:paddingStart="@dimen/padding15"
+                    android:paddingEnd="@dimen/padding15"
+                    android:background="@drawable/male_layout"
+                    android:text="@string/male"
+                    tools:ignore="RtlSymmetry" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding5"
+                android:layout_marginStart="@dimen/padding15"
+                android:layout_marginEnd="@dimen/padding15"
+                android:background="@drawable/edittext_round"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/shishu" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/shishu_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/shishu_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/shishu_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/shishu_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/baal" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/baalika_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/baal_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/baal_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/baal_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/kishore" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/kishori_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/kishore_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/kishore_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/kishore_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/tarun" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/taruni_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/tarun_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/tarun_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/tarun_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/yuva" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/yuvati_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/yuva_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/yuva_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/yuva_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/jyeshta" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/jyeshtaa_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/jyeshta_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/jyeshta_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/jyeshta_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/padding20" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:layout_marginStart="@dimen/padding20"
+                android:layout_marginEnd="@dimen/padding20"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:textAllCaps="true"
+                    android:padding="@dimen/padding5"
+                    android:text="@string/guest_information" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:fontFamily="@font/sourcesanspro_bold"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:textSize="@dimen/font_size15"
+                    android:paddingStart="@dimen/padding15"
+                    android:paddingEnd="@dimen/padding15"
+                    android:background="@drawable/female_layout"
+                    android:text="@string/female"
+                    tools:ignore="RtlSymmetry" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding15"
+                android:layout_marginStart="@dimen/padding15"
+                android:layout_marginEnd="@dimen/padding15"
+                android:layout_marginBottom="@dimen/font_size15"
+                android:background="@drawable/edittext_round"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/shishu" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/shishu_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/female_shishu_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/female_shishu_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/female_shishu_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/baalika" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/baalika_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/balika_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/balika_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/balika_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/kishori" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/kishori_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/kishori_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/kishori_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/kishori_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/taruni" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/taruni_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/taruni_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/taruni_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/taruni_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/yuvati" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/yuvati_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/yuvati_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/yuvati_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/yuvati_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:background="@color/grayColorColor" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/padding10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_size18"
+                            android:text="@string/jyeshtaa" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/jyeshtaa_content"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size15"
+                            android:textColor="@color/grayColorColor" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/padding5"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="2"
+                        android:background="@drawable/edittext_round" >
+
+                        <ImageView
+                            android:id="@+id/jyeshtaa_decriese_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="left|center_vertical"
+                            android:src="@drawable/decriese_img" />
+
+                        <TextView
+                            android:id="@+id/jyeshtaa_type_txt"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:layout_marginTop="@dimen/padding5"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textSize="@dimen/font_size18"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+                            android:id="@+id/jyeshtaa_increse_btn"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:padding="8dp"
+                            android:layout_gravity="right|center_vertical"
+                            android:src="@drawable/increase_img" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/padding20" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding20" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottom_btn_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/reportview_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:background="@color/orangeColor" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="12dp"
+                android:text="@string/review"
+                android:fontFamily="@font/sourcesanspro_regular"
+                android:textColor="@color/primaryColor"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/submit_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:background="@color/primaryColor" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="12dp"
+                android:text="@string/submit"
+                android:fontFamily="@font/sourcesanspro_regular"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

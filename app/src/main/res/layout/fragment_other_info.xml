@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.uk.myhss.ui.policies.GuruDakshinaFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/mainedit_layout">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/root_view"
+        tools:ignore="MissingConstraints">
+
+        <RelativeLayout
+            android:id="@+id/medical_info_yes_no_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding10">
+
+            <LinearLayout
+                android:id="@+id/medical_info_yes_no_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding10"
+                android:weightSum="3"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="@string/do_you_have_medical_information"
+                    android:textSize="@dimen/font_size15" />
+
+                <TextView
+                    android:id="@+id/medical_info_yes_no_txt"
+                    android:layout_width="@dimen/padding100"
+                    android:layout_height="@dimen/padding40"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="2"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:background="@color/lightGrayColor"
+                    android:text="@string/no"
+                    android:textSize="@dimen/font_size15" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/medical_information_yesview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginStart="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding10"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="Medical Information Details"
+                    android:textSize="@dimen/font_size15" />
+
+                <TextView
+                    android:id="@+id/medical_information_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/font_size18" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <RelativeLayout
+            android:id="@+id/qualification_first_aid_txt_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding10">
+
+            <LinearLayout
+                android:id="@+id/qualification_first_yes_no_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3"
+                android:layout_marginStart="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding10"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="@string/qualification_first_aid_txt"
+                    android:textSize="@dimen/font_size18" />
+
+                <TextView
+                    android:id="@+id/qualification_first_yes_no_txt"
+                    android:layout_width="@dimen/padding100"
+                    android:layout_height="@dimen/padding40"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="2"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:background="@color/lightGrayColor"
+                    android:text="@string/no"
+                    android:textSize="@dimen/font_size15" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/qualification_first_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:visibility="gone"
+                android:layout_marginStart="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding10"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:text="First Aid Qualification"
+                    android:textSize="@dimen/font_size15" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:visibility="visible"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/qualification_first_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="1"
+                    android:layout_margin="@dimen/padding5"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:text="@string/qualification_first_aid_txt"
+                    android:textSize="@dimen/font_size15" />
+
+                <TextView
+                    android:id="@+id/qualification_first_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="1"
+                    android:padding="@dimen/padding10"
+                    android:background="@drawable/gray_round"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:layout_margin="@dimen/padding5"
+                    android:layout_gravity="center"
+                    android:text="Download Certificate"
+                    android:textSize="@dimen/font_size15" />
+
+            </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/image_file_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/padding150"
+                    android:visibility="gone"
+                    android:scaleType="fitCenter"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <RelativeLayout
+            android:id="@+id/dbs_certification_number_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:padding="@dimen/padding10">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:layout_marginStart="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding10"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:theme="@style/StyleTextView"
+                    android:text="@string/dbs_certification_number"
+                    android:textSize="@dimen/font_size18" />
+
+                <TextView
+                    android:id="@+id/dbs_certification_number_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="1"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:text="@string/dbs_certification_number"
+                    android:textSize="@dimen/font_size15" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/padding5"
+            android:visibility="gone"
+            android:background="@color/lightGrayColor" />
+
+        <RelativeLayout
+            android:id="@+id/dbs_certification_date_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:padding="@dimen/padding10">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:layout_marginStart="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding10"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:theme="@style/StyleTextView"
+                    android:text="@string/dbs_certification_date"
+                    android:textSize="@dimen/font_size18" />
+
+                <TextView
+                    android:id="@+id/dbs_certification_date_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:textColor="@color/black"
+                    android:text="@string/dbs_certification_date"
+                    android:textSize="@dimen/font_size15" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/padding5"
+            android:visibility="gone"
+            android:background="@color/lightGrayColor" />
+
+        <RelativeLayout
+            android:id="@+id/email_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:padding="@dimen/padding10">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:layout_marginStart="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding10"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:theme="@style/StyleTextView"
+                    android:text="@string/safeguarding_training"
+                    android:textSize="@dimen/font_size18" />
+
+                <TextView
+                    android:id="@+id/safeguarding_training_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:text="@string/no"
+                    android:textSize="@dimen/font_size15" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/padding5"
+            android:visibility="gone"
+            android:background="@color/lightGrayColor" />
+
+    </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/mainedit_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/padding5"
+        android:background="@color/orangeColor" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/padding10"
+            android:textAlignment="center"
+            android:text="@string/edit_txt"
+            android:theme="@style/StyleTextView"
+            android:textStyle="bold"
+            android:visibility="visible"
+            android:fontFamily="@font/sourcesanspro_regular"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

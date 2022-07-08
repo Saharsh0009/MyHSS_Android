@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/home_icon"
+            android:title="@string/menu_dashboard" />
+        <!--<item
+            android:id="@+id/nav_organization"
+            android:icon="@drawable/organisation_icon"
+            android:title="@string/menu_organization" />-->
+        <!--<item
+            android:id="@+id/nav_shakha"
+            android:icon="@drawable/shakha_icon"
+            android:title="@string/menu_shakha" />-->
+        <!--<item
+            android:id="@+id/nav_shakha_type"
+            android:icon="@drawable/shakha_type_icon"
+            android:title="@string/menu_shakha_type" />-->
+        <!--<item
+            android:id="@+id/nav_roles"
+            android:icon="@drawable/roles_icon"
+            android:title="@string/menu_roles" />
+        <item
+            android:id="@+id/nav_roles_responsibility"
+            android:icon="@drawable/roles_responsiblity_icon"
+            android:title="@string/menu_roles_responsibility" />
+        <item
+            android:id="@+id/nav_karyakarts"
+            android:icon="@drawable/karyakartas_icon"
+            android:title="@string/menu_karyakarts" />
+        <item
+            android:id="@+id/nav_sankhya_report"
+            android:icon="@drawable/sankhya_icon"
+            android:title="@string/menu_sankhya_report" />
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/setting_icon"
+            android:title="@string/menu_setting" />-->
+        <item
+            android:id="@+id/nav_policiies"
+            android:icon="@drawable/policy_icon"
+            android:title="@string/menu_policiies" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/logout_icon"
+            android:title="@string/menu_logout" />
+    </group>
+</menu>

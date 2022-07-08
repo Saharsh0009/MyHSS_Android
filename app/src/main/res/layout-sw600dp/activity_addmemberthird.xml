@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/action_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/padding10"
+            android:paddingEnd="@dimen/padding10"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding65"
+                android:layout_margin="@dimen/font_size15"
+                android:src="@drawable/addmemberstep3" />
+
+            <TextView
+                android:id="@+id/guardian_full_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/guardian_information"
+                android:textSize="@dimen/font_size30"
+                android:theme="@style/StyleTextView"
+                android:layout_margin="@dimen/font_size15"
+                android:textColor="@color/blackColor" />
+
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/padding10"
+            android:layout_marginEnd="@dimen/padding10"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginStart="@dimen/padding15"
+                android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/guardian_full_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grayColorColor"
+                android:theme="@style/StyleTextView"
+                android:textSize="@dimen/font_size25"
+                android:text="@string/guardian_name" />
+
+                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/StyleTextView"
+                android:text="*"
+                    android:textSize="@dimen/font_size25"
+                android:textAlignment="center"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding10"
+                android:textColor="@color/redColor"
+                tools:ignore="RtlCompat" />
+
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:background="@drawable/edittext_round"
+                android:orientation="horizontal" >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/primaryColor"
+                        style="@style/EditText.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:theme="@style/StyleEditTextView"
+                            android:id="@+id/edit_guardian_full_name"
+                            android:inputType="text"
+                            android:textSize="@dimen/font_size25"
+                            android:layout_marginTop="-5dp"
+                            android:background="@android:color/transparent"
+                            android:textColor="@color/blackColor"
+                            android:textColorHint="@color/grayColorColor"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="@dimen/padding15"
+                android:layout_marginTop="@dimen/padding10" >
+
+            <TextView
+                android:id="@+id/guardian_contact_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grayColorColor"
+                android:theme="@style/StyleTextView"
+                android:textSize="@dimen/font_size25"
+                android:text="@string/guardian_contact_number" />
+
+                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/StyleTextView"
+                android:text="*"
+                    android:textSize="@dimen/font_size25"
+                android:textAlignment="center"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding10"
+                android:textColor="@color/redColor"
+                tools:ignore="RtlCompat" />
+
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:background="@drawable/edittext_round"
+                android:orientation="horizontal" >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/primaryColor"
+                        style="@style/EditText.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:theme="@style/StyleEditTextView"
+                            android:id="@+id/edit_guardian_contact_number"
+                            android:inputType="number"
+                            android:layout_marginTop="-5dp"
+                            android:maxLength="13"
+                            android:textSize="@dimen/font_size25"
+                            android:background="@android:color/transparent"
+                            android:textColor="@color/blackColor"
+                            android:textColorHint="@color/grayColorColor"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/padding10"
+            android:layout_marginEnd="@dimen/padding10"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginStart="@dimen/padding15" >
+
+            <TextView
+                android:id="@+id/guardian_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grayColorColor"
+                android:theme="@style/StyleTextView"
+                android:textSize="@dimen/font_size25"
+                android:text="@string/guardian_email" />
+
+                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/StyleTextView"
+                android:text="*"
+                    android:textSize="@dimen/font_size25"
+                android:textAlignment="center"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding10"
+                android:textColor="@color/redColor"
+                tools:ignore="RtlCompat" />
+
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:background="@drawable/edittext_round"
+                android:orientation="horizontal" >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/primaryColor"
+                        style="@style/EditText.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:theme="@style/StyleEditTextView"
+                            android:id="@+id/edit_guardian_email"
+                            android:inputType="textEmailAddress"
+                            android:layout_marginTop="-5dp"
+                            android:textSize="@dimen/font_size25"
+                            android:background="@android:color/transparent"
+                            android:textColor="@color/blackColor"
+                            android:textColorHint="@color/grayColorColor"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="@dimen/padding15"
+                android:layout_marginTop="@dimen/padding10" >
+
+            <TextView
+                android:id="@+id/guardian_relationship"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grayColorColor"
+                android:theme="@style/StyleTextView"
+                android:textSize="@dimen/font_size25"
+                android:text="@string/guardian_relationship" />
+
+                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/StyleTextView"
+                android:text="*"
+                    android:textSize="@dimen/font_size25"
+                android:textAlignment="center"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding10"
+                android:textColor="@color/redColor"
+                tools:ignore="RtlCompat" />
+
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:background="@drawable/edittext_round"
+                android:orientation="horizontal" >
+
+                <RelativeLayout
+                    android:id="@+id/guardian_relationship_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/primaryColor"
+                        android:paddingStart="@dimen/font_size15"
+                        style="@style/EditText.OutlinedBox"
+                        tools:ignore="RtlSymmetry">
+
+                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            style="@android:style/Widget.Spinner.DropDown"
+                            android:theme="@style/MineCustomTabText"
+                            android:id="@+id/edit_guardian_relationship"
+                            android:background="@android:color/transparent"
+                            android:textColor="@color/blackColor"
+                            android:layout_marginTop="-5dp"
+                            android:textSize="@dimen/font_size25"
+                            android:tag="@string/occupation_select_other"
+                            android:textColorHint="@color/grayColorColor"
+                            android:layout_height="match_parent"
+                            android:layout_width="match_parent" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/padding20"
+                        android:layout_height="@dimen/padding20"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/padding20"
+                        android:src="@drawable/arrow_drop_down"  />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/emergency_realationship_other_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/padding10"
+                    android:layout_marginStart="@dimen/padding15" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/grayColorColor"
+                    android:theme="@style/StyleTextView"
+                    android:textSize="@dimen/font_size25"
+                    android:text="@string/other_relationship_name" />
+
+                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/StyleTextView"
+                android:text="*"
+                    android:textSize="@dimen/font_size25"
+                android:textAlignment="center"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding10"
+                android:textColor="@color/redColor"
+                tools:ignore="RtlCompat" />
+
+        </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding10"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:background="@drawable/edittext_round"
+                    android:orientation="horizontal" >
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:boxStrokeColor="@color/primaryColor"
+                            style="@style/EditText.OutlinedBox"
+                            tools:ignore="RtlSymmetry">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:theme="@style/StyleEditTextView"
+                                android:id="@+id/edit_emergency_realationship_name"
+                                android:inputType="text"
+                                android:textSize="@dimen/font_size25"
+                                android:background="@android:color/transparent"
+                                android:textColor="@color/blackColor"
+                                android:layout_marginTop="-5dp"
+                                android:textColorHint="@color/grayColorColor"
+                                android:layout_height="match_parent"
+                                android:layout_width="match_parent" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding20"
+                    android:layout_marginEnd="@dimen/padding30"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:id="@+id/back_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal"
+                        android:background="@drawable/button_orange_round"
+                        android:paddingStart="@dimen/padding70"
+                        android:paddingEnd="@dimen/padding70" >
+
+                        <ImageView
+                            android:layout_width="@dimen/padding25"
+                            android:layout_height="@dimen/padding30"
+                            android:src="@drawable/prevarrowblue" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="12dp"
+                            android:text="@string/prev"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textColor="@color/primaryColor"
+                            android:textSize="@dimen/font_size25" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding30"
+                    android:layout_marginEnd="@dimen/padding20"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:id="@+id/next_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal"
+                        android:background="@drawable/button_round"
+                        android:paddingStart="@dimen/padding70"
+                        android:paddingEnd="@dimen/padding70" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="12dp"
+                            android:text="@string/next"
+                            android:theme="@style/StyleTextView"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/font_size25" />
+
+                        <ImageView
+                            android:layout_width="@dimen/padding25"
+                            android:layout_height="@dimen/padding30"
+                            android:src="@drawable/nextarrowwhite" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/padding20" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

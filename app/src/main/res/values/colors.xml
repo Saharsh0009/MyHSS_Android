@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="app_background">#FBFBFB</color>
+
+    <color name="primaryColor">#142F4D</color>
+    <color name="secondaryColor">#142F4D</color>
+    <color name="accentColor">#142F4D</color>
+    <color name="selected_drawer">#99142F4D</color>
+    <color name="whiteColor">#FFFFFF</color>
+    <color name="lightWhiteColor">#FFFBFA</color>
+    <color name="grayColorColor">#9e9e9e</color>
+    <color name="lightGrayColor">#EDEDED</color>
+    <color name="redColor">#f44336</color>
+    <color name="pinkColor">#FF3194</color>
+    <color name="lightpinkColor">#FFEAF4</color>
+    <color name="orangeColor">#ff9800</color>
+    <color name="greenColor">#28A745</color>
+    <color name="darkGreenColor">#4caf50</color>
+    <color name="lightGreenColor">#2FCC71</color>
+    <color name="offGreenColor">#ECFFF4</color>
+    <color name="blackColor">#000000</color>
+    <color name="offBlackColor">#212121</color>
+    <color name="blueColor">#001359</color>
+    <color name="blue_Color">#5B89C2</color>
+    <color name="off_black">#676767</color>
+    <color name="lightBlueColor">#2979FF</color>
+    <color name="skyBlueColor">#26CBE6</color>
+    <color name="firoziColor">#26CBC0</color>
+    <color name="darkOrangeColor">#D78400</color>
+    <color name="lightOrangeColor">#F8B03C</color>
+    <color name="darkfiroziColor">#26A69A</color>
+    <color name="transparentColor">#66000000</color>
+    <color name="transparent_Color">#00000000</color>
+    <color name="darkYellowColor">#FFCA28</color>
+    <color name="lightYallowColor">#FFF7EA</color>
+    <color name="brownColor">#A96800</color>
+    <color name="light_gray_background">#F5F5F5</color>
+    <color name="light_orange">#FFEED2</color>
+    <color name="light_blue">#E8F3FF</color>
+    <color name="text_hint_color">#979797</color>
+
+    <!--Category_color-->
+    <color name="male_shishu_color">#ffdc79</color>
+    <color name="female_shishu_color">#ffb4ae</color>
+    <color name="baal_color">#ffdc79</color>
+    <color name="balika_color">#ff8e88</color>
+    <color name="kishor_color">#ffce4d</color>
+    <color name="kishori_color">#ff6661</color>
+    <color name="tarun_color">#fd9e19</color>
+    <color name="taruni_color">#fa3c3a</color>
+    <color name="yuva_color">#dd9900</color>
+    <color name="yuvati_color">#da2a2c</color>
+    <color name="proudh_color">#bc7b00</color>
+    <color name="proudha_color">#b91b22</color>
+
+</resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">akamaized.net</domain>
+        <domain includeSubdomains="true">fcblive-a.akamaized.net</domain>
+        <domain includeSubdomains="true">customer.cc.at.paysafecard.com</domain>
+        <domain includeSubdomains="true">api.wirecard.com</domain>
+        <domain includeSubdomains="true">dev.betitbest.com</domain>
+        <domain includeSubdomains="true">www.betitbest.com</domain>
+        <domain includeSubdomains="true">www.sportnachrichten.com</domain>
+        <domain includeSubdomains="true">www.smedk.ru</domain>
+        <domain includeSubdomains="true">www.waltroper-zeitung.de</domain>
+        <domain includeSubdomains="true">www.kicker.de</domain>
+        <domain includeSubdomains="true">www.spox.com</domain>
+        <domain includeSubdomains="true">www.sportbuzzer.de</domain>
+        <domain includeSubdomains="true">www.recklinghaeuser-zeitung.de</domain>
+        <domain includeSubdomains="true">www.fussballtransfers.com</domain>
+        <domain includeSubdomains="true">www.kn-online.de</domain>
+        <domain includeSubdomains="true">www.spiegel.de</domain>
+        <domain includeSubdomains="true">www.goal.com</domain>
+        <domain includeSubdomains="true">www.dg-wdr-http-dus-dtag-cdn.cast.addradio.de</domain>
+        <domain includeSubdomains="true">dg-wdr-http-dus-dtag-cdn.cast.addradio.de</domain>
+        <domain includeSubdomains="true">www.addradio.de</domain>
+        <domain includeSubdomains="true">www.add.radio</domain>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </domain-config>
+</network-security-config>

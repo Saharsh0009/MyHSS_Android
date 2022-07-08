@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.uk.myhss.ui.policies.GuruDakshinaFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <!--<include
+            layout="@layout/action_bar" />-->
+
+    <LinearLayout
+        android:id="@+id/code_of_content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding10"
+        android:layout_marginBottom="@dimen/padding10"
+        android:paddingStart="@dimen/padding15"
+        android:paddingEnd="@dimen/padding15"
+        android:padding="@dimen/padding10"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="@dimen/padding25"
+            android:layout_height="@dimen/padding25"
+            android:gravity="center_vertical"
+            android:src="@drawable/rectangle_icon" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginStart="@dimen/padding10"
+            android:text="@string/code_of_conduct"
+            android:theme="@style/StyleTextView"
+            android:textColor="@color/black"
+            android:textSize="@dimen/padding15"
+            tools:ignore="SpUsage" />
+
+    </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grayColorColor" />
+
+        <LinearLayout
+            android:id="@+id/data_protection_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding10"
+            android:layout_marginBottom="@dimen/padding10"
+            android:paddingStart="@dimen/padding15"
+            android:paddingEnd="@dimen/padding15"
+            android:padding="@dimen/padding10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="@dimen/padding25"
+                android:layout_height="@dimen/padding25"
+                android:gravity="center_vertical"
+                android:src="@drawable/rectangle_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding10"
+                android:text="@string/data_protection_policy"
+                android:theme="@style/StyleTextView"
+                android:textColor="@color/black"
+                android:textSize="@dimen/padding15"
+                tools:ignore="SpUsage" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grayColorColor" />
+
+        <LinearLayout
+            android:id="@+id/membership_agreement_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding10"
+            android:layout_marginBottom="@dimen/padding10"
+            android:paddingStart="@dimen/padding15"
+            android:paddingEnd="@dimen/padding15"
+            android:padding="@dimen/padding10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="@dimen/padding25"
+                android:layout_height="@dimen/padding25"
+                android:gravity="center_vertical"
+                android:src="@drawable/rectangle_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding10"
+                android:text="@string/membership_agreement"
+                android:theme="@style/StyleTextView"
+                android:textColor="@color/black"
+                android:textSize="@dimen/padding15"
+                tools:ignore="SpUsage" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grayColorColor" />
+
+        <LinearLayout
+            android:id="@+id/terms_condition_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding10"
+            android:layout_marginBottom="@dimen/padding10"
+            android:paddingStart="@dimen/padding15"
+            android:paddingEnd="@dimen/padding15"
+            android:padding="@dimen/padding10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="@dimen/padding25"
+                android:layout_height="@dimen/padding25"
+                android:gravity="center_vertical"
+                android:src="@drawable/rectangle_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding10"
+                android:text="@string/terms_condition"
+                android:theme="@style/StyleTextView"
+                android:textColor="@color/black"
+                android:textSize="@dimen/padding15"
+                tools:ignore="SpUsage" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grayColorColor" />
+
+        <LinearLayout
+            android:id="@+id/privacy_policy_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding10"
+            android:layout_marginBottom="@dimen/padding10"
+            android:paddingStart="@dimen/padding15"
+            android:paddingEnd="@dimen/padding15"
+            android:padding="@dimen/padding10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="@dimen/padding25"
+                android:layout_height="@dimen/padding25"
+                android:gravity="center_vertical"
+                android:src="@drawable/rectangle_icon" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginStart="@dimen/padding10"
+                android:text="@string/privacy_policy"
+                android:theme="@style/StyleTextView"
+                android:textColor="@color/black"
+                android:textSize="@dimen/padding15"
+                tools:ignore="SpUsage" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grayColorColor" />
+
+    </LinearLayout>
+</ScrollView>

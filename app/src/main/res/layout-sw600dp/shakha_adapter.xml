@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/padding5"
+    android:layout_marginStart="@dimen/padding5"
+    android:layout_marginEnd="@dimen/padding5" >
+
+    <LinearLayout
+        android:id="@+id/shakha_adapter_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding5"
+        android:background="@drawable/edittext_round"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/shakha_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:padding="@dimen/padding5"
+            android:singleLine="true"
+            android:paddingStart="12dp"
+            android:paddingEnd="@dimen/padding15"
+            android:theme="@style/StyleTextView"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_size25"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/shakha_discription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:visibility="gone"
+            android:paddingStart="12dp"
+            android:paddingEnd="@dimen/padding15"
+            android:theme="@style/StyleTextView"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_size20" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

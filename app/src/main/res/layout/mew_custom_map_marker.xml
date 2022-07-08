@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding5"
+    android:background="@drawable/edittext_round"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <ImageView
+        android:id="@+id/imgCancelMapMarker"
+        android:layout_width="@dimen/padding20"
+        android:layout_height="@dimen/padding20"
+        android:layout_marginStart="@dimen/padding5"
+        android:background="@drawable/shakaha_icon" />
+
+    <TextView
+        android:id="@+id/txtLocMarkerName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/padding40"
+        android:layout_marginEnd="@dimen/padding25"
+        android:singleLine="true"
+        android:text="@string/app_name"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/font_size11"
+        android:theme="@style/StyleTextView"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/info_img"
+        android:layout_width="@dimen/padding25"
+        android:layout_height="@dimen/padding25"
+        android:layout_alignParentEnd="true"
+        android:tint="@color/blueColor"
+        android:padding="@dimen/padding5"
+        android:layout_marginStart="@dimen/padding5"
+        android:src="@drawable/get_dir"
+        tools:ignore="UseAppTint" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/padding20"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/imgCancelMapMarker"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@drawable/button_round"
+            android:padding="12dp"
+            android:paddingStart="@dimen/padding45"
+            android:paddingEnd="@dimen/padding45"
+            android:text="Shakha Info"
+            android:fontFamily="@font/sourcesanspro_regular"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size18" />
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

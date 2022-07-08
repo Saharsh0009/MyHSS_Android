@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/padding60"
+    android:weightSum="5"
+    android:id="@+id/title_actionbar"
+    android:background="@color/primaryColor">
+
+    <ImageView
+        android:id="@+id/back_arrow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/backbtn"
+        android:paddingStart="-90dp"
+        android:padding="@dimen/padding10"
+        android:layout_weight="2"
+        android:layout_gravity="center_vertical"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/header_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/app_name"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:layout_marginStart="@dimen/padding5"
+        android:layout_marginEnd="@dimen/padding5"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:fontFamily="@font/sourcesanspro_semibold"
+        android:textAlignment="center"
+        android:theme="@style/StyleTextView"
+        android:textSize="@dimen/font_size30" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="@dimen/padding80"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="2"
+        tools:ignore="RtlSymmetry">
+
+    <ImageView
+        android:id="@+id/info_tooltip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/infoyellow"
+        android:visibility="invisible"
+        android:padding="12dp"
+        android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/add_more"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Add"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:visibility="gone"
+            android:fontFamily="@font/sourcesanspro_semibold"
+            android:textAlignment="center"
+            android:theme="@style/StyleTextView"
+            android:textSize="@dimen/font_size30" />
+
+        <ImageView
+            android:id="@+id/calender_icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/calender"
+            android:visibility="invisible"
+            android:padding="12dp"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/white" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/menu_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/map_list"
+                android:visibility="invisible"
+                android:layout_centerHorizontal="true"
+                android:padding="@dimen/padding10"
+                android:layout_gravity="center_vertical"
+                app:tint="@color/white" />
+
+            <ImageView
+                android:id="@+id/map_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/map"
+                android:visibility="invisible"
+                android:padding="@dimen/padding5"
+                android:layout_gravity="center_vertical"
+                app:tint="@color/white" />
+
+            <ImageView
+                android:id="@+id/map_reload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/clear_icon"
+                android:visibility="invisible"
+                android:padding="@dimen/padding15"
+                android:tint="@color/white"
+                android:layout_gravity="center_vertical"
+                app:tint="@color/white"
+                tools:ignore="UseAppTint" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/shakha_count_layout"
+            android:layout_width="@dimen/padding45"
+            android:layout_height="@dimen/padding45"
+            android:layout_marginStart="@dimen/padding50"
+            android:layout_marginTop="@dimen/padding5"
+            android:visibility="invisible"
+            android:background="@drawable/white_orange_circle">
+            <!--white_orange_circle-->
+
+            <ImageView
+                android:layout_width="@dimen/padding30"
+                android:layout_height="@dimen/padding30"
+                android:src="@drawable/shakaha_icon"
+                android:layout_marginTop="@dimen/padding15"
+                android:layout_marginStart="@dimen/padding10"
+                android:scaleType="fitCenter"
+                app:tint="@color/white" />
+    <TextView
+        android:id="@+id/shakha_count_txt"
+        android:layout_width="@dimen/padding40"
+        android:layout_height="wrap_content"
+        android:theme="@style/StyleTextView"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:layout_marginStart="@dimen/padding10"
+        android:background="@drawable/edittext_round"
+        android:textColor="@color/black"
+        android:maxLength="3"
+        android:textSize="@dimen/font_size15"
+        tools:ignore="RtlCompat" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

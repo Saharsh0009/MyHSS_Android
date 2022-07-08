@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/app_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/top_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <include layout="@layout/action_bar" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/search_shakha_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding5"
+        android:layout_below="@+id/top_view"
+        android:background="@drawable/edittext_round"
+        android:layout_marginStart="@dimen/padding5"
+        android:layout_marginEnd="@dimen/padding5" >
+
+        <ImageView
+            android:layout_width="@dimen/padding20"
+            android:layout_height="@dimen/padding20"
+            android:src="@drawable/search_icon"
+            android:layout_centerVertical="true"
+            app:tint="@color/grayColorColor" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/search_shakha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding10"
+            android:textColor="@color/black"
+            android:hint="Search..."
+            android:imeOptions="actionDone"
+            android:textSize="@dimen/font_size20"
+            android:textColorHint="@color/grayColorColor"
+            android:layout_centerVertical="true"
+            android:background="@color/white"
+            android:layout_marginStart="@dimen/padding30" />
+
+    </RelativeLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/no_data_found_view"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/shakha_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_shakha_layout"/>
+
+</RelativeLayout>

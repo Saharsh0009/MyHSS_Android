@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/rootview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:scrollbars="vertical"
+            tools:ignore="MissingConstraints">
+
+            <include layout="@layout/action_bar" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <include
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    layout="@layout/no_data_found_view"/>
+
+            <LinearLayout
+                android:id="@+id/linechart_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/blackColor"
+                    android:textAlignment="center"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10"
+                    android:textSize="@dimen/font_size20"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:text="@string/suryanamaskar_graph" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/grayColorColor"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10"
+                    android:textSize="@dimen/font_size15"
+                    android:fontFamily="@font/sourcesanspro_bold"
+                    android:text="@string/select_family_member" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding10"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:background="@drawable/edittext_round"
+                    android:orientation="horizontal" >
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/padding40" >
+
+                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            style="@android:style/Widget.Spinner.DropDown"
+                            android:theme="@style/StyleEditTextView"
+                            android:id="@+id/family_txt"
+                            android:background="@android:color/transparent"
+                            android:textColor="@color/blackColor"
+                            android:layout_marginTop="7dp"
+                            android:tag="@string/family_member"
+                            android:textColorHint="@color/grayColorColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/username"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/blackColor"
+                            android:layout_marginStart="@dimen/font_size15"
+                            android:layout_marginTop="@dimen/padding10"
+                            android:textSize="@dimen/font_size15"
+                            android:visibility="gone"
+                            android:layout_marginEnd="@dimen/padding15"
+                            android:fontFamily="@font/sourcesanspro_regular"  />
+                        <!--</com.google.android.material.textfield.TextInputLayout>-->
+
+                        <ImageView
+                            android:layout_width="@dimen/padding10"
+                            android:layout_height="@dimen/padding10"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="@dimen/padding20"
+                            android:src="@drawable/arrow_drop_down"  />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginBottom="@dimen/padding10"
+                    android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/blackColor"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginEnd="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10"
+                    android:textSize="@dimen/font_size20"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:text="Total" />
+
+                    <TextView
+                        android:id="@+id/average_count"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/orangeColor"
+                        android:layout_weight="1"
+                        android:gravity="left|center_vertical"
+                        android:layout_marginStart="@dimen/font_size15"
+                        android:layout_marginEnd="@dimen/font_size15"
+                        android:layout_marginTop="@dimen/padding10"
+                        android:textSize="@dimen/font_size20"
+                        android:fontFamily="@font/sourcesanspro_semibold"
+                        android:text="0.0" />
+
+                </LinearLayout>
+
+                <!--<HorizontalScrollView
+                    android:id="@+id/scroll_linechart"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="visible">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="horizontal">-->
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/barChartnew"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:minHeight="400dp"/>
+
+                        <com.github.mikephil.charting.charts.BarChart
+                            android:id="@+id/barChart"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:minHeight="350dp"/>
+
+                    <!--</LinearLayout>
+                </HorizontalScrollView>-->
+
+            </LinearLayout>
+
+            </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/add_listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            <!--<com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/severityBarChart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="320dp" />-->
+
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

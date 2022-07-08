@@ -1,0 +1,408 @@
+<resources>
+    <string name="app_name">My HSS</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="qr_code_generate">Generate QR Code</string>
+    <string name="qr_code_scan">Scan QR Code</string>
+    <string name="start_end_date">Start Date / End Date</string>
+
+    <string name="error_no_data">No data</string>
+    <string name="no_connection">No internet connection</string>
+    <string name="some_thing_wrong">Something wrong</string>
+
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_organization">Organization</string>
+    <string name="menu_shakha">Shakha</string>
+    <string name="menu_shakha_type">Shakha Type</string>
+    <string name="menu_roles">Roles</string>
+    <string name="menu_roles_responsibility">Roles &amp; Responsibility</string>
+    <string name="menu_karyakarts">Karyakartas</string>
+    <string name="menu_sankhya_report">Sankhya Report</string>
+    <string name="menu_setting">Setting</string>
+    <string name="menu_policiies">Policies</string>
+    <string name="menu_logout">Logout</string>
+    <string name="default_notification_channel_id">AIzaSyBk7PnvOUhDTD-elGpVpgjXNK-UX05xto4</string>
+    <string name="unlock_myhss">Unlock MyHss</string>
+    <string name="confirm_screen_pin">Confirm your screen lock PIN, Pattern or Password</string>
+
+    <!--Camera String-->
+    <string name="appcamera">CAMERA</string>
+    <string name="appgallery">GALLERY</string>
+    <string name="appsel_img">Select Image from</string>
+
+    <!--Profile String-->
+    <string name="about_us">About Me</string>
+    <string name="personal_info">Personal Information</string>
+    <string name="contact_info">Contact Information</string>
+    <string name="other_info">Other Information</string>
+
+    <!--Add Memmber String-->
+    <string name="personal_infomation">Personal Information</string>
+    <string name="contact_infomation">Contact Information</string>
+    <string name="guardian_information">Guardian Information</string>
+    <string name="other_infomation">Other Information</string>
+
+    <!--Guru Dakshina String-->
+    <string name="one_time">One-Time</string>
+    <string name="regular">Regular</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="billing_information">Billing Information</string>
+    <string name="card_number">Card Number</string>
+    <string name="expiration_date">Expiration date</string>
+    <string name="expiration_dd_yy">DD/YYYY</string>
+    <string name="ccv_no">Ccv</string>
+    <string name="card_holder_name">Card Holder Name</string>
+    <string name="donate">Donate</string>
+    <string name="order_id">Order Id</string>
+    <string name="payment_status">Payment Status</string>
+    <string name="frequency">Frequency</string>
+    <string name="sort_code">Sort Code</string>
+    <string name="account_name">Account Name</string>
+    <string name="account_number">Account Number</string>
+    <string name="donate_amount">Donate Amount</string>
+    <string name="are_you_giving_dakshina">Are you giving this Dakshina as part of the Guru Purnima Utsav</string>
+    <string name="donating_individual_family">Donating as an Individual or Family? *</string>
+    <string name="donating_individual">Individual</string>
+    <string name="donating_family">Family</string>
+    <string name="gift_aid">Gift Aid</string>
+    <string name="gift_aid_declaration">Gift Aid Declaration:</string>
+    <string name="payment_start_date">Payment Start Date</string>
+    <string name="how_often_like_to_donate">How often would you like to donate? </string>
+    <string name="donating_as_individual_or_family">Donating as an Individual or Family? *</string>
+    <string name="disclaimer_notify"><b>Disclaimer:</b>  Please notify HSS (UK) if you:</string>
+    <string name="disclaimer_want_cancel">  Want to cancel this declaration</string>
+    <string name="disclaimer_change_name">  Change your name or home address</string>
+    <string name="disclaimer_no_longer">  No longer pay sufficient tax on your income and/or capital gains</string>
+    <string name="contribution_type">Contribution Type</string>
+    <string name="reference">Reference</string>
+    <string name="status">Status</string>
+    <string name="date">Date</string>
+    <string name="frequency_of_donation">Frequency of Donation</string>
+
+    <!--Dashboard Tab String-->
+    <string name="all_shakha">All Shakha</string>
+    <string name="shakha_details">Shakha Details</string>
+    <string name="my_suchna_board">Suchana Board</string>
+    <string name="my_sangh_sandesh">Sangh Mail/Sangh Sandesh</string>
+    <string name="my_notification">Notification</string>
+    <string name="my_family">My Family</string>
+    <string name="kendriya">Kendriya</string>
+    <string name="support">Support</string>
+    <string name="my_shakha">My Shakha</string>
+    <string name="my_nagar">My Nagar</string>
+    <string name="my_vibhag">My Vibhag</string>
+    <string name="guru_dakshina">Guru Dakshina</string>
+    <string name="shishu">Shishu</string>
+    <string name="male_shishu">Shishu_male</string>
+    <string name="female_shishu">Shishu_female</string>
+    <string name="shishu_content">Below 5 Years</string>
+    <string name="baal">Baal</string>
+    <string name="baalika">Baalika</string>
+    <string name="baalika_content">5 to 11 Years - Primary School</string>
+    <string name="kishore">Kishore</string>
+    <string name="kishori">Kishori</string>
+    <string name="kishori_content">11 to 16 Years - Hight School</string>
+    <string name="tarun">Tarun</string>
+    <string name="taruni">Taruni</string>
+    <string name="taruni_content">16 to 30 years</string>
+    <string name="yuva">Yuva</string>
+    <string name="yuvati">Yuvati</string>
+    <string name="yuvati_content">30 to 60 years</string>
+    <string name="jyeshta">Jyeshta</string>
+    <string name="jyeshtaa">Jyeshtaa</string>
+    <string name="proudh">Proudh</string>
+    <string name="proudha">Proudha</string>
+    <string name="jyeshtaa_content">60+ years</string>
+
+    <string name="clear_txt">Clear</string>
+
+    <!--Drawer Name-->
+    <string name="home_name">Home</string>
+    <string name="organistion_name">Organisation</string>
+    <string name="shakha_name">Shakha</string>
+    <string name="shakha_type_name">Shakha Type</string>
+    <string name="role_name">Role</string>
+    <string name="role_resposiblity_name">Role &amp; Responsibility</string>
+    <string name="karyakartas_name">Karyakartas</string>
+    <string name="sankhya_name">Sankhya Report</string>
+    <string name="settings_name">Settings</string>
+    <string name="policies_name">Policies</string>
+    <string name="logout_name">Logout</string>
+
+    <string name="role_txt">Role</string>
+    <string name="name_txt">Name</string>
+    <string name="email_txt">Email</string>
+    <string name="dob_txt">DOB</string>
+    <string name="shakha_txt">Shakha</string>
+    <string name="nagar_txt">Nagar</string>
+    <string name="vibhag_txt">Vibhag</string>
+
+    <string name="mobile_txt">Mobile No.</string>
+    <string name="sec_contact_txt">Secondary Contact No.</string>
+    <string name="emergency_txt">EMERGENCY/GUARDIAN INFO</string>
+    <string name="phone_no_txt">Phone No.</string>
+    <string name="relation_ship_txt">Relationship</string>
+    <string name="qualification_first_aid_txt">qualification in First Aid?</string>
+    <string name="dbs_certification_number">DBS Certificate Number</string>
+    <string name="dbs_certification_date">DBS Certificate Date</string>
+    <string name="safeguarding_training">Safeguarding Training</string>
+
+    <!--Social Login-->
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="profile">Profile</string>
+    <string name="family_member">Family Member</string>
+    <string name="select_family_member">Select Family Member</string>
+    <string name="suryanamaskar_graph">Suryanamaskar Graph</string>
+
+    <!--Other String-->
+    <string name="edit_txt">Edit</string>
+    <string name="delete_txt">Delete</string>
+    <string name="or_text">OR</string>
+    <string name="email_address">Email address</string>
+    <string name="password">Password</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="change_my_mind">I have changed my mind! </string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="sign_in">Sign In</string>
+    <string name="full_name">Full name</string>
+    <string name="username">Username</string>
+    <string name="email_mobile">Email address/Mobile no.</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="register">Register</string>
+    <string name="login_details_register">Login Details</string>
+    <string name="user_note_register">Usernames should be something memorable e.g. firstname.surname. These can contain letters and numbers only (no spaces).</string>
+    <string name="password_note_register">Please use 8 or more characters with a mix of letters, numbers &amp; symbols.</string>
+    <string name="already_user">I already have a membership! </string>
+    <!--Choosing Register means that you agree to the HSS (UK) Privacy Policy and the MyHSS Terms & Conditions.-->
+    <string name="terms_condtion"><html>Choosing Register means that you agree to the Hss (UK) <a href="https://dev.myhss.org.uk/page/privacy-policy/1">Privacy Policy </a> and the <a href="https://dev.myhss.org.uk/page/privacy-policy/1">MyHss Terms &amp; Conditions</a></html></string>
+    <!--<string name="terms_condtion">Choosing Register means that you agree to the Hss (UK) Privacy Policy and the MyHss Terms &amp; Conditions</string>-->
+    <string name="terms_condtionmsg">Agree to the Hss (UK) </string>
+    <string name="terms_privacy">Privacy Policy</string>
+    <string name="terms_terms">MyHss Terms &amp; Conditions</string>
+    <string name="forgot_your_password">Forgot your password ? </string>
+    <string name="submit">Submit</string>
+    <string name="sub_title">Fingerprint Access</string>
+    <string name="description_title">Touch finger to access application</string>
+    <string name="cancel">Cancel</string>
+    <string name="go_back">Go Back</string>
+    <string name="dont_have_account">Do not have any account ? </string>
+    <string name="login">Login</string>
+    <string name="login_in">Log In</string>
+    <string name="welocome">Welcome</string>
+    <string name="heading_AddMembers">Add Members</string>
+    <string name="Personal_Info">Personal Infomation</string>
+    <string name="enter_Fullname">Enter fullname</string>
+    <string name="enter_Firstname">Enter first name</string>
+    <string name="enter_Middlename">Enter middle name</string>
+    <string name="enter_Surname">Enter surname</string>
+    <string name="fullname">Fullname</string>
+    <string name="firstname">First name</string>
+    <string name="middlename">Middle name</string>
+    <string name="surname">Surname</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="utsav">Which Utsav did you celebrate? (Optional)</string>
+    <string name="dateofbirth">Date of birth</string>
+    <string name="dd_mm_yyyy">DD / MM / YYYY</string>
+    <string name="ageTipText">As your age is below 18, we will send one email to your guardian for the approval purpose.</string>
+    <string name="select_occupation">Select Occupation</string>
+    <string name="relationship_name">Relationship Name</string>
+    <string name="other_relationship_name">Type Guardian Other Relationship</string>
+    <string name="relationship_primery">Relationship to Primary Member </string>
+    <string name="shakha_branch">Shakha Branch</string>
+    <string name="occupation_select_other">Occupation (Select Other if not listed)</string>
+    <string name="occupation_name">Occupation Name</string>
+    <string name="select_vibhag">Select Vibhag</string>
+    <string name="vibhag_region">Vibhag (Region)</string>
+    <string name="select_nagar">Select Nagar</string>
+    <string name="nagar_town">Nagar (Town)</string>
+    <string name="select_sakha">Select Sakha</string>
+    <string name="sakha_branch">Sakha (Branch)</string>
+    <string name="next">Next</string>
+    <string name="ok">Ok</string>
+    <string name="success">Success</string>
+    <string name="Success">Succeeded</string>
+    <string name="please_use_following_reference">Please  use the following reference number to setup a standing order</string>
+    <string name="request">Request</string>
+    <string name="additional_guest">Guest Information</string> <!--Additional-->
+    <string name="guest_information">Guest Information</string>
+    <string name="member_view">Members View</string>
+    <string name="attended">All Attended</string>
+    <string name="review">Review</string>
+    <string name="prev">Prev</string>
+    <string name="guardian_name">Guardian Name</string>
+    <string name="guardian_full_name">Guardian full name</string>
+    <string name="guardian_contact_number">Guardian phone number</string>
+    <string name="guardian_email">Guardian Email</string>
+    <string name="guardian_relationship">Guardian Relationship</string>
+    <string name="find_address">FIND ADDRESS</string>
+    <string name="present_txt">Present</string>
+    <string name="absent_txt">Absent</string>
+    <string name="inactive_txt">Inactive</string>
+    <string name="active_txt">Active</string>
+    <string name="pending_txt">Pending</string>
+
+    <!--Member String-->
+    <string name="welcome_to_myhss">Welcome to MyHSS</string>
+    <string name="welcome_data">Vishwa Dharma Vikaasartham, Prabho Sanghatitaa Vayam.</string>
+    <string name="welcome_data_new">Let\'s get organised for the purpose of Vishwa Dharma.</string>
+    <string name="Add_self">Add Self</string>
+    <string name="Add_family_member">Add A Family Member</string>
+    <string name="welocome_text_mag">You are not currently a member of MyHSS. If you are experiencing an issue, please contact your Shakha Admin.</string>
+    <string name="welcome_msg">We have recived your membership application. we will update you shortly.</string>
+    <string name="contact_information">Contact Information</string>
+    <string name="primary_contact_number">Primary contact number</string>
+    <string name="secondary_contact_number">Secondary contact number</string>
+    <string name="secondary_email">Secondary email address</string>
+    <string name="whats_your_postcode">What’s your postcode?</string>
+    <string name="select_address">Select Address</string>
+    <string name="building_name">Building Name</string>
+    <string name="address_line1">Address Line 1</string>
+    <string name="address_line2">Address Line 2</string>
+    <string name="town_city">Town/City</string>
+    <string name="city">City</string>
+    <string name="country">Country</string>
+    <string name="postcode">Postcode</string>
+    <string name="other_information">Other Information</string>
+    <string name="do_you_have_medical_information">Do you have any medical information to declare? (including any allergies)</string>
+    <string name="do_you_have_qualification_First_Aid">Do you have a qualification in First Aid?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="pdf_show_local_progress_title">Downloading</string>
+    <string name="pdf_show_local_progress_content">Please wait...</string>
+    <string name="special_dietary_requirements">Special Dietary Requirements</string>
+    <string name="spoken_language">Spoken Language(s)</string>
+    <string name="originating_state_in_india">Originating State in India</string>
+    <string name="aggre_text_step4_text">I am agreeing to the</string>
+    <string name="aggre_text_step4_link"> HSS (UK) Membership Agreement</string>
+    <string name="medical_information_details">Medical Information Details   (including any allergies)</string>
+    <string name="date_of_first_aid_qualification">Date of First Aid Qualification</string>
+    <string name="qualification_file">Qualification File</string>
+    <string name="mimes_type">mimes type: jpg, jpeg, png, pdf</string>
+
+    <string name="Please_check_your_email">Please check your email </string>
+    <string name="shobha_com">shobha@gmail.com </string>
+    <string name="to_verify_your_account">to verify your account.</string>
+    <string name="membership_applications">Membership</string>  <!--Applications-->
+    <string name="view_membership_applications">View Membership Applications</string>
+    <string name="active_members">Active Members</string>
+    <string name="view_active_members">View Active Members List</string>
+    <string name="inactive_applications">In active Members</string>
+    <string name="rejected_applications">Rejected Applications</string>
+    <string name="view_rejected_applications">View Rejected Membership Applications</string>
+    <string name="approve">Approve</string>
+    <string name="reject">Reject</string>
+
+
+    <!--Error Message String-->
+    <string name="error_Please_enter_fname_text">Please enter firsr name text</string>
+    <string name="error_Please_enter_mname_text">Please enter middle name text</string>
+    <string name="error_Please_enter_sname_text">Please enter sur name text</string>
+    <string name="error_Please_enter_full_name">Please enter full name text</string>
+    <string name="error_Please_enter_first_name">Please enter first name text</string>
+    <string name="error_Please_enter_middle_name">Please enter middle name text</string>
+    <string name="error_Please_enter_sur_name">Please enter surname text</string>
+    <string name="error_Please_choose_gender">Please choose gender</string>
+    <string name="error_Please_choose_date_of_birth">Plase choose date of birth</string>
+    <string name="error_Please_enter_occupation">Please enter occupation</string>
+    <string name="error_Please_select_vibhag">Please select vibhag</string>
+    <string name="error_Please_select_nagar">Please select nagar</string>
+    <string name="error_Please_select_shakha">Please select shakha</string>
+    <string name="error_please_choose_medical_information">Please choose any medical information to declare?</string>
+    <string name="error_please_choose_qualified_first_aid">Please choose qualified in first aid?</string>
+    <string name="error_please_enter_medical_information">Please enter medical information details</string>
+    <string name="error_please_choose_date_qualified_first_aid">Please choose date of first aid qualification</string>
+    <string name="error_please_choose_file_qualified_first_aid">Please choose qualification file.</string>
+    <string name="error_please_choose_HSS_membership_agreement">Please choose HSS (UK) membership agreement.</string>
+    <string name="error_please_enter_emergency_contact_name">Please enter emergency contact name</string>
+    <string name="error_please_enter_emergency_contact_number">Please enter emergency contact number</string>
+    <string name="error_please_enter_contact_email">Please enter contact email</string>
+    <string name="error_please_select_relationship">Please select relationship</string>
+    <string name="error_Please_enter_email">Please enter email</string>
+    <string name="error_Please_enter_valid_email">Please enter valid email</string>
+
+
+    <string name="address">Address</string>
+    <string name="occupation">Occupation</string>
+    <!--<string name="about_us">CAMERA</string>-->
+
+
+    <!--Facebook Login String-->
+    <string name="facebook_app_id">1077200869440253</string>
+    <string name="fb_login_protocol_scheme">fb1077200869440253</string>
+
+
+    <!--Dashboard String-->
+    <!--Membership-->
+    <string name="membership">Membership</string>
+    <string name="members">Members</string>
+    <string name="user_profile">User Profile</string>
+    <string name="linked_family_member">Linked Family Members</string>
+    <string name="qr_code">QR Code Scan/Read</string>
+    <string name="surya_namaskar">Suryanamaskar</string>
+    <string name="record_surya_namaskar">Record Suryanamaskar</string>
+    <string name="add_family_member">Add a Family Member</string>
+    <string name="add_sankhya">Add Sankhya</string>
+    <string name="change_username">Change Username</string>
+    <string name="change_password">Change Password</string>
+
+    <!--Events-->
+    <string name="events">Events</string>
+    <string name="event_name">Event Name</string>
+    <string name="contact">Contact</string>
+    <string name="discription">Description</string>
+    <string name="info">Info</string>
+    <string name="all_events">All Events</string>
+    <string name="upcoming_events">Upcoming Events</string>
+    <string name="completed_events">Completed Events</string>
+    <string name="book_event">Book Event</string>
+    <string name="add_events">Add Events</string>
+    <string name="registration_for_events">Registration For Events</string>
+    <string name="event_calendar">Event Calendar</string>
+    <string name="user_event_history">User Event History</string>
+
+    <!--Guru Puja-->
+    <string name="guru_puja">Guru Puja</string>
+    <string name="one_time_dakshina">One-Time Dakshina</string>
+    <string name="regular_dakshina">Regular Dakshina</string>
+    <string name="shakha_guru_dakshina">Shakha Guru Dakshina</string>
+    <string name="how_much_would_you_like_donate">How much would you like to donate?</string>
+    <string name="go_to_dashboard">Go to Dashboard</string>
+
+    <!--News-->
+    <string name="news">News</string>
+    <string name="sangh_mail">Sangh Mail</string>
+    <string name="sangh_sandesh">Sangh Sandesh</string>
+
+    <!--Report-->
+    <string name="reports">Reports</string>
+    <string name="sankhya">Sankhya</string>
+
+    <!--Shakha-->
+    <string name="my_space">My Space</string>
+    <string name="my_other">Other</string>
+    <string name="shakha">Shakha</string>
+    <string name="sankhiya_form">Sankhiya Form</string>
+    <string name="my_kendriya">My Kendriya</string>
+
+    <!--Pound and euro icon-->
+    <string name="euro_icon">\u20ac</string>
+    <string name="pound_icon">\u00a3</string>
+
+
+    <!--Policies String-->
+    <string name="code_of_conduct">Code of Conduct</string>
+    <string name="data_protection_policy">Data Protection Policy</string>
+    <string name="membership_agreement">HSS (UK) Membership Agreement</string>
+    <string name="terms_condition">MyHSS Terms &amp; Conditions</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+</resources>

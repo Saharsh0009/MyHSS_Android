@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/edittext_round"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/edit_option"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding10"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="@dimen/padding15"
+            android:layout_height="@dimen/padding15"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/edit_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/StyleTextView"
+            android:layout_marginStart="@dimen/padding5"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/padding5"
+            android:text="@string/edit_txt"
+            android:textSize="@dimen/font_size15" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/delete_option"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding10"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="@dimen/padding15"
+            android:layout_height="@dimen/padding15"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/delete_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/StyleTextView"
+            android:layout_marginStart="@dimen/padding5"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/padding5"
+            android:text="@string/delete_txt"
+            android:textSize="@dimen/font_size15" />
+
+    </LinearLayout>
+
+</LinearLayout>

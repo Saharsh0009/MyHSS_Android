@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_dashboard">
+
+    <fragment
+        android:id="@+id/nav_dashboard"
+        android:name="com.uk.myhss.ui.dashboard.DashboardFragment"
+        android:label="@string/menu_dashboard"
+        tools:layout="@layout/fragment_dashboard_new" />
+
+    <fragment
+        android:id="@+id/nav_organization"
+        android:name="com.uk.myhss.ui.orgranization.OrgranizationFragment"
+        android:label="@string/menu_organization"
+        tools:layout="@layout/fragment_organization" />
+
+    <fragment
+        android:id="@+id/nav_shakha"
+        android:name="com.uk.myhss.ui.policies.ShakhaFragment"
+        android:label="@string/menu_shakha"
+        tools:layout="@layout/fragment_shakha" />
+
+    <fragment
+        android:id="@+id/nav_shakha_type"
+        android:name="com.uk.myhss.ui.policies.GuruDakshinaFragment"
+        android:label="@string/menu_shakha_type"
+        tools:layout="@layout/fragment_shakha_type" />
+
+    <fragment
+        android:id="@+id/nav_roles"
+        android:name="com.uk.myhss.ui.policies.OtherInfoFragment"
+        android:label="@string/menu_roles"
+        tools:layout="@layout/fragment_roles" />
+
+    <fragment
+        android:id="@+id/nav_roles_responsibility"
+        android:name="com.uk.myhss.ui.policies.RoleResponsibiltyFragment"
+        android:label="@string/menu_roles_responsibility"
+        tools:layout="@layout/fragment_roles_responsibility" />
+
+    <fragment
+        android:id="@+id/nav_karyakarts"
+        android:name="com.uk.myhss.ui.policies.KaryakartaFragment"
+        android:label="@string/menu_karyakarts"
+        tools:layout="@layout/fragment_karyakarts" />
+
+    <fragment
+        android:id="@+id/nav_sankhya_report"
+        android:name="com.uk.myhss.ui.policies.MyFamilyFragment"
+        android:label="@string/menu_sankhya_report"
+        tools:layout="@layout/fragment_sankhya_report" />
+
+    <fragment
+        android:id="@+id/nav_setting"
+        android:name="com.uk.myhss.ui.policies.SettingFragment"
+        android:label="@string/menu_setting"
+        tools:layout="@layout/fragment_setting" />
+
+    <fragment
+        android:id="@+id/nav_policiies"
+        android:name="com.uk.myhss.ui.policies.PolicieshowFragment"
+        android:label="@string/menu_policiies"
+        tools:layout="@layout/fragment_policies" />
+
+    <fragment
+        android:id="@+id/nav_logout"
+        android:name="com.uk.myhss.ui.policies.LogoutFragment"
+        android:label="@string/menu_logout"
+        tools:layout="@layout/fragment_logout" />
+</navigation>

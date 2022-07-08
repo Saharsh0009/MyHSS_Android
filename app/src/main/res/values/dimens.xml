@@ -1,0 +1,68 @@
+<resources>
+
+    <dimen name="navigation_drawer_width">260dp</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="font_size15">15sp</dimen>
+    <dimen name="font_size18">18sp</dimen>
+    <dimen name="font_size20">20sp</dimen>
+    <dimen name="font_size25">25sp</dimen>
+    <dimen name="font_size11">11sp</dimen>
+    <dimen name="font_size13">13sp</dimen>
+    <dimen name="font_size9">9sp</dimen>
+    <dimen name="font_size30">30sp</dimen>
+    <dimen name="font_size35">35sp</dimen>
+    <dimen name="font_size40">40sp</dimen>
+
+
+    <dimen name="padding5">5dp</dimen>
+    <dimen name="padding10">10dp</dimen>
+    <dimen name="padding15">15dp</dimen>
+    <dimen name="padding20">20dp</dimen>
+    <dimen name="padding25">25dp</dimen>
+    <dimen name="padding30">30dp</dimen>
+    <dimen name="padding35">35dp</dimen>
+    <dimen name="padding40">40dp</dimen>
+    <dimen name="padding45">45dp</dimen>
+    <dimen name="padding50">50dp</dimen>
+    <dimen name="padding55">55dp</dimen>
+    <dimen name="padding60">60dp</dimen>
+    <dimen name="padding65">65dp</dimen>
+    <dimen name="padding70">70dp</dimen>
+    <dimen name="padding75">75dp</dimen>
+    <dimen name="padding80">80dp</dimen>
+    <dimen name="padding85">85dp</dimen>
+    <dimen name="padding90">90dp</dimen>
+    <dimen name="padding95">95dp</dimen>
+    <dimen name="padding100">100dp</dimen>
+    <dimen name="padding105">105dp</dimen>
+    <dimen name="padding110">110dp</dimen>
+    <dimen name="padding115">115dp</dimen>
+    <dimen name="padding120">120dp</dimen>
+    <dimen name="padding125">125dp</dimen>
+    <dimen name="padding130">130dp</dimen>
+    <dimen name="padding135">135dp</dimen>
+    <dimen name="padding140">140dp</dimen>
+    <dimen name="padding145">145dp</dimen>
+    <dimen name="padding150">150dp</dimen>
+    <dimen name="padding155">155dp</dimen>
+    <dimen name="padding160">160dp</dimen>
+    <dimen name="padding165">165dp</dimen>
+    <dimen name="padding170">170dp</dimen>
+    <dimen name="padding175">175dp</dimen>
+    <dimen name="padding180">180dp</dimen>
+    <dimen name="padding185">185dp</dimen>
+    <dimen name="padding190">190dp</dimen>
+    <dimen name="padding195">195dp</dimen>
+    <dimen name="padding200">200dp</dimen>
+    <dimen name="padding220">220dp</dimen>
+    <dimen name="padding250">250dp</dimen>
+    <dimen name="padding280">280dp</dimen>
+    <dimen name="padding300">300dp</dimen>
+</resources>

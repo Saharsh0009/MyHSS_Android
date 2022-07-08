@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="false" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/shakha_hide_show_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray_background"
+            android:padding="@dimen/padding10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/padding5"
+                android:text="@string/my_space"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size15"
+                android:textStyle="bold"
+                android:theme="@style/StyleTextView"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:id="@+id/shakha_hide"
+                android:layout_width="@dimen/padding20"
+                android:layout_height="@dimen/padding20"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/padding5"
+                android:src="@drawable/drop_up_icon"
+                tools:ignore="RtlHardcoded" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <com.myhss.Utils.ScrollableGridView
+            android:id="@+id/shakha_gridview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fastScrollEnabled="true"
+            android:nestedScrollingEnabled="true"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <RelativeLayout
+            android:id="@+id/events_hide_show_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray_background"
+            android:padding="@dimen/padding10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/padding5"
+                android:text="@string/events"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size15"
+                android:textStyle="bold"
+                android:theme="@style/StyleTextView"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:id="@+id/event_hide"
+                android:layout_width="@dimen/padding20"
+                android:layout_height="@dimen/padding20"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/padding5"
+                android:src="@drawable/drop_up_icon"
+                tools:ignore="RtlHardcoded" />
+
+        </RelativeLayout>
+
+        <!--<View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />-->
+
+        <com.myhss.Utils.ScrollableGridView
+            android:id="@+id/events_gridview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fastScrollEnabled="true"
+            android:nestedScrollingEnabled="true"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:visibility="gone"
+            android:background="@color/lightGrayColor" />
+
+        <LinearLayout
+            android:id="@+id/news_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/news_hide_show_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/light_gray_background"
+                android:padding="@dimen/padding10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/padding5"
+                    android:text="@string/news"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size15"
+                    android:textStyle="bold"
+                    android:theme="@style/StyleTextView"
+                    tools:ignore="RtlHardcoded" />
+
+                <ImageView
+                    android:id="@+id/news_hide"
+                    android:layout_width="@dimen/padding20"
+                    android:layout_height="@dimen/padding20"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/padding5"
+                    android:src="@drawable/drop_up_icon"
+                    tools:ignore="RtlHardcoded" />
+
+            </RelativeLayout>
+
+            <!--<View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/lightGrayColor" />-->
+
+            <com.myhss.Utils.ScrollableGridView
+                android:id="@+id/news_gridview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fastScrollEnabled="true"
+                android:nestedScrollingEnabled="true"
+                android:gravity="center"
+                android:horizontalSpacing="1dp"
+                android:numColumns="3"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="1dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/lightGrayColor" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/gurupuja_hide_show_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray_background"
+            android:padding="@dimen/padding10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/padding5"
+                android:text="@string/guru_puja"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size15"
+                android:textStyle="bold"
+                android:theme="@style/StyleTextView"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:id="@+id/gurupuja_hide"
+                android:layout_width="@dimen/padding20"
+                android:layout_height="@dimen/padding20"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/padding5"
+                android:src="@drawable/drop_up_icon"
+                tools:ignore="RtlHardcoded" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <com.myhss.Utils.ScrollableGridView
+            android:id="@+id/guru_puja_gridview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fastScrollEnabled="true"
+            android:nestedScrollingEnabled="true"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <RelativeLayout
+            android:id="@+id/reports_hide_show_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray_background"
+            android:padding="@dimen/padding10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/padding5"
+                android:text="@string/reports"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size15"
+                android:textStyle="bold"
+                android:theme="@style/StyleTextView"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:layout_width="@dimen/padding20"
+                android:layout_height="@dimen/padding20"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/padding5"
+                android:src="@drawable/drop_up_icon"
+                tools:ignore="RtlHardcoded" />
+
+        </RelativeLayout>
+
+        <!--<View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />-->
+
+        <com.myhss.Utils.ScrollableGridView
+            android:id="@+id/reports_gridview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fastScrollEnabled="true"
+            android:nestedScrollingEnabled="true"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
+
+        <!--<View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />-->
+
+        <RelativeLayout
+            android:id="@+id/member_hide_show_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray_background"
+            android:padding="@dimen/padding10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/padding5"
+                android:text="@string/membership_applications"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size15"
+                android:textStyle="bold"
+                android:theme="@style/StyleTextView"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:id="@+id/member_hide"
+                android:layout_width="@dimen/padding20"
+                android:layout_height="@dimen/padding20"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/padding5"
+                android:src="@drawable/drop_up_icon"
+                tools:ignore="RtlHardcoded" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <com.myhss.Utils.ScrollableGridView
+            android:id="@+id/membership_gridview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fastScrollEnabled="true"
+            android:gravity="center"
+            android:nestedScrollingEnabled="true"
+            android:horizontalSpacing="1dp"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <RelativeLayout
+            android:id="@+id/other_hide_show_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray_background"
+            android:padding="@dimen/padding10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/padding5"
+                android:text="@string/my_other"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size15"
+                android:textStyle="bold"
+                android:theme="@style/StyleTextView"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:id="@+id/other_hide"
+                android:layout_width="@dimen/padding20"
+                android:layout_height="@dimen/padding20"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/padding5"
+                android:src="@drawable/drop_up_icon"
+                tools:ignore="RtlHardcoded" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <com.myhss.Utils.ScrollableGridView
+            android:id="@+id/other_gridview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fastScrollEnabled="true"
+            android:nestedScrollingEnabled="true"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
+
+    </LinearLayout>
+
+</ScrollView>

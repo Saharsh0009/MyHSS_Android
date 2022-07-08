@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
+    android:orientation="vertical">
+
+    <include layout="@layout/action_bar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/bottom_btn_view"
+            android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding5"
+        android:orientation="horizontal"
+        android:weightSum="5" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_weight="2" >
+
+            <ImageView
+                android:id="@+id/previous_date"
+                android:layout_width="@dimen/padding25"
+                android:layout_height="@dimen/padding25"
+                android:padding="7dp"
+                android:src="@drawable/back_arrow_icon"
+                android:tint="@color/white"
+                android:layout_centerInParent="true"
+                android:background="@drawable/button_round"
+                tools:ignore="UseAppTint" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/current_date_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:fontFamily="@font/sourcesanspro_bold"
+                android:text="21 Jan | Saturday"
+                android:theme="@style/StyleTextView"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_weight="2" >
+
+            <ImageView
+                android:id="@+id/next_date"
+                android:layout_width="@dimen/padding25"
+                android:layout_height="@dimen/padding25"
+                android:padding="7dp"
+                android:src="@drawable/right_arrow"
+                android:tint="@color/white"
+                android:layout_centerInParent="true"
+                android:background="@drawable/button_round"
+                tools:ignore="UseAppTint" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grayColorColor"
+                android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginTop="@dimen/padding10"
+                android:textSize="@dimen/font_size15"
+                android:fontFamily="@font/sourcesanspro_regular"
+                android:text="@string/utsav" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:background="@drawable/edittext_round"
+                android:orientation="horizontal" >
+
+                <RelativeLayout
+                    android:id="@+id/utsav_txt_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/padding40" >
+
+                    <!--<com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/primaryColor"
+                        android:paddingStart="@dimen/font_size15"
+                        style="@style/EditText.OutlinedBox"
+                        tools:ignore="RtlSymmetry">-->
+
+                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            style="@android:style/Widget.Spinner.DropDown"
+                            android:theme="@style/MineCustomTabText"
+                            android:id="@+id/utsav_txt"
+                            android:background="@android:color/transparent"
+                            android:textColor="@color/blackColor"
+                            android:layout_marginTop="7dp"
+                            android:tag="@string/relation_ship_txt"
+                            android:textColorHint="@color/grayColorColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    <!--</com.google.android.material.textfield.TextInputLayout>-->
+
+                    <ImageView
+                        android:layout_width="@dimen/padding10"
+                        android:layout_height="@dimen/padding10"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/padding20"
+                        android:src="@drawable/arrow_drop_down"  />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/padding5"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/shakha_name_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding5"
+            android:layout_marginStart="@dimen/padding15"
+            android:layout_marginEnd="@dimen/padding15"
+            android:theme="@style/StyleTextView"
+            android:fontFamily="@font/sourcesanspro_bold"
+            android:text="@string/shakha"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="@dimen/padding15"
+            android:layout_marginEnd="@dimen/padding15"
+            android:background="@drawable/top_gray_round_border"
+            android:padding="@dimen/padding5" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/StyleTextView"
+                    android:text="@string/name_txt"
+                    android:gravity="center_vertical"
+                    android:fontFamily="@font/sourcesanspro_bold"
+                    android:textSize="@dimen/font_size15" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:layout_weight="1" >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    tools:ignore="UselessParent">
+<!--RJ19TA5350-->
+                    <TextView
+                        android:id="@+id/tvSelect"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/StyleTextView"
+                        android:text="@string/attended"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center_vertical"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/padding45"
+                        android:textAlignment="textEnd"
+                        android:fontFamily="@font/sourcesanspro_bold"
+                        android:textSize="@dimen/font_size15"
+                        tools:ignore="RtlCompat,RtlHardcoded" />
+
+                    <CheckBox
+                        android:id="@+id/cbSelectAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:scaleX="1.2"
+                        android:scaleY="1.2"
+                        android:visibility="visible"
+                        android:theme="@style/checkBoxStyle" />
+
+                    <ImageView
+                        android:id="@+id/all_check"
+                        android:layout_width="@dimen/padding25"
+                        android:layout_height="@dimen/padding25"
+                        android:visibility="invisible"
+                        android:background="@drawable/custom_checkbox"
+                        android:layout_alignParentEnd="true" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/attended_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_btn_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/additional_guest_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:background="@color/orangeColor" >
+
+                <ImageView
+                    android:layout_width="@dimen/padding10"
+                    android:layout_height="@dimen/padding10"
+                    android:src="@drawable/plus_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="@string/additional_guest"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:textColor="@color/primaryColor"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/submit_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:background="@color/primaryColor" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="@string/submit"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+    </LinearLayout>
+
+        <!--<View
+            android:id="@+id/bottom_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding10"
+            android:layout_alignParentBottom="true"/>-->
+
+    </RelativeLayout>
+
+</LinearLayout>

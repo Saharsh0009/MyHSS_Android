@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="@dimen/padding10"
+    android:background="@drawable/edittext_round"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/family_member"
+        android:textAlignment="center"
+        android:padding="@dimen/padding10"
+        android:fontFamily="@font/sourcesanspro_bold"
+        android:background="@drawable/button_orange_round"
+        android:textSize="@dimen/font_size15"
+        android:theme="@style/StyleTextView" />
+
+    <ListView
+        android:id="@+id/family_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding5"
+        android:background="@color/light_gray_background"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnOk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding5"
+        android:background="@drawable/bottom_round_layout"
+        android:text="@string/ok"
+        android:textAlignment="center"
+        android:theme="@style/StyleTextView"
+        android:textSize="@dimen/font_size15"
+        android:textColor="@android:color/white" />
+</androidx.appcompat.widget.LinearLayoutCompat>

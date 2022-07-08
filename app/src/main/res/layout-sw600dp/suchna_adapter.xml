@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/padding5"
+    android:layout_marginStart="@dimen/padding5"
+    android:layout_marginEnd="@dimen/padding5" >
+
+    <LinearLayout
+        android:id="@+id/suchna_adapter_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding5"
+        android:background="@drawable/edittext_round"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="12dp"
+            android:paddingEnd="@dimen/padding15"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/suchna_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:padding="2dp"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:theme="@style/StyleTextView"
+                android:textColor="@color/orangeColor"
+                android:textSize="@dimen/font_size25"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/suchna_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:layout_gravity="center_vertical"
+                android:padding="2dp"
+                android:theme="@style/StyleTextView"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size15"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    <TextView
+        android:id="@+id/suchna_discription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:paddingStart="12dp"
+        android:paddingEnd="@dimen/padding15"
+        android:theme="@style/StyleTextView"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_size20" />
+
+    <LinearLayout
+        android:id="@+id/redLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/suchna_discriptionnew"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kotlin is a cross-platform, statically typed, general-purpose programming language with type inference. Kotlin is designed to interoperate fully with Java, and the JVM version of Kotlin's standard library depends on the Java Class Library, but type inference allows its syntax to be more concise"
+            android:paddingStart="12dp"
+            android:paddingEnd="@dimen/padding15"
+            android:theme="@style/StyleTextView"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_size20" />
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

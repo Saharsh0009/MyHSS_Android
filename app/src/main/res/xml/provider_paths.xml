@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+            name="external_files"
+            path="." />
+    <external-path
+            name="files_root"
+            path="Android/data/dev.myhss.org.uk/" /><!--https://dev.myhss.org.uk-->
+    <external-path
+            name="external_storage_root"
+            path="." />
+    <cache-path
+            name="cache_dir"
+            path="." />
+</paths>

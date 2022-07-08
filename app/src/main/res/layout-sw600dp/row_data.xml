@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/edittext_round"
+    android:layout_margin="@dimen/padding5">
+
+    <LinearLayout
+        android:id="@+id/change_password_view"
+        android:layout_width="@dimen/padding180"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/padding10">
+
+        <ImageView
+            android:id="@+id/adapter_image_view"
+            android:layout_width="@dimen/padding110"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_height="@dimen/padding110"
+            android:scaleType="centerInside"
+            android:src="@drawable/change_password" />
+
+        <TextView
+            android:id="@+id/adapter_name_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_password"
+            android:layout_marginTop="2dp"
+            android:textAlignment="center"
+            android:maxLines="2"
+            android:layout_marginBottom="@dimen/padding10"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_size20"
+            android:theme="@style/StyleTextView" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="@dimen/padding120"
+        android:layout_height="1dp"
+        android:layout_below="@+id/change_password_view"
+        android:background="@color/lightGrayColor" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="@dimen/padding120"
+        android:layout_centerVertical="true"
+        android:visibility="visible"
+        android:layout_alignEnd="@+id/change_password_view"
+        android:background="@color/lightGrayColor" />
+</RelativeLayout>
