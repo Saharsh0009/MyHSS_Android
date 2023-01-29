@@ -8,19 +8,40 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.2"
 
     buildFeatures {
         viewBinding = true
     }
 
+    signingConfigs {
+        production {
+            storeFile file('/Users/juimangrulkar/Documents/git/hss/MyHSSAndroidApp/MyHssKey/myhss')
+            storePassword 'myhssandroid'
+            keyAlias 'myhss'
+            keyPassword 'myhssandroid'
+            }
+        release {
+            storeFile file('/Users/juimangrulkar/Documents/git/hss/MyHSSAndroidApp/MyHssKey/myhss')
+            storePassword 'myhssandroid'
+            keyAlias 'myhss'
+            keyPassword 'myhssandroid'
+        }
+        debug {
+            storeFile file('/Users/juimangrulkar/Documents/git/Keys/Untitled')
+            storePassword 'androidstore'
+            keyPassword 'androidkey'
+            keyAlias 'keystore'
+        }
+
+    }
     defaultConfig {
         applicationId "com.uk.myhss"
         minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 15
-        versionName "1.8" // <-Current Live Version   ->Old Live Version 14 (1.7) 12/March/2022
+        targetSdkVersion 31
+        versionCode 19
+        versionName "1.12" // <-Development Version ->Current Live Version 18 (1.11) 28 Jan 2023
 //        versionName "1.0.5" // Testiing
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
