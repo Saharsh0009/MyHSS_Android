@@ -16,23 +16,17 @@ android {
     }
 
     signingConfigs {
-        production {
-            storeFile file('/Users/juimangrulkar/Documents/git/hss/MyHSSAndroidApp/MyHssKey/myhss')
-            storePassword 'myhssandroid'
-            keyAlias 'myhss'
-            keyPassword 'myhssandroid'
-            }
-        release {
+        debug {
             storeFile file('/Users/juimangrulkar/Documents/git/hss/MyHSSAndroidApp/MyHssKey/myhss')
             storePassword 'myhssandroid'
             keyAlias 'myhss'
             keyPassword 'myhssandroid'
         }
-        debug {
-            storeFile file('/Users/juimangrulkar/Documents/git/Keys/Untitled')
-            storePassword 'androidstore'
-            keyPassword 'androidkey'
-            keyAlias 'keystore'
+        release {
+            storeFile file('/Users/juimangrulkar/Documents/git/hss/MyHSSAndroidApp/MyHssKey/myhss')
+            storePassword 'myhssandroid'
+            keyAlias 'myhss'
+            keyPassword 'myhssandroid'
         }
 
     }

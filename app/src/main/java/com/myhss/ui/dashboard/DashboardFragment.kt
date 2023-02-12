@@ -61,7 +61,7 @@ class DashboardFragment : Fragment() {
     private var newsIsVisible = true
     private var reportsIsVisible = true
     private var shakhaIsVisible = true
-    private var otherIsVisible = true
+    private var otherIsVisible = false
 
     lateinit var member_hide_show_layout: RelativeLayout
     lateinit var events_hide_show_layout: RelativeLayout
@@ -135,10 +135,9 @@ class DashboardFragment : Fragment() {
     )
 
     /*other_gridview Grid View*/
-    lateinit var other_gridview: ScrollableGridView
-    var otherNames = arrayOf("Find a Shakha")
-
-    var otherImages = intArrayOf(R.drawable.find_shakha)
+   lateinit var other_gridview: ScrollableGridView
+    //var otherNames = arrayOf("Find a Shakha")
+    //var otherImages = intArrayOf(R.drawable.find_shakha)
 
     /*Shakha Grid View*/
     lateinit var shakha_gridview: ScrollableGridView
@@ -325,23 +324,23 @@ class DashboardFragment : Fragment() {
 
 
         /*For otherNames*/
-        val other_customAdapter = context?.let {
-            Adapter_dashboard(
-                it,
-                otherImages,
-                otherNames
-            )
-        }
-        other_gridview.adapter = other_customAdapter
+//        val other_customAdapter = context?.let {
+//            Adapter_dashboard(
+//                it,
+//                otherImages,
+//                otherNames
+//            )
+//        }
+        //other_gridview.adapter = other_customAdapter
 
-        other_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
-            if (position == 0) {
-                val i = Intent(requireContext(), AllShakhaListActivity::class.java)
+//        other_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
+//            if (position == 0) {
+//                val i = Intent(requireContext(), AllShakhaListActivity::class.java)
 //                    val i = Intent(requireContext(), MapsActivity::class.java)
-//                    i.putExtra("SHAKHA_LIST","SHAKHA_LIST")
-                startActivity(i)
-            }
-        }
+////                    i.putExtra("SHAKHA_LIST","SHAKHA_LIST")
+//                startActivity(i)
+//            }
+//        }
 
 
         /*For Reports*/
