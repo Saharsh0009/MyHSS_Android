@@ -11,6 +11,7 @@ import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -64,7 +65,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
     private var County: String = ""
     private var PINCODE_ID: String = ""
 
-    @SuppressLint("NewApi","MissingPermission")
+    @SuppressLint("NewApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_addmembersecond)
@@ -74,7 +75,9 @@ class AddMemberSecondActivity : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("AddMemberStep2VC")
-        sessionManager.firebaseAnalytics.setUserProperty("AddMemberStep2VC", "AddMemberSecondActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "AddMemberStep2VC", "AddMemberSecondActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -111,20 +114,22 @@ class AddMemberSecondActivity : AppCompatActivity() {
 //            header_title.text = getString(R.string.Add_family_member)
 
         Log.d(
-            "Fetch_Data one-->", intent.getStringExtra("FIRST_NAME") + "--" +
-                    intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra("LAST_NAME") + "--" + intent.getStringExtra(
+            "Fetch_Data one-->",
+            intent.getStringExtra("FIRST_NAME") + "--" + intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra(
+                "LAST_NAME"
+            ) + "--" + intent.getStringExtra(
                 "USERNAME"
-            ) + "--" +
-                    intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
                 "GENDER"
-            ) + "--" + intent.getStringExtra("DOB") + "--" +
-                    intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra("OTHER_RELATIONSHIP") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("DOB") + "--" + intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra(
+                "OTHER_RELATIONSHIP"
+            ) + "--" + intent.getStringExtra(
                 "OCCUPATION"
-            ) + "--" +
-                    intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
                 "AGE"
-            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" +
-                    intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra("TYPE") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" + intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra(
+                "TYPE"
+            ) + "--" + intent.getStringExtra(
                 "PARENT_MEMBER"
             )
         )
@@ -159,8 +164,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
                 } else if (textLength == 5) {
                     edit_primary_contact_number.setText(
                         StringBuilder(text).insert(
-                            text.length - 1,
-                            " "
+                            text.length - 1, " "
                         ).toString()
                     )
                     edit_primary_contact_number.setSelection(edit_primary_contact_number.text!!.length)
@@ -219,8 +223,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
                 } else if (textLength == 5) {
                     edit_secondary_contact_number.setText(
                         StringBuilder(text).insert(
-                            text.length - 1,
-                            " "
+                            text.length - 1, " "
                         ).toString()
                     )
                     edit_secondary_contact_number.setSelection(edit_secondary_contact_number.text!!.length)
@@ -266,7 +269,6 @@ class AddMemberSecondActivity : AppCompatActivity() {
                     find_address.callOnClick()
                 }, 500)
             }
-
             if (intent.getStringExtra("TITLENAME") == "Profile") {
                 edit_primary_contact_number.setText(sessionManager.fetchMOBILENO())
                 edit_secondary_contact_number.setText(sessionManager.fetchSECMOBILENO())
@@ -288,6 +290,14 @@ class AddMemberSecondActivity : AppCompatActivity() {
 //                edit_secondary_contact_number.error = "Secondary contact required"
 //                edit_secondary_contact_number.requestFocus()
 //                return@setOnClickListener
+            } else if (!edit_secondary_email.text.toString()
+                    .isEmpty() && !Patterns.EMAIL_ADDRESS.matcher(edit_secondary_email.text.toString())
+                    .matches()
+            ) {
+                Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT).show()
+                edit_secondary_email.error = "Valid Email required"
+                edit_secondary_email.requestFocus()
+                return@setOnClickListener
             } else if (edit_find_address.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Post Code", Snackbar.LENGTH_SHORT).show()
                 edit_find_address.error = "Post Code required"
@@ -315,7 +325,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
                 edit_town_city.requestFocus()
                 return@setOnClickListener
             } else {
-                if (intent.getStringExtra("IS_SELF") != "self") {
+                if (intent.getStringExtra("IS_SELF") != "self") { // Profile or Add family
                     val i = Intent(this@AddMemberSecondActivity, AddMemberThirdActivity::class.java)
                     i.putExtra("TITLENAME", header_title.text.toString())
                     i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
@@ -331,10 +341,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
                         i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
                     } else {
                         i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
-                        i.putExtra(
-                            "OTHER_RELATIONSHIP",
-                            intent.getStringExtra("OTHER_RELATIONSHIP")
-                        )
+                        i.putExtra("OTHER_RELATIONSHIP", intent.getStringExtra("OTHER_RELATIONSHIP"))
                     }
 
                     if (intent.getStringExtra("OCCUPATION_NAME") == "") {
@@ -361,7 +368,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
                     i.putExtra("COUNTY", County)
                     i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
                     startActivity(i)
-                } else {
+                } else { // Add self
                     val i = Intent(this@AddMemberSecondActivity, AddMemberThirdActivity::class.java)
                     i.putExtra("TITLENAME", header_title.text.toString())
                     i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
@@ -444,40 +451,40 @@ class AddMemberSecondActivity : AppCompatActivity() {
     }
 
     private fun SearchSpinner(
-        spinner_search: Array<String>,
-        edit_txt: SearchableSpinner
+        spinner_search: Array<String>, edit_txt: SearchableSpinner
     ) {
         val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item,
-            spinner_search
+            this, android.R.layout.simple_spinner_item, spinner_search
         )
         searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         edit_txt.adapter = searchmethod
     }
 
-    private val mOnItemSelectedListener_address: AdapterView.OnItemSelectedListener = object :
-        AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+    private val mOnItemSelectedListener_address: AdapterView.OnItemSelectedListener =
+        object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
 //            TODO("Not yet implemented")
-            Log.d("Name", Pincode[position])
-            Log.d("Postion", PincodeID[position])
-            PINCODE_ID = PincodeID[position]
+                Log.d("Name", Pincode[position])
+                Log.d("Postion", PincodeID[position])
+                PINCODE_ID = PincodeID[position]
 
-            if (Functions.isConnectingToInternet(this@AddMemberSecondActivity)) {
-                myPincodeAddress(PINCODE_ID)
-            } else {
-                Toast.makeText(
-                    this@AddMemberSecondActivity,
-                    resources.getString(R.string.no_connection),
-                    Toast.LENGTH_SHORT
-                ).show()
+                if (Functions.isConnectingToInternet(this@AddMemberSecondActivity)) {
+                    myPincodeAddress(PINCODE_ID)
+                } else {
+                    Toast.makeText(
+                        this@AddMemberSecondActivity,
+                        resources.getString(R.string.no_connection),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+//            TODO("Not yet implemented")
             }
         }
-
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-        }
-    }
 
     /*Pincode API*/
     private fun myPincode(pincode: String) {
@@ -486,8 +493,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
         val call: Call<Get_Pincode_Response> = MyHssApplication.instance!!.api.get_pincode(pincode)
         call.enqueue(object : Callback<Get_Pincode_Response> {
             override fun onResponse(
-                call: Call<Get_Pincode_Response>,
-                response: Response<Get_Pincode_Response>
+                call: Call<Get_Pincode_Response>, response: Response<Get_Pincode_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -506,8 +512,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
                         for (i in 0 until data_relationship.size) {
                             mStringList.add(
 //                            data_relationship[i].occupationId.toString() +
-                                data_relationship[i].streetAddress.toString() + ", " +
-                                        data_relationship[i].place.toString() + ", " + pincode
+                                data_relationship[i].streetAddress.toString() + ", " + data_relationship[i].place.toString() + ", " + pincode
                             )
                         }
 

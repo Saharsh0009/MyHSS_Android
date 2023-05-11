@@ -36,6 +36,7 @@ import com.myhss.Fingerprint.BiometricUtils
 import com.myhss.Fingerprint.FingerPrintPopUp
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.samsung.android.sdk.SsdkUnsupportedException
 import com.samsung.android.sdk.SsdkVendorCheck
@@ -144,11 +145,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         //  Firebase crashlytics
 
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
-
-        Log.d("member", sharedPreferences.getString("MEMBERID", "").toString())
-
         init()
-
         adjustPassCodeScreen()
 
 //        sh1.putString(SharedPreferences_String_Name.DEVICE_ID, getIntent().getStringExtra("m_deviceId"));
@@ -189,9 +186,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
                 if (Functions.isConnectingToInternet(this@Passcode_Activity)) {
                     passcode(
-                        sharedPreferences.getString("USERID", "")!!,
-                        passcode.toString(),
-                        "false"
+                        sharedPreferences.getString("USERID", "")!!, passcode.toString(), "false"
                     )
                 } else {
                     Toast.makeText(
@@ -289,8 +284,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         passcode_layout.setOnClickListener {
             startActivity(
                 Intent(
-                    this@Passcode_Activity,
-                    HomeActivity::class.java
+                    this@Passcode_Activity, HomeActivity::class.java
                 )
             )
             finishAffinity()
@@ -302,7 +296,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             txtEnterPasscode!!.text =
                 "Please create a pin that will be your login details for the MyHSS App. Once verified, that will be your pin."//"Set Passcode"
         } else {
-            txtEnterPasscode!!.text = //"Please create a pin that will be your login details for the MyHSS App. Once verified, that will be your pin."
+            txtEnterPasscode!!.text =
+                    //"Please create a pin that will be your login details for the MyHSS App. Once verified, that will be your pin."
                 "Enter Passcode"
             passcode_logout!!.setVisibility(View.VISIBLE)
         }
@@ -310,8 +305,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         tv_forgot_password!!.setOnClickListener(View.OnClickListener { v: View? ->
             startActivity(
                 Intent(
-                    this@Passcode_Activity,
-                    LoginActivity::class.java
+                    this@Passcode_Activity, LoginActivity::class.java
                 )
             )
         })
@@ -333,8 +327,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             Pattern.compile("([a-z])([a-z]*)", Pattern.CASE_INSENSITIVE).matcher(capString)
         while (capMatcher.find()) {
             capMatcher.appendReplacement(
-                capBuffer,
-                capMatcher.group(1).toUpperCase() + capMatcher.group(2).toLowerCase()
+                capBuffer, capMatcher.group(1).toUpperCase() + capMatcher.group(2).toLowerCase()
             )
         }
         return capMatcher.appendTail(capBuffer).toString()
@@ -464,9 +457,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 //                        Log.e("strPasslock", strPasslock);
                         if (Functions.isConnectingToInternet(this@Passcode_Activity)) {
                             passcode(
-                                sharedPreferences.getString("USERID", "")!!,
-                                strPasslock,
-                                "true"
+                                sharedPreferences.getString("USERID", "")!!, strPasslock, "true"
                             )
                         } else {
                             Toast.makeText(
@@ -494,8 +485,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                             6f,
                             -6f,
                             0f
-                        )
-                            .setDuration(500).start()
+                        ).setDuration(500).start()
                         strPasslock = ""
                         setPointView()
                     }
@@ -514,6 +504,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 //                        i.putExtra("page", page)
 //                    }
 //                    startActivity(i)
+                    DebugLog.e("" + sharedPreferences.getString("MEMBERID", "").toString())
                     if (sharedPreferences.getString("MEMBERID", "") != "") {
                         startActivity(Intent(this@Passcode_Activity, HomeActivity::class.java))
                         finish()
@@ -528,20 +519,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     txtWrongPasscode!!.visibility = View.VISIBLE
                     txtWrongPasscode!!.text = "Wrong Passcode"
                     ObjectAnimator.ofFloat(
-                        mainLayout,
-                        "translationX",
-                        0f,
-                        25f,
-                        -25f,
-                        25f,
-                        -25f,
-                        15f,
-                        -15f,
-                        6f,
-                        -6f,
-                        0f
-                    )
-                        .setDuration(500).start()
+                        mainLayout, "translationX", 0f, 25f, -25f, 25f, -25f, 15f, -15f, 6f, -6f, 0f
+                    ).setDuration(500).start()
                     strPasslock = ""
                     setPointView()
                 }
@@ -552,17 +531,13 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
     fun passcode(user_id: String, biometric_key: String, biometric_key_update: String) {
         val pd = CustomProgressBar(this@Passcode_Activity)
         pd.show()
-        val call: Call<Biometric_response> =
-            MyHssApplication.instance!!.api.biometric_key(
+        val call: Call<Biometric_response> = MyHssApplication.instance!!.api.biometric_key(
 //                token = "Bearer ${sessionManager.fetchAuthToken()}",
-                user_id,
-                biometric_key,
-                biometric_key_update
-            )
+            user_id, biometric_key, biometric_key_update
+        )
         call.enqueue(object : Callback<Biometric_response> {
             override fun onResponse(
-                call: Call<Biometric_response>,
-                response: Response<Biometric_response>
+                call: Call<Biometric_response>, response: Response<Biometric_response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     if (response.body()!!.status == true) {
@@ -581,8 +556,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                             if (sharedPreferences.getString("MEMBERID", "") != "") {
                                 startActivity(
                                     Intent(
-                                        this@Passcode_Activity,
-                                        HomeActivity::class.java
+                                        this@Passcode_Activity, HomeActivity::class.java
                                     )
                                 )
 //                                MainActivity::class.java))
@@ -590,8 +564,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                             } else {
                                 startActivity(
                                     Intent(
-                                        this@Passcode_Activity,
-                                        WelcomeActivity::class.java
+                                        this@Passcode_Activity, WelcomeActivity::class.java
                                     )
                                 )
                                 finish()
@@ -615,8 +588,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                                 6f,
                                 -6f,
                                 0f
-                            )
-                                .setDuration(500).start()
+                            ).setDuration(500).start()
                             strPasslock = ""
                             setPointView()
                         }
@@ -654,9 +626,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
     @RequiresApi(api = Build.VERSION_CODES.P)
     fun faceOpenLock() {
         if (BiometricUtils.isBiometricPromptEnabled()) {
-            if (BiometricUtils.isHardwareSupported(this@Passcode_Activity) &&
-                BiometricUtils.isFingerprintAvailable(this@Passcode_Activity) &&
-                BiometricUtils.isPermissionGranted(this@Passcode_Activity)
+            if (BiometricUtils.isHardwareSupported(this@Passcode_Activity) && BiometricUtils.isFingerprintAvailable(
+                    this@Passcode_Activity
+                ) && BiometricUtils.isPermissionGranted(this@Passcode_Activity)
             ) {
                 displayBiometricPrompt()
             }
@@ -681,9 +653,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 //                    startActivity(finger);
 //                }
 //            }
-        } else if (BiometricUtils.isHardwareSupported(this@Passcode_Activity) &&
-            BiometricUtils.isFingerprintAvailable(this@Passcode_Activity) &&
-            BiometricUtils.isPermissionGranted(this@Passcode_Activity)
+        } else if (BiometricUtils.isHardwareSupported(this@Passcode_Activity) && BiometricUtils.isFingerprintAvailable(
+                this@Passcode_Activity
+            ) && BiometricUtils.isPermissionGranted(this@Passcode_Activity)
         ) {
             if (BiometricUtils.isBiometricPromptEnabled()) {
                 displayBiometricPrompt()
@@ -705,9 +677,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
     @RequiresApi(api = Build.VERSION_CODES.P)
     fun fingerPrintLock() {
         if (BiometricUtils.isBiometricPromptEnabled()) {
-            if (BiometricUtils.isHardwareSupported(this@Passcode_Activity) &&
-                BiometricUtils.isFingerprintAvailable(this@Passcode_Activity) &&
-                BiometricUtils.isPermissionGranted(this@Passcode_Activity)
+            if (BiometricUtils.isHardwareSupported(this@Passcode_Activity) && BiometricUtils.isFingerprintAvailable(
+                    this@Passcode_Activity
+                ) && BiometricUtils.isPermissionGranted(this@Passcode_Activity)
             ) {
 //                displayBiometricPrompt();
                 val finger = Intent(this@Passcode_Activity, FingerPrintPopUp::class.java)
@@ -737,9 +709,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                 startActivity(finger)
 //                }
             }
-        } else if (BiometricUtils.isHardwareSupported(this@Passcode_Activity) &&
-            BiometricUtils.isFingerprintAvailable(this@Passcode_Activity) &&
-            BiometricUtils.isPermissionGranted(this@Passcode_Activity)
+        } else if (BiometricUtils.isHardwareSupported(this@Passcode_Activity) && BiometricUtils.isFingerprintAvailable(
+                this@Passcode_Activity
+            ) && BiometricUtils.isPermissionGranted(this@Passcode_Activity)
         ) {
             if (BiometricUtils.isBiometricPromptEnabled()) {
 //                displayBiometricPrompt();
@@ -748,8 +720,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 //                finger.putExtra("m_deviceId", getIntent().getStringExtra("m_deviceId"))
 //                finger.putExtra("fcm_id", getIntent().getStringExtra("fcm_id"))
                 startActivity(finger)
-            } else if (getSystemService(Context.KEYGUARD_SERVICE) != null ||
-                (getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager).isKeyguardSecure
+            } else if (getSystemService(Context.KEYGUARD_SERVICE) != null || (getSystemService(
+                    Context.KEYGUARD_SERVICE
+                ) as KeyguardManager).isKeyguardSecure
             ) {
 //                if (sh.getBoolean(SharedPreferences_String_Name.Finger_Print_Access, false))
 //                if (sessionManager!!.getDEVICE_FINGERID().equals("1", ignoreCase = true)) {
@@ -766,13 +739,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
     @TargetApi(Build.VERSION_CODES.P)
     fun displayBiometricPrompt() {
-        BiometricBuilder(this@Passcode_Activity)
-            .setTitle("Fingerprint Login for MyHss")
-            .setSubtitle("Touch to log in")
-            .setDescription("")
-            .setNegativeButtonText("USE PASSCODE")
-            .build()
-            .authenticate(this@Passcode_Activity)
+        BiometricBuilder(this@Passcode_Activity).setTitle("Fingerprint Login for MyHss")
+            .setSubtitle("Touch to log in").setDescription("").setNegativeButtonText("USE PASSCODE")
+            .build().authenticate(this@Passcode_Activity)
     }
 
     override fun onSdkVersionNotSupported() {
@@ -793,17 +762,13 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
     override fun onBiometricAuthenticationNotAvailable() {
         Toast.makeText(
-            getApplicationContext(),
-            "Fingerprint is not registered in device",
-            Toast.LENGTH_LONG
+            getApplicationContext(), "Fingerprint is not registered in device", Toast.LENGTH_LONG
         ).show()
     }
 
     override fun onBiometricAuthenticationPermissionNotGranted() {
         Toast.makeText(
-            getApplicationContext(),
-            "Permission is not granted by user",
-            Toast.LENGTH_LONG
+            getApplicationContext(), "Permission is not granted by user", Toast.LENGTH_LONG
         ).show()
     }
 
@@ -847,24 +812,20 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
     fun checkPermission(): Boolean {
         val result_read = ContextCompat.checkSelfPermission(
-            this@Passcode_Activity,
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            this@Passcode_Activity, Manifest.permission.READ_EXTERNAL_STORAGE
         )
         val result_write = ContextCompat.checkSelfPermission(
-            this@Passcode_Activity,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            this@Passcode_Activity, Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         return result_write == PackageManager.PERMISSION_GRANTED && result_read == PackageManager.PERMISSION_GRANTED
     }
 
     fun requestPermission() {
         ActivityCompat.requestPermissions(
-            this@Passcode_Activity,
-            arrayOf(
+            this@Passcode_Activity, arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ),
-            PERMISSION_REQUEST_CODE
+            ), PERMISSION_REQUEST_CODE
         )
     }
 
@@ -886,7 +847,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         when (v.id) {
             R.id.btnOne -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -897,7 +859,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
             R.id.btnTwo -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -908,7 +871,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
             R.id.btnThree -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -919,7 +883,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
             R.id.btnFour -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -930,7 +895,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
             R.id.btnFive -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -941,7 +907,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
             R.id.btnSix -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -952,7 +919,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
             R.id.btnSeven -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -963,7 +931,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
             R.id.btnEight -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -974,7 +943,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
             R.id.btnNine -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -985,7 +955,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
             R.id.btnZero -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
-                    this@Passcode_Activity, "",
+                    this@Passcode_Activity,
+                    "",
                     "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
                 )
             } else {
@@ -1003,8 +974,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                 setPointView()
             }
             R.id.passcode_logout -> {
-                val alertDialog: AlertDialog.Builder =
-                    AlertDialog.Builder(this@Passcode_Activity)
+                val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@Passcode_Activity)
 //            alertDialog.setTitle("Logout")
                 alertDialog.setMessage("Are you sure you would like to logout?")
                 alertDialog.setPositiveButton(
@@ -1012,8 +982,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                 ) { _, _ ->
 
                     val sharedPreferences = this@Passcode_Activity.getSharedPreferences(
-                        "production",
-                        Context.MODE_PRIVATE
+                        "production", Context.MODE_PRIVATE
                     )
                     sessionManager.saveFIRSTNAME("")
                     sessionManager.saveSURNAME("")
@@ -1035,6 +1004,12 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     sessionManager.saveGENDER("")
                     sessionManager.saveAGE("")
                     sessionManager.saveQUALIFICATIONAID("")
+                    sessionManager.saveQUALIFICATION_VALUE("")
+                    sessionManager.saveQUALIFICATION_VALUE_NAME("")
+                    sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
+                    sessionManager.saveQUALIFICATION_DATE("")
+                    sessionManager.saveQUALIFICATION_FILE("")
+                    sessionManager.saveQUALIFICATION_IS_DOC("")
                     sessionManager.saveDOB("")
                     sessionManager.saveVIBHAGNAME("")
                     sessionManager.saveSPOKKENLANGUAGE("")
@@ -1055,8 +1030,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     sessionManager.saveDIETARYID("")
                     sessionManager.saveVIBHAGID("")
                     sessionManager.saveSTATE_IN_INDIA("")
-                    sessionManager.saveQUALIFICATION_FILE("")
-                    sessionManager.saveQUALIFICATION_DATE("")
                     sessionManager.saveSHAKHAID("")
 
                     sharedPreferences.edit().apply {

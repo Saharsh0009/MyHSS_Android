@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -20,6 +21,7 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.Functions
+import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.Utils.SessionManager
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import retrofit2.Call
@@ -32,6 +34,7 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
     var dialog: Dialog? = null
+    var dialog_p: Dialog? = null
     private var gift_aid = arrayOf(
         "I am a UK Tax Payer and want to donate as Gift Aid",
         "I do not wish to donate as Gift Aid on this Occasion"
@@ -72,6 +75,8 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
     private lateinit var donating_individual_family_no_img: ImageView
 
     private lateinit var donate_amount_txt: TextView
+    private lateinit var edit_payment: ImageView
+
     private lateinit var rootLayout: LinearLayout
 
     @SuppressLint("NewApi")
@@ -94,7 +99,7 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
 
-        header_title.text = getString(R.string.one_time)
+        header_title.text = getString(R.string.one_time_dakshina)
 
         donate_amount_txt = findViewById(R.id.donate_amount_txt)
         giving_dakshina_yes_view = findViewById(R.id.giving_dakshina_yes_view)
@@ -112,6 +117,7 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         donating_individual_family_no_img = findViewById(R.id.donating_individual_family_no_img)
         giving_dakshina_layout = findViewById(R.id.giving_dakshina_layout)
         rootLayout = findViewById(R.id.rootLayout)
+        edit_payment = findViewById(R.id.edit_payment)
 
 //        giving_dakshina_layout.text = getString(R.string.are_you_giving_dakshina)
 
@@ -121,8 +127,7 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         tooltip_view = findViewById(R.id.tooltip_view)
 
         if (intent.getStringExtra("Amount") != "") {
-            donate_amount_txt.text = /*getString(R.string.donate_amount) +
-                    " "+ */getString(R.string.pound_icon) + " " + intent.getStringExtra("Amount")
+            donate_amount_txt.text = intent.getStringExtra("Amount")
         }
 
 //        gift_aid_select_txt.onItemSelectedListener = mOnItemSelectedListener_gift_aid
@@ -166,6 +171,10 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         gift_aid_select_view.setOnClickListener {
             SearchSpinner(gift_aid, gift_aid_select_txt)
         }*/
+
+        edit_payment.setOnClickListener {
+            depositDialogForEditPayment()
+        }
 
         giving_dakshina_yes_view.setOnClickListener {
             giving_dakshina_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)
@@ -293,7 +302,7 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                         this@GuruDakshinaOneTimeSecondActivity,
                         GuruDakshinaOneTimeThirdActivity::class.java
                     )
-                i.putExtra("Amount", intent.getStringExtra("Amount"))
+                i.putExtra("Amount",donate_amount_txt.text.toString())
                 i.putExtra("GIFTAID_ID", GIFTAID_ID)
                 i.putExtra("giving_dakshina", giving_dakshina)
                 i.putExtra("donating_dakshina", donating_dakshina)
@@ -511,5 +520,43 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                 pd.dismiss()
             }
         })
+    }
+
+    fun depositDialogForEditPayment() {
+        // Deposit Dialog
+        if (dialog_p == null) {
+            dialog_p = Dialog(this, R.style.StyleCommonDialog)
+        }
+        dialog_p?.setContentView(R.layout.edit_dialog_diposit_money)
+        dialog_p?.setCanceledOnTouchOutside(true)
+        dialog_p?.show()
+
+        val edit_amount = dialog_p!!.findViewById(R.id.edit_amount) as TextView
+        val btnOk = dialog_p!!.findViewById(R.id.btnOk) as TextView
+
+        if (intent.getStringExtra("Amount") != "") {
+            edit_amount.text = intent.getStringExtra("Amount")
+        }
+
+        btnOk.setOnClickListener {
+            if (edit_amount.text.toString().isNotEmpty()) {
+                edit_amount.filters = arrayOf<InputFilter>(
+                    InputFilterMinMax(
+                        "1",
+                        "10000"
+                    )
+                )
+                if (Integer.valueOf(edit_amount.text.toString()) > 0 && Integer.valueOf(edit_amount.text.toString()) <= 10000) {
+                    donate_amount_txt.text = edit_amount.text.toString()
+                    dialog_p?.dismiss()
+                } else {
+                    Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
+                        .show()
+                }
+
+            } else {
+                Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
+            }
+        }
     }
 }

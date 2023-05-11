@@ -160,7 +160,7 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
         back_arrow = findViewById(R.id.back_arrow)
         header_title = findViewById(R.id.header_title)
 
-        header_title.text = getString(R.string.linked_family_member)
+        header_title.text = intent.getStringExtra("headerName")
 
         back_arrow.setOnClickListener {
             val i = Intent(this@LinkedFamilyFragment, HomeActivity::class.java)
@@ -214,13 +214,10 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
         my_family_list.layoutManager = mLayoutManager
 
         if (intent.getStringExtra("DashBoard") == "SHAKHAVIEW") {
-            Handler().postDelayed({
-                myshakha_view.callOnClick()
-            }, 100)
+            Handler().postDelayed({ myshakha_view.callOnClick() }, 100)
         } else {
             val end: Int = 100
             val start: Int = 0
-
             CallAPI(start, end)
         }
 

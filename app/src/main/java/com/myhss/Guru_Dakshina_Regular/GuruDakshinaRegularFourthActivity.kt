@@ -106,7 +106,7 @@ class GuruDakshinaRegularFourthActivity() : AppCompatActivity() {
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
 
-        header_title.text = getString(R.string.one_time)
+        header_title.text = getString(R.string.one_time_dakshina)
 
         rootLayout = findViewById(R.id.rootLayout)
         expriation_no_view = findViewById(R.id.expriation_no_view)

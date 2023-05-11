@@ -17,13 +17,13 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('/Users/juimangrulkar/Documents/git/hss/MyHSSAndroidApp/MyHssKey/myhss')
+            storeFile file('D:/Android/Projects/MyHSS/Code/MyHSS/MyHssKey/myhss')
             storePassword 'myhssandroid'
             keyAlias 'myhss'
             keyPassword 'myhssandroid'
         }
         release {
-            storeFile file('/Users/juimangrulkar/Documents/git/hss/MyHSSAndroidApp/MyHssKey/myhss')
+            storeFile file('D:/Android/Projects/MyHSS/Code/MyHSS/MyHssKey/myhss')
             storePassword 'myhssandroid'
             keyAlias 'myhss'
             keyPassword 'myhssandroid'
@@ -35,7 +35,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
         versionCode 19
-        versionName "1.12" // <-Development Version ->Current Live Version 18 (1.11) 28 Jan 2023
+        versionName "1.5" //1.12 <-Development Version ->Current Live Version 18 (1.11) 28 Jan 2023
 //        versionName "1.0.5" // Testiing
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

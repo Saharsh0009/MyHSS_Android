@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.uk.myhss">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -25,7 +25,7 @@
         android:name="android.permission.CALL_PRIVILEGED"
         tools:ignore="ProtectedPermissions" />
 
-    <uses-feature android:name="android.hardware.location.gps" />
+<!--    <uses-feature android:name="android.hardware.location.gps" />-->
 
     <uses-feature
         android:name="android.hardware.fingerprint"
@@ -39,6 +39,7 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
+        android:requestLegacyExternalStorage="true"
         android:name="com.myhss.AnalyticsApplication"
         android:allowAudioPlaybackCapture="true"
         android:allowBackup="true"

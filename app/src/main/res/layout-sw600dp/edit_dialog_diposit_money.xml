@@ -6,22 +6,23 @@
     android:layout_margin="@dimen/padding10"
     android:background="@drawable/edittext_round"
     android:gravity="center"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <EditText
-        android:theme="@style/StyleEditTextView"
         android:id="@+id/edit_amount"
-        android:inputType="number"
-        android:hint="\u00a3  Amount"
-        android:layout_marginTop="@dimen/padding10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/font_size15"
+        android:layout_marginTop="@dimen/padding10"
         android:layout_marginEnd="@dimen/font_size15"
         android:background="@color/light_gray_background"
-        android:textColor="@color/blackColor"
+        android:hint="\u00a3  Amount"
+        android:inputType="number"
         android:padding="@dimen/padding15"
+        android:maxLength="8"
+        android:textColor="@color/blackColor"
         android:textColorHint="@color/grayColorColor"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+        android:theme="@style/StyleEditTextView" />
 
     <View
         android:layout_width="match_parent"
@@ -34,11 +35,12 @@
         android:id="@+id/btnOk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding15"
         android:layout_marginStart="@dimen/font_size15"
+        android:layout_marginTop="@dimen/padding15"
         android:layout_marginEnd="@dimen/font_size15"
+        android:layout_marginBottom="@dimen/font_size15"
         android:background="@drawable/bottom_round_layout"
         android:text="@string/ok"
-        android:textSize="@dimen/font_size15"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/font_size15" />
 </androidx.appcompat.widget.LinearLayoutCompat>

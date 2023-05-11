@@ -98,7 +98,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
 
-        header_title.text = getString(R.string.regular)
+        header_title.text = getString(R.string.regular_dakshina)
 
         donate_amount_txt = findViewById(R.id.donate_amount_txt)
         edit_dateofbirth = findViewById(R.id.edit_dateofbirth)

@@ -310,4 +310,20 @@ class Member_Get_Profile  {
     @Expose
     var other_occupation: String? = null
 
+    @SerializedName("professional_body_registartion_number")
+    @Expose
+    var professional_body_registartion_number: String? = null
+
+    @SerializedName("first_aid_qualification_val")
+    @Expose
+    var first_aid_qualification_val: String? = null
+
+    @SerializedName("first_aid_qualification_name")
+    @Expose
+    var first_aid_qualification_name: String? = null
+
+    @SerializedName("first_aid_qualification_is_doc")
+    @Expose
+    var first_aid_qualification_is_doc: String? = null
+
 }

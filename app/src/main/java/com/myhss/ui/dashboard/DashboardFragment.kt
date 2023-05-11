@@ -121,7 +121,8 @@ class DashboardFragment : Fragment() {
     /*News Grid View*/
     lateinit var news_gridview: ScrollableGridView
     var newsNames = arrayOf("Sangh Mail/Sangh Sandesh")
-//    var newsNames = arrayOf("Sangh Mail", "Sangh Sandesh")
+
+    //    var newsNames = arrayOf("Sangh Mail", "Sangh Sandesh")
     var newsImages = intArrayOf(
         R.drawable.shakaha_mail
 //        R.drawable.sangh_sandesh
@@ -135,14 +136,15 @@ class DashboardFragment : Fragment() {
     )
 
     /*other_gridview Grid View*/
-   lateinit var other_gridview: ScrollableGridView
+    lateinit var other_gridview: ScrollableGridView
     //var otherNames = arrayOf("Find a Shakha")
     //var otherImages = intArrayOf(R.drawable.find_shakha)
 
     /*Shakha Grid View*/
     lateinit var shakha_gridview: ScrollableGridView
     var shakhaNames = arrayOf("Suchana Board", "Surya Namasakar") /*"Find a Shakha"*/
-    var shakhaNamesNew = arrayOf("Suchana Board", "My Shakha", "Surya Namasakar") /*"Find a Shakha"*/
+    var shakhaNamesNew =
+        arrayOf("Suchana Board", "My Shakha", "Surya Namasakar") /*"Find a Shakha"*/
 //    var shakhaNames = arrayOf("My Shakha")
 
     //        "Sankhiya Form", "My Shakha")
@@ -270,7 +272,8 @@ class DashboardFragment : Fragment() {
             }
 
             /*For Shakha*/
-            val shakha_customAdapter = context?.let { Adapter_dashboard(it, shakhaImagesNew, shakhaNamesNew) }
+            val shakha_customAdapter =
+                context?.let { Adapter_dashboard(it, shakhaImagesNew, shakhaNamesNew) }
             shakha_gridview.adapter = shakha_customAdapter
 
             shakha_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
@@ -284,6 +287,7 @@ class DashboardFragment : Fragment() {
                 } else if (position == 1) {
                     val i = Intent(requireContext(), LinkedFamilyFragment::class.java)
                     i.putExtra("DashBoard", "SHAKHAVIEW")
+                    i.putExtra("headerName", getString(R.string.my_shakha))
                     startActivity(i)
                 } else if (position == 2) {
                     startActivity(Intent(requireContext(), SuryaNamaskar::class.java))
@@ -297,7 +301,8 @@ class DashboardFragment : Fragment() {
 //            news_gridview.visibility = View.GONE
 
             /*For Shakha*/
-            val shakha_customAdapter = context?.let { Adapter_dashboard(it, shakhaImages, shakhaNames) }
+            val shakha_customAdapter =
+                context?.let { Adapter_dashboard(it, shakhaImages, shakhaNames) }
             shakha_gridview.adapter = shakha_customAdapter
 
             shakha_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
@@ -308,10 +313,10 @@ class DashboardFragment : Fragment() {
                     transaction.commit()*/
                     val i = Intent(requireContext(), SuchanaBoardActivity::class.java)
                     startActivity(i)
-                /*} else if (position == 1) {
-                    val i = Intent(requireContext(), LinkedFamilyFragment::class.java)
-                    i.putExtra("DashBoard", "SHAKHAVIEW")
-                    startActivity(i)*/
+                    /*} else if (position == 1) {
+                        val i = Intent(requireContext(), LinkedFamilyFragment::class.java)
+                        i.putExtra("DashBoard", "SHAKHAVIEW")
+                        startActivity(i)*/
                 } else if (position == 1) {
                     startActivity(Intent(requireContext(), SuryaNamaskar::class.java))
 //                    val i = Intent(requireContext(), AllShakhaListActivity::class.java)
@@ -368,6 +373,7 @@ class DashboardFragment : Fragment() {
             } else if (position == 1) {
                 val i = Intent(requireContext(), LinkedFamilyFragment::class.java)
                 i.putExtra("DashBoard", "")
+                i.putExtra("headerName", getString(R.string.linked_family_member))
                 startActivity(i)
 //                startActivity(Intent(requireContext(), LinkedFamilyFragment::class.java))
             } else if (position == 2) {
@@ -563,11 +569,21 @@ class DashboardFragment : Fragment() {
     }
 
     /*myPrivileges API*/
-    private fun myProfile(user_id: String, member_id: String, deviceType: String, device_token: String) {
+    private fun myProfile(
+        user_id: String,
+        member_id: String,
+        deviceType: String,
+        device_token: String
+    ) {
         val pd = CustomProgressBar(requireContext())
         pd.show()
         val call: Call<Get_Profile_Response> =
-            MyHssApplication.instance!!.api.get_profile(user_id, member_id, deviceType, device_token)
+            MyHssApplication.instance!!.api.get_profile(
+                user_id,
+                member_id,
+                deviceType,
+                device_token
+            )
         call.enqueue(object : Callback<Get_Profile_Response> {
             override fun onResponse(
                 call: Call<Get_Profile_Response>,
@@ -650,7 +666,6 @@ class DashboardFragment : Fragment() {
                             sessionManager.saveGUAEMRRELATIONSHIP(data_getmember[0].emergencyRelatioship.toString())
                             sessionManager.saveGUAEMRRELATIONSHIP_OTHER(data_getmember[0].otherEmergencyRelationship.toString())
                             sessionManager.saveDOHAVEMEDICAL(data_getmember[0].medicalInformationDeclare.toString())
-                            sessionManager.saveQUALIFICATIONAID(data_getmember[0].isQualifiedInFirstAid.toString())
                             sessionManager.saveAGE(data_getmember[0].memberAge.toString())
                             sessionManager.saveGENDER(data_getmember[0].gender.toString())
                             sessionManager.saveCITY(data_getmember[0].city.toString())
@@ -658,10 +673,14 @@ class DashboardFragment : Fragment() {
                             sessionManager.savePOSTCODE(data_getmember[0].postalCode.toString())
                             sessionManager.saveSHAKHA_TAB(data_getmember[0].shakha_tab.toString())
                             sessionManager.saveSHAKHA_SANKHYA_AVG(data_getmember[0].shakha_sankhya_avg.toString())
-
                             sessionManager.saveMEDICAL_OTHER_INFO(data_getmember[0].medicalDetails.toString())
+                            sessionManager.saveQUALIFICATIONAID(data_getmember[0].isQualifiedInFirstAid.toString())
+                            sessionManager.saveQUALIFICATION_VALUE(data_getmember[0].first_aid_qualification_val.toString())
+                            sessionManager.saveQUALIFICATION_VALUE_NAME(data_getmember[0].first_aid_qualification_name.toString())// value name
+                            sessionManager.saveQUALIFICATION_IS_DOC(data_getmember[0].first_aid_qualification_is_doc.toString())
                             sessionManager.saveQUALIFICATION_DATE(data_getmember[0].dateOfFirstAidQualification.toString())
                             sessionManager.saveQUALIFICATION_FILE(data_getmember[0].firstAidQualificationFile.toString())
+                            sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO(data_getmember[0].professional_body_registartion_number.toString())
                             sessionManager.saveDIETARY(data_getmember[0].specialMedDietryInfo.toString())
                             sessionManager.saveDIETARYID(data_getmember[0].special_med_dietry_info_id.toString())
                             sessionManager.saveSTATE_IN_INDIA(data_getmember[0].indianConnectionState.toString())
@@ -677,7 +696,7 @@ class DashboardFragment : Fragment() {
                         }
 
                     } else {
-                        Functions.displayMessage(requireContext(),response.body()?.message)
+                        Functions.displayMessage(requireContext(), response.body()?.message)
 //                        Functions.showAlertMessageWithOK(
 //                            requireContext(), "",
 ////                        "Message",

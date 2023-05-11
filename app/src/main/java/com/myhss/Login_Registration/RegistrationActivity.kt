@@ -4,27 +4,26 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Html
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
-import android.text.util.Linkify
 import android.util.Log
 import android.util.Patterns
 import android.view.View
-import android.view.animation.TranslateAnimation
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatCheckBox
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
@@ -37,18 +36,16 @@ import com.uk.myhss.Utils.SessionManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 class RegistrationActivity : AppCompatActivity() {
 
     var m_deviceId: String = ""
     var Check_value: String = ""
-    lateinit var registration_success_layout: RelativeLayout
-    lateinit var emal_txt: TextView
     lateinit var edit_email: TextInputEditText
-
     private lateinit var sessionManager: SessionManager
-
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,20 +69,15 @@ class RegistrationActivity : AppCompatActivity() {
 
         val login_btn = findViewById<TextView>(R.id.login_btn)
         val registration_layout = findViewById<RelativeLayout>(R.id.registration_layout)
-
         val edit_firstname = findViewById<TextInputEditText>(R.id.edit_firstname)
         val edit_surname = findViewById<TextInputEditText>(R.id.edit_surname)
         val edit_username = findViewById<TextInputEditText>(R.id.edit_username)
         edit_email = findViewById(R.id.edit_email)
         val edit_password = findViewById<TextInputEditText>(R.id.edit_password)
         val edit_confirmpassword = findViewById<TextInputEditText>(R.id.edit_confirmpassword)
-        val registration_success_btn = findViewById<TextView>(R.id.registration_success_btn)
-        val close_layout = findViewById<ImageView>(R.id.close_layout)
-        registration_success_layout = findViewById(R.id.registration_success_layout)
         val rootLayout = findViewById<RelativeLayout>(R.id.rootLayout)
         val already_terms = findViewById<TextView>(R.id.already_terms)
         val checkbox = findViewById<AppCompatCheckBox>(R.id.checkbox)
-        emal_txt = findViewById(R.id.emal_txt)
 
         checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
 //            Toast.makeText(this,isChecked.toString(),Toast.LENGTH_SHORT).show()
@@ -93,6 +85,7 @@ class RegistrationActivity : AppCompatActivity() {
         }
 
         login_btn.setOnClickListener {
+
             val firstname = edit_firstname.text.toString()
             val surname = edit_surname.text.toString()
             val username = edit_username.text.toString()
@@ -102,50 +95,64 @@ class RegistrationActivity : AppCompatActivity() {
 
             if (firstname.isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter First name", Snackbar.LENGTH_SHORT).show()
-                edit_firstname.error = "First name required"
+                edit_firstname.error = "    First name required"
+                edit_firstname.requestFocus()
+                return@setOnClickListener
+            } else if (!isOnlyLetters(firstname)) {
+                Snackbar.make(
+                    rootLayout, "Please Enter Valid First Name", Snackbar.LENGTH_SHORT
+                ).show()
+                edit_firstname.error = "    Valid First name required"
                 edit_firstname.requestFocus()
                 return@setOnClickListener
             } else if (surname.isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter surname", Snackbar.LENGTH_SHORT).show()
-                edit_surname.error = "surname required"
+                edit_surname.error = "      Surname required"
+                edit_surname.requestFocus()
+                return@setOnClickListener
+            } else if (!isOnlyLetters(surname)) {
+                Snackbar.make(
+                    rootLayout, "Please Enter Valid Surname", Snackbar.LENGTH_SHORT
+                ).show()
+                edit_surname.error = "    Valid Surname required"
                 edit_surname.requestFocus()
                 return@setOnClickListener
             } else if (username.isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter User name", Snackbar.LENGTH_SHORT).show()
-                edit_username.error = "Username required"
+                edit_username.error = "     Username required"
                 edit_username.requestFocus()
                 return@setOnClickListener
             } else if (email.isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Email", Snackbar.LENGTH_SHORT).show()
-                edit_email.error = "Email required"
+                edit_email.error = "    Email required"
                 edit_email.requestFocus()
                 return@setOnClickListener
             } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT).show()
-                edit_email.error = "Valid Email required"
+                edit_email.error = "    Valid Email required"
                 edit_email.requestFocus()
                 return@setOnClickListener
             } else if (password.isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Password.", Snackbar.LENGTH_SHORT).show()
-                edit_password.error = "Password required"
+                edit_password.error = "     Password required"
                 edit_password.requestFocus()
                 return@setOnClickListener
             } else if (password.length < 8) {
                 Snackbar.make(rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT)
                     .show()
-                edit_password.error = "Password required"
+                edit_password.error = "     Password required"
                 edit_password.requestFocus()
                 return@setOnClickListener
             } else if (confirm_password.isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Confirm Password.", Snackbar.LENGTH_SHORT)
                     .show()
-                edit_confirmpassword.error = "Confirm Password required"
+                edit_confirmpassword.error = "      Confirm Password required"
                 edit_confirmpassword.requestFocus()
                 return@setOnClickListener
             } else if (confirm_password.length < 8) {
                 Snackbar.make(rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT)
                     .show()
-                edit_confirmpassword.error = "Password required"
+                edit_confirmpassword.error = "      Password required"
                 edit_confirmpassword.requestFocus()
                 return@setOnClickListener
             } else if (password != confirm_password) {
@@ -177,20 +184,7 @@ class RegistrationActivity : AppCompatActivity() {
         }
 
         registration_layout.setOnClickListener {
-            val i = Intent(this@RegistrationActivity, LoginActivity::class.java)
-            startActivity(i)
-            finish()
-        }
-
-        close_layout.setOnClickListener {
-            sessionManager.slideDown(registration_success_layout)
-        }
-
-        registration_success_btn.setOnClickListener {
-            sessionManager.slideDown(registration_success_layout)
-            val i = Intent(this@RegistrationActivity, LoginActivity::class.java)
-            startActivity(i)
-            finish()
+            moveToLoginScreen()
         }
 
         val policy = " Privacy Policy "
@@ -201,8 +195,7 @@ class RegistrationActivity : AppCompatActivity() {
 
         val webClickSpan: ClickableSpan = object : ClickableSpan() {
             override fun onClick(v: View) {
-                val uriUrl: Uri =
-                    Uri.parse(MyHssApplication.BaseURL+"page/privacy-policy/1")
+                val uriUrl: Uri = Uri.parse(MyHssApplication.BaseURL + "page/privacy-policy/1")
                 val launchBrowser = Intent(Intent.ACTION_VIEW, uriUrl)
                 startActivity(launchBrowser)
             }
@@ -210,8 +203,7 @@ class RegistrationActivity : AppCompatActivity() {
 
         val webClickSpanTerms: ClickableSpan = object : ClickableSpan() {
             override fun onClick(v: View) {
-                val uriUrl: Uri =
-                    Uri.parse(MyHssApplication.BaseURL+"page/terms-conditions/2")
+                val uriUrl: Uri = Uri.parse(MyHssApplication.BaseURL + "page/terms-conditions/2")
                 val launchBrowser = Intent(Intent.ACTION_VIEW, uriUrl)
                 startActivity(launchBrowser)
             }
@@ -235,26 +227,28 @@ class RegistrationActivity : AppCompatActivity() {
 
     }
 
+
     private fun registration(
-        firstname: String, surname: String, username: String, email: String,
-        password: String, m_deviceId: String
+        firstname: String,
+        surname: String,
+        username: String,
+        email: String,
+        password: String,
+        m_deviceId: String
     ) {
         val pd = CustomProgressBar(this@RegistrationActivity)
         pd.show()
         val call: Call<RegistrationResponse> = MyHssApplication.instance!!.api.userRegistration(
-            firstname, surname, username, email,
-            password, m_deviceId
+            firstname, surname, username, email, password, m_deviceId
         )
         call.enqueue(object : Callback<RegistrationResponse> {
             override fun onResponse(
-                call: Call<RegistrationResponse>,
-                response: Response<RegistrationResponse>
+                call: Call<RegistrationResponse>, response: Response<RegistrationResponse>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
-                        emal_txt.text = edit_email.text.toString()
-                        sessionManager.slideUp(registration_success_layout)
+                        dialogShow(edit_email.text.toString())
                     } else {
                         Functions.showAlertMessageWithOK(
                             this@RegistrationActivity, "",
@@ -276,6 +270,62 @@ class RegistrationActivity : AppCompatActivity() {
                 pd.dismiss()
             }
         })
+    }
+
+
+    private fun dialogShow(toString: String) {
+        val dialog = BottomSheetDialog(this)
+        val view_d = layoutInflater.inflate(R.layout.dialog_registrationsuccess, null)
+
+        dialog.setOnShowListener {
+            val bottomSheetDialog = it as BottomSheetDialog
+            val parentLayout =
+                bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            parentLayout?.let { it ->
+                val behaviour = BottomSheetBehavior.from(it)
+                setupFullHeight(it)
+                behaviour.state = BottomSheetBehavior.STATE_EXPANDED
+                behaviour.isDraggable = false
+            }
+        }
+
+        val btnClose = view_d.findViewById<ImageView>(R.id.close_layout)
+        val registration_success_btn = view_d.findViewById<TextView>(R.id.registration_success_btn)
+        val emal_txt = view_d.findViewById<TextView>(R.id.emal_txt)
+
+        emal_txt.text = toString
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+            moveToLoginScreen()
+        }
+        registration_success_btn.setOnClickListener {
+            dialog.dismiss()
+            moveToLoginScreen()
+        }
+        dialog.setCancelable(false)
+        dialog.setContentView(view_d)
+        dialog.show()
+    }
+
+    private fun setupFullHeight(it: View) {
+        val layoutParams = it.layoutParams
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+        it.layoutParams = layoutParams
+    }
+
+    fun isOnlyLetters(password: String?): Boolean {
+        val pattern: Pattern
+        val matcher: Matcher
+        val PASSWORD_PATTERN = "^[A-Za-z]*\$"
+        pattern = Pattern.compile(PASSWORD_PATTERN)
+        matcher = pattern.matcher(password)
+        return matcher.matches()
+    }
+
+    private fun moveToLoginScreen() {
+        val i = Intent(this@RegistrationActivity, LoginActivity::class.java)
+        startActivity(i)
+        finish()
     }
 }
 

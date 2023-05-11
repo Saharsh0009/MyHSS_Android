@@ -28,6 +28,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 class AddMemberThirdActivity : AppCompatActivity() {
@@ -61,7 +63,9 @@ class AddMemberThirdActivity : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("AddMemberStep3VC")
-        sessionManager.firebaseAnalytics.setUserProperty("AddMemberStep3VC", "AddMemberThirdActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "AddMemberStep3VC", "AddMemberThirdActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -126,29 +130,30 @@ class AddMemberThirdActivity : AppCompatActivity() {
         }
 
         Log.d(
-            "Fetch_Data two-->", intent.getStringExtra("FIRST_NAME") + "--" +
-                    intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra("LAST_NAME") + "--" + intent.getStringExtra(
+            "Fetch_Data two-->",
+            intent.getStringExtra("FIRST_NAME") + "--" + intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra(
+                "LAST_NAME"
+            ) + "--" + intent.getStringExtra(
                 "USERNAME"
-            ) + "--" +
-                    intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
                 "GENDER"
-            ) + "--" + intent.getStringExtra("DOB") + "--" +
-                    intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra("OTHER_RELATIONSHIP") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("DOB") + "--" + intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra(
+                "OTHER_RELATIONSHIP"
+            ) + "--" + intent.getStringExtra(
                 "OCCUPATION"
-            ) + "--" +
-                    intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
                 "AGE"
-            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" +
-                    intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra("TYPE") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" + intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra(
+                "TYPE"
+            ) + "--" + intent.getStringExtra(
                 "PARENT_MEMBER"
-            )
-                    + "--" + intent.getStringExtra("MOBILE") + "--" + intent.getStringExtra("LAND_LINE") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("MOBILE") + "--" + intent.getStringExtra("LAND_LINE") + "--" + intent.getStringExtra(
                 "SECOND_EMAIL"
-            ) + "--" + intent.getStringExtra("POST_CODE")
-                    + "--" + intent.getStringExtra("BUILDING_NAME") + "--" + intent.getStringExtra("ADDRESS_ONE") + "--" + intent.getStringExtra(
+            ) + "--" + intent.getStringExtra("POST_CODE") + "--" + intent.getStringExtra("BUILDING_NAME") + "--" + intent.getStringExtra(
+                "ADDRESS_ONE"
+            ) + "--" + intent.getStringExtra(
                 "ADDRESS_TWO"
-            )
-                    + "--" + intent.getStringExtra("POST_TOWN") + "--" + intent.getStringExtra("COUNTY")
+            ) + "--" + intent.getStringExtra("POST_TOWN") + "--" + intent.getStringExtra("COUNTY")
         )
 
         if (intent.getStringExtra("IS_SELF") != "self") {
@@ -196,8 +201,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                 } else if (textLength == 5) {
                     edit_guardian_contact_number.setText(
                         StringBuilder(text).insert(
-                            text.length - 1,
-                            " "
+                            text.length - 1, " "
                         ).toString()
                     )
                     edit_guardian_contact_number.setSelection(edit_guardian_contact_number.text!!.length)
@@ -227,10 +231,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
         })
 
         next_layout.setOnClickListener {
-//            Snackbar.make(rootLayout, "Next", Snackbar.LENGTH_SHORT).show()
-//            startActivity(Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java))
-
-            if (intent.getStringExtra("AGE") == "1") {
+            if (intent.getStringExtra("AGE") == "1") {// age under 18
 
                 if (edit_guardian_full_name.text.toString().isEmpty()) {
                     Snackbar.make(rootLayout, "Please Enter Emergency Name", Snackbar.LENGTH_SHORT)
@@ -238,20 +239,23 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     edit_guardian_full_name.error = "Emergency name required"
                     edit_guardian_full_name.requestFocus()
                     return@setOnClickListener
+                } else if (!isOnlyLetters(edit_guardian_full_name.text.toString())) {
+                    Snackbar.make(
+                        rootLayout, "Please Enter Valid Guardian Name", Snackbar.LENGTH_SHORT
+                    ).show()
+                    edit_guardian_full_name.error = "Valid Guardian Name required"
+                    edit_guardian_full_name.requestFocus()
+                    return@setOnClickListener
                 } else if (edit_guardian_contact_number.text.toString().isEmpty()) {
                     Snackbar.make(
-                        rootLayout,
-                        "Please Enter Emergency Contact",
-                        Snackbar.LENGTH_SHORT
+                        rootLayout, "Please Enter Emergency Contact", Snackbar.LENGTH_SHORT
                     ).show()
                     edit_guardian_contact_number.error = "Emergency contact required"
                     edit_guardian_contact_number.requestFocus()
                     return@setOnClickListener
                 } else if (edit_guardian_email.text.toString().isEmpty()) {
                     Snackbar.make(
-                        rootLayout,
-                        "Please Enter Emergency Contact",
-                        Snackbar.LENGTH_SHORT
+                        rootLayout, "Please Enter Emergency Contact", Snackbar.LENGTH_SHORT
                     ).show()
                     edit_guardian_email.error = "Emergency contact required"
                     edit_guardian_email.requestFocus()
@@ -265,9 +269,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     edit_guardian_email.requestFocus()
                     return@setOnClickListener
                 } else {
-                    if (intent.getStringExtra("IS_SELF") != "self") {
-                        val i =
-                            Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
+                    if (intent.getStringExtra("IS_SELF") != "self") { // Profile or Add Family(under age 18)
+                        val i = Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
                         i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                         i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
@@ -283,8 +286,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                         } else {
                             i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
                             i.putExtra(
-                                "OTHER_RELATIONSHIP",
-                                intent.getStringExtra("OTHER_RELATIONSHIP")
+                                "OTHER_RELATIONSHIP", intent.getStringExtra("OTHER_RELATIONSHIP")
                             )
                         }
 
@@ -327,9 +329,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
 
                         i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
                         startActivity(i)
-                    } else {
-                        val i =
-                            Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
+                    } else { // Add self(under age 18)
+                        val i = Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
                         i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                         i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
@@ -391,7 +392,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                         startActivity(i)
                     }
                 }
-            } else {
+            } else { // age above 18
                 if (edit_guardian_full_name.text.toString().isEmpty()) {
                     Snackbar.make(rootLayout, "Please Enter Guardian Name", Snackbar.LENGTH_SHORT)
                         .show()
@@ -400,18 +401,14 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     return@setOnClickListener
                 } else if (edit_guardian_contact_number.text.toString().isEmpty()) {
                     Snackbar.make(
-                        rootLayout,
-                        "Please Enter Guardian Contact",
-                        Snackbar.LENGTH_SHORT
+                        rootLayout, "Please Enter Guardian Contact", Snackbar.LENGTH_SHORT
                     ).show()
                     edit_guardian_contact_number.error = "Guardian contact required"
                     edit_guardian_contact_number.requestFocus()
                     return@setOnClickListener
                 } else if (edit_guardian_email.text.toString().isEmpty()) {
                     Snackbar.make(
-                        rootLayout,
-                        "Please Enter Guardian Contact",
-                        Snackbar.LENGTH_SHORT
+                        rootLayout, "Please Enter Guardian Contact", Snackbar.LENGTH_SHORT
                     ).show()
                     edit_guardian_email.error = "Guardian contact required"
                     edit_guardian_email.requestFocus()
@@ -425,9 +422,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     edit_guardian_email.requestFocus()
                     return@setOnClickListener
                 } else {
-                    if (intent.getStringExtra("IS_SELF") != "self") {
-                        val i =
-                            Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
+                    if (intent.getStringExtra("IS_SELF") != "self") { // profile or Add family(age above 18)
+                        val i = Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
                         i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                         i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
@@ -446,10 +442,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                             i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
                         } else {
                             i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
-                            i.putExtra(
-                                "OTHER_RELATIONSHIP",
-                                intent.getStringExtra("OTHER_RELATIONSHIP")
-                            )
+                            i.putExtra("OTHER_RELATIONSHIP", intent.getStringExtra("OTHER_RELATIONSHIP"))
                         }
 
                         if (intent.getStringExtra("OCCUPATION_NAME") == "") {
@@ -490,7 +483,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
 
                         i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
                         startActivity(i)
-                    } else {
+                    } else { // add self(age above 18)
                         val i =
                             Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
@@ -508,8 +501,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                         } else {
                             i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
                             i.putExtra(
-                                "OTHER_RELATIONSHIP",
-                                intent.getStringExtra("OTHER_RELATIONSHIP")
+                                "OTHER_RELATIONSHIP", intent.getStringExtra("OTHER_RELATIONSHIP")
                             )
                         }
 
@@ -575,13 +567,20 @@ class AddMemberThirdActivity : AppCompatActivity() {
         }
     }
 
+    fun isOnlyLetters(password: String?): Boolean {
+        val pattern: Pattern
+        val matcher: Matcher
+        val PASSWORD_PATTERN = "^[A-Za-z]*\$"
+        pattern = Pattern.compile(PASSWORD_PATTERN)
+        matcher = pattern.matcher(password)
+        return matcher.matches()
+    }
+
     private fun SearchSpinner(
-        spinner_search: Array<String>,
-        edit_txt: SearchableSpinner
+        spinner_search: Array<String>, edit_txt: SearchableSpinner
     ) {
         val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item,
-            spinner_search
+            this, android.R.layout.simple_spinner_item, spinner_search
         )
         searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         edit_txt.adapter = searchmethod
@@ -593,27 +592,29 @@ class AddMemberThirdActivity : AppCompatActivity() {
         }
     }
 
-    private val mOnItemSelectedListener_guardian: AdapterView.OnItemSelectedListener = object :
-        AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+    private val mOnItemSelectedListener_guardian: AdapterView.OnItemSelectedListener =
+        object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
 //            TODO("Not yet implemented")
-            Log.d("Name", relationshipName[position])
-            Log.d("Postion", relationshipID[position])
-            REALTIONSHIP_ID = relationshipID[position]
+                Log.d("Name", relationshipName[position])
+                Log.d("Postion", relationshipID[position])
+                REALTIONSHIP_ID = relationshipID[position]
 
-            if (REALTIONSHIP_ID == "5") {
-                emergency_realationship_other_view.visibility = View.VISIBLE
-                OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
-            } else {
-                emergency_realationship_other_view.visibility = View.GONE
-                OTHER_EMERGENCY_RELATIONSHIP = ""
+                if (REALTIONSHIP_ID == "5") {
+                    emergency_realationship_other_view.visibility = View.VISIBLE
+                    OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
+                } else {
+                    emergency_realationship_other_view.visibility = View.GONE
+                    OTHER_EMERGENCY_RELATIONSHIP = ""
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+//            TODO("Not yet implemented")
             }
         }
-
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-        }
-    }
 
     /*Relationship API*/
     private fun myRelationship() {
@@ -623,8 +624,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
             MyHssApplication.instance!!.api.get_relationship()
         call.enqueue(object : Callback<Get_Relationship_Response> {
             override fun onResponse(
-                call: Call<Get_Relationship_Response>,
-                response: Response<Get_Relationship_Response>
+                call: Call<Get_Relationship_Response>, response: Response<Get_Relationship_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -636,8 +636,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                         Log.d("atheletsBeans", data_relationship.toString())
                         for (i in 1 until data_relationship.size) {
                             Log.d(
-                                "relationshipName",
-                                data_relationship[i].relationshipName.toString()
+                                "relationshipName", data_relationship[i].relationshipName.toString()
                             )
                         }
                         relationshipName = listOf(arrayOf(data_relationship).toString())

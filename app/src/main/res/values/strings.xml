@@ -53,7 +53,7 @@
     <string name="billing_information">Billing Information</string>
     <string name="card_number">Card Number</string>
     <string name="expiration_date">Expiration date</string>
-    <string name="expiration_dd_yy">DD/YYYY</string>
+    <string name="expiration_dd_yy">MM/YYYY</string>
     <string name="ccv_no">Ccv</string>
     <string name="card_holder_name">Card Holder Name</string>
     <string name="donate">Donate</string>
@@ -404,5 +404,14 @@
     <string name="membership_agreement">HSS (UK) Membership Agreement</string>
     <string name="terms_condition">MyHSS Terms &amp; Conditions</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="log_in">Log In</string>
+    <string name="first_aid_qualification_type">First Aid Qualification Type</string>
+    <string name="professional_body_registration_number">Professional Body Registration Number</string>
+    <string name="first_aider_your_shakha">Are you a first aider for your shakha/HSS (UK)?</string>
+    <string name="medical_information_details_new">Medical Information Details</string>
+    <string name="first_aid_qualification_type_new">First Aid Qualification Type</string>
+    <string name="download_certificate">Download Certificate</string>
+    <string name="pro_body_reg_number">Professional body registartion number</string>
+    <string name="view_certificate">View Certificate</string>
 
 </resources>

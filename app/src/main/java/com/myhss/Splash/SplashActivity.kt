@@ -77,10 +77,7 @@ class SplashActivity : AppCompatActivity() {
         mTracker!!.setScreenName("Image~${this@SplashActivity}")
         mTracker!!.send(ScreenViewBuilder().build())
         mTracker!!.send(
-            EventBuilder()
-                .setCategory("Action")
-                .setAction("Share")
-                .build()
+            EventBuilder().setCategory("Action").setAction("Share").build()
         )
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -91,6 +88,7 @@ class SplashActivity : AppCompatActivity() {
             requestPermission()
         } else {
             Handler().postDelayed({
+                Log.e("TAG-SharedPref",""+sharedPreferences.getString("USERID", ""))
                 if (sharedPreferences.getString("USERID", "") != "") {
                     try {
                         if (sharedPreferences.getString("MEMBERID", "") != "") {
@@ -101,8 +99,7 @@ class SplashActivity : AppCompatActivity() {
                         } else {
                             startActivity(
                                 Intent(
-                                    this@SplashActivity,
-                                    WelcomeActivity::class.java
+                                    this@SplashActivity, WelcomeActivity::class.java
                                 )
                             )
                             finish()
@@ -113,8 +110,7 @@ class SplashActivity : AppCompatActivity() {
                 } else {
                     startActivity(
                         Intent(
-                            this@SplashActivity,
-                            LoginActivity::class.java
+                            this@SplashActivity, LoginActivity::class.java
                         )
                     )
                     finish()
@@ -156,8 +152,7 @@ class SplashActivity : AppCompatActivity() {
         Log.d("currentVersion", currentVersion)
         Log.d(
             "Allow_biometric", sharedPreferences.getString(
-                "Allow_biometric",
-                ""
+                "Allow_biometric", ""
             ).toString()
         )
     }
@@ -168,52 +163,47 @@ class SplashActivity : AppCompatActivity() {
             ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
         val result1 =
             ContextCompat.checkSelfPermission(applicationContext, permission.READ_EXTERNAL_STORAGE)
-        val result2 =
-            ContextCompat.checkSelfPermission(applicationContext, permission.ACCESS_FINE_LOCATION)
+//        val result2 =
+//            ContextCompat.checkSelfPermission(applicationContext, permission.ACCESS_FINE_LOCATION)
         val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
 //        val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.ACCESS_BACKGROUND_LOCATION)
-        val result5 =
-            ContextCompat.checkSelfPermission(applicationContext, permission.ACCESS_COARSE_LOCATION)
-        return result == PackageManager.PERMISSION_GRANTED &&
-                result1 == PackageManager.PERMISSION_GRANTED &&
-                result2 == PackageManager.PERMISSION_GRANTED &&
-                result3 == PackageManager.PERMISSION_GRANTED &&
+//        val result5 =
+//            ContextCompat.checkSelfPermission(applicationContext, permission.ACCESS_COARSE_LOCATION)
+        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED &&
+//                result2 == PackageManager.PERMISSION_GRANTED &&
+                result3 == PackageManager.PERMISSION_GRANTED
 //                result4 == PackageManager.PERMISSION_GRANTED &&
-                result5 == PackageManager.PERMISSION_GRANTED
+//                result5 == PackageManager.PERMISSION_GRANTED
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestPermission() {
         ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                permission.WRITE_EXTERNAL_STORAGE,
-                permission.READ_EXTERNAL_STORAGE,
-                permission.ACCESS_FINE_LOCATION,
-                permission.ACCESS_COARSE_LOCATION,
+            this, arrayOf(
+                permission.WRITE_EXTERNAL_STORAGE, permission.READ_EXTERNAL_STORAGE,
+//                permission.ACCESS_FINE_LOCATION,
+//                permission.ACCESS_COARSE_LOCATION,
 //                permission.ACCESS_BACKGROUND_LOCATION,
                 permission.CALL_PHONE
-            ),
-            PERMISSION_REQUEST_CODE
+            ), PERMISSION_REQUEST_CODE
         )
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
         when (requestCode) {
             PERMISSION_REQUEST_CODE -> if (grantResults.size > 0) {
                 val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
                 val cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED
                 val callAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED
-                val gpsAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED
-                val locatioAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED
+//                val gpsAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED
+//                val locatioAccepted = grantResults[4] == PackageManager.PERMISSION_GRANTED
 //                val backgroundlocatioAccepted = grantResults[5] == PackageManager.PERMISSION_GRANTED
-                if (readAccepted && cameraAccepted && callAccepted && gpsAccepted && locatioAccepted) {
-                    displayLocationSettingsRequest(this)
+//                if (readAccepted && cameraAccepted && callAccepted && gpsAccepted && locatioAccepted) {
+                if (readAccepted && cameraAccepted && callAccepted) {
+//                    displayLocationSettingsRequest(this)
                     Handler().postDelayed({
                         if (Functions.isConnectingToInternet(this@SplashActivity)) {
                             val OSName = "android"
@@ -238,12 +228,11 @@ class SplashActivity : AppCompatActivity() {
                                             arrayOf(
                                                 permission.WRITE_EXTERNAL_STORAGE,
                                                 permission.READ_EXTERNAL_STORAGE,
-                                                permission.ACCESS_FINE_LOCATION,
-                                                permission.ACCESS_COARSE_LOCATION,
+//                                                permission.ACCESS_FINE_LOCATION,
+//                                                permission.ACCESS_COARSE_LOCATION,
 //                                                permission.ACCESS_BACKGROUND_LOCATION,
                                                 permission.CALL_PHONE
-                                            ),
-                                            PERMISSION_REQUEST_CODE
+                                            ), PERMISSION_REQUEST_CODE
                                         )
                                     }
                                 })
@@ -256,12 +245,11 @@ class SplashActivity : AppCompatActivity() {
                                             arrayOf(
                                                 permission.WRITE_EXTERNAL_STORAGE,
                                                 permission.READ_EXTERNAL_STORAGE,
-                                                permission.ACCESS_FINE_LOCATION,
-                                                permission.ACCESS_COARSE_LOCATION,
+//                                                permission.ACCESS_FINE_LOCATION,
+//                                                permission.ACCESS_COARSE_LOCATION,
 //                                                permission.ACCESS_BACKGROUND_LOCATION,
                                                 permission.CALL_PHONE
-                                            ),
-                                            PERMISSION_REQUEST_CODE
+                                            ), PERMISSION_REQUEST_CODE
                                         )
                                     }
                                 })
@@ -274,17 +262,16 @@ class SplashActivity : AppCompatActivity() {
                                             arrayOf(
                                                 permission.WRITE_EXTERNAL_STORAGE,
                                                 permission.READ_EXTERNAL_STORAGE,
-                                                permission.ACCESS_FINE_LOCATION,
-                                                permission.ACCESS_COARSE_LOCATION,
+//                                                permission.ACCESS_FINE_LOCATION,
+//                                                permission.ACCESS_COARSE_LOCATION,
 //                                                permission.ACCESS_BACKGROUND_LOCATION,
                                                 permission.CALL_PHONE
-                                            ),
-                                            PERMISSION_REQUEST_CODE
+                                            ), PERMISSION_REQUEST_CODE
                                         )
                                     }
                                 })
                             return
-                        } else if (shouldShowRequestPermissionRationale(permission.ACCESS_FINE_LOCATION)) {
+                        } /* else if (shouldShowRequestPermissionRationale(permission.ACCESS_FINE_LOCATION)) {
                             showMessageOKCancel("You need to allow access to fine location the permissions",
                                 DialogInterface.OnClickListener { dialog, which ->
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -320,25 +307,26 @@ class SplashActivity : AppCompatActivity() {
                                     }
                                 })
                             return
-                        } /*else if (shouldShowRequestPermissionRationale(permission.ACCESS_BACKGROUND_LOCATION)) {
-                            showMessageOKCancel("You need to allow access to background location the permissions",
-                                DialogInterface.OnClickListener { dialog, which ->
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                        requestPermissions(
-                                            arrayOf(
-                                                permission.WRITE_EXTERNAL_STORAGE,
-                                                permission.READ_EXTERNAL_STORAGE,
-                                                permission.ACCESS_FINE_LOCATION,
-                                                permission.ACCESS_COARSE_LOCATION,
-//                                                permission.ACCESS_BACKGROUND_LOCATION,
-                                                permission.CALL_PHONE
-                                            ),
-                                            PERMISSION_REQUEST_CODE
-                                        )
-                                    }
-                                })
-                            return
-                        }*/
+                        } */
+                        /*else if (shouldShowRequestPermissionRationale(permission.ACCESS_BACKGROUND_LOCATION)) {
+                                showMessageOKCancel("You need to allow access to background location the permissions",
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                            requestPermissions(
+                                                arrayOf(
+                                                    permission.WRITE_EXTERNAL_STORAGE,
+                                                    permission.READ_EXTERNAL_STORAGE,
+                                                    permission.ACCESS_FINE_LOCATION,
+                                                    permission.ACCESS_COARSE_LOCATION,
+    //                                                permission.ACCESS_BACKGROUND_LOCATION,
+                                                    permission.CALL_PHONE
+                                                ),
+                                                PERMISSION_REQUEST_CODE
+                                            )
+                                        }
+                                    })
+                                return
+                            }*/
                     }
                 }
             }
@@ -346,14 +334,10 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
-        AlertDialog.Builder(this@SplashActivity)
-            .setMessage(message)
-            .setPositiveButton("OK", okListener)
-            .setNegativeButton(
+        AlertDialog.Builder(this@SplashActivity).setMessage(message)
+            .setPositiveButton("OK", okListener).setNegativeButton(
                 "Cancel"
-            ) { dialogInterface, i -> finishAffinity() }
-            .create()
-            .show()
+            ) { dialogInterface, i -> finishAffinity() }.create().show()
     }
 
     private fun myLatestUpdate(OSName: String, app_version: String, app_name: String) {
@@ -363,8 +347,7 @@ class SplashActivity : AppCompatActivity() {
             MyHssApplication.instance!!.api.latestupdate(OSName, app_version, app_name)
         call.enqueue(object : Callback<latest_update_response> {
             override fun onResponse(
-                call: Call<latest_update_response>,
-                response: Response<latest_update_response>
+                call: Call<latest_update_response>, response: Response<latest_update_response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -400,8 +383,7 @@ class SplashActivity : AppCompatActivity() {
                                     } else {
                                         startActivity(
                                             Intent(
-                                                this@SplashActivity,
-                                                LoginActivity::class.java
+                                                this@SplashActivity, LoginActivity::class.java
                                             )
                                         )
                                         finish()
@@ -425,8 +407,7 @@ class SplashActivity : AppCompatActivity() {
                                         if (sharedPreferences.getString("USERID", "") != "") {
                                             try {
                                                 if (sharedPreferences.getString(
-                                                        "MEMBERID",
-                                                        ""
+                                                        "MEMBERID", ""
                                                     ) != ""
                                                 ) {
                                                     val i = Intent(
@@ -451,8 +432,7 @@ class SplashActivity : AppCompatActivity() {
                                         } else {
                                             startActivity(
                                                 Intent(
-                                                    this@SplashActivity,
-                                                    LoginActivity::class.java
+                                                    this@SplashActivity, LoginActivity::class.java
                                                 )
                                             )
                                             finish()
@@ -471,9 +451,7 @@ class SplashActivity : AppCompatActivity() {
 
                     } else {
                         Functions.showAlertMessageWithOK(
-                            this@SplashActivity,
-                            "Message",
-                            response.body()?.message
+                            this@SplashActivity, "Message", response.body()?.message
                         )
                     }
                 } else {
@@ -496,8 +474,7 @@ class SplashActivity : AppCompatActivity() {
         try {
             startActivity(
                 Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=$appPackageName")
+                    Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName")
                 )
             )
         } catch (exception: android.content.ActivityNotFoundException) {
@@ -511,8 +488,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun displayLocationSettingsRequest(context: Context) {
-        val googleApiClient = GoogleApiClient.Builder(context)
-            .addApi(LocationServices.API).build()
+        val googleApiClient = GoogleApiClient.Builder(context).addApi(LocationServices.API).build()
         googleApiClient.connect()
         val locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -525,11 +501,9 @@ class SplashActivity : AppCompatActivity() {
         result.setResultCallback { result ->
             val status: Status = result.status
             when (status.statusCode) {
-                LocationSettingsStatusCodes.SUCCESS ->
-                    Log.i(
-                        TAG.toString(),
-                        "All location settings are satisfied."
-                    )
+                LocationSettingsStatusCodes.SUCCESS -> Log.i(
+                    TAG.toString(), "All location settings are satisfied."
+                )
                 LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                     Log.i(
                         TAG.toString(),
@@ -539,8 +513,7 @@ class SplashActivity : AppCompatActivity() {
                         // Show the dialog by calling startResolutionForResult(), and check the result
                         // in onActivityResult().
                         status.startResolutionForResult(
-                            this@SplashActivity,
-                            1
+                            this@SplashActivity, 1
                         )
                     } catch (e: IntentSender.SendIntentException) {
                         Log.i(TAG.toString(), "PendingIntent unable to execute request.")

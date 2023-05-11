@@ -22,9 +22,11 @@ import com.uk.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime.Get_Create_Onetime
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.Utils.SessionManager
+import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -106,7 +108,7 @@ class GuruDakshinaOneTimeFourthActivity() : AppCompatActivity() {
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
 
-        header_title.text = getString(R.string.one_time)
+        header_title.text = getString(R.string.one_time_dakshina)
 
         rootLayout = findViewById(R.id.rootLayout)
         expriation_no_view = findViewById(R.id.expriation_no_view)
@@ -133,7 +135,7 @@ class GuruDakshinaOneTimeFourthActivity() : AppCompatActivity() {
 
         if (intent.getStringExtra("Amount") != "") {
             donate_amount_txt.text =
-                getString(R.string.pound_icon) + " " + intent.getStringExtra("Amount")
+                intent.getStringExtra("Amount")
         }
 
         listOfPattern.add(ptVisa)
@@ -207,13 +209,19 @@ class GuruDakshinaOneTimeFourthActivity() : AppCompatActivity() {
                 val text: String = expriation_no_txt.getText().toString()
                 val textLength: Int = expriation_no_txt.text!!.length
                 if (text.endsWith(" ") || text.endsWith(" ") || text.endsWith(" ")) return
+
                 if (textLength == 1) {
                     expriation_no_txt.setSelection(expriation_no_txt.text!!.length)
+                } else if(textLength == 2){// for month heck
+                    if(Integer(expriation_no_txt.text.toString()) > 12 || Integer(expriation_no_txt.text.toString()) < 0){
+                        Snackbar.make(rootLayout, "Please Enter Valid Expiration Month.", Snackbar.LENGTH_SHORT).show()
+                    }
                 } else if (textLength == 3) {
-                    expriation_no_txt.setText(
-                        StringBuilder(text).insert(text.length - 1, "/").toString()
-                    )
+                    if(!expriation_no_txt.text.toString().contains("/")){
+                        expriation_no_txt.setText(StringBuilder(text).insert(text.length - 1, "/").toString())
+                    }
                     expriation_no_txt.setSelection(expriation_no_txt.text!!.length)
+
                 } else if (textLength == 7) {
                     expriation_no_txt.setSelection(expriation_no_txt.text!!.length)
                     expriation_icon.visibility = View.VISIBLE
@@ -259,8 +267,7 @@ class GuruDakshinaOneTimeFourthActivity() : AppCompatActivity() {
             if (edit_card_number.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Card Number", Snackbar.LENGTH_SHORT).show()
             } else if (expriation_no_txt.text.toString().isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Expriation No.", Snackbar.LENGTH_SHORT)
-                    .show()
+                Snackbar.make(rootLayout, "Please Enter Expiration Date.", Snackbar.LENGTH_SHORT).show()
             } else if (expriation_ccv_txt.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter CCV No.", Snackbar.LENGTH_SHORT).show()
             } else if (edit_card_holder.text.toString().isEmpty()) {
@@ -286,7 +293,7 @@ class GuruDakshinaOneTimeFourthActivity() : AppCompatActivity() {
                 if (Functions.isConnectingToInternet(this@GuruDakshinaOneTimeFourthActivity)) {
                     User_Id = sessionManager.fetchUserID()!!
                     Member_Id = sessionManager.fetchMEMBERID()!!
-                    Amount = intent.getStringExtra("Amount")!!
+                    Amount = donate_amount_txt.text.toString()!!
                     Is_Linked_Member = intent.getStringExtra("donating_dakshina")!!  //"Individual"
                     Gift_aid = intent.getStringExtra("GIFTAID_ID")!!
                     Is_prunima_Dashina = intent.getStringExtra("giving_dakshina")!!
@@ -335,7 +342,7 @@ class GuruDakshinaOneTimeFourthActivity() : AppCompatActivity() {
             dialog = Dialog(this, R.style.StyleCommonDialog)
         }
         dialog?.setContentView(R.layout.edit_dialog_diposit_money)
-        dialog?.setCanceledOnTouchOutside(false)
+        dialog?.setCanceledOnTouchOutside(true)
         dialog?.show()
 
         val edit_amount = dialog!!.findViewById(R.id.edit_amount) as TextView
@@ -353,9 +360,9 @@ class GuruDakshinaOneTimeFourthActivity() : AppCompatActivity() {
                         "10000"
                     )
                 )
-                if (Integer.valueOf(edit_amount.text.toString()) > 0 && Integer.valueOf(edit_amount.text.toString()) <= 1000) {
+                if (Integer.valueOf(edit_amount.text.toString()) > 0 && Integer.valueOf(edit_amount.text.toString()) <= 10000) {
                     donate_amount_txt.text =
-                        getString(R.string.pound_icon) + " " + edit_amount.text.toString()
+                        edit_amount.text.toString()
                     dialog?.dismiss()
                 } else {
                     Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)

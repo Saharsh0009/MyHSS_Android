@@ -42,7 +42,8 @@ class WelcomeActivity : AppCompatActivity() {
     lateinit var welcome_txt_msg: TextView
     lateinit var add_self: TextView
     lateinit var add_self_family: TextView
-//    lateinit var welcome_layout: LinearLayout
+
+    //    lateinit var welcome_layout: LinearLayout
     lateinit var add_self_layout: LinearLayout
     lateinit var rootLayout: RelativeLayout
 
@@ -68,7 +69,8 @@ class WelcomeActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(/*context=*/ this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(
-            DebugAppCheckProviderFactory.getInstance())
+            DebugAppCheckProviderFactory.getInstance()
+        )
 
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
@@ -143,7 +145,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         if (add_self.text.toString() == getString(R.string.Add_self)) {
 //            welcome_layout.setOnClickListener {
-                add_self_layout.setOnClickListener {
+            add_self_layout.setOnClickListener {
 //                Snackbar.make(rootLayout, "Add self", Snackbar.LENGTH_SHORT).show()
                 val i = Intent(this@WelcomeActivity, AddMemberFirstActivity::class.java)
                 i.putExtra("TYPE_SELF", TYPE_SELF)
@@ -177,8 +179,7 @@ class WelcomeActivity : AppCompatActivity() {
         val call: Call<WelcomeResponse> = MyHssApplication.instance!!.api.welcome_api(user_id)
         call.enqueue(object : Callback<WelcomeResponse> {
             override fun onResponse(
-                call: Call<WelcomeResponse>,
-                response: Response<WelcomeResponse>
+                call: Call<WelcomeResponse>, response: Response<WelcomeResponse>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -196,16 +197,18 @@ class WelcomeActivity : AppCompatActivity() {
                         }
 
                         val sharedPreferences = getSharedPreferences(
-                            "production",
-                            Context.MODE_PRIVATE
+                            "production", Context.MODE_PRIVATE
                         )
 
                         sharedPreferences.edit().apply {
                             putString("TYPE_SELF", TYPE_SELF)
+                            putString("MEMBERID", response.body()!!.member_id)
+
                         }.apply()
 
                         val editor: SharedPreferences.Editor = sharedPreferences.edit()
                         editor.putString("TYPE_SELF", TYPE_SELF)
+                        editor.putString("MEMBERID", response.body()!!.member_id)
                         editor.apply()
                         editor.commit()
 
@@ -237,8 +240,9 @@ class WelcomeActivity : AppCompatActivity() {
                         if (TYPE_SELF == "family") {
                             welcome_txt_msg.visibility = View.GONE
                             Handler().postDelayed({
-                                val i = Intent(this@WelcomeActivity,
-                                    Passcode_Activity::class.java)
+                                val i = Intent(
+                                    this@WelcomeActivity, Passcode_Activity::class.java
+                                )
 //                                    HomeActivity::class.java)
 //                                MainActivity::class.java)
                                 i.putExtra("CHANGE_BIOMETRIC", "")
@@ -253,7 +257,7 @@ class WelcomeActivity : AppCompatActivity() {
                             response.body()?.message
                         )
                     }
-                } else{
+                } else {
                     Functions.showAlertMessageWithOK(
                         this@WelcomeActivity, "Message",
                         getString(R.string.some_thing_wrong),

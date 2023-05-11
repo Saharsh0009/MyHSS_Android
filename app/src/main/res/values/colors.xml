@@ -37,6 +37,7 @@
     <color name="lightOrangeColor">#F8B03C</color>
     <color name="darkfiroziColor">#26A69A</color>
     <color name="transparentColor">#66000000</color>
+    <color name="transparentColor_dialog">#0F0F0F0F</color>
     <color name="transparent_Color">#00000000</color>
     <color name="darkYellowColor">#FFCA28</color>
     <color name="lightYallowColor">#FFF7EA</color>

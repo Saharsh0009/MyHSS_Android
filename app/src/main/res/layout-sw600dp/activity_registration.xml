@@ -446,6 +446,6 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/registrationsuccessactivity" />
+<!--    <include layout="@layout/registrationsuccessactivity" />-->
 
 </RelativeLayout>

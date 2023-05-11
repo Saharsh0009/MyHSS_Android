@@ -83,6 +83,7 @@ import android.content.DialogInterface
 import android.R.attr.data
 import com.blikoon.qrcodescanner.QrCodeActivity
 import com.myhss.QRCode.CaptureActivityPortrait
+import com.myhss.Utils.DebugLog
 
 
 //import com.blikoon.qrcodescanner.QrCodeActivity
@@ -124,13 +125,11 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     }
 
     data class GoogleDriveConfig(
-        val activityTitle: String? = null,
-        val mimeTypes: List<String>? = null
+        val activityTitle: String? = null, val mimeTypes: List<String>? = null
     )
 
     class GoogleDriveService(
-        private val activity: Activity,
-        private val config: GoogleDriveConfig
+        private val activity: Activity, private val config: GoogleDriveConfig
     ) {
 
     }
@@ -250,9 +249,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 //            }
         } else {
             Toast.makeText(
-                this@HomeActivity,
-                resources.getString(R.string.no_connection),
-                Toast.LENGTH_SHORT
+                this@HomeActivity, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
             ).show()
         }
 
@@ -268,382 +265,392 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         navigation_rv.setHasFixedSize(true)
 
         // Add Item Touch Listener
-        navigation_rv.addOnItemTouchListener(RecyclerTouchListener(this@HomeActivity, object :
-            ClickListener {
-            override fun onClick(view: View, position: Int) {
-                if (sessionManager.fetchSHAKHA_TAB() == "yes") {
-                    when (position) {
-                        0 -> {
-                            toolbar.title = ""
+        navigation_rv.addOnItemTouchListener(
+            RecyclerTouchListener(this@HomeActivity, object : ClickListener {
+                override fun onClick(view: View, position: Int) {
+                    if (sessionManager.fetchSHAKHA_TAB() == "yes") {
+                        when (position) {
+                            0 -> {
+                                toolbar.title = ""
 //                        activity_main_toolbar_title.setText("")
-                            toolbar_logo.visibility = View.VISIBLE
-                            scan_qr_img.visibility = View.GONE
-                            notification_img.visibility = View.GONE
-                            // # Dashboard Fragment
-                            val dashboardFragment = DashboardFragment()
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.activity_main_content_id, dashboardFragment).commit()
-                        }
-                        1 -> {
-                            // # QR Code Fragment
-                            val i = Intent(this@HomeActivity, LinkedFamilyFragment::class.java)
-                            i.putExtra("DashBoard", "SHAKHAVIEW")
-                            startActivity(i)
+                                toolbar_logo.visibility = View.VISIBLE
+                                scan_qr_img.visibility = View.GONE
+                                notification_img.visibility = View.GONE
+                                // # Dashboard Fragment
+                                val dashboardFragment = DashboardFragment()
+                                supportFragmentManager.beginTransaction()
+                                    .replace(R.id.activity_main_content_id, dashboardFragment)
+                                    .commit()
+                            }
+                            1 -> {
+                                // # QR Code Fragment
+                                val i = Intent(this@HomeActivity, LinkedFamilyFragment::class.java)
+                                i.putExtra("DashBoard", "SHAKHAVIEW")
+                                i.putExtra("headerName", getString(R.string.my_shakha))
+                                startActivity(i)
 //                            val organisationFragment = OrgranizationFragment()
 //                            supportFragmentManager.beginTransaction()
 //                                .replace(R.id.activity_main_content_id, organisationFragment).commit()
-                        }
-                        /*2 -> {
-//                            val i = Intent(this@HomeActivity, QrCodeActivity::class.java)
-//                            startActivity(i)
+                            }
+                            /*2 -> {
+    //                            val i = Intent(this@HomeActivity, QrCodeActivity::class.java)
+    //                            startActivity(i)
 
-                            val integrator = IntentIntegrator(this@HomeActivity)
-                            integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
-                            integrator.setPrompt("Scan")
-                            integrator.setCameraId(0)
-                            integrator.setBeepEnabled(true)
-                            integrator.setBarcodeImageEnabled(true)
-//            integrator.captureActivity = HomeActivity::class.java
-                            integrator.setTorchEnabled(false)
-                            integrator.captureActivity = CaptureActivityPortrait::class.java
-//                            integrator.setResultDisplayDuration(0) //Text..
-//                            integrator.setScanningRectangle(450, 450);//size
-                            integrator.setOrientationLocked(false)
-                            integrator.initiateScan()
-                        }*/
+                                val integrator = IntentIntegrator(this@HomeActivity)
+                                integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
+                                integrator.setPrompt("Scan")
+                                integrator.setCameraId(0)
+                                integrator.setBeepEnabled(true)
+                                integrator.setBarcodeImageEnabled(true)
+    //            integrator.captureActivity = HomeActivity::class.java
+                                integrator.setTorchEnabled(false)
+                                integrator.captureActivity = CaptureActivityPortrait::class.java
+    //                            integrator.setResultDisplayDuration(0) //Text..
+    //                            integrator.setScanningRectangle(450, 450);//size
+                                integrator.setOrientationLocked(false)
+                                integrator.initiateScan()
+                            }*/
 //                        2 -> {
 //                            val i = Intent(this@HomeActivity, QRCodeFragment::class.java)
 //                            startActivity(i)
 //                        }
-                        /*2 -> {
-                            startOpenGoogleDriveApp()
-//                            checkLoginStatus()
-//                            startActivity(Intent(this@HomeActivity, GoogleCalendar::class.java))
-                        }*/
-                        2 -> {
-                            // Use package name which we want to check
-                            val isAppInstalled: Boolean =
-                                appInstalledOrNot("market://details?id=com.hss.khelappandroid")
+                            /*2 -> {
+                                startOpenGoogleDriveApp()
+    //                            checkLoginStatus()
+    //                            startActivity(Intent(this@HomeActivity, GoogleCalendar::class.java))
+                            }*/
+                            2 -> {
+                                // Use package name which we want to check
+                                val isAppInstalled: Boolean =
+                                    appInstalledOrNot("market://details?id=com.hss.khelappandroid")
 
-                            if (isAppInstalled) {
-                                //This intent will help you to launch if the package is already installed
-                                val LaunchIntent = packageManager
-                                    .getLaunchIntentForPackage("market://details?id=com.hss.khelappandroid")
-                                startActivity(LaunchIntent)
-                                Log.d("", "Application is already installed.")
-                            } else {
-                                // Do whatever we want to do if application not installed
-                                // For example, Redirect to play store
-                                Log.d("", "Application is not currently installed.")
-                                startActivity(
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("market://details?id=com.hss.khelappandroid")
+                                if (isAppInstalled) {
+                                    //This intent will help you to launch if the package is already installed
+                                    val LaunchIntent =
+                                        packageManager.getLaunchIntentForPackage("market://details?id=com.hss.khelappandroid")
+                                    startActivity(LaunchIntent)
+                                    Log.d("", "Application is already installed.")
+                                } else {
+                                    // Do whatever we want to do if application not installed
+                                    // For example, Redirect to play store
+                                    Log.d("", "Application is not currently installed.")
+                                    startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse("market://details?id=com.hss.khelappandroid")
+                                        )
                                     )
-                                )
+                                }
                             }
-                        }
-                        3 -> {
-                            toolbar.title = "Change Password"
-                            toolbar_logo.visibility = View.GONE
-                            scan_qr_img.visibility = View.GONE
-                            notification_img.visibility = View.GONE
-                            // # Policieshow Fragment
-                            val organisationFragment = ChangePasswordFragment()
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.activity_main_content_id, organisationFragment)
-                                .commit()
-                        }
-                        4 -> {
-                            /*val i = Intent(this@HomeActivity, Passcode_Activity::class.java)
-                            i.putExtra("CHANGE_BIOMETRIC", "CHANGE_BIOMETRIC")
-                            startActivity(i)
-                            finish()*/
-                            toolbar.title = "Change Biometric"
-                            toolbar_logo.visibility = View.GONE
-                            scan_qr_img.visibility = View.GONE
-                            notification_img.visibility = View.GONE
-                            // # Policieshow Fragment
-                            val organisationFragment = ChangeBiomerticFragment()
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.activity_main_content_id, organisationFragment)
-                                .commit()
-                        }
-                        5 -> {
-                            toolbar.title = "Policies"
+                            3 -> {
+                                toolbar.title = "Change Password"
+                                toolbar_logo.visibility = View.GONE
+                                scan_qr_img.visibility = View.GONE
+                                notification_img.visibility = View.GONE
+                                // # Policieshow Fragment
+                                val organisationFragment = ChangePasswordFragment()
+                                supportFragmentManager.beginTransaction().replace(
+                                    R.id.activity_main_content_id, organisationFragment
+                                ).commit()
+                            }
+                            4 -> {
+                                /*val i = Intent(this@HomeActivity, Passcode_Activity::class.java)
+                                i.putExtra("CHANGE_BIOMETRIC", "CHANGE_BIOMETRIC")
+                                startActivity(i)
+                                finish()*/
+                                toolbar.title = "Change Biometric"
+                                toolbar_logo.visibility = View.GONE
+                                scan_qr_img.visibility = View.GONE
+                                notification_img.visibility = View.GONE
+                                // # Policieshow Fragment
+                                val organisationFragment = ChangeBiomerticFragment()
+                                supportFragmentManager.beginTransaction().replace(
+                                    R.id.activity_main_content_id, organisationFragment
+                                ).commit()
+                            }
+                            5 -> {
+                                toolbar.title = "Policies"
 //                        activity_main_toolbar_title.setText("Policies")
-                            toolbar_logo.visibility = View.GONE
-                            scan_qr_img.visibility = View.GONE
-                            notification_img.visibility = View.GONE
-                            // # Policieshow Fragment
-                            val organisationFragment = PolicieshowFragment()
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.activity_main_content_id, organisationFragment)
-                                .commit()
-                        }
-                        6 -> {
-                            val alertDialog: AlertDialog.Builder =
-                                AlertDialog.Builder(this@HomeActivity)
+                                toolbar_logo.visibility = View.GONE
+                                scan_qr_img.visibility = View.GONE
+                                notification_img.visibility = View.GONE
+                                // # Policieshow Fragment
+                                val organisationFragment = PolicieshowFragment()
+                                supportFragmentManager.beginTransaction().replace(
+                                    R.id.activity_main_content_id, organisationFragment
+                                ).commit()
+                            }
+                            6 -> {
+                                val alertDialog: AlertDialog.Builder =
+                                    AlertDialog.Builder(this@HomeActivity)
 //            alertDialog.setTitle("Logout")
-                            alertDialog.setMessage("Are you sure you would like to logout?")
-                            alertDialog.setPositiveButton(
-                                "yes"
-                            ) { _, _ ->
+                                alertDialog.setMessage("Are you sure you would like to logout?")
+                                alertDialog.setPositiveButton(
+                                    "yes"
+                                ) { _, _ ->
 
-                                val sharedPreferences = this@HomeActivity.getSharedPreferences(
-                                    "production",
-                                    Context.MODE_PRIVATE
-                                )
-                                sessionManager.saveFIRSTNAME("")
-                                sessionManager.saveSURNAME("")
-                                sessionManager.saveUSERNAME("")
-                                sessionManager.saveUserID("")
-                                sessionManager.saveUSEREMAIL("")
-                                sessionManager.saveUSERROLE("")
-                                sessionManager.saveMEMBERID("")
-                                sessionManager.saveSECURITYKEY("")
-                                sessionManager.saveAuthToken("")
-                                sessionManager.saveMIDDLENAME("")
-                                sessionManager.saveSHAKHA_SANKHYA_AVG("")
-                                sessionManager.saveSHAKHA_TAB("")
-                                sessionManager.saveSHAKHANAME("")
-                                sessionManager.savePOSTCODE("")
-                                sessionManager.saveCOUNTRY("")
-                                sessionManager.saveCITY("")
-                                sessionManager.saveLineOne("")
-                                sessionManager.saveGENDER("")
-                                sessionManager.saveAGE("")
-                                sessionManager.saveQUALIFICATIONAID("")
-                                sessionManager.saveDOB("")
-                                sessionManager.saveVIBHAGNAME("")
-                                sessionManager.saveSPOKKENLANGUAGE("")
-                                sessionManager.saveMOBILENO("")
-                                sessionManager.saveSECMOBILENO("")
-                                sessionManager.saveOCCUPATIONNAME("")
-                                sessionManager.saveADDRESS("")
-                                sessionManager.saveGUAEMREMAIL("")
-                                sessionManager.saveGUAEMRNAME("")
-                                sessionManager.saveGUAEMRPHONE("")
-                                sessionManager.saveGUAEMRRELATIONSHIP("")
-                                sessionManager.saveSPOKKENLANGUAGEID("")
-                                sessionManager.saveSPOKKENLANGUAGE("")
-                                sessionManager.saveRELATIONSHIPNAME("")
-                                sessionManager.saveRELATIONSHIPNAME_OTHER("")
-                                sessionManager.saveNAGARID("")
-                                sessionManager.saveDIETARY("")
-                                sessionManager.saveDIETARYID("")
-                                sessionManager.saveVIBHAGID("")
-                                sessionManager.saveSTATE_IN_INDIA("")
-                                sessionManager.saveQUALIFICATION_FILE("")
-                                sessionManager.saveQUALIFICATION_DATE("")
-                                sessionManager.saveSHAKHAID("")
+                                    val sharedPreferences = this@HomeActivity.getSharedPreferences(
+                                        "production", Context.MODE_PRIVATE
+                                    )
+                                    sessionManager.saveFIRSTNAME("")
+                                    sessionManager.saveSURNAME("")
+                                    sessionManager.saveUSERNAME("")
+                                    sessionManager.saveUserID("")
+                                    sessionManager.saveUSEREMAIL("")
+                                    sessionManager.saveUSERROLE("")
+                                    sessionManager.saveMEMBERID("")
+                                    sessionManager.saveSECURITYKEY("")
+                                    sessionManager.saveAuthToken("")
+                                    sessionManager.saveMIDDLENAME("")
+                                    sessionManager.saveSHAKHA_SANKHYA_AVG("")
+                                    sessionManager.saveSHAKHA_TAB("")
+                                    sessionManager.saveSHAKHANAME("")
+                                    sessionManager.savePOSTCODE("")
+                                    sessionManager.saveCOUNTRY("")
+                                    sessionManager.saveCITY("")
+                                    sessionManager.saveLineOne("")
+                                    sessionManager.saveGENDER("")
+                                    sessionManager.saveAGE("")
+                                    sessionManager.saveQUALIFICATIONAID("")
+                                    sessionManager.saveQUALIFICATION_VALUE("")
+                                    sessionManager.saveQUALIFICATION_VALUE_NAME("")
+                                    sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
+                                    sessionManager.saveQUALIFICATION_DATE("")
+                                    sessionManager.saveQUALIFICATION_FILE("")
+                                    sessionManager.saveQUALIFICATION_IS_DOC("")
+                                    sessionManager.saveDOB("")
+                                    sessionManager.saveVIBHAGNAME("")
+                                    sessionManager.saveSPOKKENLANGUAGE("")
+                                    sessionManager.saveMOBILENO("")
+                                    sessionManager.saveSECMOBILENO("")
+                                    sessionManager.saveOCCUPATIONNAME("")
+                                    sessionManager.saveADDRESS("")
+                                    sessionManager.saveGUAEMREMAIL("")
+                                    sessionManager.saveGUAEMRNAME("")
+                                    sessionManager.saveGUAEMRPHONE("")
+                                    sessionManager.saveGUAEMRRELATIONSHIP("")
+                                    sessionManager.saveSPOKKENLANGUAGEID("")
+                                    sessionManager.saveSPOKKENLANGUAGE("")
+                                    sessionManager.saveRELATIONSHIPNAME("")
+                                    sessionManager.saveRELATIONSHIPNAME_OTHER("")
+                                    sessionManager.saveNAGARID("")
+                                    sessionManager.saveDIETARY("")
+                                    sessionManager.saveDIETARYID("")
+                                    sessionManager.saveVIBHAGID("")
+                                    sessionManager.saveSTATE_IN_INDIA("")
+                                    sessionManager.saveSHAKHAID("")
 
-                                sharedPreferences.edit().apply {
-                                    putString("FIRSTNAME", "")
-                                    putString("SURNAME", "")
-                                    putString("USERNAME", "")
-                                    putString("USERID", "")
-                                    putString("USEREMAIL", "")
-                                    putString("USERROLE", "")
-                                    putString("MEMBERID", "")
-                                    putString("SECURITYKEY", "")
-                                    putString("USERTOKEN", "")
-                                    putString("Allow_biometric", "")
-                                }.apply()
+                                    sharedPreferences.edit().apply {
+                                        putString("FIRSTNAME", "")
+                                        putString("SURNAME", "")
+                                        putString("USERNAME", "")
+                                        putString("USERID", "")
+                                        putString("USEREMAIL", "")
+                                        putString("USERROLE", "")
+                                        putString("MEMBERID", "")
+                                        putString("SECURITYKEY", "")
+                                        putString("USERTOKEN", "")
+                                        putString("Allow_biometric", "")
+                                    }.apply()
 
-                                val i = Intent(this@HomeActivity, LoginActivity::class.java)
-                                startActivity(i)
-                                finishAffinity()
+                                    val i = Intent(this@HomeActivity, LoginActivity::class.java)
+                                    startActivity(i)
+                                    finishAffinity()
+                                }
+                                alertDialog.setNegativeButton(
+                                    "No"
+                                ) { _, _ ->
+                                    val i = Intent(this@HomeActivity, HomeActivity::class.java)
+                                    startActivity(i)
+                                    finishAffinity()
+                                }
+                                val alert: AlertDialog = alertDialog.create()
+                                alert.setCanceledOnTouchOutside(false)
+                                alert.show()
                             }
-                            alertDialog.setNegativeButton(
-                                "No"
-                            ) { _, _ ->
-                                val i = Intent(this@HomeActivity, HomeActivity::class.java)
-                                startActivity(i)
-                                finishAffinity()
-                            }
-                            val alert: AlertDialog = alertDialog.create()
-                            alert.setCanceledOnTouchOutside(false)
-                            alert.show()
                         }
-                    }
-                } else {
-                    when (position) {
-                        0 -> {
-                            toolbar.title = ""
+                    } else {
+                        when (position) {
+                            0 -> {
+                                toolbar.title = ""
 //                        activity_main_toolbar_title.setText("")
-                            toolbar_logo.visibility = View.VISIBLE
-                            scan_qr_img.visibility = View.GONE
-                            notification_img.visibility = View.GONE
-                            // # Dashboard Fragment
-                            val dashboardFragment = DashboardFragment()
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.activity_main_content_id, dashboardFragment).commit()
-                        }
-                        /*1 -> {
-                            startOpenGoogleDriveApp()
-//                            checkLoginStatus()
-//                            startActivity(Intent(this@HomeActivity, GoogleCalendar::class.java))
-                        }*/
-                        1 -> {
-                            // Use package name which we want to check
-                            val isAppInstalled: Boolean =
-                                appInstalledOrNot("market://details?id=com.hss.khelappandroid")
+                                toolbar_logo.visibility = View.VISIBLE
+                                scan_qr_img.visibility = View.GONE
+                                notification_img.visibility = View.GONE
+                                // # Dashboard Fragment
+                                val dashboardFragment = DashboardFragment()
+                                supportFragmentManager.beginTransaction()
+                                    .replace(R.id.activity_main_content_id, dashboardFragment)
+                                    .commit()
+                            }
+                            /*1 -> {
+                                startOpenGoogleDriveApp()
+    //                            checkLoginStatus()
+    //                            startActivity(Intent(this@HomeActivity, GoogleCalendar::class.java))
+                            }*/
+                            1 -> {
+                                // Use package name which we want to check
+                                val isAppInstalled: Boolean =
+                                    appInstalledOrNot("market://details?id=com.hss.khelappandroid")
 
-                            if (isAppInstalled) {
-                                //This intent will help you to launch if the package is already installed
-                                val LaunchIntent = packageManager
-                                    .getLaunchIntentForPackage("market://details?id=com.hss.khelappandroid")
-                                startActivity(LaunchIntent)
-                                Log.d("", "Application is already installed.")
-                            } else {
-                                // Do whatever we want to do if application not installed
-                                // For example, Redirect to play store
-                                Log.d("", "Application is not currently installed.")
-                                startActivity(
-                                    Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("market://details?id=com.hss.khelappandroid")
+                                if (isAppInstalled) {
+                                    //This intent will help you to launch if the package is already installed
+                                    val LaunchIntent =
+                                        packageManager.getLaunchIntentForPackage("market://details?id=com.hss.khelappandroid")
+                                    startActivity(LaunchIntent)
+                                    Log.d("", "Application is already installed.")
+                                } else {
+                                    // Do whatever we want to do if application not installed
+                                    // For example, Redirect to play store
+                                    Log.d("", "Application is not currently installed.")
+                                    startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse("market://details?id=com.hss.khelappandroid")
+                                        )
                                     )
-                                )
+                                }
                             }
-                        }
-                        2 -> {
-                            toolbar.title = "Change Password"
+                            2 -> {
+                                toolbar.title = "Change Password"
 //                        activity_main_toolbar_title.setText("Policies")
-                            toolbar_logo.visibility = View.GONE
-                            scan_qr_img.visibility = View.GONE
-                            notification_img.visibility = View.GONE
-                            // # Policieshow Fragment
-                            val organisationFragment = ChangePasswordFragment()
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.activity_main_content_id, organisationFragment)
-                                .commit()
-                        }
-                        3 -> {
-                            toolbar.title = "Change Biometric"
-                            toolbar_logo.visibility = View.GONE
-                            scan_qr_img.visibility = View.GONE
-                            notification_img.visibility = View.GONE
-                            // # Policieshow Fragment
-                            val organisationFragment = ChangeBiomerticFragment()
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.activity_main_content_id, organisationFragment)
-                                .commit()
-                            /*val i = Intent(this@HomeActivity, Passcode_Activity::class.java)
-                            i.putExtra("CHANGE_BIOMETRIC", "CHANGE_BIOMETRIC")
-                            startActivity(i)
-                            finish()*/
-                        }
-                        4 -> {
-                            toolbar.title = "Policies"
+                                toolbar_logo.visibility = View.GONE
+                                scan_qr_img.visibility = View.GONE
+                                notification_img.visibility = View.GONE
+                                // # Policieshow Fragment
+                                val organisationFragment = ChangePasswordFragment()
+                                supportFragmentManager.beginTransaction().replace(
+                                    R.id.activity_main_content_id, organisationFragment
+                                ).commit()
+                            }
+                            3 -> {
+                                toolbar.title = "Change Biometric"
+                                toolbar_logo.visibility = View.GONE
+                                scan_qr_img.visibility = View.GONE
+                                notification_img.visibility = View.GONE
+                                // # Policieshow Fragment
+                                val organisationFragment = ChangeBiomerticFragment()
+                                supportFragmentManager.beginTransaction().replace(
+                                    R.id.activity_main_content_id, organisationFragment
+                                ).commit()
+                                /*val i = Intent(this@HomeActivity, Passcode_Activity::class.java)
+                                i.putExtra("CHANGE_BIOMETRIC", "CHANGE_BIOMETRIC")
+                                startActivity(i)
+                                finish()*/
+                            }
+                            4 -> {
+                                toolbar.title = "Policies"
 //                        activity_main_toolbar_title.setText("Policies")
-                            toolbar_logo.visibility = View.GONE
-                            scan_qr_img.visibility = View.GONE
-                            notification_img.visibility = View.GONE
-                            // # Policieshow Fragment
-                            val organisationFragment = PolicieshowFragment()
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.activity_main_content_id, organisationFragment)
-                                .commit()
-                        }
-                        5 -> {
-                            val alertDialog: AlertDialog.Builder =
-                                AlertDialog.Builder(this@HomeActivity)
+                                toolbar_logo.visibility = View.GONE
+                                scan_qr_img.visibility = View.GONE
+                                notification_img.visibility = View.GONE
+                                // # Policieshow Fragment
+                                val organisationFragment = PolicieshowFragment()
+                                supportFragmentManager.beginTransaction().replace(
+                                    R.id.activity_main_content_id, organisationFragment
+                                ).commit()
+                            }
+                            5 -> {
+                                val alertDialog: AlertDialog.Builder =
+                                    AlertDialog.Builder(this@HomeActivity)
 //            alertDialog.setTitle("Logout")
-                            alertDialog.setMessage("Are you sure you would like to logout?")
-                            alertDialog.setPositiveButton(
-                                "yes"
-                            ) { _, _ ->
+                                alertDialog.setMessage("Are you sure you would like to logout?")
+                                alertDialog.setPositiveButton(
+                                    "yes"
+                                ) { _, _ ->
 
-                                val sharedPreferences = this@HomeActivity.getSharedPreferences(
-                                    "production",
-                                    Context.MODE_PRIVATE
-                                )
-                                sessionManager.saveFIRSTNAME("")
-                                sessionManager.saveSURNAME("")
-                                sessionManager.saveUSERNAME("")
-                                sessionManager.saveUserID("")
-                                sessionManager.saveUSEREMAIL("")
-                                sessionManager.saveUSERROLE("")
-                                sessionManager.saveMEMBERID("")
-                                sessionManager.saveSECURITYKEY("")
-                                sessionManager.saveAuthToken("")
-                                sessionManager.saveMIDDLENAME("")
-                                sessionManager.saveSHAKHA_SANKHYA_AVG("")
-                                sessionManager.saveSHAKHA_TAB("")
-                                sessionManager.saveSHAKHANAME("")
-                                sessionManager.savePOSTCODE("")
-                                sessionManager.saveCOUNTRY("")
-                                sessionManager.saveCITY("")
-                                sessionManager.saveLineOne("")
-                                sessionManager.saveGENDER("")
-                                sessionManager.saveAGE("")
-                                sessionManager.saveQUALIFICATIONAID("")
-                                sessionManager.saveDOB("")
-                                sessionManager.saveVIBHAGNAME("")
-                                sessionManager.saveSPOKKENLANGUAGE("")
-                                sessionManager.saveMOBILENO("")
-                                sessionManager.saveSECMOBILENO("")
-                                sessionManager.saveOCCUPATIONNAME("")
-                                sessionManager.saveADDRESS("")
-                                sessionManager.saveGUAEMREMAIL("")
-                                sessionManager.saveGUAEMRNAME("")
-                                sessionManager.saveGUAEMRPHONE("")
-                                sessionManager.saveGUAEMRRELATIONSHIP("")
-                                sessionManager.saveSPOKKENLANGUAGEID("")
-                                sessionManager.saveSPOKKENLANGUAGE("")
-                                sessionManager.saveRELATIONSHIPNAME("")
-                                sessionManager.saveRELATIONSHIPNAME_OTHER("")
-                                sessionManager.saveNAGARID("")
-                                sessionManager.saveDIETARY("")
-                                sessionManager.saveDIETARYID("")
-                                sessionManager.saveVIBHAGID("")
-                                sessionManager.saveSTATE_IN_INDIA("")
-                                sessionManager.saveQUALIFICATION_FILE("")
-                                sessionManager.saveQUALIFICATION_DATE("")
-                                sessionManager.saveSHAKHAID("")
+                                    val sharedPreferences = this@HomeActivity.getSharedPreferences(
+                                        "production", Context.MODE_PRIVATE
+                                    )
+                                    sessionManager.saveFIRSTNAME("")
+                                    sessionManager.saveSURNAME("")
+                                    sessionManager.saveUSERNAME("")
+                                    sessionManager.saveUserID("")
+                                    sessionManager.saveUSEREMAIL("")
+                                    sessionManager.saveUSERROLE("")
+                                    sessionManager.saveMEMBERID("")
+                                    sessionManager.saveSECURITYKEY("")
+                                    sessionManager.saveAuthToken("")
+                                    sessionManager.saveMIDDLENAME("")
+                                    sessionManager.saveSHAKHA_SANKHYA_AVG("")
+                                    sessionManager.saveSHAKHA_TAB("")
+                                    sessionManager.saveSHAKHANAME("")
+                                    sessionManager.savePOSTCODE("")
+                                    sessionManager.saveCOUNTRY("")
+                                    sessionManager.saveCITY("")
+                                    sessionManager.saveLineOne("")
+                                    sessionManager.saveGENDER("")
+                                    sessionManager.saveAGE("")
+                                    sessionManager.saveQUALIFICATIONAID("")
+                                    sessionManager.saveQUALIFICATION_VALUE("")
+                                    sessionManager.saveQUALIFICATION_VALUE_NAME("")
+                                    sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
+                                    sessionManager.saveQUALIFICATION_DATE("")
+                                    sessionManager.saveQUALIFICATION_FILE("")
+                                    sessionManager.saveQUALIFICATION_IS_DOC("")
+                                    sessionManager.saveDOB("")
+                                    sessionManager.saveVIBHAGNAME("")
+                                    sessionManager.saveSPOKKENLANGUAGE("")
+                                    sessionManager.saveMOBILENO("")
+                                    sessionManager.saveSECMOBILENO("")
+                                    sessionManager.saveOCCUPATIONNAME("")
+                                    sessionManager.saveADDRESS("")
+                                    sessionManager.saveGUAEMREMAIL("")
+                                    sessionManager.saveGUAEMRNAME("")
+                                    sessionManager.saveGUAEMRPHONE("")
+                                    sessionManager.saveGUAEMRRELATIONSHIP("")
+                                    sessionManager.saveSPOKKENLANGUAGEID("")
+                                    sessionManager.saveSPOKKENLANGUAGE("")
+                                    sessionManager.saveRELATIONSHIPNAME("")
+                                    sessionManager.saveRELATIONSHIPNAME_OTHER("")
+                                    sessionManager.saveNAGARID("")
+                                    sessionManager.saveDIETARY("")
+                                    sessionManager.saveDIETARYID("")
+                                    sessionManager.saveVIBHAGID("")
+                                    sessionManager.saveSTATE_IN_INDIA("")
+                                    sessionManager.saveSHAKHAID("")
 
-                                sharedPreferences.edit().apply {
-                                    putString("FIRSTNAME", "")
-                                    putString("SURNAME", "")
-                                    putString("USERNAME", "")
-                                    putString("USERID", "")
-                                    putString("USEREMAIL", "")
-                                    putString("USERROLE", "")
-                                    putString("MEMBERID", "")
-                                    putString("SECURITYKEY", "")
-                                    putString("USERTOKEN", "")
-                                    putString("Allow_biometric", "")
-                                }.apply()
+                                    sharedPreferences.edit().apply {
+                                        putString("FIRSTNAME", "")
+                                        putString("SURNAME", "")
+                                        putString("USERNAME", "")
+                                        putString("USERID", "")
+                                        putString("USEREMAIL", "")
+                                        putString("USERROLE", "")
+                                        putString("MEMBERID", "")
+                                        putString("SECURITYKEY", "")
+                                        putString("USERTOKEN", "")
+                                        putString("Allow_biometric", "")
+                                    }.apply()
 
-                                val i = Intent(this@HomeActivity, LoginActivity::class.java)
-                                startActivity(i)
-                                finishAffinity()
+                                    val i = Intent(this@HomeActivity, LoginActivity::class.java)
+                                    startActivity(i)
+                                    finishAffinity()
+                                }
+                                alertDialog.setNegativeButton(
+                                    "No"
+                                ) { _, _ ->
+                                    val i = Intent(this@HomeActivity, HomeActivity::class.java)
+                                    startActivity(i)
+                                    finishAffinity()
+                                }
+                                val alert: AlertDialog = alertDialog.create()
+                                alert.setCanceledOnTouchOutside(false)
+                                alert.show()
                             }
-                            alertDialog.setNegativeButton(
-                                "No"
-                            ) { _, _ ->
-                                val i = Intent(this@HomeActivity, HomeActivity::class.java)
-                                startActivity(i)
-                                finishAffinity()
-                            }
-                            val alert: AlertDialog = alertDialog.create()
-                            alert.setCanceledOnTouchOutside(false)
-                            alert.show()
                         }
                     }
-                }
 
-                // Don't highlight the 'Profile' and 'Like us on Facebook' item row
+                    // Don't highlight the 'Profile' and 'Like us on Facebook' item row
 //                if (position != 6 && position != 4) {
 //                    updateAdapter(position)
 //                }
-                Handler().postDelayed({
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }, 200)
-            }
-        }))
+                    Handler().postDelayed({
+                        drawerLayout.closeDrawer(GravityCompat.START)
+                    }, 200)
+                }
+            })
+        )
 
         // Update Adapter with item data and highlight the default menu item ('Home' Fragment)
 //        updateAdapter(0)
@@ -954,16 +961,12 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     private fun myPrivileges(menu_id: String, approve: String) {
         val pd = CustomProgressBar(this@HomeActivity)
         pd.show()
-        val call: Call<Get_Privileges_Response> =
-            MyHssApplication.instance!!.api.get_privileges(
-                sessionManager.fetchUserID()!!,
-                menu_id,
-                approve
-            )
+        val call: Call<Get_Privileges_Response> = MyHssApplication.instance!!.api.get_privileges(
+            sessionManager.fetchUserID()!!, menu_id, approve
+        )
         call.enqueue(object : Callback<Get_Privileges_Response> {
             override fun onResponse(
-                call: Call<Get_Privileges_Response>,
-                response: Response<Get_Privileges_Response>
+                call: Call<Get_Privileges_Response>, response: Response<Get_Privileges_Response>
             ) {
 
                 Log.d("status", response.body()?.status.toString())
@@ -1001,17 +1004,15 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     ) {
         val pd = CustomProgressBar(this@HomeActivity)
         pd.show()
-        val call: Call<Get_Profile_Response> =
-            MyHssApplication.instance!!.api.get_profile(
-                user_id,
-                member_id,
-                deviceType,
-                device_token
-            )
+        val call: Call<Get_Profile_Response> = MyHssApplication.instance!!.api.get_profile(
+            user_id,
+            member_id,
+            deviceType,
+            device_token
+        )
         call.enqueue(object : Callback<Get_Profile_Response> {
             override fun onResponse(
-                call: Call<Get_Profile_Response>,
-                response: Response<Get_Profile_Response>
+                call: Call<Get_Profile_Response>, response: Response<Get_Profile_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
 
@@ -1028,8 +1029,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 //                    data_getmember = response.body()!!.data!![0].member!!
 
                             val sharedPreferences = getSharedPreferences(
-                                "production",
-                                Context.MODE_PRIVATE
+                                "production", Context.MODE_PRIVATE
                             )
 
                             sharedPreferences.edit().apply {
@@ -1067,8 +1067,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             sessionManager.saveNAGARNAME(data_getmember[0].nagar.toString())
                             sessionManager.saveVIBHAGNAME(data_getmember[0].vibhag.toString())
                             sessionManager.saveADDRESS(
-                                data_getmember[0].buildingName.toString() + " " + data_getmember[0].addressLine1.toString()
-                                        + " " + data_getmember[0].addressLine2.toString()
+                                data_getmember[0].buildingName.toString() + " " + data_getmember[0].addressLine1.toString() + " " + data_getmember[0].addressLine2.toString()
                             )
                             sessionManager.saveLineOne(data_getmember[0].addressLine1.toString())
                             sessionManager.saveRELATIONSHIPNAME(data_getmember[0].relationship.toString())
@@ -1083,13 +1082,14 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             if (!data_getmember[0].secondaryEmail.toString().equals("null")) {
                                 sessionManager.saveSECEMAIL(data_getmember[0].secondaryEmail.toString())
                             }
+                            DebugLog.e("First Aid : " + data_getmember[0].isQualifiedInFirstAid.toString())
                             sessionManager.saveGUAEMRNAME(data_getmember[0].emergencyName.toString())
                             sessionManager.saveGUAEMRPHONE(data_getmember[0].emergencyPhone.toString())
                             sessionManager.saveGUAEMREMAIL(data_getmember[0].emergencyEmail.toString())
                             sessionManager.saveGUAEMRRELATIONSHIP(data_getmember[0].emergencyRelatioship.toString())
                             sessionManager.saveGUAEMRRELATIONSHIP_OTHER(data_getmember[0].otherEmergencyRelationship.toString())
                             sessionManager.saveDOHAVEMEDICAL(data_getmember[0].medicalInformationDeclare.toString())
-                            sessionManager.saveQUALIFICATIONAID(data_getmember[0].isQualifiedInFirstAid.toString())
+
                             sessionManager.saveAGE(data_getmember[0].memberAge.toString())
                             sessionManager.saveGENDER(data_getmember[0].gender.toString())
                             sessionManager.saveCITY(data_getmember[0].city.toString())
@@ -1097,10 +1097,14 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             sessionManager.savePOSTCODE(data_getmember[0].postalCode.toString())
                             sessionManager.saveSHAKHA_TAB(data_getmember[0].shakha_tab.toString())
                             sessionManager.saveSHAKHA_SANKHYA_AVG(data_getmember[0].shakha_sankhya_avg.toString())
-
                             sessionManager.saveMEDICAL_OTHER_INFO(data_getmember[0].medicalDetails.toString())
+                            sessionManager.saveQUALIFICATIONAID(data_getmember[0].isQualifiedInFirstAid.toString())
+                            sessionManager.saveQUALIFICATION_VALUE(data_getmember[0].first_aid_qualification_val.toString())
+                            sessionManager.saveQUALIFICATION_VALUE_NAME(data_getmember[0].first_aid_qualification_name.toString())// value name
+                            sessionManager.saveQUALIFICATION_IS_DOC(data_getmember[0].first_aid_qualification_is_doc.toString())
                             sessionManager.saveQUALIFICATION_DATE(data_getmember[0].dateOfFirstAidQualification.toString())
                             sessionManager.saveQUALIFICATION_FILE(data_getmember[0].firstAidQualificationFile.toString())
+                            sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO(data_getmember[0].professional_body_registartion_number.toString())
                             sessionManager.saveDIETARY(data_getmember[0].specialMedDietryInfo.toString())
                             sessionManager.saveDIETARYID(data_getmember[0].special_med_dietry_info_id.toString())
                             sessionManager.saveSTATE_IN_INDIA(data_getmember[0].indianConnectionState.toString())
@@ -1155,8 +1159,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     }
 
     private fun displayLocationSettingsRequest(context: Context) {
-        val googleApiClient = GoogleApiClient.Builder(context)
-            .addApi(LocationServices.API).build()
+        val googleApiClient = GoogleApiClient.Builder(context).addApi(LocationServices.API).build()
         googleApiClient.connect()
         val locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -1169,11 +1172,9 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         result.setResultCallback { result ->
             val status: Status = result.status
             when (status.statusCode) {
-                LocationSettingsStatusCodes.SUCCESS ->
-                    Log.i(
-                        TAG,
-                        "All location settings are satisfied."
-                    )
+                LocationSettingsStatusCodes.SUCCESS -> Log.i(
+                    TAG, "All location settings are satisfied."
+                )
                 LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                     Log.i(
                         TAG,
@@ -1183,8 +1184,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                         // Show the dialog by calling startResolutionForResult(), and check the result
                         // in onActivityResult().
                         status.startResolutionForResult(
-                            this@HomeActivity,
-                            1
+                            this@HomeActivity, 1
                         )
                     } catch (e: IntentSender.SendIntentException) {
                         Log.i(TAG, "PendingIntent unable to execute request.")
@@ -1200,22 +1200,18 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun checkPermission(): Boolean {
-        val result =
-            ContextCompat.checkSelfPermission(
-                applicationContext,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            )
+        val result = ContextCompat.checkSelfPermission(
+            applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
         return result == PackageManager.PERMISSION_GRANTED
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestPermission() {
         ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
+            this, arrayOf(
                 android.Manifest.permission.ACCESS_FINE_LOCATION
-            ),
-            PERMISSION_REQUEST_CODE
+            ), PERMISSION_REQUEST_CODE
         )
     }
 

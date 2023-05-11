@@ -15,7 +15,6 @@ import android.view.Window
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.*
 import com.facebook.login.LoginManager
@@ -27,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -46,7 +46,6 @@ import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.Welcome.WelcomeActivity
 import pro.devapp.biometric.BiometricCallback
-import pro.devapp.biometric.BiometricDialogV23Interface
 import pro.devapp.biometric.BiometricManager
 import retrofit2.Call
 import retrofit2.Callback
@@ -61,7 +60,6 @@ class LoginActivity : AppCompatActivity() {
 //    var isMapInfoShown: Boolean = false
     lateinit var sharedPreferences: SharedPreferences
     private lateinit var sessionManager: SessionManager
-    private lateinit var forgot_password_layout: RelativeLayout
 
     private val sharedPrefFile = "MyHss"
 
@@ -98,27 +96,19 @@ class LoginActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
 
         m_deviceId = Settings.Secure.getString(
-            contentResolver,
-            Settings.Secure.ANDROID_ID
+            contentResolver, Settings.Secure.ANDROID_ID
         )
 
         Log.d("m_deviceId", m_deviceId)
 
         val login_btn = findViewById<TextView>(R.id.login_btn)
         val edit_username = findViewById<TextInputEditText>(R.id.edit_username)
-        val edit_forgotusername = findViewById<TextInputEditText>(R.id.edit_forgotusername)
         val edit_password = findViewById<TextInputEditText>(R.id.edit_password)
-//        val edit_password = findViewById<ShowHidePasswordEditText>(R.id.edit_password)
         val registration_layout = findViewById<RelativeLayout>(R.id.registration_layout)
         val forgot_btn = findViewById<TextView>(R.id.forgot_btn)
         val rootLayout = findViewById<RelativeLayout>(R.id.rootLayout)
-        forgot_password_layout = findViewById(R.id.forgot_password_layout)
-        val close_layout = findViewById<ImageView>(R.id.close_layout)
-        val forgot_passwordbtn = findViewById<TextView>(R.id.forgot_passwordbtn)
-//        val hide_show = findViewById<ImageView>(R.id.hide_show)
-//        val facebook_login = findViewById<ImageView>(R.id.facebook_login)
         val gmail_login = findViewById<ImageView>(R.id.gmail_login)
-
+//        val facebook_login = findViewById<ImageView>(R.id.facebook_login)
         /*val sharedPreferences: SharedPreferences = this.getSharedPreferences(
             sharedPrefFile,
             Context.MODE_PRIVATE
@@ -137,8 +127,7 @@ class LoginActivity : AppCompatActivity() {
                     Log.d("MainActivity", "Facebook token: " + loginResult!!.accessToken.token)
                     startActivity(
                         Intent(
-                            applicationContext,
-                            HomeActivity::class.java
+                            applicationContext, HomeActivity::class.java
 //                            MainActivity::class.java
                         )
                     )// App code
@@ -151,8 +140,8 @@ class LoginActivity : AppCompatActivity() {
                 }
             })
             callbackManager = CallbackManager.Factory.create()
-            LoginManager.getInstance().registerCallback(callbackManager,
-                object : FacebookCallback<LoginResult?> {
+            LoginManager.getInstance()
+                .registerCallback(callbackManager, object : FacebookCallback<LoginResult?> {
                     override fun onSuccess(loginResult: LoginResult?) { // App code
                     }
 
@@ -164,14 +153,12 @@ class LoginActivity : AppCompatActivity() {
 
                     val accessToken = AccessToken.getCurrentAccessToken()
 //                    accessToken != null && !accessToken.isExpired
-                }
-            )
+                })
         }
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("780977723182-n1l2dbg5k9h8trm1nfeditcje078s9kj.apps.googleusercontent.com")
-            .requestEmail()
-            .build()
+            .requestEmail().build()
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
@@ -184,14 +171,26 @@ class LoginActivity : AppCompatActivity() {
             val user = edit_username.text.toString()
             val password = edit_password.text.toString()
 
-            if (user.isEmpty()) {
+
+
+            if (user.isEmpty() && password.isEmpty()) {
+                Snackbar.make(rootLayout, "Please Enter Username & Password", Snackbar.LENGTH_SHORT)
+                    .show()
+                edit_username.error = ""
+                edit_password.error = ""
+                edit_username.requestFocus()
+                edit_password.requestFocus()
+                return@setOnClickListener
+            } else if (user.isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Username", Snackbar.LENGTH_SHORT).show()
-                edit_username.error = "Username required"
+//                edit_username.error = "Username required"
+                edit_username.error = ""
                 edit_username.requestFocus()
                 return@setOnClickListener
             } else if (password.isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Password.", Snackbar.LENGTH_SHORT).show()
-                edit_password.error = "Password required"
+//                edit_password.error = "Password required"
+                edit_password.error = ""
                 edit_password.requestFocus()
                 return@setOnClickListener
             } else {
@@ -217,12 +216,12 @@ class LoginActivity : AppCompatActivity() {
 
                 if (user.isEmpty()) {
                     Snackbar.make(rootLayout, "Please Enter Username", Snackbar.LENGTH_SHORT).show()
-                    edit_username.error = "Username required"
+                    edit_username.error = "     Username required"
                     edit_username.requestFocus()
                 } else if (password.isEmpty()) {
                     Snackbar.make(rootLayout, "Please Enter Password.", Snackbar.LENGTH_SHORT)
                         .show()
-                    edit_password.error = "Password required"
+                    edit_password.error = "     Password required"
                     edit_password.requestFocus()
                 } else {
                     if (Functions.isConnectingToInternet(this@LoginActivity)) {
@@ -258,33 +257,44 @@ class LoginActivity : AppCompatActivity() {
         }
 
         forgot_btn.setOnClickListener {
-            sessionManager.slideUp(forgot_password_layout)
-        }
+            val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
+            val view_d = layoutInflater.inflate(R.layout.dialog_forgotpassword, null)
+            val btnClose = view_d.findViewById<ImageView>(R.id.close_layout)
+            val edit_forgotusername =
+                view_d.findViewById<TextInputEditText>(R.id.edit_forgotusername)
+            val forgot_passwordbtn = view_d.findViewById<TextView>(R.id.forgot_passwordbtn)
+            btnClose.setOnClickListener {
+                dialog.dismiss()
+            }
 
-        close_layout.setOnClickListener {
-            sessionManager.slideDown(forgot_password_layout)
-        }
-
-        forgot_passwordbtn.setOnClickListener {
-            val forgotuser = edit_forgotusername.text.toString()
-
-            if (forgotuser.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Username", Snackbar.LENGTH_SHORT).show()
-                edit_forgotusername.error = "Username required"
-                edit_forgotusername.requestFocus()
-                return@setOnClickListener
-            } else {
-                sessionManager.slideDown(forgot_password_layout)
-                if (Functions.isConnectingToInternet(this@LoginActivity)) {
-                    forgot(forgotuser)
+            forgot_passwordbtn.setOnClickListener {
+                val forgotuser = edit_forgotusername.text.toString()
+                if (forgotuser.isEmpty()) {
+                    dialog?.window?.decorView?.let { it1 ->
+                        Snackbar.make(
+                            it1, "Please Enter Username", Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                    edit_forgotusername.error = "   Username required"
+                    edit_forgotusername.requestFocus()
+                    return@setOnClickListener
                 } else {
-                    Toast.makeText(
-                        this@LoginActivity,
-                        resources.getString(R.string.no_connection),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    dialog.dismiss()
+                    if (Functions.isConnectingToInternet(this@LoginActivity)) {
+                        forgot(forgotuser)
+                    } else {
+                        Toast.makeText(
+                            this@LoginActivity,
+                            resources.getString(R.string.no_connection),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
+
+            dialog.setCancelable(true)
+            dialog.setContentView(view_d)
+            dialog.show()
         }
     }
 
@@ -296,17 +306,15 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun revokeAccess() {
-        mGoogleSignInClient.revokeAccess()
-            .addOnCompleteListener(this) {
-                // Update your UI here
-            }
+        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this) {
+            // Update your UI here
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
-            val task =
-                GoogleSignIn.getSignedInAccountFromIntent(data)
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
         }
     }
@@ -334,8 +342,7 @@ class LoginActivity : AppCompatActivity() {
 //                    )
                     if (response.body()!!.status == true) {
                         val sharedPreferences = getSharedPreferences(
-                            "production",
-                            Context.MODE_PRIVATE
+                            "production", Context.MODE_PRIVATE
                         )
                         sessionManager.saveDEVICE_TOKEN(m_deviceId)
                         sessionManager.saveFIRSTNAME(response.body()!!.firstname!!)
@@ -376,11 +383,11 @@ class LoginActivity : AppCompatActivity() {
                         editor.apply()
                         editor.commit()
 
-                        if (response.body()!!.memberId == "") {  // && sharedPreferences.getString("MEMBERID", "") == ""
+                        if (response.body()!!.memberId == "" || response.body()!!.memberStatus == "0") {  // && sharedPreferences.getString("MEMBERID", "") == ""
                             val i = Intent(this@LoginActivity, WelcomeActivity::class.java)
                             startActivity(i)
                             finish()
-                        } else {
+                        } else if (response.body()!!.memberId != "" && response.body()!!.memberStatus == "1") {
 
 //                            showDialog(this@LoginActivity)
 
@@ -412,9 +419,13 @@ class LoginActivity : AppCompatActivity() {
                             i.putExtra("CHANGE_BIOMETRIC", "")
                             startActivity(i)
                             finish()
+                        } else {
+                            Functions.displayMessage(
+                                this@LoginActivity, "Login Error, Please try after sometime"
+                            )
                         }
                     } else {
-                        Functions.displayMessage(this@LoginActivity,response.body()?.message)
+                        Functions.displayMessage(this@LoginActivity, response.body()?.message)
 //                        Functions.showAlertMessageWithOK(
 //                            this@LoginActivity, "",
 ////                            "Message"+true,
@@ -456,8 +467,7 @@ class LoginActivity : AppCompatActivity() {
             MyHssApplication.instance!!.api.userForgot(forgotuser)
         call.enqueue(object : Callback<ForgotPasswordResponse> {
             override fun onResponse(
-                call: Call<ForgotPasswordResponse>,
-                response: Response<ForgotPasswordResponse>
+                call: Call<ForgotPasswordResponse>, response: Response<ForgotPasswordResponse>
             ) {
 
                 if (response.code() == 200 && response.body() != null) {
@@ -600,9 +610,7 @@ class LoginActivity : AppCompatActivity() {
             override fun onBiometricAuthenticationNotAvailable() {
                 Log.d("FP", "onBiometricAuthenticationNotAvailable")
                 Toast.makeText(
-                    this@LoginActivity,
-                    "onBiometricAuthenticationNotAvailable",
-                    Toast.LENGTH_SHORT
+                    this@LoginActivity, "onBiometricAuthenticationNotAvailable", Toast.LENGTH_SHORT
                 ).show()
                 CallDashboard()
             }
@@ -705,8 +713,7 @@ class LoginActivity : AppCompatActivity() {
         if (sharedPreferences.getString("MEMBERID", "") != "") {
             startActivity(
                 Intent(
-                    this@LoginActivity,
-                    HomeActivity::class.java
+                    this@LoginActivity, HomeActivity::class.java
                 )
             )
 //                                MainActivity::class.java))
@@ -714,8 +721,7 @@ class LoginActivity : AppCompatActivity() {
         } else {
             startActivity(
                 Intent(
-                    this@LoginActivity,
-                    WelcomeActivity::class.java
+                    this@LoginActivity, WelcomeActivity::class.java
                 )
             )
             finish()

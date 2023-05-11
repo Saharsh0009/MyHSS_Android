@@ -57,7 +57,7 @@ class GuruDakshinaRegularCompleteActivity() : AppCompatActivity() {
         val header_title = findViewById<TextView>(R.id.header_title)
         back_arrow.visibility = View.INVISIBLE
 
-        header_title.text = getString(R.string.regular)
+        header_title.text = getString(R.string.regular_dakshina)
 
         rootLayout = findViewById(R.id.rootLayout)
 

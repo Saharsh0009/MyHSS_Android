@@ -22,6 +22,7 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
     private lateinit var user_name_txt: TextView
     private lateinit var shakha_name_txt: TextView
     private lateinit var frequency_of_donation_txt: TextView
+    private lateinit var frequency_of_donation_value: TextView
     private lateinit var gift_aid_txt: TextView
     private lateinit var date_txt: TextView
     private lateinit var status_txt: TextView
@@ -42,7 +43,9 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("GuruDakshinaaVC")
-        sessionManager.firebaseAnalytics.setUserProperty("GuruDakshinaaVC", "GuruDakshinaRegularDetail")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "GuruDakshinaaVC", "GuruDakshinaRegularDetail"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -57,6 +60,7 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
         user_name_txt = findViewById(R.id.user_name_txt)
         shakha_name_txt = findViewById(R.id.shakha_name_txt)
         frequency_of_donation_txt = findViewById(R.id.frequency_of_donation_txt)
+        frequency_of_donation_value = findViewById(R.id.frequency_of_donation_value)
         gift_aid_txt = findViewById(R.id.gift_aid_txt)
         date_txt = findViewById(R.id.date_txt)
         status_txt = findViewById(R.id.status_txt)
@@ -67,11 +71,19 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
 
         rootLayout = findViewById(R.id.rootLayout)
 
-        frequency_of_donation_txt.visibility = View.GONE
+
+        if (intent.getStringExtra("dakshina").toString() == "One-Time") {
+            frequency_of_donation_txt.visibility = View.GONE
+            frequency_of_donation_value.visibility = View.GONE
+        } else {
+            frequency_of_donation_txt.visibility = View.VISIBLE
+            frequency_of_donation_value.visibility = View.VISIBLE
+        }
+
 
         user_name_txt.text = intent.getStringExtra("username_name")!!.capitalize(Locale.ROOT)
         shakha_name_txt.text = intent.getStringExtra("user_shakha_type")!!.capitalize(Locale.ROOT)
-        frequency_of_donation_txt.text = intent.getStringExtra("recurring")
+        frequency_of_donation_value.text = intent.getStringExtra("recurring")
         gift_aid_txt.text = intent.getStringExtra("giftAid")!!.capitalize(Locale.ROOT)
         date_txt.text = intent.getStringExtra("date_txt")
         status_txt.text = intent.getStringExtra("status")

@@ -1,6 +1,8 @@
 package com.uk.myhss.Restful
 
 import com.google.gson.JsonObject
+import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
+import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.AllShakha.Model.Get_Shakha_Details_Response
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Splash.Model.Biometric.Latest_Update.latest_update_response
@@ -172,16 +174,14 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/member/get_nagar_by_vibhag")
     fun get_nagar(
-        @Field("vibhag_id") vibhag_id: String,
-        @Field("user_id") user_id: String
+        @Field("vibhag_id") vibhag_id: String, @Field("user_id") user_id: String
     ): Call<Get_Nagar_Response>
 
     /*Get Shakha*/
     @FormUrlEncoded
     @POST("api/v1/member/get_shakha_by_nagar")
     fun get_shakha(
-        @Field("nagar_id") nagar_id: String,
-        @Field("user_id") user_id: String
+        @Field("nagar_id") nagar_id: String, @Field("user_id") user_id: String
     ): Call<Get_Shakha_Response>
 
     /*Get Pincode*/
@@ -209,194 +209,6 @@ interface ApiInterface {
     /*Get Indianstates*/
     @GET("api/v1/member/get_indianstates")
     fun get_indianstates(): Call<Get_Indianstates_Response>
-
-    @Multipart
-    @POST("api/v1/member/create_membership")
-    fun updateMembershipWithoutImage(
-//        @Part qualification_file: MultipartBody.Part,
-        @Part("user_id") user_id: RequestBody,
-        @Part("first_name") first_name: RequestBody,
-        @Part("middle_name") middle_name: RequestBody,
-        @Part("last_name") last_name: RequestBody,
-        @Part("username") username: RequestBody,
-        @Part("email") email: RequestBody,
-        @Part("password") password: RequestBody,
-        @Part("gender") gender: RequestBody,
-        @Part("dob") dob: RequestBody,
-        @Part("age") age: RequestBody,
-        @Part("relationship") relationship: RequestBody,
-        @Part("other_relationship") other_relationship: RequestBody,
-        @Part("occupation") occupation: RequestBody,
-        @Part("occupation_name") occupation_name: RequestBody,
-        @Part("shakha") shakha: RequestBody,
-        @Part("mobile") mobile: RequestBody,
-        @Part("land_line") land_line: RequestBody,
-        @Part("secondary_email") secondary_email: RequestBody,
-        @Part("post_code") post_code: RequestBody,
-        @Part("building_name") building_name: RequestBody,
-        @Part("address_line_1") address_line_1: RequestBody,
-        @Part("address_line_2") address_line_2: RequestBody,
-        @Part("post_town") post_town: RequestBody,
-        @Part("county") county: RequestBody,
-        @Part("emergency_name") emergency_name: RequestBody,
-        @Part("emergency_phone") emergency_phone: RequestBody,
-        @Part("emergency_email") emergency_email: RequestBody,
-        @Part("emergency_relationship") emergency_relationship: RequestBody,
-        @Part("other_emergency_relationship") other_emergency_relationship: RequestBody,
-        @Part("medical_information") medical_information: RequestBody,
-        @Part("provide_details") provide_details: RequestBody,
-        @Part("is_qualified_in_first_aid") is_qualified_in_first_aid: RequestBody,
-        @Part("date_of_first_aid_qualification") date_of_first_aid_qualification: RequestBody,
-        @Part("special_med_dietry_info") special_med_dietry_info: RequestBody,
-        @Part("language") language: RequestBody,
-        @Part("state") state: RequestBody,
-        @Part("parent_member_id") parent_member_id: RequestBody,
-        @Part("type") type: RequestBody,
-        @Part("is_linked") is_linked: RequestBody,
-        @Part("is_self") is_self: RequestBody,
-        @Part("app") app: RequestBody
-    ): Call<JsonObject>
-
-    @Multipart
-    @POST("api/v1/member/create_membership")
-    fun updateProfileWithoutImage(
-//        @Part qualification_file: MultipartBody.Part,
-        @Part("user_id") user_id: RequestBody,
-        @Part("first_name") first_name: RequestBody,
-        @Part("middle_name") middle_name: RequestBody,
-        @Part("last_name") last_name: RequestBody,
-        @Part("username") username: RequestBody,
-        @Part("email") email: RequestBody,
-        @Part("password") password: RequestBody,
-        @Part("gender") gender: RequestBody,
-        @Part("dob") dob: RequestBody,
-        @Part("age") age: RequestBody,
-//        @Part("relationship") relationship: RequestBody,
-//        @Part("other_relationship") other_relationship: RequestBody,
-        @Part("occupation") occupation: RequestBody,
-        @Part("occupation_name") occupation_name: RequestBody,
-        @Part("shakha") shakha: RequestBody,
-        @Part("mobile") mobile: RequestBody,
-        @Part("land_line") land_line: RequestBody,
-        @Part("secondary_email") secondary_email: RequestBody,
-        @Part("post_code") post_code: RequestBody,
-        @Part("building_name") building_name: RequestBody,
-        @Part("address_line_1") address_line_1: RequestBody,
-        @Part("address_line_2") address_line_2: RequestBody,
-        @Part("post_town") post_town: RequestBody,
-        @Part("county") county: RequestBody,
-        @Part("emergency_name") emergency_name: RequestBody,
-        @Part("emergency_phone") emergency_phone: RequestBody,
-        @Part("emergency_email") emergency_email: RequestBody,
-        @Part("emergency_relationship") emergency_relationship: RequestBody,
-        @Part("other_emergency_relationship") other_emergency_relationship: RequestBody,
-        @Part("medical_information") medical_information: RequestBody,
-        @Part("provide_details") provide_details: RequestBody,
-        @Part("is_qualified_in_first_aid") is_qualified_in_first_aid: RequestBody,
-        @Part("date_of_first_aid_qualification") date_of_first_aid_qualification: RequestBody,
-        @Part("special_med_dietry_info") special_med_dietry_info: RequestBody,
-        @Part("language") language: RequestBody,
-        @Part("state") state: RequestBody,
-        @Part("parent_member_id") parent_member_id: RequestBody,
-        @Part("type") type: RequestBody,
-        @Part("is_linked") is_linked: RequestBody,
-        @Part("is_self") is_self: RequestBody,
-        @Part("app") app: RequestBody
-    ): Call<JsonObject>
-
-    @Multipart
-    @POST("api/v1/member/create_membership")
-    fun updateMembership(
-        @Part qualification_file: MultipartBody.Part,
-        @Part("user_id") user_id: RequestBody,
-        @Part("first_name") first_name: RequestBody,
-        @Part("middle_name") middle_name: RequestBody,
-        @Part("last_name") last_name: RequestBody,
-        @Part("username") username: RequestBody,
-        @Part("email") email: RequestBody,
-        @Part("password") password: RequestBody,
-        @Part("gender") gender: RequestBody,
-        @Part("dob") dob: RequestBody,
-        @Part("age") age: RequestBody,
-        @Part("relationship") relationship: RequestBody,
-        @Part("other_relationship") other_relationship: RequestBody,
-        @Part("occupation") occupation: RequestBody,
-        @Part("occupation_name") occupation_name: RequestBody,
-        @Part("shakha") shakha: RequestBody,
-        @Part("mobile") mobile: RequestBody,
-        @Part("land_line") land_line: RequestBody,
-        @Part("secondary_email") secondary_email: RequestBody,
-        @Part("post_code") post_code: RequestBody,
-        @Part("building_name") building_name: RequestBody,
-        @Part("address_line_1") address_line_1: RequestBody,
-        @Part("address_line_2") address_line_2: RequestBody,
-        @Part("post_town") post_town: RequestBody,
-        @Part("county") county: RequestBody,
-        @Part("emergency_name") emergency_name: RequestBody,
-        @Part("emergency_phone") emergency_phone: RequestBody,
-        @Part("emergency_email") emergency_email: RequestBody,
-        @Part("emergency_relationship") emergency_relationship: RequestBody,
-        @Part("other_emergency_relationship") other_emergency_relationship: RequestBody,
-        @Part("medical_information") medical_information: RequestBody,
-        @Part("provide_details") provide_details: RequestBody,
-        @Part("is_qualified_in_first_aid") is_qualified_in_first_aid: RequestBody,
-        @Part("date_of_first_aid_qualification") date_of_first_aid_qualification: RequestBody,
-        @Part("special_med_dietry_info") special_med_dietry_info: RequestBody,
-        @Part("language") language: RequestBody,
-        @Part("state") state: RequestBody,
-        @Part("parent_member_id") parent_member_id: RequestBody,
-        @Part("type") type: RequestBody,
-        @Part("is_linked") is_linked: RequestBody,
-        @Part("is_self") is_self: RequestBody,
-        @Part("app") app: RequestBody
-    ): Call<JsonObject>
-
-    @Multipart
-    @POST("api/v1/member/create_membership")
-    fun updateProfile(
-        @Part qualification_file: MultipartBody.Part,
-        @Part("user_id") user_id: RequestBody,
-        @Part("first_name") first_name: RequestBody,
-        @Part("middle_name") middle_name: RequestBody,
-        @Part("last_name") last_name: RequestBody,
-        @Part("username") username: RequestBody,
-        @Part("email") email: RequestBody,
-        @Part("password") password: RequestBody,
-        @Part("gender") gender: RequestBody,
-        @Part("dob") dob: RequestBody,
-        @Part("age") age: RequestBody,
-//        @Part("relationship") relationship: RequestBody,
-//        @Part("other_relationship") other_relationship: RequestBody,
-        @Part("occupation") occupation: RequestBody,
-        @Part("occupation_name") occupation_name: RequestBody,
-        @Part("shakha") shakha: RequestBody,
-        @Part("mobile") mobile: RequestBody,
-        @Part("land_line") land_line: RequestBody,
-        @Part("secondary_email") secondary_email: RequestBody,
-        @Part("post_code") post_code: RequestBody,
-        @Part("building_name") building_name: RequestBody,
-        @Part("address_line_1") address_line_1: RequestBody,
-        @Part("address_line_2") address_line_2: RequestBody,
-        @Part("post_town") post_town: RequestBody,
-        @Part("county") county: RequestBody,
-        @Part("emergency_name") emergency_name: RequestBody,
-        @Part("emergency_phone") emergency_phone: RequestBody,
-        @Part("emergency_email") emergency_email: RequestBody,
-        @Part("emergency_relationship") emergency_relationship: RequestBody,
-        @Part("other_emergency_relationship") other_emergency_relationship: RequestBody,
-        @Part("medical_information") medical_information: RequestBody,
-        @Part("provide_details") provide_details: RequestBody,
-        @Part("is_qualified_in_first_aid") is_qualified_in_first_aid: RequestBody,
-        @Part("date_of_first_aid_qualification") date_of_first_aid_qualification: RequestBody,
-        @Part("special_med_dietry_info") special_med_dietry_info: RequestBody,
-        @Part("language") language: RequestBody,
-        @Part("state") state: RequestBody,
-        @Part("parent_member_id") parent_member_id: RequestBody,
-        @Part("type") type: RequestBody,
-        @Part("is_linked") is_linked: RequestBody,
-        @Part("is_self") is_self: RequestBody,
-        @Part("app") app: RequestBody
-    ): Call<JsonObject>
 
     /*Get create_membership*/
     @FormUrlEncoded
@@ -556,8 +368,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/guru_dakshina/family_members")
     fun get_family_members(
-        @Field("user_id") user_id: String,
-        @Field("member_id") member_id: String
+        @Field("user_id") user_id: String, @Field("member_id") member_id: String
     ): Call<Family_Member_Response>
 
     /*Post sankhya add*/
@@ -601,17 +412,16 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/sankhya/get_record")
     fun get_sankhya_get_record(
-        @Field("user_id") user_id: String,
-        @Field("id") sankhya_id: String
+        @Field("user_id") user_id: String, @Field("id") sankhya_id: String
     ): Call<Sankhya_details_Response>
 
     /*Post Single Member*/
     @FormUrlEncoded
     @POST("v1/member/record")
     fun get_single_member_record(
-        @Field("user_id") user_id: String,
-        @Field("member_id") member_id: String
+        @Field("user_id") user_id: String, @Field("member_id") member_id: String
     ): Call<Get_Single_Member_Record_Response>
+
 
     /*Post update_membership*/
     @FormUrlEncoded
@@ -678,40 +488,35 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/member/delete")
     fun get_member_delete(
-        @Field("user_id") user_id: String,
-        @Field("member_id") member_id: String
+        @Field("user_id") user_id: String, @Field("member_id") member_id: String
     ): Call<Get_Member_Delete_Response>
 
     /*Post member inactive*/
     @FormUrlEncoded
     @POST("api/v1/member/inactive")
     fun get_member_inactive(
-        @Field("user_id") user_id: String,
-        @Field("member_id") member_id: String
+        @Field("user_id") user_id: String, @Field("member_id") member_id: String
     ): Call<Get_Member_Inactive_Response>
 
     /*Post member active*/
     @FormUrlEncoded
     @POST("api/v1/member/active")
     fun get_member_active(
-        @Field("user_id") user_id: String,
-        @Field("member_id") member_id: String
+        @Field("user_id") user_id: String, @Field("member_id") member_id: String
     ): Call<Get_Member_Active_Response>
 
     /*Post member approve*/
     @FormUrlEncoded
     @POST("api/v1/member/approve")
     fun get_member_approve(
-        @Field("user_id") user_id: String,
-        @Field("member_id") member_id: String
+        @Field("user_id") user_id: String, @Field("member_id") member_id: String
     ): Call<Get_Member_Approve_Response>
 
     /*Post member reject*/
     @FormUrlEncoded
     @POST("api/v1/member/reject")
     fun get_member_reject(
-        @Field("user_id") user_id: String,
-        @Field("member_id") member_id: String
+        @Field("user_id") user_id: String, @Field("member_id") member_id: String
     ): Call<Get_Member_Reject_Response>
 
     /*Post member check_username_exist*/
@@ -754,8 +559,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/Member/seen_suchana_by_member")
     fun get_seen_suchana_by_member(
-        @Field("suchana_id") suchana_id: String,
-        @Field("member_id") member_id: String
+        @Field("suchana_id") suchana_id: String, @Field("member_id") member_id: String
     ): Call<Get_Suchana_Seen_Response>
 
     /*Post SuryaNamasakar Add*/
@@ -773,9 +577,9 @@ interface ApiInterface {
 //        @Field("surynamaskar") surynamaskar: ArrayList<String>
     ): Call<save_suryanamaskarResponse>
 
-//    @Headers("Content-Type: application/json;charset=UTF-8")
+    //    @Headers("Content-Type: application/json;charset=UTF-8")
     @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
-    fun postsuryanamasakar_count(@Body logs:String ):Call<save_suryanamaskarResponse>
+    fun postsuryanamasakar_count(@Body logs: String): Call<save_suryanamaskarResponse>
 
 //    @FormUrlEncoded
 //    @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
@@ -786,8 +590,19 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/suryanamaskar/get_suryanamaskar_count")
     fun get_suryanamaskar_count(
-        @Field("member_id") member_id: String,
-        @Field("is_api") is_api: String
+        @Field("member_id") member_id: String, @Field("is_api") is_api: String
     ): Call<Get_SuryaNamaskar_ModelResponse>
+
+    //Nikunj
+    @POST("api/v1/member/create_membership")
+    fun postAddOrCreateMembership(@Body body: MultipartBody): Call<JsonObject>
+
+    //Nikunj
+    @POST("api/v1/member/update_membership")
+    fun postUpdateMembership(@Body body: MultipartBody): Call<JsonObject>
+
+    /*Get First Aid Info*/
+    @GET("api/v1/member/firstaidinfo")
+    fun getFirstAidInfor(): Call<FirstAidInfo>
 
 }

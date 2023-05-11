@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings.Global.getString
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -919,9 +920,12 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                 alertBuilder.setPositiveButton(
                                     "OK"
                                 ) { dialog, which ->
+
                                     val i = Intent(itemView.context, LinkedFamilyFragment::class.java)
                                     i.putExtra("DashBoard", "SHAKHAVIEW")
+                                    i.putExtra("headerName", itemView.context.getString(R.string.my_shakha))
                                     itemView.context.startActivity(i)
+
                                     (itemView.context as AppCompatActivity).finishAffinity()
 
 //                                    itemView.context.startActivity(
@@ -993,6 +997,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                 ) { dialog, which ->
                                     val i = Intent(itemView.context, LinkedFamilyFragment::class.java)
                                     i.putExtra("DashBoard", "SHAKHAVIEW")
+                                    i.putExtra("headerName", itemView.context.getString(R.string.my_shakha))
                                     itemView.context.startActivity(i)
                                     (itemView.context as AppCompatActivity).finishAffinity()
 //                                    itemView.context.startActivity(
@@ -1171,6 +1176,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                 ) { dialog, which ->
                                     val i = Intent(itemView.context, LinkedFamilyFragment::class.java)
                                     i.putExtra("DashBoard", "SHAKHAVIEW")
+                                    i.putExtra("headerName", itemView.context.getString(R.string.my_shakha))
                                     itemView.context.startActivity(i)
                                     (itemView.context as AppCompatActivity).finishAffinity()
 //                                    itemView.context.startActivity(

@@ -41,7 +41,6 @@
                     android:textColor="@color/blackColor" />
 
                 <TextView
-                    android:id="@+id/donate_amount_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pound_icon"
@@ -51,6 +50,24 @@
                     android:fontFamily="@font/sourcesanspro_semibold"
                     android:textSize="@dimen/font_size18"
                     android:textColor="@color/blackColor" />
+
+                <TextView
+                    android:id="@+id/donate_amount_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:theme="@style/StyleTextView"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:textSize="@dimen/font_size18"
+                    android:textColor="@color/blackColor" />
+
+                <ImageView
+                    android:id="@+id/edit_payment"
+                    android:layout_width="@dimen/padding20"
+                    android:layout_height="@dimen/padding20"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/payment_edit" />
 
             </LinearLayout>
 
