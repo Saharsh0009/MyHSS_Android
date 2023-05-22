@@ -237,6 +237,7 @@
     <string name="member_view">Members View</string>
     <string name="attended">All Attended</string>
     <string name="review">Review</string>
+    <string name="preview">Preview</string>
     <string name="prev">Prev</string>
     <string name="guardian_name">Guardian Name</string>
     <string name="guardian_full_name">Guardian full name</string>
@@ -292,10 +293,12 @@
     <string name="shobha_com">shobha@gmail.com </string>
     <string name="to_verify_your_account">to verify your account.</string>
     <string name="membership_applications">Membership</string>  <!--Applications-->
+    <string name="membership_applications_new">Membership Applications</string>
     <string name="view_membership_applications">View Membership Applications</string>
     <string name="active_members">Active Members</string>
     <string name="view_active_members">View Active Members List</string>
     <string name="inactive_applications">In active Members</string>
+    <string name="inactive_members">Inactive Members</string>
     <string name="rejected_applications">Rejected Applications</string>
     <string name="view_rejected_applications">View Rejected Membership Applications</string>
     <string name="approve">Approve</string>
@@ -385,6 +388,7 @@
     <!--Report-->
     <string name="reports">Reports</string>
     <string name="sankhya">Sankhya</string>
+    <string name="sankhya_count">Sankhya : </string>
 
     <!--Shakha-->
     <string name="my_space">My Space</string>
@@ -413,5 +417,7 @@
     <string name="download_certificate">Download Certificate</string>
     <string name="pro_body_reg_number">Professional body registartion number</string>
     <string name="view_certificate">View Certificate</string>
+    <string name="guest">Guest</string>
+    <string name="total">Total</string>
 
 </resources>

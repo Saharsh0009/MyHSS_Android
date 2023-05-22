@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:theme="@style/StyleTextView"
-                    android:text="@string/membership_applications"
+                    android:text="@string/membership_applications_new"
                     android:textSize="@dimen/font_size18" />
 
                 <TextView

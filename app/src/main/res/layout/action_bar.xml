@@ -2,112 +2,112 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
+    android:id="@+id/title_actionbar"
     android:layout_width="match_parent"
     android:layout_height="@dimen/padding50"
-    android:weightSum="5"
-    android:id="@+id/title_actionbar"
-    android:background="@color/primaryColor">
+    android:background="@color/primaryColor"
+    android:orientation="horizontal"
+    android:weightSum="5">
 
     <ImageView
         android:id="@+id/back_arrow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/backbtn"
-        android:padding="@dimen/padding10"
+        android:layout_gravity="center_vertical"
         android:layout_weight="2"
-        android:layout_gravity="center_vertical" />
+        android:padding="@dimen/padding10"
+        android:src="@drawable/backbtn" />
 
     <TextView
         android:id="@+id/header_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="header"
-        android:layout_weight="1"
-        android:textColor="@color/white"
+        android:layout_gravity="center"
         android:layout_marginStart="@dimen/padding5"
         android:layout_marginEnd="@dimen/padding5"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_weight="1"
         android:fontFamily="@font/sourcesanspro_semibold"
+        android:gravity="center"
+        android:text="header"
         android:textAlignment="center"
-        android:theme="@style/StyleTextView"
-        android:textSize="@dimen/font_size20" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/font_size20"
+        android:theme="@style/StyleTextView" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:layout_weight="2" >
+        android:layout_weight="2">
 
-    <ImageView
-        android:id="@+id/info_tooltip"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/infoyellow"
-        android:visibility="invisible"
-        android:padding="12dp"
-        android:layout_gravity="center_vertical" />
+        <ImageView
+            android:id="@+id/info_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="12dp"
+            android:src="@drawable/infoyellow"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/add_more"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Add"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:visibility="gone"
             android:fontFamily="@font/sourcesanspro_semibold"
+            android:gravity="center"
+            android:text="Add"
             android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size20"
             android:theme="@style/StyleTextView"
-            android:textSize="@dimen/font_size20" />
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/calender_icon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="12dp"
             android:src="@drawable/calender"
             android:visibility="invisible"
-            android:padding="12dp"
-            android:layout_gravity="center_vertical"
             app:tint="@color/white" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/menu_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/padding10"
                 android:src="@drawable/map_list"
                 android:visibility="invisible"
-                android:layout_centerHorizontal="true"
-                android:padding="@dimen/padding10"
-                android:layout_gravity="center_vertical"
                 app:tint="@color/white" />
 
-        <ImageView
-            android:id="@+id/map_icon"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/map"
-            android:visibility="invisible"
-            android:padding="@dimen/padding5"
-            android:layout_gravity="center_vertical"
-            app:tint="@color/white" />
+            <ImageView
+                android:id="@+id/map_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/padding5"
+                android:src="@drawable/map"
+                android:visibility="invisible"
+                app:tint="@color/white" />
 
-        <ImageView
-            android:id="@+id/map_reload"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/clear_icon"
-            android:visibility="invisible"
-            android:padding="@dimen/padding15"
-            android:tint="@color/white"
-            android:layout_gravity="center_vertical"
-            app:tint="@color/white"
-            tools:ignore="UseAppTint" />
+            <ImageView
+                android:id="@+id/map_reload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/padding15"
+                android:src="@drawable/clear_icon"
+                android:tint="@color/white"
+                android:visibility="invisible"
+                app:tint="@color/white"
+                tools:ignore="UseAppTint" />
 
         </RelativeLayout>
 
@@ -117,31 +117,32 @@
             android:layout_height="@dimen/padding35"
             android:layout_marginStart="@dimen/padding20"
             android:layout_marginTop="@dimen/padding5"
-            android:visibility="invisible"
-            android:background="@drawable/white_orange_circle">
+            android:background="@drawable/white_orange_circle"
+            android:visibility="invisible">
             <!--white_orange_circle-->
 
             <ImageView
                 android:layout_width="@dimen/padding20"
                 android:layout_height="@dimen/padding20"
-                android:src="@drawable/shakaha_icon"
-                android:layout_marginTop="@dimen/padding15"
                 android:layout_marginStart="@dimen/padding10"
+                android:layout_marginTop="@dimen/padding15"
                 android:scaleType="fitCenter"
+                android:src="@drawable/shakaha_icon"
                 app:tint="@color/white" />
-    <TextView
-        android:id="@+id/shakha_count_txt"
-        android:layout_width="@dimen/padding30"
-        android:layout_height="wrap_content"
-        android:theme="@style/StyleTextView"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:layout_marginStart="@dimen/padding10"
-        android:background="@drawable/edittext_round"
-        android:textColor="@color/black"
-        android:maxLength="3"
-        android:textSize="@dimen/font_size11"
-        tools:ignore="RtlCompat" />
+
+            <TextView
+                android:id="@+id/shakha_count_txt"
+                android:layout_width="@dimen/padding30"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding10"
+                android:background="@drawable/edittext_round"
+                android:gravity="center"
+                android:maxLength="3"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size11"
+                android:theme="@style/StyleTextView"
+                tools:ignore="RtlCompat" />
 
         </RelativeLayout>
 
