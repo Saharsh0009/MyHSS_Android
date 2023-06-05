@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_500">#C16200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
@@ -60,5 +60,21 @@
     <color name="yuvati_color">#da2a2c</color>
     <color name="proudh_color">#bc7b00</color>
     <color name="proudha_color">#b91b22</color>
+
+    <!--Piechart_color-->
+    <array name="pieChart">
+        <item>#ffdc79</item>
+        <item>#ffb4ae</item>
+        <item>#ff6661</item>
+        <item>#fd9e19</item>
+        <item>#da2a2c</item>
+        <item>#26A69A</item>
+        <item>#5B89C2</item>
+        <item>#2FCC71</item>
+        <item>#2979FF</item>
+        <item>#866200EE</item>
+    </array>
+
+
 
 </resources>

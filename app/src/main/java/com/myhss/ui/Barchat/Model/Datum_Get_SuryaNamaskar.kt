@@ -3,7 +3,8 @@ package com.myhss.ui.Barchat.Model
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Datum_Get_SuryaNamaskar {
+
+class Datum_Get_SuryaNamaskar : java.io.Serializable {
 
     @SerializedName("surya_namaskar_count_id")
     @Expose
@@ -20,6 +21,10 @@ class Datum_Get_SuryaNamaskar {
     @SerializedName("count_date")
     @Expose
     private var count_date: String? = null
+
+    @SerializedName("member_name")
+    @Expose
+    private var member_name: String? = null
 
     fun getsurya_namaskar_count_id(): String? {
         return surya_namaskar_count_id
@@ -51,6 +56,14 @@ class Datum_Get_SuryaNamaskar {
 
     fun setcount_date(count_date: String?) {
         this.count_date = count_date
+    }
+
+    fun getmember_name(): String? {
+        return member_name
+    }
+
+    fun setmember_name(member_name: String?) {
+        this.member_name = member_name
     }
 
 }

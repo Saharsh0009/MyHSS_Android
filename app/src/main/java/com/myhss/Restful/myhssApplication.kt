@@ -80,8 +80,6 @@ class MyHssApplication private constructor() : MultiDexApplication() {
 //        var BaseURL = "https://stg.myhss.org.uk/"    // Staging URL
         var BaseURL = "https://dev.myhss.org.uk/"   // Developer
 
-//        var IMAGE_PDF_URL = BaseURL + "assets/qualification_file/"  //Production URL
-//        var IMAGE_PDF_URL = BaseURL + "assets/qualification_file/" //Staging URL
         var IMAGE_PDF_URL = BaseURL + "assets/qualification_file/"  //Developement Url
 
         @SuppressLint("StaticFieldLeak")
