@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.uk.myhss">
-
-<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
+    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -14,8 +13,12 @@
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.camera.autoFocus" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.autoFocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -23,10 +26,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.CALL_PRIVILEGED"
-        tools:ignore="ProtectedPermissions" />
-
-<!--    <uses-feature android:name="android.hardware.location.gps" />-->
-
+        tools:ignore="ProtectedPermissions" /> <!-- <uses-feature android:name="android.hardware.location.gps" /> -->
     <uses-feature
         android:name="android.hardware.fingerprint"
         android:required="true" />
@@ -39,7 +39,6 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:name="com.myhss.AnalyticsApplication"
         android:allowAudioPlaybackCapture="true"
         android:allowBackup="true"
@@ -50,41 +49,41 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:resizeableActivity="false"
         android:roundIcon="@drawable/app_logo"
         android:supportsMultipleDisplays="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
-        tools:ignore="AllowBackup" >
-
+        tools:ignore="AllowBackup">
+        <activity
+            android:name="com.myhss.ui.Barchat.ViewBarchartActivity"
+            android:exported="false" />
         <activity
             android:name="com.uk.myhss.Splash.SplashActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="true"
             android:label="@string/app_name"
             android:screenOrientation="sensor"
-            android:theme="@style/Theme.MyApplication.NoActionBar"
-            android:exported="true">
+            android:theme="@style/Theme.MyApplication.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.myhss.QRCode.CaptureActivityPortrait"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
             android:name="com.uk.myhss.Login_Registration.LoginActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.ui.Barchat.SuryaNamaskar"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -92,7 +91,6 @@
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             tools:ignore="DuplicateActivity" />
-
         <activity
             android:name="com.myhss.ui.Barchat.AddSuryaNamaskarActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -104,13 +102,14 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
-        <!--<activity
+        <!--
+<activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />-->
-
-        <!--<activity
+            android:label="@string/app_name" />
+        -->
+        <!--
+<activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
@@ -121,43 +120,38 @@
 
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
-        </activity>-->
-
+        </activity>
+        -->
         <activity
             android:name="com.myhss.Fingerprint.FingerPrintPopUp"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.Login_Registration.Passcode_Activity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.Login_Registration.PasscodeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.Login_Registration.RegistrationActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Main.HomeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.uk.myhss.AddMember.AddMemberFirstActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -165,7 +159,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.uk.myhss.AddMember.AddMemberSecondActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -173,7 +166,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.uk.myhss.AddMember.AddMemberThirdActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -181,7 +173,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.uk.myhss.AddMember.AddMemberForthActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -189,7 +180,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.ui.SuchanaBoard.SuchanaBoardActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -197,7 +187,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.ui.SanghSandesh.SanghSandeshActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -205,7 +194,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.ui.SuchanaBoard.NotificationList"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -213,14 +201,14 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
-        <!--<activity android:name="com.uk.myhss.Fingerprint.FingerprintActivity"
+        <!--
+<activity android:name="com.uk.myhss.Fingerprint.FingerprintActivity"
             android:hardwareAccelerated="false"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            android:screenOrientation="sensor" />-->
-
+            android:screenOrientation="sensor" />
+        -->
         <activity
             android:name="com.uk.myhss.Welcome.WelcomeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -228,7 +216,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.uk.myhss.ui.policies.ProfileFragment"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -236,7 +223,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_OneTime.GuruDakshinaOneTimeFirstActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -244,7 +230,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_OneTime.GuruDakshinaOneTimeSecondActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -252,7 +237,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_OneTime.GuruDakshinaOneTimeThirdActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -260,7 +244,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_OneTime.GuruDakshinaOneTimeFourthActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -268,7 +251,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_OneTime.GuruDakshinaOneTimeCompleteActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -276,7 +258,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_Regular.GuruDakshinaRegularFirstActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -284,7 +265,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_Regular.GuruDakshinaRegularSecondActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -292,7 +272,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_Regular.GuruDakshinaRegularThirdActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -300,7 +279,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_Regular.GuruDakshinaRegularFourthActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -308,7 +286,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".Guru_Dakshina_Regular.GuruDakshinaRegularCompleteActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -316,7 +293,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".ui.guru_dakshina.GuruDakshinaRegularDetail"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -324,7 +300,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".ui.dashboard.LinkedFamilyFragment"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -332,7 +307,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".ui.dashboard.EventsFragment"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -340,7 +314,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.ui.events.EventsDetails"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -348,7 +321,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.QRCode.QRCodeFragment"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -356,7 +328,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".ui.policies.SankhyaActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -364,7 +335,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".ui.sankhya_report.AddSankhyaActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -372,7 +342,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.ui.sankhya_report.Model.AddCheckbox"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -380,7 +349,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".ui.sankhya_report.SankhyaDetail"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -388,7 +356,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".ui.sankhya_report.SankhyaFormDetail"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -396,7 +363,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name=".ui.linked_family.MemberShipActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -404,7 +370,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.ui.policies.WebViewPolicies"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -412,7 +377,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.ui.SuchanaBoard.NotificationDetails"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -420,7 +384,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.AllShakha.AllShakhaListActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -428,7 +391,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.AllShakha.ShakhaDetailsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -436,7 +398,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.GoogleCalendar"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -444,7 +405,6 @@
             android:label="@string/app_name"
             android:screenOrientation="sensor"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
         <activity
             android:name="com.myhss.ui.ShakhaMap.MapsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -462,27 +422,27 @@
                     tools:ignore="BatteryLife" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name="com.uk.myhss.Utils.NetworkStateChecker"
+        <receiver
+            android:name="com.uk.myhss.Utils.NetworkStateChecker"
             android:exported="false">
             <intent-filter>
                 <action
                     android:name="android.net.conn.CONNECTIVITY_CHANGE"
                     tools:ignore="BatteryLife" />
             </intent-filter>
-        </receiver>
-
-        <!--Firebase-->
-        <!--<service
+        </receiver> <!-- Firebase -->
+        <!--
+<service
             android:name="com.myhss.Notification.MyFirebaseMessagingService"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
-        </service>-->
-
-        <service android:name="com.myhss.Notification.MyFirebaseMessagingService"
+        </service>
+        -->
+        <service
+            android:name="com.myhss.Notification.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -493,24 +453,20 @@
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/app_logo" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <!--<meta-data
+        <!--
+<meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDrf0ghZH6Jby8g3NMM33cd19eaSxGvKbQ" />-->
-
+            android:value="AIzaSyDrf0ghZH6Jby8g3NMM33cd19eaSxGvKbQ" />
+        -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDrf0ghZH6Jby8g3NMM33cd19eaSxGvKbQ" />
-        <!--android:value="AIzaSyC3ofpXhVMhRDAxbFZ1mYDUpR_p2BvZA4U" />-->
-
     </application>
 
 </manifest>

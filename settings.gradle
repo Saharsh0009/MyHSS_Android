@@ -2,4 +2,3 @@ include ':stooltip'
 include ':app'
 rootProject.name = "My Application"
 include ':qrcodescanner'
-include ':MPChartLib'

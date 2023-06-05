@@ -419,5 +419,6 @@
     <string name="view_certificate">View Certificate</string>
     <string name="guest">Guest</string>
     <string name="total">Total</string>
+    <string name="add_more">Add More</string>
 
 </resources>
