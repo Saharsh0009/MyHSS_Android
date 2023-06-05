@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.sankhya_report.Model.Sankhya_details_Datum
@@ -49,6 +50,9 @@ class SankhyaDetail : AppCompatActivity() {
     private lateinit var jyeshtaa_type_txt: TextView
     private lateinit var members_listview: TextView
     private lateinit var sankhya_list_view: ListView
+    private lateinit var txt_guest_count: TextView
+    private lateinit var txt_sankhya_count: TextView
+    private lateinit var txt_total_count: TextView
 
     var MemberListName: ArrayList<String> = ArrayList<String>()
     var MemberListId: ArrayList<String> = ArrayList<String>()
@@ -79,7 +83,7 @@ class SankhyaDetail : AppCompatActivity() {
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
 
-        header_title.text = getString(R.string.sankhya) + " Details"
+        header_title.text = "View " + getString(R.string.sankhya)
 
         active_inactive_view = findViewById(R.id.active_inactive_view)
         active_inactive_txt = findViewById(R.id.active_inactive_txt)
@@ -102,6 +106,9 @@ class SankhyaDetail : AppCompatActivity() {
 
         members_listview = findViewById(R.id.members_listview)
         sankhya_list_view = findViewById(R.id.sankhya_list_view)
+        txt_guest_count = findViewById(R.id.txt_guest_count)
+        txt_sankhya_count = findViewById(R.id.txt_sankhya_count)
+        txt_total_count = findViewById(R.id.txt_total_count)
 
         rootLayout = findViewById(R.id.rootLayout)
 
@@ -133,8 +140,7 @@ class SankhyaDetail : AppCompatActivity() {
             MyHssApplication.instance!!.api.get_sankhya_get_record(user_id, sankhya_id)
         call.enqueue(object : Callback<Sankhya_details_Response> {
             override fun onResponse(
-                call: Call<Sankhya_details_Response>,
-                response: Response<Sankhya_details_Response>
+                call: Call<Sankhya_details_Response>, response: Response<Sankhya_details_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -164,7 +170,8 @@ class SankhyaDetail : AppCompatActivity() {
 //                                    sankhya_datum[0].member!![0].lastName!!.capitalize(Locale.ROOT)
 
                             shakha_name_txt.text = sessionManager.fetchSHAKHANAME()!!.capitalize(
-                                Locale.ROOT)
+                                Locale.ROOT
+                            )
 
                             /*if (sankhya_detail[0].firstName == getString(R.string.tarun) && sankhya_detail[0].firstName == getString(R.string.taruni)) {
                                 active_inactive_view.setBackgroundResource(R.drawable.baal_background)
@@ -198,6 +205,33 @@ class SankhyaDetail : AppCompatActivity() {
 
                             active_inactive_txt.text = sankhya_datum[0].member!![0].ageCategory
 
+                            val ct_guest: Int =
+                                (Integer.parseInt(sankhya_datum[0].shishuMale) + Integer.parseInt(
+                                    sankhya_datum[0].baal
+                                )
+                                        + Integer.parseInt(sankhya_datum[0].kishore) + Integer.parseInt(
+                                    sankhya_datum[0].tarun
+                                )
+                                        + Integer.parseInt(sankhya_datum[0].yuva) + Integer.parseInt(
+                                    sankhya_datum[0].proudh
+                                )
+                                        + Integer.parseInt(sankhya_datum[0].shishuFemale) + Integer.parseInt(
+                                    sankhya_datum[0].kishori
+                                )
+                                        + Integer.parseInt(sankhya_datum[0].taruni) + Integer.parseInt(
+                                    sankhya_datum[0].taruni
+                                )
+                                        + Integer.parseInt(sankhya_datum[0].yuvati) + Integer.parseInt(
+                                    sankhya_datum[0].proudha
+                                ))
+
+                            DebugLog.e("count : " + ct_guest)
+                            txt_guest_count.text = ": $ct_guest"
+                            txt_sankhya_count.text =
+                                ": " + sankhya_datum[0].member!!.size.toString()
+                            txt_total_count.text =
+                                ": " + (ct_guest + sankhya_datum[0].member!!.size)
+
                             shishu_type_txt.text = sankhya_datum[0].shishuMale
                             baal_type_txt.text = sankhya_datum[0].baal
                             kishore_type_txt.text = sankhya_datum[0].kishore
@@ -216,14 +250,17 @@ class SankhyaDetail : AppCompatActivity() {
                             for (i in 0 until sankhya_datum[0].member!!.size) {
                                 if (sankhya_datum[0].member!![i].middleName == "") {
                                     mStringList.add(
-                                        sankhya_datum[0].member!![i].firstName!!.capitalize(Locale.ROOT)
-                                                + " " + sankhya_datum[0].member!![i].lastName!!.capitalize(Locale.ROOT)
+                                        sankhya_datum[0].member!![i].firstName!!.capitalize(Locale.ROOT) + " " + sankhya_datum[0].member!![i].lastName!!.capitalize(
+                                            Locale.ROOT
+                                        )
                                     )
                                 } else {
                                     mStringList.add(
-                                        sankhya_datum[0].member!![i].firstName!!.capitalize(Locale.ROOT)
-                                                + " " + sankhya_datum[0].member!![i].middleName!!.capitalize(Locale.ROOT)
-                                                + " " + sankhya_datum[0].member!![i].lastName!!.capitalize(Locale.ROOT)
+                                        sankhya_datum[0].member!![i].firstName!!.capitalize(Locale.ROOT) + " " + sankhya_datum[0].member!![i].middleName!!.capitalize(
+                                            Locale.ROOT
+                                        ) + " " + sankhya_datum[0].member!![i].lastName!!.capitalize(
+                                            Locale.ROOT
+                                        )
                                     )
                                 }
                             }
@@ -251,7 +288,7 @@ class SankhyaDetail : AppCompatActivity() {
                             )
                             sankhya_list_view.adapter = adapter
 
-                            members_listview.setOnClickListener {
+                            /* members_listview.setOnClickListener {
                                 if (IsVisible) {
                                     sankhya_list_view.visibility = View.VISIBLE
                                     IsVisible = false
@@ -259,7 +296,7 @@ class SankhyaDetail : AppCompatActivity() {
                                     sankhya_list_view.visibility = View.GONE
                                     IsVisible = true
                                 }
-                            }
+                            } */
 
                             justifyListViewHeightBasedOnChildren(sankhya_list_view)
 
@@ -270,7 +307,7 @@ class SankhyaDetail : AppCompatActivity() {
                         }
 //                    }
                     } else {
-                        Functions.displayMessage(this@SankhyaDetail,response.body()?.message)
+                        Functions.displayMessage(this@SankhyaDetail, response.body()?.message)
 //                        Functions.showAlertMessageWithOK(
 //                            this@SankhyaDetail, "",
 ////                        "Message",

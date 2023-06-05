@@ -79,6 +79,10 @@ class SankhyaFormDetail : AppCompatActivity() {
     private lateinit var jyeshtaa_decriese_btn: ImageView
     private lateinit var jyeshtaa_increse_btn: ImageView
 
+    private lateinit var txt_guest_count: TextView
+    private lateinit var txt_sankhya_count: TextView
+    private lateinit var txt_total_count: TextView
+
     private lateinit var rootLayout: LinearLayout
     lateinit var reportview_layout: LinearLayout
     lateinit var submit_layout: LinearLayout
@@ -100,19 +104,20 @@ class SankhyaFormDetail : AppCompatActivity() {
     private var EVENT_DATE: String = ""
     private var EVENTDATE: String = ""
     private var UTSAV_NAME: String = ""
-    private var SHISHU_MALE: String = ""
-    private var SHISHU_FEMALE: String = ""
-    private var BAAL: String = ""
-    private var BAALIKA: String = ""
-    private var KISHOR: String = ""
-    private var KISHORI: String = ""
-    private var TARUN: String = ""
-    private var TARUNI: String = ""
-    private var YUVA: String = ""
-    private var YUVTI: String = ""
-    private var PRODH: String = ""
-    private var PRODHA: String = ""
+    private var SHISHU_MALE: String = "0"
+    private var SHISHU_FEMALE: String = "0"
+    private var BAAL: String = "0"
+    private var BAALIKA: String = "0"
+    private var KISHOR: String = "0"
+    private var KISHORI: String = "0"
+    private var TARUN: String = "0"
+    private var TARUNI: String = "0"
+    private var YUVA: String = "0"
+    private var YUVTI: String = "0"
+    private var PRODH: String = "0"
+    private var PRODHA: String = "0"
     private var API: String = ""
+
 
     @SuppressLint("NewApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,7 +139,7 @@ class SankhyaFormDetail : AppCompatActivity() {
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
 
-        header_title.text = getString(R.string.sankhya) + " Details"
+        header_title.text = "Guest " + getString(R.string.sankhya)
 
         active_inactive_view = findViewById(R.id.active_inactive_view)
         active_inactive_txt = findViewById(R.id.active_inactive_txt)
@@ -188,6 +193,10 @@ class SankhyaFormDetail : AppCompatActivity() {
         members_listview = findViewById(R.id.members_listview)
         sankhya_list_view = findViewById(R.id.sankhya_list_view)
 
+        txt_guest_count = findViewById(R.id.txt_guest_count)
+        txt_sankhya_count = findViewById(R.id.txt_sankhya_count)
+        txt_total_count = findViewById(R.id.txt_total_count)
+
         if (intent.getStringExtra("SANKHYA_ID") != "") {
             if (Functions.isConnectingToInternet(this@SankhyaFormDetail)) {
                 USERID = sessionManager.fetchUserID()!!
@@ -208,13 +217,13 @@ class SankhyaFormDetail : AppCompatActivity() {
             finish()
         }
 
-        user_name_txt.text = intent.getStringExtra("UTSAVE_ID")!!.capitalize(Locale.ROOT) + " " +
-                intent.getStringExtra("CURRENT_DATE")
+        user_name_txt.text = intent.getStringExtra("UTSAVE_ID")!!
+            .capitalize(Locale.ROOT) + " " + intent.getStringExtra("CURRENT_DATE")
 
         shakha_name_txt.text = intent.getStringExtra("SHAKHA_NAME")!!.capitalize(Locale.ROOT)
 
         Log.d("CURRENT_DATE", intent.getStringExtra("CURRENT_DATE").toString())
-        Log.d("MEMBER_NAME", intent.getStringExtra("MEMBER_NAME").toString())
+        Log.d("MEMBER_NAME", intent.getStringArrayListExtra("MEMBER_NAME").toString())
 //        Log.d("USER_MEMBER", intent.getStringExtra("USER_MEMBER").toString())
         Log.d(
             "USERNAME_LIST",
@@ -226,10 +235,7 @@ class SankhyaFormDetail : AppCompatActivity() {
 //        var demooo: ArrayList<String> = ArrayList<String>()
 //        demooo.add(intent.getSerializableExtra("USERNAME_LIST").toString()).re
 
-        MemberListName.add(
-            intent.getSerializableExtra("MEMBER_NAME")!!.toString().replace("[", "")
-                .replace("]", "")
-        ) //as Array<String>
+        MemberListName = intent.getStringArrayListExtra("MEMBER_NAME")!! //as Array<String>
 //        MemberListId.add(intent.getSerializableExtra("USERID_LIST")!!.toString()) //as Array<String>
 
         total_member_count.visibility = View.GONE
@@ -244,21 +250,21 @@ class SankhyaFormDetail : AppCompatActivity() {
 //        shakha_name_txt.text = sessionManager.fetchSHAKHANAME()!!.capitalize(Locale.ROOT)
 
         val adapter = ArrayAdapter(
-            this@SankhyaFormDetail,
-            android.R.layout.simple_list_item_1,
-            MemberListName
+            this@SankhyaFormDetail, android.R.layout.simple_list_item_1, MemberListName
         )
         sankhya_list_view.adapter = adapter
 
-        members_listview.setOnClickListener {
-            if (IsVisible) {
-                sankhya_list_view.visibility = View.VISIBLE
-                IsVisible = false
-            } else if (!IsVisible) {
-                sankhya_list_view.visibility = View.GONE
-                IsVisible = true
-            }
-        }
+        setSankhyaCountView()
+
+//        members_listview.setOnClickListener {
+//            if (IsVisible) {
+//                sankhya_list_view.visibility = View.VISIBLE
+//                IsVisible = false
+//            } else if (!IsVisible) {
+//                sankhya_list_view.visibility = View.GONE
+//                IsVisible = true
+//            }
+//        }
 
         justifyListViewHeightBasedOnChildren(sankhya_list_view)
 
@@ -326,6 +332,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (shishu_type_txt.text.toString().toInt() != 0) {
                 shishu_type_txt.text = (shishu_type_txt.text.toString().toInt() - 1).toString()
                 SHISHU_MALE = shishu_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -334,6 +341,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (shishu_type_txt.text.toString().toInt() <= 99) {
                 shishu_type_txt.text = (shishu_type_txt.text.toString().toInt() + 1).toString()
                 SHISHU_MALE = shishu_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -342,6 +350,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (baal_type_txt.text.toString().toInt() != 0) {
                 baal_type_txt.text = (baal_type_txt.text.toString().toInt() - 1).toString()
                 BAAL = baal_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -350,6 +359,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (baal_type_txt.text.toString().toInt() <= 99) {
                 baal_type_txt.text = (baal_type_txt.text.toString().toInt() + 1).toString()
                 BAAL = baal_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -358,6 +368,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (kishore_type_txt.text.toString().toInt() != 0) {
                 kishore_type_txt.text = (kishore_type_txt.text.toString().toInt() - 1).toString()
                 KISHOR = kishore_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -366,6 +377,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (kishore_type_txt.text.toString().toInt() <= 99) {
                 kishore_type_txt.text = (kishore_type_txt.text.toString().toInt() + 1).toString()
                 KISHOR = kishore_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -374,6 +386,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (tarun_type_txt.text.toString().toInt() != 0) {
                 tarun_type_txt.text = (tarun_type_txt.text.toString().toInt() - 1).toString()
                 TARUN = tarun_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -382,6 +395,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (tarun_type_txt.text.toString().toInt() <= 99) {
                 tarun_type_txt.text = (tarun_type_txt.text.toString().toInt() + 1).toString()
                 TARUN = tarun_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -390,6 +404,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (yuva_type_txt.text.toString().toInt() != 0) {
                 yuva_type_txt.text = (yuva_type_txt.text.toString().toInt() - 1).toString()
                 YUVA = yuva_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -398,6 +413,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (yuva_type_txt.text.toString().toInt() <= 99) {
                 yuva_type_txt.text = (yuva_type_txt.text.toString().toInt() + 1).toString()
                 YUVA = yuva_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -406,6 +422,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (jyeshta_type_txt.text.toString().toInt() != 0) {
                 jyeshta_type_txt.text = (jyeshta_type_txt.text.toString().toInt() - 1).toString()
                 PRODH = jyeshta_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -414,6 +431,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (jyeshta_type_txt.text.toString().toInt() <= 99) {
                 jyeshta_type_txt.text = (jyeshta_type_txt.text.toString().toInt() + 1).toString()
                 PRODH = jyeshta_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -422,6 +440,8 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (female_shishu_type_txt.text.toString().toInt() != 0) {
                 female_shishu_type_txt.text =
                     (female_shishu_type_txt.text.toString().toInt() - 1).toString()
+                SHISHU_FEMALE = female_shishu_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -431,6 +451,7 @@ class SankhyaFormDetail : AppCompatActivity() {
                 female_shishu_type_txt.text =
                     (female_shishu_type_txt.text.toString().toInt() + 1).toString()
                 SHISHU_FEMALE = female_shishu_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -438,7 +459,8 @@ class SankhyaFormDetail : AppCompatActivity() {
 //            decreaseInteger(balika_type_txt.text.toString())
             if (balika_type_txt.text.toString().toInt() != 0) {
                 balika_type_txt.text = (balika_type_txt.text.toString().toInt() - 1).toString()
-                SHISHU_FEMALE = female_shishu_type_txt.text.toString()
+                BAALIKA = balika_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -447,6 +469,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (balika_type_txt.text.toString().toInt() <= 99) {
                 balika_type_txt.text = (balika_type_txt.text.toString().toInt() + 1).toString()
                 BAALIKA = balika_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -455,6 +478,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (kishori_type_txt.text.toString().toInt() != 0) {
                 kishori_type_txt.text = (kishori_type_txt.text.toString().toInt() - 1).toString()
                 KISHORI = kishori_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -463,6 +487,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (kishori_type_txt.text.toString().toInt() <= 99) {
                 kishori_type_txt.text = (kishori_type_txt.text.toString().toInt() + 1).toString()
                 KISHORI = kishori_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -471,6 +496,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (taruni_type_txt.text.toString().toInt() != 0) {
                 taruni_type_txt.text = (taruni_type_txt.text.toString().toInt() - 1).toString()
                 TARUNI = taruni_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -479,6 +505,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (taruni_type_txt.text.toString().toInt() <= 99) {
                 taruni_type_txt.text = (taruni_type_txt.text.toString().toInt() + 1).toString()
                 TARUNI = taruni_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -487,6 +514,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (yuvati_type_txt.text.toString().toInt() != 0) {
                 yuvati_type_txt.text = (yuvati_type_txt.text.toString().toInt() - 1).toString()
                 YUVTI = yuvati_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -495,6 +523,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (yuvati_type_txt.text.toString().toInt() <= 99) {
                 yuvati_type_txt.text = (yuvati_type_txt.text.toString().toInt() + 1).toString()
                 YUVTI = yuvati_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -503,6 +532,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (jyeshtaa_type_txt.text.toString().toInt() != 0) {
                 jyeshtaa_type_txt.text = (jyeshtaa_type_txt.text.toString().toInt() - 1).toString()
                 PRODHA = jyeshtaa_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
 
@@ -511,8 +541,23 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (jyeshtaa_type_txt.text.toString().toInt() <= 99) {
                 jyeshtaa_type_txt.text = (jyeshtaa_type_txt.text.toString().toInt() + 1).toString()
                 PRODHA = jyeshtaa_type_txt.text.toString()
+                setSankhyaCountView()
             }
         }
+    }
+
+    private fun setSankhyaCountView() {
+        val ct_guest: Int =
+            (Integer.parseInt(SHISHU_MALE) + Integer.parseInt(SHISHU_FEMALE) + Integer.parseInt(BAAL)
+                    + Integer.parseInt(BAALIKA) + Integer.parseInt(KISHOR) + Integer.parseInt(
+                KISHORI
+            ) + Integer.parseInt(TARUN)
+                    + Integer.parseInt(TARUNI) + Integer.parseInt(YUVA) + Integer.parseInt(YUVTI) + Integer.parseInt(
+                PRODH
+            ) + Integer.parseInt(PRODHA))
+        txt_guest_count.text = " : $ct_guest"
+        txt_sankhya_count.text = " : " + MemberListName.size.toString()
+        txt_total_count.text = " : " + (ct_guest + MemberListName.size).toString()
     }
 
     fun increaseInteger(increasetoString: String) {
@@ -576,31 +621,29 @@ class SankhyaFormDetail : AppCompatActivity() {
     ) {
         val pd = CustomProgressBar(this@SankhyaFormDetail)
         pd.show()
-        val call: Call<Get_Sankhya_Add_Response> =
-            MyHssApplication.instance!!.api.get_sankhya_add(
-                user_id,
-                member_id,
-                org_chapter_id,
-                event_date,
-                utsav,
-                shishu_male,
-                shishu_female,
-                baal,
-                baalika,
-                kishore,
-                kishori,
-                tarun,
-                taruni,
-                yuva,
-                yuvati,
-                proudh,
-                proudha,
-                api
-            )
+        val call: Call<Get_Sankhya_Add_Response> = MyHssApplication.instance!!.api.get_sankhya_add(
+            user_id,
+            member_id,
+            org_chapter_id,
+            event_date,
+            utsav,
+            shishu_male,
+            shishu_female,
+            baal,
+            baalika,
+            kishore,
+            kishori,
+            tarun,
+            taruni,
+            yuva,
+            yuvati,
+            proudh,
+            proudha,
+            api
+        )
         call.enqueue(object : Callback<Get_Sankhya_Add_Response> {
             override fun onResponse(
-                call: Call<Get_Sankhya_Add_Response>,
-                response: Response<Get_Sankhya_Add_Response>
+                call: Call<Get_Sankhya_Add_Response>, response: Response<Get_Sankhya_Add_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -616,8 +659,7 @@ class SankhyaFormDetail : AppCompatActivity() {
                         ) { dialog, which ->
                             startActivity(
                                 Intent(
-                                    this@SankhyaFormDetail,
-                                    SankhyaActivity::class.java
+                                    this@SankhyaFormDetail, SankhyaActivity::class.java
                                 )
                             )
                             finish()
@@ -656,8 +698,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             MyHssApplication.instance!!.api.get_sankhya_get_record(user_id, sankhya_id)
         call.enqueue(object : Callback<Sankhya_details_Response> {
             override fun onResponse(
-                call: Call<Sankhya_details_Response>,
-                response: Response<Sankhya_details_Response>
+                call: Call<Sankhya_details_Response>, response: Response<Sankhya_details_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -677,12 +718,17 @@ class SankhyaFormDetail : AppCompatActivity() {
 
                             if (sankhya_detail[0].middleName == "") {
                                 user_name_txt.text =
-                                    sankhya_detail[0].firstName!!.capitalize(Locale.ROOT) + " " + sankhya_detail[0].lastName!!.capitalize(Locale.ROOT)
+                                    sankhya_detail[0].firstName!!.capitalize(Locale.ROOT) + " " + sankhya_detail[0].lastName!!.capitalize(
+                                        Locale.ROOT
+                                    )
                             } else {
                                 user_name_txt.text =
-                                    sankhya_detail[0].firstName!!.capitalize(Locale.ROOT) + " " + sankhya_detail[0].middleName!!.capitalize(Locale.ROOT) + " " + sankhya_detail[0].lastName!!.capitalize(Locale.ROOT)
+                                    sankhya_detail[0].firstName!!.capitalize(Locale.ROOT) + " " + sankhya_detail[0].middleName!!.capitalize(
+                                        Locale.ROOT
+                                    ) + " " + sankhya_detail[0].lastName!!.capitalize(Locale.ROOT)
                             }
-                            shakha_name_txt.text = sessionManager.fetchSHAKHANAME()!!.capitalize(Locale.ROOT)
+                            shakha_name_txt.text =
+                                sessionManager.fetchSHAKHANAME()!!.capitalize(Locale.ROOT)
 
                             /*if (sankhya_detail[0].firstName == getString(R.string.tarun) && sankhya_detail[0].firstName == getString(R.string.taruni)) {
                                 active_inactive_view.setBackgroundResource(R.drawable.baal_background)
@@ -791,6 +837,9 @@ class SankhyaFormDetail : AppCompatActivity() {
         val dialog_taruni_type_txt = dialog!!.findViewById(R.id.taruni_type_txt) as TextView
         val dialog_yuvati_type_txt = dialog!!.findViewById(R.id.yuvati_type_txt) as TextView
         val dialog_jyeshtaa_type_txt = dialog!!.findViewById(R.id.jyeshtaa_type_txt) as TextView
+        val dialog_txt_guest_count = dialog!!.findViewById(R.id.txt_guest_count) as TextView
+        val dialog_txt_sankhya_count = dialog!!.findViewById(R.id.txt_sankhya_count) as TextView
+        val dialog_txt_total_count = dialog!!.findViewById(R.id.txt_total_count) as TextView
 
         dialog_active_inactive_txt.text = active_inactive_txt.text.toString()
 
@@ -813,6 +862,10 @@ class SankhyaFormDetail : AppCompatActivity() {
 
         dialog_user_name_txt.text = user_name_txt.text.toString()
         dialog_shakha_name_txt.text = sessionManager.fetchSHAKHANAME()
+
+        dialog_txt_guest_count.text = txt_guest_count.text.toString()
+        dialog_txt_sankhya_count.text = txt_sankhya_count.text.toString()
+        dialog_txt_total_count.text = txt_total_count.text.toString()
 
         val btnOk = dialog!!.findViewById(R.id.btnOk) as TextView
 
@@ -838,24 +891,20 @@ class SankhyaFormDetail : AppCompatActivity() {
 //        }
 
         val adapter = ArrayAdapter(
-            this@SankhyaFormDetail,
-            android.R.layout.simple_list_item_1,
-            MemberListName
+            this@SankhyaFormDetail, android.R.layout.simple_list_item_1, MemberListName
         )
         sankhya_list_view.adapter = adapter
 
-        members_listview.setOnClickListener {
-            if (IsVisible) {
-                sankhya_list_view.visibility = View.VISIBLE
-                IsVisible = false
-            } else if (!IsVisible) {
-                sankhya_list_view.visibility = View.GONE
-                IsVisible = true
-            }
-        }
-
+//        members_listview.setOnClickListener {
+//            if (IsVisible) {
+//                sankhya_list_view.visibility = View.VISIBLE
+//                IsVisible = false
+//            } else if (!IsVisible) {
+//                sankhya_list_view.visibility = View.GONE
+//                IsVisible = true
+//            }
+//        }
         justifyListViewHeightBasedOnChildren(sankhya_list_view)
-
         btnOk.setOnClickListener {
             dialog?.dismiss()
         }

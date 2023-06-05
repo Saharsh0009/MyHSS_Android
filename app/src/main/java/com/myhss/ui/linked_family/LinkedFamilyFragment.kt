@@ -22,6 +22,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.Guru_Dakshina_OneTime.GuruDakshinaOneTimeFirstActivity
@@ -124,8 +125,8 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
 
     private var loading = true
     var pastVisiblesItems = 0
-    var visibleItemCount:Int = 0
-    var totalItemCount:Int = 0
+    var visibleItemCount: Int = 0
+    var totalItemCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,7 +151,10 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("MembershipApplicationsVC")
-        sessionManager.firebaseAnalytics.setUserProperty("MembershipApplicationsVC", "LinkedFamilyFragment")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "MembershipApplicationsVC",
+            "LinkedFamilyFragment"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -213,8 +217,13 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
         mLayoutManager = LinearLayoutManager(this@LinkedFamilyFragment)
         my_family_list.layoutManager = mLayoutManager
 
+        DebugLog.d("Dashboard => "+intent.getStringExtra("DashBoard").toString())
+
         if (intent.getStringExtra("DashBoard") == "SHAKHAVIEW") {
             Handler().postDelayed({ myshakha_view.callOnClick() }, 100)
+            val end: Int = 100
+            val start: Int = 0
+            CallAPI(start, end)
         } else {
             val end: Int = 100
             val start: Int = 0
@@ -303,8 +312,8 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
 
         search_fields.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val end:Int = 100
-                val start:Int = 0
+                val end: Int = 100
+                val start: Int = 0
 
                 if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
                     USERID = sessionManager.fetchUserID()!!
@@ -424,8 +433,8 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
         guru_dakshinasearch_fields.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
-                val end:Int = 100
-                val start:Int = 0
+                val end: Int = 100
+                val start: Int = 0
 
                 if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
                     USERID = sessionManager.fetchUserID()!!
@@ -548,9 +557,8 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
                 )
             )
 
-            val end:Int = 100
-            val start:Int = 0
-
+            val end: Int = 100
+            val start: Int = 0
             if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
                 USERID = sessionManager.fetchUserID()!!
                 Log.d("USERID", USERID)
@@ -635,8 +643,8 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
             )
 
             if (sessionManager.fetchSHAKHAID() != "") {
-                val end:Int = 100
-                val start:Int = 0
+                val end: Int = 100
+                val start: Int = 0
 
                 CallGuruDakshinaAPI(start, end)
                 /*if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
@@ -759,9 +767,7 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
                                 member_count_layout.visibility = View.VISIBLE
                                 member_count.text = atheletsBeans.size.toString()
                             }
-
                             mAdapterGuru = CustomAdapter(atheletsBeans)
-
                             my_family_list.adapter = mAdapterGuru
                             mAdapterGuru!!.notifyDataSetChanged()
 
@@ -834,7 +840,10 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
                         }
                     } else {
 //                        data_not_found_layout.visibility = View.VISIBLE
-                        Functions.displayMessage(this@LinkedFamilyFragment,response.body()?.message)
+                        Functions.displayMessage(
+                            this@LinkedFamilyFragment,
+                            response.body()?.message
+                        )
 //                        Functions.showAlertMessageWithOK(
 //                            this@LinkedFamilyFragment, "",
 ////                        "Message",
@@ -954,7 +963,10 @@ class LinkedFamilyFragment : AppCompatActivity() { //Fragment() {
                         }
                     } else {
 //                        data_not_found_layout.visibility = View.VISIBLE
-                        Functions.displayMessage(this@LinkedFamilyFragment, response.body()?.message)
+                        Functions.displayMessage(
+                            this@LinkedFamilyFragment,
+                            response.body()?.message
+                        )
 //                        Functions.showAlertMessageWithOK(
 //                            this@LinkedFamilyFragment, "",
 ////                        "Message",

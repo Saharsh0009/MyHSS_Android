@@ -19,6 +19,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.adapter.StudentAdapter
 import com.myhss.ui.sankhya_report.Adapter.ApproveRecyclerView
@@ -126,6 +127,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 
     lateinit var cbSelectAll: CheckBox
     lateinit var tvSelect: TextView
+    lateinit var txt_sankhya_count: TextView
 
     private var selectAllItems: Boolean = false
 
@@ -174,6 +176,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         previous_date = findViewById(R.id.previous_date)
         all_check = findViewById(R.id.all_check)
         calender_icon = findViewById(R.id.calender_icon)
+        txt_sankhya_count = findViewById(R.id.txt_sankhya_count)
 
         calender_icon.visibility = View.VISIBLE
 
@@ -294,8 +297,8 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             })
         }*/
 
-        val end:Int = 100
-        val start:Int = 0
+        val end: Int = 100
+        val start: Int = 0
 
         if (Functions.isConnectingToInternet(this@AddSankhyaActivity)) {
             USERID = sessionManager.fetchUserID()!!
@@ -538,12 +541,12 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 //            startActivity(Intent(this@AddSankhyaActivity, SankhyaDetail::class.java))
 //            val i = Intent(this@AddSankhyaActivity, SankhyaDetail::class.java)
 
-            Log.d("arrayListUser", arrayListUser.toString())
-            Log.d("arrayListUserId", arrayListUserId.toString())
-            Log.d("arrayData", arrayData)
+            DebugLog.d("arrayListUser : " + arrayListUser.toString())
+            DebugLog.d("arrayListUserId : " + arrayListUserId.toString())
+            DebugLog.d("arrayData : " + arrayData)
 
             val mergedId = arrayListUserId + arrayListUserId
-            Log.d("mergedId==>", mergedId.toString())
+            DebugLog.d("mergedId  ==>   " + mergedId.toString())
 
             for (num in arrayListUserId) {      // iterate through the second list
                 if (!arrayListUserId.contains(num)) {   // if first list doesn't contain current element
@@ -552,7 +555,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             }
 
             val mergedUser = arrayListUser + arrayListUser
-            Log.d("mergedUser==>", mergedUser.toString())
+            DebugLog.d("mergedUser==> 3 :  " + mergedUser.toString())
 
             for (num in arrayListUser) {      // iterate through the second list
                 if (!arrayListUser.contains(num)) {   // if first list doesn't contain current element
@@ -561,14 +564,14 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             }
 
             val merged = selected_user + selected_userAll
-            Log.d("merged==>", merged.toString())
+            DebugLog.d("merged==> 4 : " + merged.toString())
 
             for (x in selected_userAll) {
                 if (!selected_user.contains(x)) selected_user.add(x)
             }
 
             val mergedname = selected_userName + selected_userNameAll
-            Log.d("mergedname==>", mergedname.toString())
+            DebugLog.d("mergedname==> 5 : " + mergedname.toString())
 
             for (x in selected_userNameAll) {
                 if (!selected_userName.contains(x)) selected_userName.add(x)
@@ -594,35 +597,36 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 Snackbar.make(root_view, "User Name is Empty", Snackbar.LENGTH_SHORT).show()
             } else if (UserCategory.equals("")) {
                 Snackbar.make(root_view, "User Type is Empty", Snackbar.LENGTH_SHORT).show()
-            } else */if (MEMBER_ID == "") {
-            Snackbar.make(root_view, "Member is Empty", Snackbar.LENGTH_SHORT).show()
-        } else {
-
-            val i = Intent(this@AddSankhyaActivity, SankhyaFormDetail::class.java)
-            i.putExtra("SANKHYA", "SANKHYA")
-            i.putExtra("SANKHYA_ID", "")
-            i.putExtra("CURRENT_DATE", EVENTDATE)
-            if (UTSAV_ID == "Please Select Utsav") {
-                i.putExtra("UTSAVE_ID", "")
-                i.putExtra("UTSAV_NAME", "")
+            } else */
+            if (MEMBER_ID == "") {
+                Snackbar.make(root_view, "Member is Empty", Snackbar.LENGTH_SHORT).show()
             } else {
-                i.putExtra("UTSAVE_ID", UTSAV_ID)
-                i.putExtra("UTSAV_NAME", UTSAV_NAME)
+
+                val i = Intent(this@AddSankhyaActivity, SankhyaFormDetail::class.java)
+                i.putExtra("SANKHYA", "SANKHYA")
+                i.putExtra("SANKHYA_ID", "")
+                i.putExtra("CURRENT_DATE", EVENTDATE)
+                if (UTSAV_ID == "Please Select Utsav") {
+                    i.putExtra("UTSAVE_ID", "")
+                    i.putExtra("UTSAV_NAME", "")
+                } else {
+                    i.putExtra("UTSAVE_ID", UTSAV_ID)
+                    i.putExtra("UTSAV_NAME", UTSAV_NAME)
+                }
+                //                i.putExtra("UTSAVE_ID", UTSAV_ID)
+                i.putExtra("USER_ID", USER_ID)
+                i.putExtra("MEMBER_ID", MEMBER_ID)
+                i.putExtra("ORG_CHAPTER_ID", ORG_CHAPTER_ID)
+                //                i.putExtra("UTSAV_NAME", UTSAV_NAME)
+                i.putExtra("EVENT_DATE", EVENT_DATE)
+                i.putStringArrayListExtra("MEMBER_NAME", arrayListUser)
+                i.putStringArrayListExtra("USERNAME_LIST", UserName)
+                i.putStringArrayListExtra("USERID_LIST", UserCategory)
+                i.putExtra("SHAKHA_NAME", shakha_name_txt.text.toString())
+                //            i.putExtra("SELECTED_USER", selected_user)
+                //            i.putExtra("ALL_USER", selected_userAll)
+                startActivity(i)
             }
-//                i.putExtra("UTSAVE_ID", UTSAV_ID)
-            i.putExtra("USER_ID", USER_ID)
-            i.putExtra("MEMBER_ID", MEMBER_ID)
-            i.putExtra("ORG_CHAPTER_ID", ORG_CHAPTER_ID)
-//                i.putExtra("UTSAV_NAME", UTSAV_NAME)
-            i.putExtra("EVENT_DATE", EVENT_DATE)
-            i.putExtra("MEMBER_NAME", MEMBER_NAME)
-            i.putStringArrayListExtra("USERNAME_LIST", UserName)
-            i.putStringArrayListExtra("USERID_LIST", UserCategory)
-            i.putExtra("SHAKHA_NAME", shakha_name_txt.text.toString())
-//            i.putExtra("SELECTED_USER", selected_user)
-//            i.putExtra("ALL_USER", selected_userAll)
-            startActivity(i)
-        }
         }
 
         for (element in selected_user) {
@@ -742,8 +746,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 Log.v("Bhanu", "onItemClick ${position}")
 
                 Toast.makeText(
-                    this@AddSankhyaActivity,
-                    "Clicked: ${approveRecyclerView!!.mItems[position]}",
+                    this@AddSankhyaActivity, "Clicked: ${approveRecyclerView!!.mItems[position]}",
 //                    "Clicked: ${mAdapterGuru!!.mItems[position]}",
                     Toast.LENGTH_SHORT
                 ).show()
@@ -753,31 +756,31 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     }
 
     private fun SearchSpinner(
-        spinner_search: Array<String>,
-        edit_txt: SearchableSpinner
+        spinner_search: Array<String>, edit_txt: SearchableSpinner
     ) {
         val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item,
-            spinner_search
+            this, android.R.layout.simple_spinner_item, spinner_search
         )
         searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         edit_txt.adapter = searchmethod
     }
 
-    private val mOnItemSelectedListener_utsav: AdapterView.OnItemSelectedListener = object :
-        AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+    private val mOnItemSelectedListener_utsav: AdapterView.OnItemSelectedListener =
+        object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
 //            TODO("Not yet implemented")
-            Log.d("Name", utsavName[position])
-            Log.d("Postion", utsavID[position])
-            UTSAV_ID = utsavName[position]
+                Log.d("Name", utsavName[position])
+                Log.d("Postion", utsavID[position])
+                UTSAV_ID = utsavName[position]
 //            UTSAV_ID = utsavID[position]
-        }
+            }
 
-        override fun onNothingSelected(parent: AdapterView<*>?) {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
 //            TODO("Not yet implemented")
+            }
         }
-    }
 
     /*Relationship API*/
     private fun myRelationship() {
@@ -863,7 +866,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                         SearchSpinner(utsavName.toTypedArray(), utsav_txt)
 
                     } else {
-                        Functions.displayMessage(this@AddSankhyaActivity,response.body()?.message)
+                        Functions.displayMessage(this@AddSankhyaActivity, response.body()?.message)
 //                        Functions.showAlertMessageWithOK(
 //                            this@AddSankhyaActivity, "",
 ////                        "Message",
@@ -887,19 +890,22 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     }
 
     private fun mySankhyaList(
-        user_id: String, chapter_id: String, length: String, start: String, search: String,
-        start_date: String, end_date: String
+        user_id: String,
+        chapter_id: String,
+        length: String,
+        start: String,
+        search: String,
+        start_date: String,
+        end_date: String
     ) {
         val pd = CustomProgressBar(this@AddSankhyaActivity)
         pd.show()
         val call: Call<Sankhya_List_Response> = MyHssApplication.instance!!.api.get_sankhya_listing(
-            user_id, chapter_id, length,
-            start, search, start_date, end_date
+            user_id, chapter_id, length, start, search, start_date, end_date
         )
         call.enqueue(object : Callback<Sankhya_List_Response> {
             override fun onResponse(
-                call: Call<Sankhya_List_Response>,
-                response: Response<Sankhya_List_Response>
+                call: Call<Sankhya_List_Response>, response: Response<Sankhya_List_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -953,8 +959,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         val call: Call<my_family_response> = MyHssApplication.instance!!.api.get_members(user_id)
         call.enqueue(object : Callback<my_family_response> {
             override fun onResponse(
-                call: Call<my_family_response>,
-                response: Response<my_family_response>
+                call: Call<my_family_response>, response: Response<my_family_response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -1021,8 +1026,14 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 //
 //                            mAdapterGurunew!!.notifyDataSetChanged()
 
-                            approveRecyclerView = ApproveRecyclerView(this@AddSankhyaActivity,
-                                athelets_Beans, arrayListUser, arrayListUserId, selectAllItems, arrayData)
+                            approveRecyclerView = ApproveRecyclerView(
+                                this@AddSankhyaActivity,
+                                athelets_Beans,
+                                arrayListUser,
+                                arrayListUserId,
+                                selectAllItems,
+                                arrayData
+                            )
 
                             /*mAdapterGuru = SankhyaAdapter(
                                 athelets_Beans,
@@ -1033,62 +1044,50 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 
                             attended_list.adapter = mAdapterGuru*/
 
-                            val adapter = ArrayAdapter(this@AddSankhyaActivity, R.layout.simple_list_item_multiple_choice, UserName)
+                            val adapter = ArrayAdapter(
+                                this@AddSankhyaActivity,
+                                R.layout.simple_list_item_multiple_choice,
+                                UserName
+                            )
                             /** Setting the arrayadapter for this listview   */
                             attendedlist.adapter = adapter
                             /** Defining checkbox click event listener  */
-                            val clickListener =
-                                View.OnClickListener { v ->
-                                    arrayListUser.clear()
-                                    arrayListUserId.clear()
-                                    val chk = v as CheckBox
-                                    val itemCount = attendedlist.count
-                                    for (i in 0 until itemCount) {
-                                        attendedlist.setItemChecked(i, chk.isChecked)
+                            val clickListener = View.OnClickListener { v ->
+                                arrayListUser.clear()
+                                arrayListUserId.clear()
+                                val chk = v as CheckBox
+                                val itemCount = attendedlist.count
+                                for (i in 0 until itemCount) {
+                                    attendedlist.setItemChecked(i, chk.isChecked)
 
-                                        if (chk.isChecked) {
-                                            arrayListUser.add(UserName[i])
-                                            arrayListUserId.add(UserCategory[i])
-                                        } else {
-                                            arrayListUser.remove(UserName[i])
-                                            arrayListUserId.remove(UserCategory[i])
-                                        }
+                                    if (chk.isChecked) {
+                                        arrayListUser.add(UserName[i])
+                                        arrayListUserId.add(UserCategory[i])
+                                    } else {
+                                        arrayListUser.remove(UserName[i])
+                                        arrayListUserId.remove(UserCategory[i])
                                     }
-                                    Log.d("arrayListUser", arrayListUser.toString())
-                                    Log.d("arrayListUserId", arrayListUserId.toString())
                                 }
+                                DebugLog.d("arrayListUser=====> " + arrayListUser.toString())
+                                DebugLog.d("arrayListUser SIZE=====> " + arrayListUser.size)
+                                DebugLog.d("arrayListUserId=====> " + arrayListUserId.toString())
+                                txt_sankhya_count.text = arrayListUser.size.toString()
+                            }
 
                             /** Defining click event listener for the listitem checkbox  */
                             val itemClickListener =
-                                AdapterView.OnItemClickListener { arg0, arg1, arg2, arg3 ->
-                                    arrayListUser.clear()
-                                    arrayListUserId.clear()
-                                    val selectedItem = arg2
-//                                    arrayListUserId.add(selectedItem.toString())
-
-                                    arrayListUser.add(UserName[selectedItem])
-                                    arrayListUserId.add(UserCategory[selectedItem])
-
-//                                    val chk = findViewById<View>(R.id.chkAll) as CheckBox
-                                    val checkedItemCount = checkedItemCount
-
-                                    /*if (attendedlist.count == 1) {
-                                        cbSelectAll.isChecked = true
-
-                                        arrayListUser.add(UserName[selectedItem])
-                                        arrayListUserId.add(UserCategory[selectedItem])
-
+                                AdapterView.OnItemClickListener { arg0, arg1, position, arg3 ->
+                                    val checkedTextView = arg1 as CheckedTextView
+                                    val isSelected = checkedTextView.isChecked
+                                    if (isSelected) {
+                                        arrayListUser.add(UserName[position])
+                                        arrayListUserId.add(UserCategory[position])
                                     } else {
-                                        cbSelectAll.isChecked = false
-
-                                        arrayListUser.remove(UserName[selectedItem])
-                                        arrayListUserId.remove(UserCategory[selectedItem])
-                                    }*/
-
-                                    Log.d("arrayListUser", arrayListUser.toString())
-                                    Log.d("arrayListUserId", arrayListUserId.toString())
-                                    if (attendedlist.count == checkedItemCount) cbSelectAll.isChecked =
-                                        true else cbSelectAll.isChecked = false
+                                        arrayListUser.remove(UserName[position])
+                                        arrayListUserId.remove(UserCategory[position])
+                                    }
+                                    cbSelectAll.isChecked = attendedlist.count == checkedItemCount
+                                    txt_sankhya_count.text = arrayListUser.size.toString()
                                 }
 
                             cbSelectAll.setOnClickListener(clickListener)
@@ -1106,9 +1105,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                         }
                     } else {
                         Functions.showAlertMessageWithOK(
-                            this@AddSankhyaActivity,
-                            "Message",
-                            response.body()?.message
+                            this@AddSankhyaActivity, "Message", response.body()?.message
                         )
                     }
                 } else {
@@ -1150,8 +1147,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             }
             val data = builder.toString()
             studentList = Gson().fromJson<List<Datum?>>(
-                data,
-                object : TypeToken<List<Datum?>?>() {}.type
+                data, object : TypeToken<List<Datum?>?>() {}.type
             )
             Functions.printLog("studentList", studentList.toString())
             return studentList
@@ -1186,31 +1182,29 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     ) {
         val pd = CustomProgressBar(this@AddSankhyaActivity)
         pd.show()
-        val call: Call<Get_Sankhya_Add_Response> =
-            MyHssApplication.instance!!.api.get_sankhya_add(
-                user_id,
-                member_id,
-                org_chapter_id,
-                event_date,
-                utsav,
-                shishu_male,
-                shishu_female,
-                baal,
-                baalika,
-                kishore,
-                kishori,
-                tarun,
-                taruni,
-                yuva,
-                yuvati,
-                proudh,
-                proudha,
-                api
-            )
+        val call: Call<Get_Sankhya_Add_Response> = MyHssApplication.instance!!.api.get_sankhya_add(
+            user_id,
+            member_id,
+            org_chapter_id,
+            event_date,
+            utsav,
+            shishu_male,
+            shishu_female,
+            baal,
+            baalika,
+            kishore,
+            kishori,
+            tarun,
+            taruni,
+            yuva,
+            yuvati,
+            proudh,
+            proudha,
+            api
+        )
         call.enqueue(object : Callback<Get_Sankhya_Add_Response> {
             override fun onResponse(
-                call: Call<Get_Sankhya_Add_Response>,
-                response: Response<Get_Sankhya_Add_Response>
+                call: Call<Get_Sankhya_Add_Response>, response: Response<Get_Sankhya_Add_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -1226,8 +1220,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                         ) { dialog, which ->
                             startActivity(
                                 Intent(
-                                    this@AddSankhyaActivity,
-                                    SankhyaActivity::class.java
+                                    this@AddSankhyaActivity, SankhyaActivity::class.java
                                 )
                             )
                             finish()
@@ -1243,9 +1236,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 
                     } else {
                         Functions.showAlertMessageWithOK(
-                            this@AddSankhyaActivity,
-                            "Message",
-                            response.body()?.message
+                            this@AddSankhyaActivity, "Message", response.body()?.message
                         )
                     }
                 } else {

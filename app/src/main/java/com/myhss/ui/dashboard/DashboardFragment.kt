@@ -672,7 +672,11 @@ class DashboardFragment : Fragment() {
                             sessionManager.saveCOUNTRY(data_getmember[0].country.toString())
                             sessionManager.savePOSTCODE(data_getmember[0].postalCode.toString())
                             sessionManager.saveSHAKHA_TAB(data_getmember[0].shakha_tab.toString())
-                            sessionManager.saveSHAKHA_SANKHYA_AVG(data_getmember[0].shakha_sankhya_avg.toString())
+                            var s_count  = data_getmember[0].shakha_sankhya_avg.toString()
+                            if(s_count.length ==0){
+                                s_count = "0"
+                            }
+                            sessionManager.saveSHAKHA_SANKHYA_AVG(s_count)
                             sessionManager.saveMEDICAL_OTHER_INFO(data_getmember[0].medicalDetails.toString())
                             sessionManager.saveQUALIFICATIONAID(data_getmember[0].isQualifiedInFirstAid.toString())
                             sessionManager.saveQUALIFICATION_VALUE(data_getmember[0].first_aid_qualification_val.toString())

@@ -1744,9 +1744,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             "other_relationship", intent.getStringExtra("OTHER_RELATIONSHIP").toString()
         )
         builderData.addFormDataPart("occupation", intent.getStringExtra("OCCUPATION").toString())
-        builderData.addFormDataPart(
-            "occupation_name", intent.getStringExtra("OCCUPATION_NAME").toString()
-        )
+        builderData.addFormDataPart("occupation_name", intent.getStringExtra("OCCUPATION_NAME").toString())
         builderData.addFormDataPart("shakha", intent.getStringExtra("SHAKHA").toString())
         builderData.addFormDataPart("mobile", intent.getStringExtra("MOBILE").toString())
         builderData.addFormDataPart("land_line", intent.getStringExtra("LAND_LINE").toString())
@@ -1932,9 +1930,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             "other_relationship", intent.getStringExtra("OTHER_RELATIONSHIP").toString()
         )
         builderData.addFormDataPart("occupation", intent.getStringExtra("OCCUPATION").toString())
-        builderData.addFormDataPart(
-            "occupation_name", intent.getStringExtra("OCCUPATION_NAME").toString()
-        )
+//        builderData.addFormDataPart("occupation_name", intent.getStringExtra("OCCUPATION_NAME").toString())
         builderData.addFormDataPart("shakha", intent.getStringExtra("SHAKHA").toString())
         builderData.addFormDataPart("mobile", intent.getStringExtra("MOBILE").toString())
         builderData.addFormDataPart("land_line", intent.getStringExtra("LAND_LINE").toString())
