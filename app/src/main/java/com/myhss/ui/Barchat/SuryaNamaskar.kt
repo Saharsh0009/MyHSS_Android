@@ -1,15 +1,12 @@
 package com.myhss.ui.Barchat
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
-import android.text.InputFilter
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -27,14 +24,11 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.Utils.InputFilterMinMax
 import com.myhss.ui.Barchat.Model.Datum_Get_SuryaNamaskar
 import com.myhss.ui.Barchat.Model.Get_SuryaNamaskar_ModelResponse
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -44,11 +38,8 @@ import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.math.RoundingMode
-import java.text.DecimalFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.roundToLong
 
 
 class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
@@ -56,14 +47,10 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     private lateinit var sessionManager: SessionManager
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
-    lateinit var average_count: TextView
-    private var Value = ""
     private var MEMBER_ID: String = ""
-
     var IDMEMBER: ArrayList<String> = ArrayList<String>()
     var UserName: ArrayList<String> = ArrayList<String>()
     var UserCategory: ArrayList<String> = ArrayList<String>()
-
     private var USER_NAME: String = ""
     private var USER_ID: String = ""
     lateinit var USERID: String
@@ -74,24 +61,16 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var START: String
     lateinit var SEARCH: String
     lateinit var CHAPTERID: String
-
-    private var athelets_Beans: List<Get_Member_Listing_Datum> =
-        ArrayList<Get_Member_Listing_Datum>()
-
-    var dialog: Dialog? = null
     lateinit var data_not_found_layout: RelativeLayout
-
     lateinit var mLayoutManager: LinearLayoutManager
     lateinit var linechart_layout: LinearLayout
     private lateinit var add_more: ImageView
-    private var ddd = ArrayList<String>()
+    lateinit var pieChart_surya: PieChart
+    private var memberDataList: List<Get_Member_Listing_Datum> =
+        ArrayList<Get_Member_Listing_Datum>()
     private var surya_namaskarlist: List<Datum_Get_SuryaNamaskar> =
         ArrayList<Datum_Get_SuryaNamaskar>()
 
-    var sum = 0.0
-    var res = 0.0
-
-    lateinit var pieChart_surya: PieChart
 
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.N)
@@ -113,7 +92,6 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
 
         back_arrow = findViewById(R.id.back_arrow)
         header_title = findViewById(R.id.header_title)
-        average_count = findViewById(R.id.average_count)
         header_title.text = getString(R.string.surya_namaskar)
         linechart_layout = findViewById(R.id.linechart_layout)
         pieChart_surya = findViewById(R.id.pieChart_surya)
@@ -179,16 +157,16 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                     Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
                         try {
-                            athelets_Beans = response.body()!!.data!!
-                            Log.d("atheletsBeans", athelets_Beans.toString())
+                            memberDataList = response.body()!!.data!!
+                            Log.d("atheletsBeans", memberDataList.toString())
 
                             val mStringList = ArrayList<String>()
                             mStringList.add("All")
                             mStringList.add(sessionManager.fetchFIRSTNAME()!! + " " + sessionManager.fetchSURNAME()!!)
-                            for (i in 0 until athelets_Beans.size) {
-                                if (athelets_Beans[i].firstName.toString() + " " + athelets_Beans[i].lastName.toString() != sessionManager.fetchFIRSTNAME() + " " + sessionManager.fetchSURNAME()) {
+                            for (i in 0 until memberDataList.size) {
+                                if (memberDataList[i].firstName.toString() + " " + memberDataList[i].lastName.toString() != sessionManager.fetchFIRSTNAME() + " " + sessionManager.fetchSURNAME()) {
                                     mStringList.add(
-                                        athelets_Beans[i].firstName.toString() + " " + athelets_Beans[i].lastName.toString()
+                                        memberDataList[i].firstName.toString() + " " + memberDataList[i].lastName.toString()
                                     )
                                 }
                             }
@@ -196,10 +174,10 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                             val mStringListnew = ArrayList<String>()
                             mStringListnew.add("-99")
                             mStringListnew.add(sessionManager.fetchMEMBERID()!!)
-                            for (i in 0 until athelets_Beans.size) {
-                                if (athelets_Beans[i].memberId != sessionManager.fetchMEMBERID()) {
+                            for (i in 0 until memberDataList.size) {
+                                if (memberDataList[i].memberId != sessionManager.fetchMEMBERID()) {
                                     mStringListnew.add(
-                                        athelets_Beans[i].memberId.toString()
+                                        memberDataList[i].memberId.toString()
                                     )
                                 }
                             }
@@ -248,8 +226,6 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                         USER_NAME = sessionManager.fetchUSERNAME()!!
                         USER_ID = sessionManager.fetchMEMBERID()!!
                         if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
-                            sum = 0.0
-                            res = 0.0
                             DebugLog.e("MEMBER_ID 3==>" + sessionManager.fetchMEMBERID()!!)
                             SuryanamaskarList(sessionManager.fetchMEMBERID()!!, "true")
                         } else {
@@ -294,54 +270,20 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                         data_not_found_layout.visibility = View.GONE
                         try {
                             surya_namaskarlist = response.body()!!.data!!
-                            val mStringList = ArrayList<String>()
+                            val memberStringList = ArrayList<String>()
                             for (i in 0 until surya_namaskarlist.size) {
-                                mStringList.add(surya_namaskarlist.get(i).getmember_id().toString())
+                                memberStringList.add(
+                                    surya_namaskarlist.get(i).getmember_id().toString()
+                                )
                             }
-                            var mStringArray = mStringList.toArray()
-                            mStringArray = mStringList.toArray(mStringArray)
+                            var memberStringArray = memberStringList.toArray()
+                            memberStringArray = memberStringList.toArray(memberStringArray)
                             val list: ArrayList<String> = arrayListOf<String>()
-                            for (element in mStringArray) {
+                            for (element in memberStringArray) {
                                 list.add(element.toString())
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                     IDMEMBER = list
                                 }
-                            }
-                            DebugLog.d("surya_namaskarlist=>111 : " + surya_namaskarlist.toString())
-                            for (i in surya_namaskarlist.indices) {
-                                surya_namaskarlist.filter { it.getmember_id() == surya_namaskarlist[i].getmember_id() }
-                            }
-                            DebugLog.d("surya_namaskarlist=> : " + surya_namaskarlist.toString())
-
-                            //now draw bar chart with dynamic data
-                            val entries: ArrayList<BarEntry> = ArrayList()
-                            //you can replace this data object with  your custom object
-                            for (i in surya_namaskarlist.indices) {
-                                val score = surya_namaskarlist[i]
-                                entries.add(BarEntry(i.toFloat(), score.getcount()!!.toFloat()))
-                                Value = score.toString()
-                            }
-
-                            val mStringListnew = ArrayList<String>()
-                            for (i in 0 until surya_namaskarlist.size) {
-                                mStringListnew.add(
-                                    surya_namaskarlist[i].getcount().toString()
-                                )
-                            }
-                            val format = DecimalFormat("###.##")
-                            for (i in 0 until mStringListnew.size) {
-                                sum = mStringListnew.get(i).toInt() + sum
-                            }
-                            format.roundingMode = RoundingMode.CEILING
-                            res = sum // / mStringListnew.size
-                            DebugLog.e("The average is ==> : " + format.format(res))
-                            average_count.text = format.format(res.roundToLong())
-                            val dateee = ArrayList<String>()
-                            for (i in 0 until surya_namaskarlist.size) {
-                                dateee.add(surya_namaskarlist[i].getcount_date().toString())
-
-                                val parts: Array<String> = dateee[i].split("-").toTypedArray()
-                                ddd.add(parts[0] + "-" + parts[1])
                             }
                             pieChart_surya.visibility = View.VISIBLE
                             setPieChartForSuryanamaskar(surya_namaskarlist)
@@ -353,7 +295,6 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                     } else {
                         data_not_found_layout.visibility = View.VISIBLE
                         pieChart_surya.visibility = View.GONE
-                        average_count.text = "0.0"
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -397,17 +338,19 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         pieChart_surya.legend.setWordWrapEnabled(true)
         pieChart_surya.setEntryLabelColor(Color.BLACK)
         pieChart_surya.setEntryLabelTextSize(12f)
-        val deDupedNodes = IDMEMBER.toSet()
+        val member_list = IDMEMBER.toSet()
         val pieEntries: ArrayList<PieEntry> = ArrayList()
-        for (i in 0 until deDupedNodes.size) {
+        var t_count = 0
+        for (i in 0 until member_list.size) {
             var s_count = 0
             var s_name = ""
             for (j in 0 until suryaNamaskarlistData.size) {
-                if (deDupedNodes.elementAt(i) == suryaNamaskarlistData.get(j).getmember_id()) {
+                if (member_list.elementAt(i) == suryaNamaskarlistData.get(j).getmember_id()) {
                     s_count = s_count + suryaNamaskarlistData.get(j).getcount()!!.toInt()
                     s_name = suryaNamaskarlistData.get(j).getmember_name().toString()
                 }
             }
+            t_count = t_count + s_count
             pieEntries.add(PieEntry(s_count.toFloat(), s_name))
         }
         val pieDataSet = PieDataSet(pieEntries, "")
@@ -428,6 +371,9 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         data.setValueTextColor(Color.BLACK)
         pieChart_surya.setData(data)
         pieChart_surya.setDrawEntryLabels(false)
+        pieChart_surya.centerText = "Total\n" + t_count
+        pieChart_surya.setCenterTextColor(Color.parseColor("#ff9800"))
+        pieChart_surya.setCenterTextSize(30f)
         pieChart_surya.invalidate()
     }
 
@@ -447,4 +393,3 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     override fun onNothingSelected() {
     }
 }
-

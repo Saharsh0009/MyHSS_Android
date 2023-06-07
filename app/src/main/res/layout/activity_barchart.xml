@@ -48,43 +48,6 @@
                         android:textColor="@color/blackColor"
                         android:textSize="@dimen/font_size20" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/font_size15"
-                        android:layout_marginEnd="@dimen/font_size15"
-                        android:layout_marginBottom="@dimen/padding10"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:layout_marginEnd="@dimen/font_size15"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/sourcesanspro_semibold"
-                            android:gravity="center_horizontal"
-                            android:text="Total"
-                            android:textColor="@color/blackColor"
-                            android:textSize="@dimen/font_size20" />
-
-                        <TextView
-                            android:id="@+id/average_count"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:layout_marginEnd="@dimen/font_size15"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/sourcesanspro_semibold"
-                            android:gravity="left|center_vertical"
-                            android:text="0.0"
-                            android:textColor="@color/orangeColor"
-                            android:textSize="@dimen/font_size20" />
-
-                    </LinearLayout>
-                    
                     <com.github.mikephil.charting.charts.PieChart
                         android:id="@+id/pieChart_surya"
                         android:layout_width="match_parent"
