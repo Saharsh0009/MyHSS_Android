@@ -63,18 +63,33 @@
 
     <!--Piechart_color-->
     <array name="pieChart">
-        <item>#ffdc79</item>
-        <item>#ffb4ae</item>
-        <item>#ff6661</item>
-        <item>#fd9e19</item>
-        <item>#da2a2c</item>
-        <item>#26A69A</item>
-        <item>#5B89C2</item>
-        <item>#2FCC71</item>
-        <item>#2979FF</item>
-        <item>#866200EE</item>
+        <item>#FF3224</item>
+        <item>#512119</item>
+        <item>#F87700</item>
+        <item>#F8B03C</item>
+        <item>#9EAC3D</item>
+        <item>#4E9B5B</item>
+        <item>#B22469</item>
+        <item>#5E3B03</item>
+        <item>#D37B13</item>
+        <item>#C25450</item>
     </array>
 
+    <!--Piechart_gurudakshina_color-->
+    <array name="pieChart_guru">
+        <item>#264D99</item>
+        <item>#2F4858</item>
+        <item>#00A26A</item>
+        <item>#142F4D</item>
+        <item>#005979</item>
+        <item>#008692</item>
+        <item>#00B290</item>
+        <item>#2B5824</item>
+        <item>#144D3F</item>
+        <item>#00B4BA</item>
+    </array>
 
+    <color name="guru_dakshina_bk">#0F142F4D</color>
+    <color name="surya_namaskar_bk">#1CF8B03C</color>
 
 </resources>

@@ -2,6 +2,7 @@ package com.uk.myhss.ui.guru_dakshina
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -11,6 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.SwipeleftToRightBack
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
 import java.util.*
@@ -68,10 +70,7 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
         contribution_type_txt = findViewById(R.id.contribution_type_txt)
         guru_dakshina_txt = findViewById(R.id.guru_dakshina_txt)
         close_layout = findViewById(R.id.close_layout)
-
         rootLayout = findViewById(R.id.rootLayout)
-
-
         if (intent.getStringExtra("dakshina").toString() == "One-Time") {
             frequency_of_donation_txt.visibility = View.GONE
             frequency_of_donation_value.visibility = View.GONE
@@ -79,8 +78,6 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
             frequency_of_donation_txt.visibility = View.VISIBLE
             frequency_of_donation_value.visibility = View.VISIBLE
         }
-
-
         user_name_txt.text = intent.getStringExtra("username_name")!!.capitalize(Locale.ROOT)
         shakha_name_txt.text = intent.getStringExtra("user_shakha_type")!!.capitalize(Locale.ROOT)
         frequency_of_donation_value.text = intent.getStringExtra("recurring")
@@ -90,13 +87,20 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
         reference_txt.text = intent.getStringExtra("order_id")
         contribution_type_txt.text = intent.getStringExtra("dakshina")
         guru_dakshina_txt.text = intent.getStringExtra("amount_txt")
-
         back_arrow.setOnClickListener {
             finish()
         }
-
         close_layout.setOnClickListener {
             finish()
         }
+
+//        SwipeleftToRightBack.enableSwipeBack(this)
+//        SwipeleftToRightBack.enableSwipeBackFullView(this)
     }
+
+//    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+//        return SwipeleftToRightBack.dispatchTouchEvent(this, event) || super.dispatchTouchEvent(
+//            event
+//        )
+//    }
 }

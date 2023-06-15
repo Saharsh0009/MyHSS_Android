@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/guru_dakshina_layout"
     android:layout_width="match_parent"
+    android:background="@color/guru_dakshina_bk"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -14,7 +15,7 @@
         android:layout_marginEnd="@dimen/padding10"
         android:background="@drawable/edittext_round"
         android:padding="@dimen/padding5"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="@dimen/padding20"
@@ -44,7 +45,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/view_view"
         android:layout_below="@+id/search_fields_layout"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <Button
         android:layout_width="wrap_content"
@@ -53,7 +54,25 @@
         android:text="Load more"
         android:textColor="@color/black"
         android:textSize="@dimen/padding15"
-        android:visibility="invisible" />
+        android:visibility="gone" />
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart_guru"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:id="@+id/layout_pieChart_lable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pieChart_guru"
+        android:layout_marginLeft="@dimen/padding20"
+        android:layout_marginRight="@dimen/padding20"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/view_view"

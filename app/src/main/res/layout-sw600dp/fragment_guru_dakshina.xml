@@ -14,7 +14,7 @@
         android:layout_marginEnd="@dimen/padding10"
         android:background="@drawable/edittext_round"
         android:padding="@dimen/padding5"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="@dimen/padding20"
@@ -44,7 +44,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/view_view"
         android:layout_below="@+id/search_fields_layout"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/view_view"

@@ -5,111 +5,136 @@ import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.myhss.Utils.DebugLog
-import com.myhss.ui.Barchat.Model.Datum_Get_SuryaNamaskar
+import com.myhss.Utils.SwipeleftToRightBack
+import com.myhss.ui.Barchat.Model.BarchartDataModel
 import com.uk.myhss.R
+import com.uk.myhss.ui.guru_dakshina.GuruDakshinaRegularDetail
+import com.uk.myhss.ui.my_family.Model.Datum_guru_dakshina
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ViewBarchartActivity : AppCompatActivity() {
+class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
 
-    lateinit var barChart_surya: BarChart
-    lateinit var barData_surya: BarData
-    lateinit var barDataSet_surya: BarDataSet
-    lateinit var barEntriesList_surya: ArrayList<BarEntry>
+    lateinit var barChart: BarChart
+    lateinit var barchartData: BarData
+    lateinit var barchartDataSet: BarDataSet
+    lateinit var barchartEntriesList: ArrayList<BarEntry>
+    lateinit var guruDakshinaData: ArrayList<Datum_guru_dakshina>
     lateinit var back_arrow: ImageView
+    var colorCode: String = "#ff9800"
     lateinit var header_title: TextView
     private lateinit var add_more: ImageView
+    private var isBarClickable = false
+    var chartDigit: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_barchart)
-        barChart_surya = findViewById(R.id.barChart_surya)
+        barChart = findViewById(R.id.barChart_surya)
         back_arrow = findViewById(R.id.back_arrow)
         header_title = findViewById(R.id.header_title)
         add_more = findViewById(R.id.info_tooltip)
         add_more.setImageResource(R.drawable.ic_plus)
-        val u_name = intent.getStringExtra("name")
-        val u_listData =
-            intent.getSerializableExtra("list_data") as ArrayList<Datum_Get_SuryaNamaskar>
-        DebugLog.e("User Count =>>>  " + u_listData.size)
-        DebugLog.e("NAme  =>>>  " + u_name)
-        setBarChartDataForSuryanamaskar(u_listData)
-        header_title.text = u_name
+
+        val u_case = intent.getStringExtra("case")
+        val u_listData = intent.getSerializableExtra("list_data") as ArrayList<BarchartDataModel>
+        header_title.text = u_listData.get(0).getValue_user()
         back_arrow.setOnClickListener {
             this.finish()
         }
-        add_more.visibility = View.VISIBLE
-        add_more.setOnClickListener {
-            val i = Intent(this@ViewBarchartActivity, AddSuryaNamaskarActivity::class.java)
-            startActivity(i)
+        when (u_case) {
+            "1" -> {
+                add_more.visibility = View.VISIBLE
+                add_more.setOnClickListener {
+                    val i = Intent(this@ViewBarchartActivity, AddSuryaNamaskarActivity::class.java)
+                    startActivity(i)
+                    isBarClickable = false
+                }
+                colorCode = "#ff9800"
+                chartDigit = 0
+            }
+            "2" -> {
+                isBarClickable = true
+                add_more.visibility = View.GONE
+                guruDakshinaData =
+                    intent.getSerializableExtra("list_guruDakshina") as ArrayList<Datum_guru_dakshina>
+
+//                DebugLog.e("guruDakshinaData => " + guruDakshinaData.size)
+                colorCode = "#0080ff"
+                chartDigit = 2
+            }
         }
-
+        setBarChartDataForSuryanamaskar(u_listData)
+//        SwipeleftToRightBack.enableSwipeBack(this)
+//        SwipeleftToRightBack.enableSwipeBackFullView(this)
     }
+//    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+//        return SwipeleftToRightBack.dispatchTouchEvent(this, event) || super.dispatchTouchEvent(event)
+//    }
 
-    private fun setBarChartDataForSuryanamaskar(suryaNamaskarlistData: ArrayList<Datum_Get_SuryaNamaskar>) {
-        barEntriesList_surya = ArrayList()
-        for (i in 0 until suryaNamaskarlistData.size) {
-            barEntriesList_surya.add(
+    private fun setBarChartDataForSuryanamaskar(barchartData: ArrayList<BarchartDataModel>) {
+        barchartEntriesList = ArrayList()
+        for (i in 0 until barchartData.size) {
+            barchartEntriesList.add(
                 BarEntry(
-                    (i.toFloat()), (suryaNamaskarlistData.get(i).getcount())!!.toFloat()
+                    (i.toFloat()), (barchartData.get(i).getValue_y())!!.toFloat()
                 )
             )
         }
-        setupBarChartSurya(suryaNamaskarlistData)
+        setupBarChartSurya(barchartData)
     }
 
-    private fun setupBarChartSurya(suryaNamaskarlistData: ArrayList<Datum_Get_SuryaNamaskar>) {
-        barDataSet_surya = BarDataSet(barEntriesList_surya, getString(R.string.surya_namaskar))
-        barDataSet_surya.valueFormatter = DefaultValueFormatter(0)
-        barDataSet_surya.valueTextColor = Color.BLACK
-        barDataSet_surya.setColor(Color.parseColor("#ff9800"))
-        barDataSet_surya.valueTextSize = 10f
-        barData_surya = BarData(barDataSet_surya)
-        barChart_surya.data = barData_surya
-        barChart_surya.isHorizontalScrollBarEnabled = true
-        barChart_surya.animateXY(1000, 1000)
-        barChart_surya.isDoubleTapToZoomEnabled = true
-        barChart_surya.setScaleEnabled(true)
-        barChart_surya.setTouchEnabled(true)
-        barChart_surya.setPinchZoom(true)
-        barChart_surya.description = null
-        barChart_surya.legend.isEnabled = false
-        barChart_surya.setDrawBarShadow(false)
-        barChart_surya.setVisibleXRangeMaximum(10f)
-        barChart_surya.axisLeft.axisMinimum = 0f
-        barChart_surya.axisRight.axisMinimum = 0f
-        setXAxisDataForBarChart(suryaNamaskarlistData)
-        barChart_surya.invalidate()
+    private fun setupBarChartSurya(barchartDataList: ArrayList<BarchartDataModel>) {
+        barchartDataSet = BarDataSet(barchartEntriesList, getString(R.string.surya_namaskar))
+        barchartDataSet.valueFormatter = DefaultValueFormatter(chartDigit)
+        barchartDataSet.valueTextColor = Color.BLACK
+        barchartDataSet.setColor(Color.parseColor(colorCode))
+        barchartDataSet.valueTextSize = 10f
+        barchartData = BarData(barchartDataSet)
+        barchartData.barWidth = 0.4f
+        barChart.data = barchartData
+        barChart.setOnChartValueSelectedListener(this)
+        barChart.isHorizontalScrollBarEnabled = true
+        barChart.animateXY(1000, 1000)
+        barChart.isDoubleTapToZoomEnabled = true
+        barChart.setScaleEnabled(true)
+        barChart.setTouchEnabled(true)
+        barChart.setPinchZoom(true)
+        barChart.description = null
+        barChart.legend.isEnabled = false
+        barChart.setDrawBarShadow(false)
+        barChart.setVisibleXRangeMaximum(10f)
+        barChart.axisLeft.axisMinimum = 0f
+        barChart.axisRight.axisMinimum = 0f
+        setXAxisDataForBarChart(barchartDataList)
+        barChart.invalidate()
     }
 
 
-    private fun setXAxisDataForBarChart(suryaNamaskarlistData: ArrayList<Datum_Get_SuryaNamaskar>) {
+    private fun setXAxisDataForBarChart(barchartDataist: ArrayList<BarchartDataModel>) {
         val xAxisLabel: ArrayList<String> = ArrayList()
-        for (i in 0 until suryaNamaskarlistData.size) {
-            xAxisLabel.add(
-                convertToDateMonthCode(
-                    suryaNamaskarlistData.get(i).getcount_date().toString()
-                )
-            )
+        for (i in 0 until barchartDataist.size) {
+            xAxisLabel.add(convertToDateMonthCode(barchartDataist.get(i).getValue_x().toString()))
+//            xAxisLabel.add(barchartDataist.get(i).getValue_x().toString())
         }
-        val xAxis: XAxis = barChart_surya.getXAxis()
+        val xAxis: XAxis = barChart.getXAxis()
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.textSize = 10f
         xAxis.setDrawAxisLine(false)
@@ -120,9 +145,9 @@ class ViewBarchartActivity : AppCompatActivity() {
         xAxis.setGranularity(1f)
         xAxis.granularity
         xAxis.spaceMax = 0.4f
-        val yAxisRight: YAxis = barChart_surya.getAxisRight()
+        val yAxisRight: YAxis = barChart.getAxisRight()
         yAxisRight.isEnabled = false
-        val yAxisLeft: YAxis = barChart_surya.axisLeft
+        val yAxisLeft: YAxis = barChart.axisLeft
         yAxisLeft.isDrawBottomYLabelEntryEnabled
     }
 
@@ -133,7 +158,50 @@ class ViewBarchartActivity : AppCompatActivity() {
         } else {
             TODO("VERSION.SDK_INT < O")
         }
-        val date = LocalDate.parse(dateString)
-        return date.format(formatter)
+        try {
+            val date = LocalDate.parse(dateString)
+            return date.format(formatter)
+        } catch (e: Exception) {
+            return dateString
+        }
     }
+
+    override fun onValueSelected(e: Entry?, h: Highlight?) {
+        if (isBarClickable) {
+            val xAxisLabel = barChart.xAxis.valueFormatter.getFormattedValue(e!!.x, barChart.xAxis)
+            val yAxisValue = e?.y
+            for (i in 0 until guruDakshinaData.size) {
+//                DebugLog.e("Y Axis : $yAxisValue And Value from BAr chart : ${guruDakshinaData[i].paidAmount!!}")
+//                DebugLog.e("X Axis : $xAxisLabel And Value from BAr chart : ${guruDakshinaData[i].startDate!!}")
+                if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString() && (yAxisValue.toString()).toFloat() == guruDakshinaData[i].paidAmount!!.toFloat()) {
+//                    DebugLog.e("click button ${guruDakshinaData[i].paidAmount}")
+                    openguruDakshinaDetails(guruDakshinaData[i])
+                    break
+                }
+            }
+        }
+    }
+
+    private fun openguruDakshinaDetails(datumGuruDakshina: Datum_guru_dakshina) {
+        val i = Intent(this@ViewBarchartActivity, GuruDakshinaRegularDetail::class.java)
+        i.putExtra("username_name", datumGuruDakshina.firstName + datumGuruDakshina.lastName)
+        i.putExtra("user_shakha_type", datumGuruDakshina.chapterName)
+        i.putExtra("amount_txt", datumGuruDakshina.paidAmount)
+        i.putExtra("regular_onetime_type", datumGuruDakshina.dakshina)
+        i.putExtra("regular_onetime_id", datumGuruDakshina.orderId)
+        i.putExtra("date_txt", datumGuruDakshina.startDate)
+        i.putExtra("status", datumGuruDakshina.status)
+        i.putExtra("txnId", datumGuruDakshina.txnId)
+        i.putExtra("giftAid", datumGuruDakshina.giftAid)
+        i.putExtra("order_id", datumGuruDakshina.orderId)
+        i.putExtra("dakshina", datumGuruDakshina.dakshina)
+        i.putExtra("recurring", datumGuruDakshina.recurring)
+        startActivity(i)
+    }
+
+    override fun onNothingSelected() {
+
+    }
+
+
 }

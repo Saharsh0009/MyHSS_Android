@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 
-class Datum_guru_dakshina {
+class Datum_guru_dakshina : java.io.Serializable {
 
     @SerializedName("id")
     @Expose
