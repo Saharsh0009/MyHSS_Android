@@ -2,12 +2,15 @@ package com.myhss.ui.Barchat
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +23,8 @@ import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.MPPointF
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -27,6 +32,8 @@ import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.Utils.SwipeleftToRightBack
+import com.myhss.ui.Barchat.Model.BarchartDataModel
 import com.myhss.ui.Barchat.Model.Datum_Get_SuryaNamaskar
 import com.myhss.ui.Barchat.Model.Get_SuryaNamaskar_ModelResponse
 import com.uk.myhss.Main.HomeActivity
@@ -35,6 +42,7 @@ import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
+import okhttp3.internal.notify
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,6 +55,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     private lateinit var sessionManager: SessionManager
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
+    lateinit var layout_pieChart_lable: LinearLayout
     private var MEMBER_ID: String = ""
     var IDMEMBER: ArrayList<String> = ArrayList<String>()
     var UserName: ArrayList<String> = ArrayList<String>()
@@ -97,6 +106,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         pieChart_surya = findViewById(R.id.pieChart_surya)
         add_more = findViewById(R.id.info_tooltip)
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
+        layout_pieChart_lable = findViewById(R.id.layout_pieChart_lable)
         add_more.setImageResource(R.drawable.ic_plus)
         back_arrow.setOnClickListener {
             val i = Intent(this@SuryaNamaskar, HomeActivity::class.java)
@@ -109,7 +119,13 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
             val i = Intent(this@SuryaNamaskar, AddSuryaNamaskarActivity::class.java)
             startActivity(i)
         }
+
+//        SwipeleftToRightBack.enableSwipeBack(this)
+//        SwipeleftToRightBack.enableSwipeBackFullView(this)
     }
+//    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+//        return SwipeleftToRightBack.dispatchTouchEvent(this, event) || super.dispatchTouchEvent(event)
+//    }
 
     private fun callMemberListApi() {
         if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
@@ -332,14 +348,15 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         pieChart_surya.setRotationEnabled(true)
         pieChart_surya.setHighlightPerTapEnabled(true)
         pieChart_surya.animateY(2000, Easing.EaseInOutQuad)
-        pieChart_surya.legend.isEnabled = true
-        pieChart_surya.legend.textSize = 16f
-        pieChart_surya.legend.isWordWrapEnabled = true
-        pieChart_surya.legend.setWordWrapEnabled(true)
-        pieChart_surya.setEntryLabelColor(Color.BLACK)
+        pieChart_surya.legend.isEnabled = false
+//        pieChart_surya.legend.textSize = 16f
+//        pieChart_surya.legend.isWordWrapEnabled = true
+//        pieChart_surya.legend.setWordWrapEnabled(true)
+//        pieChart_surya.setEntryLabelColor(Color.BLACK)
         pieChart_surya.setEntryLabelTextSize(12f)
         val member_list = IDMEMBER.toSet()
         val pieEntries: ArrayList<PieEntry> = ArrayList()
+        val labelsList: java.util.ArrayList<String> = java.util.ArrayList()
         var t_count = 0
         for (i in 0 until member_list.size) {
             var s_count = 0
@@ -351,14 +368,15 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                 }
             }
             t_count = t_count + s_count
+            labelsList.add(s_name)
             pieEntries.add(PieEntry(s_count.toFloat(), s_name))
         }
         val pieDataSet = PieDataSet(pieEntries, "")
         pieDataSet.setDrawIcons(false)
         pieDataSet.valueFormatter = DefaultValueFormatter(0)
-        pieDataSet.sliceSpace = 3f
+        pieDataSet.sliceSpace = 2f
         pieDataSet.iconsOffset = MPPointF(0f, 40f)
-        pieDataSet.selectionShift = 5f
+        pieDataSet.selectionShift = 2f
         val colors: ArrayList<Int> = ArrayList()
         val piechart_color: IntArray = getResources().getIntArray(R.array.pieChart)
         for (i in 0 until piechart_color.size) {
@@ -368,28 +386,78 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         val data = PieData(pieDataSet)
         data.setValueTextSize(14f)
         data.setValueTypeface(Typeface.DEFAULT_BOLD)
-        data.setValueTextColor(Color.BLACK)
+        data.setValueTextColor(Color.WHITE)
         pieChart_surya.setData(data)
         pieChart_surya.setDrawEntryLabels(false)
         pieChart_surya.centerText = "Total\n" + t_count
         pieChart_surya.setCenterTextColor(Color.parseColor("#ff9800"))
         pieChart_surya.setCenterTextSize(30f)
         pieChart_surya.invalidate()
+
+        setupPieChartChipGroup(labelsList)
+    }
+
+    private fun setupPieChartChipGroup(labelsList: java.util.ArrayList<String>) {
+        val chipGroup = ChipGroup(this)
+        chipGroup.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        chipGroup.isSingleSelection = true
+        chipGroup.isSingleLine = false
+        for (i in 0 until labelsList.size) {
+            chipGroup.addView(createChip(labelsList.get(i).toString()))
+        }
+        val colorArray = resources.obtainTypedArray(R.array.pieChart)
+        var t_color = 0;
+        for (i in 0 until chipGroup.childCount) {
+            val chip = chipGroup.getChildAt(i) as Chip
+            val chipColor = colorArray.getColor(t_color, 0)
+            t_color = if (t_color < (colorArray.length() - 1)) t_color + 1 else 0
+            chip.chipBackgroundColor = ColorStateList.valueOf(chipColor)
+        }
+        layout_pieChart_lable.addView(chipGroup)
+    }
+
+    private fun createChip(label: String): Chip {
+        val chip = Chip(
+            this, null, com.google.android.material.R.style.Widget_MaterialComponents_Chip_Entry
+        )
+        chip.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        chip.text = label
+        chip.isCloseIconVisible = false
+        chip.isChipIconVisible = false
+        chip.isCheckable = false
+        chip.isClickable = true
+        chip.setTextColor(Color.WHITE)
+        chip.setOnClickListener {
+            openBarChart(label.toString())
+        }
+        return chip
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        val listData_surya: ArrayList<Datum_Get_SuryaNamaskar> = ArrayList()
-        for (i in 0 until surya_namaskarlist.size) {
-            if ((e as PieEntry).label.toString() == surya_namaskarlist.get(i).getmember_name()) {
-                listData_surya.add(surya_namaskarlist.get(i))
-            }
-        }
-        val intent = Intent(this@SuryaNamaskar, ViewBarchartActivity::class.java)
-        intent.putExtra("name", (e as PieEntry).label.toString())
-        intent.putExtra("list_data", listData_surya)
-        startActivity(intent)
+        openBarChart((e as PieEntry).label.toString())
     }
 
     override fun onNothingSelected() {
+    }
+
+    private fun openBarChart(sName: String) {
+        val listData_surya: ArrayList<BarchartDataModel> = ArrayList()
+        for (i in 0 until surya_namaskarlist.size) {
+            if (sName == surya_namaskarlist.get(i).getmember_name()) {
+                val barchartDataModel = BarchartDataModel()
+                barchartDataModel.setValue_x(surya_namaskarlist.get(i).getcount_date())
+                barchartDataModel.setValue_y(surya_namaskarlist.get(i).getcount())
+                barchartDataModel.setValue_user(surya_namaskarlist.get(i).getmember_name())
+                listData_surya.add(barchartDataModel)
+            }
+        }
+        val intent = Intent(this@SuryaNamaskar, ViewBarchartActivity::class.java)
+        intent.putExtra("case", "1")
+        intent.putExtra("list_data", listData_surya)
+        startActivity(intent)
     }
 }

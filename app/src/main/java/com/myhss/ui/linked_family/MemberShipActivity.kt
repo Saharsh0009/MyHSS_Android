@@ -151,7 +151,8 @@ class MemberShipActivity : AppCompatActivity() {
                 Log.d("USERID", USERID)
                 TAB = "family"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
-                STATUS = "all"
+//                STATUS = "all"
+                STATUS = "0"
                 LENGTH = end.toString()
                 START = start.toString()
                 SEARCH = ""

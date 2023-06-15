@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/surya_namaskar_bk"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -50,9 +51,20 @@
 
                     <com.github.mikephil.charting.charts.PieChart
                         android:id="@+id/pieChart_surya"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="350dp"
+                        android:layout_height="350dp"
                         android:layout_margin="@dimen/padding20" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_pieChart_lable"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/padding20"
+                        android:layout_marginRight="@dimen/padding20"
+                        android:orientation="vertical">
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
