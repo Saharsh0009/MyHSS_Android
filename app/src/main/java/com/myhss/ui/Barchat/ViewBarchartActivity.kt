@@ -41,6 +41,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var header_title: TextView
     private lateinit var add_more: ImageView
     private var isBarClickable = false
+    var chartDigit: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +52,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
         header_title = findViewById(R.id.header_title)
         add_more = findViewById(R.id.info_tooltip)
         add_more.setImageResource(R.drawable.ic_plus)
+
         val u_case = intent.getStringExtra("case")
         val u_listData = intent.getSerializableExtra("list_data") as ArrayList<BarchartDataModel>
         header_title.text = u_listData.get(0).getValue_user()
@@ -66,6 +68,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
                     isBarClickable = false
                 }
                 colorCode = "#ff9800"
+                chartDigit = 0
             }
             "2" -> {
                 isBarClickable = true
@@ -75,6 +78,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
 
 //                DebugLog.e("guruDakshinaData => " + guruDakshinaData.size)
                 colorCode = "#0080ff"
+                chartDigit = 2
             }
         }
         setBarChartDataForSuryanamaskar(u_listData)
@@ -99,7 +103,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
 
     private fun setupBarChartSurya(barchartDataList: ArrayList<BarchartDataModel>) {
         barchartDataSet = BarDataSet(barchartEntriesList, getString(R.string.surya_namaskar))
-        barchartDataSet.valueFormatter = DefaultValueFormatter(0)
+        barchartDataSet.valueFormatter = DefaultValueFormatter(chartDigit)
         barchartDataSet.valueTextColor = Color.BLACK
         barchartDataSet.setColor(Color.parseColor(colorCode))
         barchartDataSet.valueTextSize = 10f
@@ -167,7 +171,9 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
             val xAxisLabel = barChart.xAxis.valueFormatter.getFormattedValue(e!!.x, barChart.xAxis)
             val yAxisValue = e?.y
             for (i in 0 until guruDakshinaData.size) {
-                if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString() && yAxisValue.toInt() == guruDakshinaData[i].paidAmount!!.toInt()) {
+//                DebugLog.e("Y Axis : $yAxisValue And Value from BAr chart : ${guruDakshinaData[i].paidAmount!!}")
+//                DebugLog.e("X Axis : $xAxisLabel And Value from BAr chart : ${guruDakshinaData[i].startDate!!}")
+                if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString() && (yAxisValue.toString()).toFloat() == guruDakshinaData[i].paidAmount!!.toFloat()) {
 //                    DebugLog.e("click button ${guruDakshinaData[i].paidAmount}")
                     openguruDakshinaDetails(guruDakshinaData[i])
                     break

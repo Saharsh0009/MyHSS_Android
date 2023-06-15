@@ -891,6 +891,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         pieChart_guru.setDrawCenterText(true)
         pieChart_guru.setRotationAngle(0f)
         pieChart_guru.setRotationEnabled(true)
+
         pieChart_guru.setHighlightPerTapEnabled(true)
         pieChart_guru.animateY(1500, Easing.EaseInOutSine)
         pieChart_guru.legend.isEnabled = false
@@ -904,23 +905,25 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         val member_list = IDMEMBER.toSet()
         val pieEntries: ArrayList<PieEntry> = ArrayList()
         val labelsList: java.util.ArrayList<String> = java.util.ArrayList()
-        var t_count = 0
+        var t_count = 0.0
         for (i in 0 until member_list.size) {
-            var s_count = 0
+            var s_count: Double = 0.0
             var s_name = ""
             for (j in 0 until guruDakshinabeans.size) {
                 if (member_list.elementAt(i) == guruDakshinabeans.get(j).memberId) {
-                    s_count = s_count + guruDakshinabeans.get(j).paidAmount!!.toInt()
+//                    DebugLog.e("paid amt : " + guruDakshinabeans.get(j).paidAmount)
+                    s_count = s_count + guruDakshinabeans.get(j).paidAmount!!.toDouble()
                     s_name = guruDakshinabeans.get(j).firstName.toString()
                 }
             }
             t_count = t_count + s_count
+//            DebugLog.e("Total paid amt : $s_count")
             labelsList.add(s_name)
             pieEntries.add(PieEntry(s_count.toFloat(), s_name))
         }
         val pieDataSet = PieDataSet(pieEntries, "")
         pieDataSet.setDrawIcons(false)
-        pieDataSet.valueFormatter = DefaultValueFormatter(0)
+        pieDataSet.valueFormatter = DefaultValueFormatter(2)
         pieDataSet.sliceSpace = 2f
         pieDataSet.iconsOffset = MPPointF(0f, 40f)
         pieDataSet.selectionShift = 2f
