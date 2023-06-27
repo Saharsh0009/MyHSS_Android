@@ -1,6 +1,6 @@
 package com.myhss.Login_Registration
 
-import `in`.arjsna.passcodeview.PassCodeView
+
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -56,7 +56,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
     lateinit var sharedPreferences: SharedPreferences
     val TAG = Passcode_Activity::class.java.name
-    val passCodeView: PassCodeView? = null
+
     var isRePass = false
     private var isNew: Boolean = false
     val onetxt: TextView? = null

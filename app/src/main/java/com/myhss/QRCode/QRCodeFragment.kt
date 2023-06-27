@@ -14,8 +14,7 @@ import android.view.Display
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
-import androidmads.library.qrgenearator.QRGContents
-import androidmads.library.qrgenearator.QRGEncoder
+
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -57,7 +56,7 @@ class QRCodeFragment : AppCompatActivity() {
 
     /*QR Code Read/Scan*/
     lateinit var bitmap: Bitmap
-    lateinit var qrgEncoder: QRGEncoder
+//    lateinit var qrgEncoder: QRGEncoder
 
     private lateinit var mQrResultLauncher: ActivityResultLauncher<Intent>
 
@@ -189,17 +188,17 @@ class QRCodeFragment : AppCompatActivity() {
         }
 
         // Alternative to "onActivityResult", because that is "deprecated"
-        mQrResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if (it.resultCode == Activity.RESULT_OK) {
-                    val result = IntentIntegrator.parseActivityResult(it.resultCode, it.data)
-
-                    if (result.contents != null) {
-                        // Do something with the contents (this is usually a URL)
-                        println("RESULT==>" + result.contents)
-                    }
-                }
-            }
+//        mQrResultLauncher =
+//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+//                if (it.resultCode == Activity.RESULT_OK) {
+//                    val result = IntentIntegrator.parseActivityResult(it.resultCode, it.data)
+//
+//                    if (result.contents != null) {
+//                        // Do something with the contents (this is usually a URL)
+//                        println("RESULT==>" + result.contents)
+//                    }
+//                }
+//            }
 
         scanQrBtn.setOnClickListener {
 //            startScanner()
