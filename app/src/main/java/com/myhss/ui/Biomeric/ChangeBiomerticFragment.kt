@@ -1,6 +1,6 @@
 package com.myhss.ui.Biomeric
 
-import `in`.arjsna.passcodeview.PassCodeView
+//import `in`.arjsna.passcodeview.PassCodeView
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.TargetApi
@@ -57,7 +57,7 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
     private lateinit var sessionManager: SessionManager
     lateinit var sharedPreferences: SharedPreferences
 
-    val passCodeView: PassCodeView? = null
+//    val passCodeView: PassCodeView? = null
     var isRePass = false
     private var isNew: Boolean = false
     val onetxt: TextView? = null

@@ -1,7 +1,8 @@
 package com.myhss.Utils
 
 import android.util.Log
-import com.uk.myhss.BuildConfig
+import androidx.multidex.BuildConfig
+
 
 /**
  * Created by Nikunj Dhokia on 13-04-2023.

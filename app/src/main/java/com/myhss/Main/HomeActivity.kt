@@ -69,7 +69,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.util.*
-import androidmads.library.qrgenearator.QRGEncoder
+
 
 import android.graphics.Bitmap
 import android.os.Build
@@ -1219,6 +1219,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         )
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
