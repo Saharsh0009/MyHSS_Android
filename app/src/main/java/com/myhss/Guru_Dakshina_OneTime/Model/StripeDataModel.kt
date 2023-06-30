@@ -3,5 +3,6 @@ package com.myhss.Guru_Dakshina_OneTime.Model
 data class StripeDataModel(
     val info: Info,
     val message: String,
-    val status: Boolean
+    val status: Boolean,
+    val dakshina_pay_intent_id : String
 )

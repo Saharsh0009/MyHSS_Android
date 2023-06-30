@@ -609,4 +609,7 @@ interface ApiInterface {
     @POST("api/v1/guru_dakshina/onetime_dakshina")
     fun postOneTimeDakshinaStripe(@Body body: MultipartBody): Call<StripeDataModel>
 
+    @POST("api/v1/guru_dakshina/payment_response")
+    fun postSaveStripePaymentData(@Body body: MultipartBody): Call<JsonObject>
+
 }

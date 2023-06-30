@@ -29,6 +29,7 @@
                 android:background="@drawable/payment_round_layout"
                 android:paddingStart="@dimen/padding15"
                 android:paddingEnd="@dimen/padding15"
+                android:visibility="gone"
                 tools:ignore="RtlSymmetry">
 
                 <TextView

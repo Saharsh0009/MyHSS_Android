@@ -3,6 +3,7 @@ package com.myhss
 import android.app.Application
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
+import com.myhss.appConstants.AppParam
 import com.stripe.android.PaymentConfiguration
 import com.uk.myhss.R
 
@@ -14,7 +15,7 @@ class MyApplication : Application() {
 
         PaymentConfiguration.init(
             applicationContext,
-            "pk_test_51MYS88SD1lLtRImz3pdqBn6WirB0AYgXZcvjAxz0AdipGLzrPHccYShud0nP0ALbbO5d7SVFNPLmKN2yz0MVa6yz00qHqe9oo0"
+            AppParam.publishableKey
         )
     }
 

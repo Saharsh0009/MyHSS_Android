@@ -39,13 +39,13 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.gson.JsonObject
 import com.stripe.android.PaymentAuthConfig
-import com.stripe.android.model.PaymentMethodCreateParams
 import com.stripe.android.payments.paymentlauncher.PaymentLauncher
 import com.stripe.android.payments.paymentlauncher.PaymentResult
-import com.stripe.android.view.CardInputWidget
 import com.uk.myhss.Main.HomeActivity
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -63,6 +63,9 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
 
     private lateinit var stripe: Stripe
     private lateinit var paymentIntentClientSecret: String
+    private lateinit var paymentID: String
+    private lateinit var paymentStatus: String
+    private lateinit var paymentStatusReason: String
     private lateinit var paymentLauncher: PaymentLauncher
 
     @SuppressLint("NewApi")
@@ -80,7 +83,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
-        sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true)
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         //  Firebase crashlytics
 
@@ -112,22 +115,16 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         stripe = Stripe(this, PaymentConfiguration.getInstance(applicationContext).publishableKey)
 
         val paymentConfiguration = PaymentConfiguration.getInstance(applicationContext)
-        val uiCustomization = PaymentAuthConfig.Stripe3ds2UiCustomization.Builder()
-            .setLabelCustomization(
-                PaymentAuthConfig.Stripe3ds2LabelCustomization.Builder()
-                    .setTextFontSize(12)
+        val uiCustomization =
+            PaymentAuthConfig.Stripe3ds2UiCustomization.Builder().setLabelCustomization(
+                PaymentAuthConfig.Stripe3ds2LabelCustomization.Builder().setTextFontSize(12)
                     .build()
-            )
-            .build()
+            ).build()
         PaymentAuthConfig.init(
-            PaymentAuthConfig.Builder()
-                .set3ds2Config(
-                    PaymentAuthConfig.Stripe3ds2Config.Builder()
-                        .setTimeout(5)
-                        .setUiCustomization(uiCustomization)
-                        .build()
-                )
-                .build()
+            PaymentAuthConfig.Builder().set3ds2Config(
+                PaymentAuthConfig.Stripe3ds2Config.Builder().setTimeout(5)
+                    .setUiCustomization(uiCustomization).build()
+            ).build()
         )
         paymentLauncher = PaymentLauncher.Companion.create(
             this,
@@ -152,36 +149,34 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         pd.show()
         val queue = Volley.newRequestQueue(this)
         val url = "https://demo.codeseasy.com/apis/stripe/"
-        val stringRequest: StringRequest =
-            object : StringRequest(
-                Method.POST,
-                url,
-                com.android.volley.Response.Listener<String> { response ->
-                    Log.e("Response : ", "Response is: $response")
+        val stringRequest: StringRequest = object : StringRequest(Method.POST,
+            url,
+            com.android.volley.Response.Listener<String> { response ->
+                Log.e("Response : ", "Response is: $response")
 
-                    try {
-                        val responseJson = JSONObject(response)
-                        val paymentIntent = responseJson.getString("paymentIntent")
-                        paymentIntentClientSecret = paymentIntent
-                        makeStripePayement(paymentIntentClientSecret)
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                        // Handle JSON parsing error
-                        Log.e("Error Response Issue : ", "That didn't work! ${e.toString()}")
-                    }
-
-                },
-                com.android.volley.Response.ErrorListener { error ->
-                    Log.e("Error Response : ", "That didn't work!")
-                    error.printStackTrace()
-
-                }) {
-                override fun getParams(): Map<String, String>? {
-                    val paramV: MutableMap<String, String> = HashMap()
-                    paramV["authKey"] = "abc"
-                    return paramV
+                try {
+                    val responseJson = JSONObject(response)
+                    val paymentIntent = responseJson.getString("paymentIntent")
+                    paymentIntentClientSecret = paymentIntent
+                    makeStripePayement(paymentIntentClientSecret)
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                    // Handle JSON parsing error
+                    Log.e("Error Response Issue : ", "That didn't work! ${e.toString()}")
                 }
+
+            },
+            com.android.volley.Response.ErrorListener { error ->
+                Log.e("Error Response : ", "That didn't work!")
+                error.printStackTrace()
+
+            }) {
+            override fun getParams(): Map<String, String>? {
+                val paramV: MutableMap<String, String> = HashMap()
+                paramV["authKey"] = "abc"
+                return paramV
             }
+        }
         queue.add(stringRequest)
         pd.dismiss()
     }
@@ -252,7 +247,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                             )
                             paymentIntentClientSecret =
                                 response.body()!!.info.payment_intent_client_secret
-
+                            paymentID = response.body()!!.dakshina_pay_intent_id
                             Log.e(
                                 "Secret ",
                                 "paymentIntentClientSecret : " + paymentIntentClientSecret
@@ -292,11 +287,11 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
 //            )
 //            stripe.confirmPayment(this, confirmParams)
 //        }
-
-
         cardInputWidget.paymentMethodCreateParams?.let { params ->
-            val confirmParams = ConfirmPaymentIntentParams
-                .createWithPaymentMethodCreateParams(params, paymentIntentClientSecretKey)
+            val confirmParams = ConfirmPaymentIntentParams.createWithPaymentMethodCreateParams(
+                params,
+                paymentIntentClientSecretKey
+            )
             lifecycleScope.launch {
                 paymentLauncher.confirm(confirmParams)
             }
@@ -345,56 +340,134 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         val message = when (paymentResult) {
             is PaymentResult.Completed -> {
                 "Completed!"
+                paymentStatus = "Completed"
+                paymentStatusReason = ""
 
             }
 
             is PaymentResult.Canceled -> {
                 "Canceled!"
+                paymentStatus = "Canceled"
+                paymentStatusReason = "User canceled the payment"
             }
 
             is PaymentResult.Failed -> {
                 // This string comes from the PaymentIntent's error message.
                 // See here: https://stripe.com/docs/api/payment_intents/object#payment_intent_object-last_payment_error-message
                 "Failed: " + paymentResult.throwable.message
+                paymentStatus = "Failed"
+                paymentStatusReason = paymentResult.throwable.message.toString()
             }
         }
         Toast.makeText(
-            this,
-            "Payment Result:" +
-                    message,
-            Toast.LENGTH_LONG
+            this, "Payment Result:" + message, Toast.LENGTH_LONG
         ).show()
 
-        Log.e("Payment Result: ", " Result : " + message)
+        Log.e("Payment Result: ", " Result : $message")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         stripe.onPaymentResult(requestCode, data, object : ApiResultCallback<PaymentIntentResult> {
             override fun onError(e: Exception) {
-                Log.e(
-                    "OnError : ", " Error : $e"
-                )
+                Log.e("OnError : ", " Error : $e")
+                paymentStatus = "Error"
+                paymentStatusReason = "Unknown Error"
+                savePaymentDataintoDB(e.toString())
             }
 
             override fun onSuccess(result: PaymentIntentResult) {
-
                 val paymentIntent = result.intent
                 if (paymentIntent.status == StripeIntent.Status.Succeeded) {
                     val gson = GsonBuilder().setPrettyPrinting().create()
-                    Log.e(
-                        "Succeeded : ", " Response : " + gson.toJson(paymentIntent)
-                    )
-                    val i =
-                        Intent(this@GuruDakshinaOneTimeFourthActivity, HomeActivity::class.java)
-//                    MainActivity::class.java)
-                    startActivity(i)
-                    finishAffinity()
+                    Log.e("Succeeded : ", " Response : " + gson.toJson(paymentIntent))
+                    paymentStatus = "Completed"
+                    savePaymentDataintoDB(gson.toJson(paymentIntent))
                 } else if (paymentIntent.status == StripeIntent.Status.RequiresPaymentMethod) {
-                    Log.e(
-                        "Failed : ", " Response : " + paymentIntent.lastErrorMessage?.orEmpty()
+                    Log.e("Failed : ", " Response : " + paymentIntent.lastErrorMessage?.orEmpty())
+                    paymentStatus = "Error"
+                    paymentStatusReason = paymentIntent.lastErrorMessage?.orEmpty().toString()
+                    savePaymentDataintoDB(paymentIntent.lastErrorMessage?.orEmpty().toString())
+                }
+            }
+        })
+    }
+
+    private fun savePaymentDataintoDB(toJson: String) {
+        val pd1 = CustomProgressBar(this@GuruDakshinaOneTimeFourthActivity)
+        pd1.show()
+
+        val builderData: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
+        builderData.addFormDataPart("payment_status", paymentStatus)
+        builderData.addFormDataPart("dakshina_pay_intent_id", paymentID)
+        builderData.addFormDataPart("payment_object", toJson)
+        builderData.addFormDataPart("payment_status_reason", paymentStatusReason)
+        builderData.addFormDataPart("gateway", "stripe")
+
+        val requestBody: MultipartBody = builderData.build()
+        for (i in 0 until requestBody.size) {
+            val part = requestBody.part(i)
+            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+                ?.substringBefore("\"")
+            val value = part.body?.let { requestBody ->
+                val buffer = Buffer()
+                requestBody.writeTo(buffer)
+                buffer.readUtf8()
+            } ?: ""
+            Log.e("Param : ", "$key: $value")
+        }
+
+        val call: Call<JsonObject> =
+            MyHssApplication.instance!!.api.postSaveStripePaymentData(requestBody)
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(
+                call: Call<JsonObject>, response: Response<JsonObject>
+            ) {
+                if (response.code() == 200 && response.body() != null) {
+                    if (response.isSuccessful) {
+
+                        var resp = ""
+                        if (response.body().toString().startsWith("{")) {
+                            resp = "[" + response.body().toString() + "]"
+                        }
+                        DebugLog.e(resp)
+                        val jsonObj = JSONArray(resp)
+                        val jsonObject = jsonObj.getJSONObject(0)
+                        val status = jsonObject.get("status")
+                        val message = jsonObject.get("message")
+                        if (status == true) {
+                            Toast.makeText(
+                                this@GuruDakshinaOneTimeFourthActivity,
+                                "success : $message",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            val i = Intent(
+                                this@GuruDakshinaOneTimeFourthActivity,
+                                HomeActivity::class.java
+                            )
+                            startActivity(i)
+                            finishAffinity()
+                        } else {
+                            Functions.showAlertMessageWithOK(
+                                this@GuruDakshinaOneTimeFourthActivity, "", message.toString()
+                            )
+                        }
+                        pd1.dismiss()
+                    }
+                } else {
+                    Functions.showAlertMessageWithOK(
+                        this@GuruDakshinaOneTimeFourthActivity, "Message",
+                        getString(R.string.some_thing_wrong),
                     )
                 }
+                pd1.dismiss()
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Toast.makeText(this@GuruDakshinaOneTimeFourthActivity, t.message, Toast.LENGTH_LONG)
+                    .show()
+                pd1.dismiss()
             }
         })
     }
