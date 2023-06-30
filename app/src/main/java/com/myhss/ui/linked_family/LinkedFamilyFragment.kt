@@ -457,7 +457,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 Log.d("USERID", USERID)
                 TAB = "family"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
-                STATUS = "all"
+                STATUS = "0"
                 LENGTH = end.toString()
                 START = start.toString()
                 SEARCH = ""
@@ -583,7 +583,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
             Log.d("USERID", USERID)
             TAB = "family"
             MEMBERID = sessionManager.fetchMEMBERID()!!
-            STATUS = "all"
+            STATUS = "0"
             LENGTH = END.toString()
             START = PAGE.toString()
             SEARCH = ""
@@ -659,7 +659,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                             Log.d("count=>", atheletsBeans.size.toString())
 
                             if (atheletsBeans.isNotEmpty()) {
-                                member_count_layout.visibility = View.VISIBLE
+                                member_count_layout.visibility = View.VISIBLE // nik
                                 member_count.text = atheletsBeans.size.toString()
                             }
                             mAdapterGuru = CustomAdapter(atheletsBeans)
