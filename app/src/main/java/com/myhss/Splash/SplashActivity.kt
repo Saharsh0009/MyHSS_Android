@@ -1,6 +1,5 @@
 package com.uk.myhss.Splash
 
-import android.Manifest
 import android.Manifest.permission
 import android.content.*
 import android.content.pm.PackageManager
@@ -14,10 +13,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.biometric.BiometricPrompt
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.analytics.HitBuilders.EventBuilder
 import com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder
 import com.google.android.gms.analytics.Tracker
@@ -31,25 +28,20 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
-import com.myhss.AnalyticsApplication
+import com.myhss.MyApplication
 import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Splash.Model.Biometric.Latest_Update.latest_update_response
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.Functions
-import com.myhss.Welcome.BiometricDialogV23
 import com.uk.myhss.Login_Registration.LoginActivity
-import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.Welcome.WelcomeActivity
-import pro.devapp.biometric.BiometricCallback
-import pro.devapp.biometric.BiometricManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.sql.DriverManager.println
-import java.util.concurrent.Executors
 
 
 class SplashActivity : AppCompatActivity() {
@@ -71,7 +63,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         // Obtain the shared Tracker instance.
-        val application = application as AnalyticsApplication
+        val application = application as MyApplication
         mTracker = application.defaultTracker
         Log.i(TAG.toString(), "Setting screen name: ${this@SplashActivity}")
         mTracker!!.setScreenName("Image~${this@SplashActivity}")
@@ -193,6 +185,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PERMISSION_REQUEST_CODE -> if (grantResults.size > 0) {
                 val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED

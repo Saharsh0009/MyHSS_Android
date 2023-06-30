@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
 import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.AllShakha.Model.Get_Shakha_Details_Response
+import com.myhss.Guru_Dakshina_OneTime.Model.StripeDataModel
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Splash.Model.Biometric.Latest_Update.latest_update_response
 import com.myhss.ui.Barchat.Model.Get_SuryaNamaskar_ModelResponse
@@ -604,5 +605,8 @@ interface ApiInterface {
     /*Get First Aid Info*/
     @GET("api/v1/member/firstaidinfo")
     fun getFirstAidInfor(): Call<FirstAidInfo>
+
+    @POST("api/v1/guru_dakshina/onetime_dakshina")
+    fun postOneTimeDakshinaStripe(@Body body: MultipartBody): Call<StripeDataModel>
 
 }
