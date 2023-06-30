@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My HSS</string>
+    <string name="app_name">MyHSS</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -26,7 +26,7 @@
     <string name="menu_policiies">Policies</string>
     <string name="menu_logout">Logout</string>
     <string name="default_notification_channel_id">AIzaSyBk7PnvOUhDTD-elGpVpgjXNK-UX05xto4</string>
-    <string name="unlock_myhss">Unlock MyHss</string>
+    <string name="unlock_myhss">Unlock MyHSS</string>
     <string name="confirm_screen_pin">Confirm your screen lock PIN, Pattern or Password</string>
 
     <!--Camera String-->

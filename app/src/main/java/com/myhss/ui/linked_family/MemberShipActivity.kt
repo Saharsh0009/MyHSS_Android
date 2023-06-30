@@ -688,6 +688,15 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
 
             active_inactive_txt.text = my_family_DatumGurudakshina.ageCategories
 
+            if (sessionManager.fetchUSERROLE()?.contains("Sankhya Pramukh", false) == true) {
+//            if (true) {
+            Log.e("Role : ", " Role : " + sessionManager.fetchUSERROLE())
+
+                righr_menu.visibility = View.GONE
+            } else {
+                righr_menu.visibility = View.VISIBLE
+            }
+
             if (SHOW_HIDE == "ALLSHOW") {
 //                if (my_family_DatumGurudakshina.status.toString()!! == "0") {
 //                    active_txt.visibility = View.VISIBLE
