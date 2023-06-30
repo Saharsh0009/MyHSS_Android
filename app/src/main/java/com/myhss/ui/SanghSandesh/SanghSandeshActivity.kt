@@ -30,7 +30,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class SanghSandeshActivity: AppCompatActivity() {
+class SanghSandeshActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
 
@@ -120,7 +120,11 @@ class SanghSandeshActivity: AppCompatActivity() {
                 val strCurrentDatenew = simpledateFormat.format(calendar.time)
                 Functions.printLog("strCurrentDatenew", strCurrentDatenew)
 
-                mySuchanaBoard(USERID, MEMBERID, Tab_Type) //strCurrentDate.toString(), strCurrentDatenew.toString(),
+                mySuchanaBoard(
+                    USERID,
+                    MEMBERID,
+                    Tab_Type
+                ) //strCurrentDate.toString(), strCurrentDatenew.toString(),
             } else {
                 Toast.makeText(
                     this,
@@ -223,7 +227,8 @@ class SanghSandeshActivity: AppCompatActivity() {
 
 //                            val distinct: List<Get_Suchana_Datum> = LinkedHashSet(suchana_data).toMutableList()
 
-                            sangh_sandesh_adapter = SanghSandeshAdapter(suchana_data, dietaryName, tab_type)
+                            sangh_sandesh_adapter =
+                                SanghSandeshAdapter(suchana_data, dietaryName, tab_type)
 
                             notification_list.adapter = sangh_sandesh_adapter
                             sangh_sandesh_adapter!!.notifyDataSetChanged()
@@ -243,16 +248,18 @@ class SanghSandeshActivity: AppCompatActivity() {
 //                        )
                     }
                 } else {
-                    Functions.showAlertMessageWithOK(
-                        this@SanghSandeshActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
+//                    Functions.showAlertMessageWithOK(
+//                        this@SanghSandeshActivity, "Message",
+//                        getString(R.string.some_thing_wrong),
+//                    )
+                    data_not_found_layout.visibility = View.VISIBLE
                 }
                 pd.dismiss()
             }
 
             override fun onFailure(call: Call<Get_Suchana_Response>, t: Throwable) {
                 Toast.makeText(this@SanghSandeshActivity, t.message, Toast.LENGTH_LONG).show()
+                data_not_found_layout.visibility = View.VISIBLE
                 pd.dismiss()
             }
         })

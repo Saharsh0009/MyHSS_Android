@@ -30,7 +30,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class SuchanaBoardActivity: AppCompatActivity() {
+class SuchanaBoardActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
 
@@ -120,7 +120,11 @@ class SuchanaBoardActivity: AppCompatActivity() {
                 val strCurrentDatenew = simpledateFormat.format(calendar.time)
                 Functions.printLog("strCurrentDatenew", strCurrentDatenew)
 
-                mySuchanaBoard(USERID, MEMBERID, Tab_Type) // strCurrentDate.toString(), strCurrentDatenew.toString(),
+                mySuchanaBoard(
+                    USERID,
+                    MEMBERID,
+                    Tab_Type
+                ) // strCurrentDate.toString(), strCurrentDatenew.toString(),
             } else {
                 Toast.makeText(
                     this,
@@ -245,17 +249,17 @@ class SuchanaBoardActivity: AppCompatActivity() {
 //                        )
                     }
                 } else {
-                    Functions.showAlertMessageWithOK(
-                        this@SuchanaBoardActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
+//                    Functions.showAlertMessageWithOK(this@SuchanaBoardActivity, "Message", getString(R.string.some_thing_wrong),)
+                    data_not_found_layout.visibility = View.VISIBLE
                 }
                 pd.dismiss()
+
             }
 
             override fun onFailure(call: Call<Get_Suchana_Response>, t: Throwable) {
                 Toast.makeText(this@SuchanaBoardActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                data_not_found_layout.visibility = View.VISIBLE
             }
         })
     }
