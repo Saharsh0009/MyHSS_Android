@@ -25,8 +25,6 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -771,7 +769,11 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         val btn_image = view_d.findViewById<LinearLayout>(R.id.select_gallery)
         val btn_pdf = view_d.findViewById<LinearLayout>(R.id.select_pdf)
 
-//        btn_pdf.visibility = View.GONE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            btn_pdf.visibility = View.GONE
+        } else {
+            btn_pdf.visibility = View.VISIBLE
+        }
 
         btnClose.setOnClickListener {
             dialog.dismiss()
@@ -793,20 +795,39 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     }
 
     private fun openFirstAidImage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                //permission denied
-                val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
-                //show popup to request runtime permission
-                requestPermissions(permissions, PERMISSION_CODE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_DENIED) {
+                    //permission denied
+                    val permissions = arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+                    //show popup to request runtime permission
+                    requestPermissions(permissions, PERMISSION_CODE)
+                } else {
+                    //permission already granted
+                    openGalleryForImage()
+                }
             } else {
-                //permission already granted
+                //system OS is < Marshmallow
                 openGalleryForImage()
             }
         } else {
-            //system OS is < Marshmallow
-            openGalleryForImage()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                    //permission denied
+                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    //show popup to request runtime permission
+                    requestPermissions(permissions, PERMISSION_CODE)
+                } else {
+                    //permission already granted
+                    openGalleryForImage()
+                }
+            } else {
+                //system OS is < Marshmallow
+                openGalleryForImage()
+            }
         }
+
+
     }
 
     private fun SearchSpinner(
@@ -939,6 +960,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         edit_profe_body_regis_num.setText("")
 
                     }
+
                     "0" -> {
                         date_of_first_aid_qualification_view.visibility = View.GONE
                         qualification_file_view.visibility = View.GONE
@@ -1412,6 +1434,14 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         intent.type = "application/pdf"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PICK_PDF_REQUEST)
+
+//        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+//        intent.addCategory(Intent.CATEGORY_OPENABLE)
+//        intent.type = "application/pdf"
+//        startActivityForResult(intent, PICK_PDF_REQUEST)
+
+
+
     }
 
     //handling the image chooser activity result
@@ -1571,20 +1601,20 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         return Uri.fromFile(getOutputMediaFile(type))
     }
 
-    fun requestRuntimePermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (ContextCompat.checkSelfPermission(
-                    this@AddMemberForthActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) !== PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this@AddMemberForthActivity,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    1
-                )
-            }
-        }
-    }
+//    fun requestRuntimePermission() {
+//        if (Build.VERSION.SDK_INT >= 23) {
+//            if (ContextCompat.checkSelfPermission(
+//                    this@AddMemberForthActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                ) !== PackageManager.PERMISSION_GRANTED
+//            ) {
+//                ActivityCompat.requestPermissions(
+//                    this@AddMemberForthActivity,
+//                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+//                    1
+//                )
+//            }
+//        }
+//    }
 
     @SuppressLint("LongLogTag")
     private fun getOutputMediaFile(type: Int): File? {
@@ -1633,29 +1663,29 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         return mediaFile
     }
 
-    private fun requestStoragePermission() {
-        if (ContextCompat.checkSelfPermission(
-                this, Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-        ) return
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                this, Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        ) {
-            Functions.showAlertMessageWithOK(
-                this.applicationContext,
-                "Permission",
-                "To upload First Aid PDF file, you  must have to give permission to access location"
-            )
-            //If the user has denied the permission previously your code will come to this block
-            //Here you can explain why you need this permission
-            //Explain here why you need this permission
-        }
-        //And finally ask for the permission
-        ActivityCompat.requestPermissions(
-            this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE
-        )
-    }
+//    private fun requestStoragePermission() {
+//        if (ContextCompat.checkSelfPermission(
+//                this, Manifest.permission.READ_EXTERNAL_STORAGE
+//            ) == PackageManager.PERMISSION_GRANTED
+//        ) return
+//        if (ActivityCompat.shouldShowRequestPermissionRationale(
+//                this, Manifest.permission.READ_EXTERNAL_STORAGE
+//            )
+//        ) {
+//            Functions.showAlertMessageWithOK(
+//                this.applicationContext,
+//                "Permission",
+//                "To upload First Aid PDF file, you  must have to give permission to access location"
+//            )
+//            //If the user has denied the permission previously your code will come to this block
+//            //Here you can explain why you need this permission
+//            //Explain here why you need this permission
+//        }
+//        //And finally ask for the permission
+//        ActivityCompat.requestPermissions(
+//            this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE
+//        )
+//    }
 
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -1706,6 +1736,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                 first_aid_date = ""
                 mediaFileDoc = null
             }
+
             "1" -> {
                 for (n in data_firstaidInfo.indices) {
                     if (data_firstaidInfo.get(n).id == FIRSTAID_ID) {
@@ -1713,6 +1744,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                             "1" -> {
                                 first_aid_pro_body = ""
                             }
+
                             "0" -> {
                                 first_aid_date = ""
                                 mediaFileDoc = null
@@ -1744,7 +1776,10 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             "other_relationship", intent.getStringExtra("OTHER_RELATIONSHIP").toString()
         )
         builderData.addFormDataPart("occupation", intent.getStringExtra("OCCUPATION").toString())
-        builderData.addFormDataPart("occupation_name", intent.getStringExtra("OCCUPATION_NAME").toString())
+        builderData.addFormDataPart(
+            "occupation_name",
+            intent.getStringExtra("OCCUPATION_NAME").toString()
+        )
         builderData.addFormDataPart("shakha", intent.getStringExtra("SHAKHA").toString())
         builderData.addFormDataPart("mobile", intent.getStringExtra("MOBILE").toString())
         builderData.addFormDataPart("land_line", intent.getStringExtra("LAND_LINE").toString())
@@ -1846,6 +1881,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                     startActivity(i)
                                     finishAffinity()
                                 }
+
                                 "self" -> {
                                     val i = Intent(
                                         this@AddMemberForthActivity, WelcomeActivity::class.java
@@ -1894,6 +1930,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                 first_aid_date = ""
                 mediaFileDoc = null
             }
+
             "1" -> {
                 for (n in data_firstaidInfo.indices) {
                     if (data_firstaidInfo.get(n).id == FIRSTAID_ID) {
@@ -1901,6 +1938,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                             "1" -> {
                                 first_aid_pro_body = ""
                             }
+
                             "0" -> {
                                 first_aid_date = ""
                                 mediaFileDoc = null

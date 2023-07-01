@@ -366,6 +366,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         Log.e("Payment Result: ", " Result : $message")
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         stripe.onPaymentResult(requestCode, data, object : ApiResultCallback<PaymentIntentResult> {
