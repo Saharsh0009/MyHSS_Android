@@ -364,7 +364,8 @@
                     style="@style/EditText.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/padding25"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/padding10"
                     app:boxStrokeColor="@color/primaryColor"
                     tools:ignore="RtlSymmetry">
 
@@ -373,7 +374,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginTop="-10dp"
+                        android:gravity="center_vertical"
                         android:background="@android:color/transparent"
                         android:hint="@string/relationship_primery"
                         android:tag="@string/occupation_select_other"

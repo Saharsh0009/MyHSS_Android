@@ -18,10 +18,15 @@ import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.SwipeleftToRightBack
 import com.myhss.ui.Barchat.Model.BarchartDataModel
 import com.uk.myhss.R
+import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.guru_dakshina.GuruDakshinaRegularDetail
 import com.uk.myhss.ui.my_family.Model.Datum_guru_dakshina
 import java.time.LocalDate
@@ -42,11 +47,15 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
     private lateinit var add_more: ImageView
     private var isBarClickable = false
     var chartDigit: Int = 0
+    private lateinit var sessionManager: SessionManager
+    var screenName: String = "SuryaNamaskar"
+    var screenNameID: String = "BarChartSuryaNamaskarVC"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_barchart)
+        sessionManager = SessionManager(this)
         barChart = findViewById(R.id.barChart_surya)
         back_arrow = findViewById(R.id.back_arrow)
         header_title = findViewById(R.id.header_title)
@@ -69,7 +78,10 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
                 }
                 colorCode = "#ff9800"
                 chartDigit = 0
+                screenName = "SuryaNamaskar"
+                screenNameID = "BarChartSuryaNamaskarVC"
             }
+
             "2" -> {
                 isBarClickable = true
                 add_more.visibility = View.GONE
@@ -79,11 +91,23 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
 //                DebugLog.e("guruDakshinaData => " + guruDakshinaData.size)
                 colorCode = "#0080ff"
                 chartDigit = 2
+                screenName = "GuruDakshina"
+                screenNameID = "BarChartGuruDakshinaVC"
             }
         }
         setBarChartDataForSuryanamaskar(u_listData)
 //        SwipeleftToRightBack.enableSwipeBack(this)
 //        SwipeleftToRightBack.enableSwipeBackFullView(this)
+
+        //Fireabse
+        sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        sessionManager.firebaseAnalytics.setUserId(screenNameID)
+        sessionManager.firebaseAnalytics.setUserProperty(screenNameID, screenName)
+
+        sessionManager.firebaseAnalytics = Firebase.analytics
+        sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true)
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+
     }
 //    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
 //        return SwipeleftToRightBack.dispatchTouchEvent(this, event) || super.dispatchTouchEvent(event)

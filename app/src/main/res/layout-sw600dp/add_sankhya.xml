@@ -183,12 +183,13 @@
                             android:theme="@style/StyleTextView" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -210,6 +211,7 @@
                             android:theme="@style/StyleTextView" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -247,15 +249,6 @@
                                 android:scaleY="1.2"
                                 android:theme="@style/checkBoxStyle"
                                 android:visibility="visible" />
-
-                            <ImageView
-                                android:id="@+id/all_check"
-                                android:layout_width="@dimen/padding25"
-                                android:layout_height="@dimen/padding25"
-                                android:layout_alignParentEnd="true"
-                                android:background="@drawable/custom_checkbox"
-                                android:visibility="invisible" />
-
                         </RelativeLayout>
 
                     </LinearLayout>

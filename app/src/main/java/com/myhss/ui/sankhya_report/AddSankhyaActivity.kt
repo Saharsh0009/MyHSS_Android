@@ -120,7 +120,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     lateinit var shakha_name_txt: TextView
     lateinit var next_date: ImageView
     lateinit var previous_date: ImageView
-    lateinit var all_check: ImageView
     lateinit var calender_icon: ImageView
     lateinit var attended_list: RecyclerView
     lateinit var attendedlist: ListView
@@ -174,7 +173,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         shakha_name_txt = findViewById(R.id.shakha_name_txt)
         next_date = findViewById(R.id.next_date)
         previous_date = findViewById(R.id.previous_date)
-        all_check = findViewById(R.id.all_check)
         calender_icon = findViewById(R.id.calender_icon)
         txt_sankhya_count = findViewById(R.id.txt_sankhya_count)
 
@@ -360,17 +358,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         sessionManager.saveSELECTED_TRUE("")
         sessionManager.saveSELECTED_FALSE("")
 
-//        if (sessionManager.fetchSELECTED_TRUE() == "true") {
-//            all_check.setBackgroundResource(R.drawable.check_img)
-//            sessionManager.saveSELECTED_TRUE("true")
-//        } else {
-//            all_check.setBackgroundResource(R.drawable.uncheck_icon)
-//            sessionManager.saveSELECTED_FALSE("false")
-//        }
-
-//        cbSelectAll.visibility = View.VISIBLE
-//        all_check.visibility = View.INVISIBLE
-
         cbSelectAll.visibility = View.VISIBLE
         /*cbSelectAll.setOnCheckedChangeListener { buttonView, isChecked ->
             if (approveRecyclerView != null) {
@@ -437,105 +424,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 }
                 //Toast.makeText(getApplicationContext(), "select item text : " + itemDto.getItemText(), Toast.LENGTH_SHORT).show();
             }*/
-
-        all_check.visibility = View.GONE
-        all_check.setOnClickListener {
-
-            if (IsVisible) {
-                all_check.setBackgroundResource(R.drawable.check_img)
-                IsVisible = false
-            } else {
-                all_check.setBackgroundResource(R.drawable.uncheck_icon)
-                IsVisible = true
-            }
-//                            Snackbar.make(root_view, "All Check", Snackbar.LENGTH_SHORT).show()
-            /*selected_user.clear()
-            selected_userName.clear()
-            selected_userNameAll.clear()
-            selected_userAll.clear()
-            Log.d("athelets_Beans", athelets_Beans.size.toString())
-            if (IsVisible) {
-                selectAllItems = true
-                all_check.setBackgroundResource(R.drawable.check_img)
-                mAdapterGuru!!.selectAllItems(selectAllItems)
-                mAdapterGuru!!.updateList(athelets_Beans)
-                mAdapterGuru!!.notifyDataSetChanged()
-                IsVisible = false
-                sessionManager.saveSELECTED_ALL(selectAllItems.toString())
-//                sessionManager.saveSELECTED_FALSE("false")
-                Log.d("athelets_Beans_T", athelets_Beans.size.toString())
-                Log.d("athelets_Beans_T-->", mAdapterGuru!!.selectAllItems.toString())
-
-                val mStringList = java.util.ArrayList<String>()
-                for (i in 0 until athelets_Beans.size) {
-                    mStringList.add(
-                        athelets_Beans[i].memberId.toString()
-                    )
-                }
-
-                var mStringArray = mStringList.toArray()
-                mStringArray = mStringList.toArray(mStringArray)
-
-                val list: java.util.ArrayList<String> = arrayListOf<String>()
-
-                for (element in mStringArray) {
-                    Log.d("LIST==>", element.toString())
-                    list.add(element.toString())
-                    Log.d("list==>", list.toString())
-
-                    val listn = arrayOf(element)
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                        selected_userAll = list
-                    }
-                }
-
-                val mStringListname = java.util.ArrayList<String>()
-                for (i in 0 until athelets_Beans.size) {
-                    mStringListname.add(
-                        athelets_Beans[i].firstName.toString() + " " + athelets_Beans[i].lastName.toString()
-                    )
-                }
-
-                var mStringArrayname = mStringListname.toArray()
-                mStringArrayname = mStringListname.toArray(mStringArrayname)
-
-                val listname: java.util.ArrayList<String> = arrayListOf<String>()
-
-                for (element in mStringArrayname) {
-                    Log.d("LIST==>", element.toString())
-                    listname.add(element.toString())
-                    Log.d("list==>", listname.toString())
-
-                    val listn = arrayOf(element)
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                        selected_userNameAll = listname
-                    }
-                }
-
-                Log.d("selected_userAll==>", selected_userAll.toString())
-                Log.d("selected_userNameAll==>", selected_userNameAll.toString())
-
-//                selected_userAll.add(selected_user[athelets_Beans.size])
-
-            } else if (!IsVisible) {
-                selectAllItems = false
-                all_check.setBackgroundResource(R.drawable.uncheck_icon)
-                mAdapterGuru!!.selectAllItems(selectAllItems)
-                mAdapterGuru!!.updateList(athelets_Beans)
-                mAdapterGuru!!.notifyDataSetChanged()
-                IsVisible = true
-//                sessionManager.saveSELECTED_TRUE("false")
-                sessionManager.saveSELECTED_ALL(selectAllItems.toString())
-                Log.d("athelets_Beans_F", athelets_Beans.size.toString())
-                Log.d("athelets_Beans_F-->", mAdapterGuru!!.selectAllItems.toString())
-
-                selected_userAll.add("")
-                selected_userNameAll.add("")
-                Log.d("selected_userAll==>", selected_userAll.toString())
-                Log.d("selected_userNameAll==>", selected_userNameAll.toString())
-            }*/
-        }
-
         additional_guest_layout.setOnClickListener {
 //            Snackbar.make(root_view, "Additional Guest Information", Snackbar.LENGTH_SHORT).show()
 //            startActivity(Intent(this@AddSankhyaActivity, SankhyaDetail::class.java))

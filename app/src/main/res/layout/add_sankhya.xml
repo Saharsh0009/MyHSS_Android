@@ -164,8 +164,7 @@
                     android:layout_marginStart="@dimen/padding15"
                     android:layout_marginEnd="@dimen/padding15"
                     android:background="@drawable/top_gray_round_border"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/padding5">
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -188,8 +187,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -223,7 +222,7 @@
                             android:layout_height="match_parent"
                             android:gravity="center_vertical"
                             tools:ignore="UselessParent">
-                            <!--RJ19TA5350-->
+
                             <TextView
                                 android:id="@+id/tvSelect"
                                 android:layout_width="match_parent"
@@ -243,23 +242,10 @@
                                 android:id="@+id/cbSelectAll"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:layout_centerVertical="true"
-                                android:layout_marginRight="-20dp"
-                                android:scaleX="1.2"
-                                android:scaleY="1.2"
-                                android:visibility="visible" />
-
-                            <!--android:theme="@style/checkBoxStyle"-->
-
-                            <ImageView
-                                android:id="@+id/all_check"
-                                android:layout_width="@dimen/padding25"
-                                android:layout_height="@dimen/padding25"
                                 android:layout_alignParentEnd="true"
-                                android:background="@drawable/custom_checkbox"
-                                android:visibility="invisible" />
-
+                                android:layout_marginRight="-10dp"
+                                android:layout_centerVertical="true"
+                                android:visibility="visible" />
                         </RelativeLayout>
 
                     </LinearLayout>

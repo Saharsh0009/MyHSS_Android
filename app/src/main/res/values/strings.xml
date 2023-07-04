@@ -248,6 +248,7 @@
     <string name="present_txt">Present</string>
     <string name="absent_txt">Absent</string>
     <string name="inactive_txt">Inactive</string>
+    <string name="inactivate_txt">Inactivate</string>
     <string name="active_txt">Active</string>
     <string name="pending_txt">Pending</string>
 

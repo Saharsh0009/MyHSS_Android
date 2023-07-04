@@ -55,179 +55,179 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
 
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/padding15"
+                            android:layout_marginTop="@dimen/padding10"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/primary_contact_number"
+                                android:textColor="@color/grayColorColor"
+                                android:textSize="@dimen/font_size25"
+                                android:theme="@style/StyleTextView" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="@dimen/padding10"
+                                android:gravity="center_vertical"
+                                android:text="*"
+                                android:textAlignment="center"
+                                android:textColor="@color/redColor"
+                                android:textSize="@dimen/font_size25"
+                                android:theme="@style/StyleTextView"
+                                tools:ignore="RtlCompat" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/font_size15"
+                            android:layout_marginTop="@dimen/padding10"
+                            android:layout_marginEnd="@dimen/font_size15"
+                            android:background="@drawable/edittext_round"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/EditText.OutlinedBox"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    app:boxStrokeColor="@color/primaryColor">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/edit_primary_contact_number"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:background="@android:color/transparent"
+                                        android:inputType="number"
+                                        android:maxLength="13"
+                                        android:textColor="@color/blackColor"
+                                        android:textColorHint="@color/grayColorColor"
+                                        android:textSize="@dimen/font_size25"
+                                        android:theme="@style/StyleEditTextView" />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/padding15"
-                        android:layout_marginTop="@dimen/padding10"
-                        android:orientation="horizontal">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/primary_contact_number"
+                            android:layout_marginStart="@dimen/font_size15"
+                            android:layout_marginTop="@dimen/padding10"
+                            android:text="@string/secondary_contact_number"
                             android:textColor="@color/grayColorColor"
-                            android:textSize="@dimen/font_size25"
-                            android:theme="@style/StyleTextView" />
+                            android:textSize="@dimen/font_size25" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/font_size15"
+                            android:layout_marginTop="@dimen/padding10"
+                            android:layout_marginEnd="@dimen/font_size15"
+                            android:background="@drawable/edittext_round"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/EditText.OutlinedBox"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    app:boxStrokeColor="@color/primaryColor">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/edit_secondary_contact_number"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:background="@android:color/transparent"
+                                        android:inputType="number"
+                                        android:maxLength="13"
+                                        android:textColor="@color/blackColor"
+                                        android:textColorHint="@color/grayColorColor"
+                                        android:textSize="@dimen/font_size25"
+                                        android:theme="@style/StyleEditTextView" />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginStart="@dimen/padding10"
-                            android:gravity="center_vertical"
-                            android:text="*"
-                            android:textAlignment="center"
-                            android:textColor="@color/redColor"
-                            android:textSize="@dimen/font_size25"
-                            android:theme="@style/StyleTextView"
-                            tools:ignore="RtlCompat" />
+                            android:layout_marginStart="@dimen/font_size15"
+                            android:layout_marginTop="@dimen/padding10"
+                            android:text="@string/secondary_email"
+                            android:textColor="@color/grayColorColor"
+                            android:textSize="@dimen/font_size25" />
 
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/font_size15"
-                        android:layout_marginTop="@dimen/padding10"
-                        android:layout_marginEnd="@dimen/font_size15"
-                        android:background="@drawable/edittext_round"
-                        android:orientation="horizontal">
-
-                        <RelativeLayout
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/font_size15"
+                            android:layout_marginTop="@dimen/padding10"
+                            android:layout_marginEnd="@dimen/font_size15"
+                            android:background="@drawable/edittext_round"
+                            android:orientation="horizontal">
 
-                            <com.google.android.material.textfield.TextInputLayout
-                                style="@style/EditText.OutlinedBox"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                app:boxStrokeColor="@color/primaryColor">
+                                android:layout_height="wrap_content">
 
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/edit_primary_contact_number"
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/EditText.OutlinedBox"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:background="@android:color/transparent"
-                                    android:inputType="number"
-                                    android:maxLength="13"
-                                    android:textColor="@color/blackColor"
-                                    android:textColorHint="@color/grayColorColor"
-                                    android:textSize="@dimen/font_size25"
-                                    android:theme="@style/StyleEditTextView" />
+                                    app:boxStrokeColor="@color/primaryColor">
 
-                            </com.google.android.material.textfield.TextInputLayout>
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/edit_secondary_email"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:background="@android:color/transparent"
+                                        android:inputType="textEmailAddress"
+                                        android:textColor="@color/blackColor"
+                                        android:textColorHint="@color/grayColorColor"
+                                        android:textSize="@dimen/font_size25"
+                                        android:theme="@style/StyleEditTextView" />
 
-                        </RelativeLayout>
+                                </com.google.android.material.textfield.TextInputLayout>
 
-                    </LinearLayout>
+                            </RelativeLayout>
 
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/font_size15"
-                        android:layout_marginTop="@dimen/padding10"
-                        android:text="@string/secondary_contact_number"
-                        android:textColor="@color/grayColorColor"
-                        android:textSize="@dimen/font_size25" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/font_size15"
-                        android:layout_marginTop="@dimen/padding10"
-                        android:layout_marginEnd="@dimen/font_size15"
-                        android:background="@drawable/edittext_round"
-                        android:orientation="horizontal">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <com.google.android.material.textfield.TextInputLayout
-                                style="@style/EditText.OutlinedBox"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                app:boxStrokeColor="@color/primaryColor">
-
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/edit_secondary_contact_number"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@android:color/transparent"
-                                    android:inputType="number"
-                                    android:maxLength="13"
-                                    android:textColor="@color/blackColor"
-                                    android:textColorHint="@color/grayColorColor"
-                                    android:textSize="@dimen/font_size25"
-                                    android:theme="@style/StyleEditTextView" />
-
-                            </com.google.android.material.textfield.TextInputLayout>
-
-                        </RelativeLayout>
-
-                    </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/font_size15"
-                        android:layout_marginTop="@dimen/padding10"
-                        android:text="@string/secondary_email"
-                        android:textColor="@color/grayColorColor"
-                        android:textSize="@dimen/font_size25" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/font_size15"
-                        android:layout_marginTop="@dimen/padding10"
-                        android:layout_marginEnd="@dimen/font_size15"
-                        android:background="@drawable/edittext_round"
-                        android:orientation="horizontal">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <com.google.android.material.textfield.TextInputLayout
-                                style="@style/EditText.OutlinedBox"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                app:boxStrokeColor="@color/primaryColor">
-
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/edit_secondary_email"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@android:color/transparent"
-                                    android:inputType="textEmailAddress"
-                                    android:textColor="@color/blackColor"
-                                    android:textColorHint="@color/grayColorColor"
-                                    android:textSize="@dimen/font_size25"
-                                    android:theme="@style/StyleEditTextView" />
-
-                            </com.google.android.material.textfield.TextInputLayout>
-
-                        </RelativeLayout>
-
-                    </LinearLayout>
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -312,6 +312,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/padding55"
                                 android:layout_marginEnd="@dimen/padding55"
+                                android:gravity="center_vertical"
                                 app:boxStrokeColor="@color/primaryColor">
 
                                 <com.google.android.material.textfield.TextInputEditText
@@ -390,6 +391,8 @@
                                         style="@style/EditText.OutlinedBox"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:gravity="center_vertical"
+                                        android:paddingStart="@dimen/padding10"
                                         app:boxStrokeColor="@color/primaryColor">
 
                                         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -397,7 +400,6 @@
                                             style="@android:style/Widget.Spinner.DropDown"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
-                                            android:layout_marginTop="-5dp"
                                             android:background="@android:color/transparent"
                                             android:inputType="text"
                                             android:textColor="@color/blackColor"
@@ -427,139 +429,139 @@
                             android:layout_weight="1"
                             android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:text="@string/building_name"
-                            android:textColor="@color/grayColorColor"
-                            android:textSize="@dimen/font_size25"
-                            android:theme="@style/StyleTextView" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:layout_marginEnd="@dimen/font_size15"
-                            android:background="@drawable/edittext_round"
-                            android:orientation="horizontal">
-
-                            <RelativeLayout
-                                android:id="@+id/realationship_txt"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                                <com.google.android.material.textfield.TextInputLayout
-                                    style="@style/EditText.OutlinedBox"
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/font_size15"
+                                    android:layout_marginTop="@dimen/padding10"
+                                    android:text="@string/building_name"
+                                    android:textColor="@color/grayColorColor"
+                                    android:textSize="@dimen/font_size25"
+                                    android:theme="@style/StyleTextView" />
+
+                                <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    app:boxStrokeColor="@color/primaryColor"
-                                    tools:ignore="RtlSymmetry">
+                                    android:layout_marginStart="@dimen/font_size15"
+                                    android:layout_marginTop="@dimen/padding10"
+                                    android:layout_marginEnd="@dimen/font_size15"
+                                    android:background="@drawable/edittext_round"
+                                    android:orientation="horizontal">
 
-                                    <com.google.android.material.textfield.TextInputEditText
-                                        android:id="@+id/edit_building_name"
+                                    <RelativeLayout
+                                        android:id="@+id/realationship_txt"
                                         android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_marginTop="-5dp"
-                                        android:background="@android:color/transparent"
-                                        android:inputType="textPostalAddress"
-                                        android:textColor="@color/blackColor"
-                                        android:textColorHint="@color/grayColorColor"
-                                        android:textSize="@dimen/font_size25"
-                                        android:theme="@style/StyleEditTextView" />
+                                        android:layout_height="wrap_content">
 
-                                </com.google.android.material.textfield.TextInputLayout>
+                                        <com.google.android.material.textfield.TextInputLayout
+                                            style="@style/EditText.OutlinedBox"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center_vertical"
+                                            app:boxStrokeColor="@color/primaryColor"
+                                            tools:ignore="RtlSymmetry">
 
-                            </RelativeLayout>
+                                            <com.google.android.material.textfield.TextInputEditText
+                                                android:id="@+id/edit_building_name"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:background="@android:color/transparent"
+                                                android:inputType="textPostalAddress"
+                                                android:textColor="@color/blackColor"
+                                                android:textColorHint="@color/grayColorColor"
+                                                android:textSize="@dimen/font_size25"
+                                                android:theme="@style/StyleEditTextView" />
 
-                        </LinearLayout>
+                                        </com.google.android.material.textfield.TextInputLayout>
 
-                        </LinearLayout>
+                                    </RelativeLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                                </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/padding15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:orientation="horizontal">
+                            </LinearLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/address_line1"
-                                android:textColor="@color/grayColorColor"
-                                android:textSize="@dimen/font_size25"
-                                android:theme="@style/StyleTextView" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginStart="@dimen/padding10"
-                                android:gravity="center_vertical"
-                                android:text="*"
-                                android:textAlignment="center"
-                                android:textColor="@color/redColor"
-                                android:textSize="@dimen/font_size25"
-                                android:theme="@style/StyleTextView"
-                                tools:ignore="RtlCompat" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:layout_marginEnd="@dimen/font_size15"
-                            android:background="@drawable/edittext_round"
-                            android:orientation="horizontal">
-
-                            <RelativeLayout
-                                android:id="@+id/occupation_select_other"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                                <com.google.android.material.textfield.TextInputLayout
-                                    style="@style/EditText.OutlinedBox"
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/padding15"
+                                    android:layout_marginTop="@dimen/padding10"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/address_line1"
+                                        android:textColor="@color/grayColorColor"
+                                        android:textSize="@dimen/font_size25"
+                                        android:theme="@style/StyleTextView" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="@dimen/padding10"
+                                        android:gravity="center_vertical"
+                                        android:text="*"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/redColor"
+                                        android:textSize="@dimen/font_size25"
+                                        android:theme="@style/StyleTextView"
+                                        tools:ignore="RtlCompat" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    app:boxStrokeColor="@color/primaryColor"
-                                    tools:ignore="RtlSymmetry">
+                                    android:layout_marginStart="@dimen/font_size15"
+                                    android:layout_marginTop="@dimen/padding10"
+                                    android:layout_marginEnd="@dimen/font_size15"
+                                    android:background="@drawable/edittext_round"
+                                    android:orientation="horizontal">
 
-                                    <com.google.android.material.textfield.TextInputEditText
-                                        android:id="@+id/edit_address_line1"
+                                    <RelativeLayout
+                                        android:id="@+id/occupation_select_other"
                                         android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_marginTop="-5dp"
-                                        android:background="@android:color/transparent"
-                                        android:inputType="textPostalAddress"
-                                        android:textColor="@color/blackColor"
-                                        android:textColorHint="@color/grayColorColor"
-                                        android:textSize="@dimen/font_size25"
-                                        android:theme="@style/StyleEditTextView" />
+                                        android:layout_height="wrap_content">
 
-                                </com.google.android.material.textfield.TextInputLayout>
+                                        <com.google.android.material.textfield.TextInputLayout
+                                            style="@style/EditText.OutlinedBox"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center_vertical"
+                                            app:boxStrokeColor="@color/primaryColor"
+                                            tools:ignore="RtlSymmetry">
 
-                            </RelativeLayout>
+                                            <com.google.android.material.textfield.TextInputEditText
+                                                android:id="@+id/edit_address_line1"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:background="@android:color/transparent"
+                                                android:inputType="textPostalAddress"
+                                                android:textColor="@color/blackColor"
+                                                android:textColorHint="@color/grayColorColor"
+                                                android:textSize="@dimen/font_size25"
+                                                android:theme="@style/StyleEditTextView" />
 
-                        </LinearLayout>
+                                        </com.google.android.material.textfield.TextInputLayout>
 
-                        </LinearLayout>
+                                    </RelativeLayout>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -569,139 +571,139 @@
                             android:layout_weight="1"
                             android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:text="@string/address_line2"
-                            android:textColor="@color/grayColorColor"
-                            android:textSize="@dimen/font_size25"
-                            android:theme="@style/StyleTextView" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:layout_marginEnd="@dimen/font_size15"
-                            android:background="@drawable/edittext_round"
-                            android:orientation="horizontal">
-
-                            <RelativeLayout
-                                android:id="@+id/vibhag_region"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                                <com.google.android.material.textfield.TextInputLayout
-                                    style="@style/EditText.OutlinedBox"
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/font_size15"
+                                    android:layout_marginTop="@dimen/padding10"
+                                    android:text="@string/address_line2"
+                                    android:textColor="@color/grayColorColor"
+                                    android:textSize="@dimen/font_size25"
+                                    android:theme="@style/StyleTextView" />
+
+                                <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    app:boxStrokeColor="@color/primaryColor"
-                                    tools:ignore="RtlSymmetry">
+                                    android:layout_marginStart="@dimen/font_size15"
+                                    android:layout_marginTop="@dimen/padding10"
+                                    android:layout_marginEnd="@dimen/font_size15"
+                                    android:background="@drawable/edittext_round"
+                                    android:orientation="horizontal">
 
-                                    <com.google.android.material.textfield.TextInputEditText
-                                        android:id="@+id/edit_address_line2"
+                                    <RelativeLayout
+                                        android:id="@+id/vibhag_region"
                                         android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_marginTop="-5dp"
-                                        android:background="@android:color/transparent"
-                                        android:inputType="textPostalAddress"
-                                        android:textColor="@color/blackColor"
-                                        android:textColorHint="@color/grayColorColor"
-                                        android:textSize="@dimen/font_size25"
-                                        android:theme="@style/StyleEditTextView" />
+                                        android:layout_height="wrap_content">
 
-                                </com.google.android.material.textfield.TextInputLayout>
+                                        <com.google.android.material.textfield.TextInputLayout
+                                            style="@style/EditText.OutlinedBox"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center_vertical"
+                                            app:boxStrokeColor="@color/primaryColor"
+                                            tools:ignore="RtlSymmetry">
 
-                            </RelativeLayout>
+                                            <com.google.android.material.textfield.TextInputEditText
+                                                android:id="@+id/edit_address_line2"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:background="@android:color/transparent"
+                                                android:inputType="textPostalAddress"
+                                                android:textColor="@color/blackColor"
+                                                android:textColorHint="@color/grayColorColor"
+                                                android:textSize="@dimen/font_size25"
+                                                android:theme="@style/StyleEditTextView" />
 
-                        </LinearLayout>
+                                        </com.google.android.material.textfield.TextInputLayout>
 
-                        </LinearLayout>
+                                    </RelativeLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                                </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/padding15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:orientation="horizontal">
+                            </LinearLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/town_city"
-                                android:textColor="@color/grayColorColor"
-                                android:textSize="@dimen/font_size25"
-                                android:theme="@style/StyleTextView" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginStart="@dimen/padding10"
-                                android:gravity="center_vertical"
-                                android:text="*"
-                                android:textAlignment="center"
-                                android:textColor="@color/redColor"
-                                android:textSize="@dimen/font_size25"
-                                android:theme="@style/StyleTextView"
-                                tools:ignore="RtlCompat" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:layout_marginEnd="@dimen/font_size15"
-                            android:background="@drawable/edittext_round"
-                            android:orientation="horizontal">
-
-                            <RelativeLayout
-                                android:id="@+id/nagar_town"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                                <com.google.android.material.textfield.TextInputLayout
-                                    style="@style/EditText.OutlinedBox"
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/padding15"
+                                    android:layout_marginTop="@dimen/padding10"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/town_city"
+                                        android:textColor="@color/grayColorColor"
+                                        android:textSize="@dimen/font_size25"
+                                        android:theme="@style/StyleTextView" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_marginStart="@dimen/padding10"
+                                        android:gravity="center_vertical"
+                                        android:text="*"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/redColor"
+                                        android:textSize="@dimen/font_size25"
+                                        android:theme="@style/StyleTextView"
+                                        tools:ignore="RtlCompat" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    app:boxStrokeColor="@color/primaryColor"
-                                    tools:ignore="RtlSymmetry">
+                                    android:layout_marginStart="@dimen/font_size15"
+                                    android:layout_marginTop="@dimen/padding10"
+                                    android:layout_marginEnd="@dimen/font_size15"
+                                    android:background="@drawable/edittext_round"
+                                    android:orientation="horizontal">
 
-                                    <com.google.android.material.textfield.TextInputEditText
-                                        android:id="@+id/edit_town_city"
+                                    <RelativeLayout
+                                        android:id="@+id/nagar_town"
                                         android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_marginTop="-5dp"
-                                        android:background="@android:color/transparent"
-                                        android:inputType="text"
-                                        android:textColor="@color/blackColor"
-                                        android:textColorHint="@color/grayColorColor"
-                                        android:textSize="@dimen/font_size25"
-                                        android:theme="@style/StyleEditTextView" />
+                                        android:layout_height="wrap_content">
 
-                                </com.google.android.material.textfield.TextInputLayout>
+                                        <com.google.android.material.textfield.TextInputLayout
+                                            style="@style/EditText.OutlinedBox"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center_vertical"
+                                            app:boxStrokeColor="@color/primaryColor"
+                                            tools:ignore="RtlSymmetry">
 
-                            </RelativeLayout>
+                                            <com.google.android.material.textfield.TextInputEditText
+                                                android:id="@+id/edit_town_city"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:background="@android:color/transparent"
+                                                android:inputType="text"
+                                                android:textColor="@color/blackColor"
+                                                android:textColorHint="@color/grayColorColor"
+                                                android:textSize="@dimen/font_size25"
+                                                android:theme="@style/StyleEditTextView" />
 
-                        </LinearLayout>
+                                        </com.google.android.material.textfield.TextInputLayout>
 
-                        </LinearLayout>
+                                    </RelativeLayout>
+
+                                </LinearLayout>
+
+                            </LinearLayout>
 
                         </LinearLayout>
 

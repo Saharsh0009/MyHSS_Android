@@ -770,13 +770,13 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 }*/
             }
 
-            reject_txt.text = itemView.context.getString(R.string.inactive_txt)
+            reject_txt.text = itemView.context.getString(R.string.inactivate_txt)
 
             reject_txt.setOnClickListener {
 //                Toast.makeText(itemView.context, "Rejected", Toast.LENGTH_SHORT).show()
                 val alertDialog: AlertDialog.Builder = AlertDialog.Builder(itemView.context)
 //            alertDialog.setTitle("Logout")
-                alertDialog.setMessage("Are you sure you want to inactive this member?")
+                alertDialog.setMessage("Are you sure you want to inactivate this member?")
                 alertDialog.setPositiveButton(
                     "yes"
                 ) { _, _ ->

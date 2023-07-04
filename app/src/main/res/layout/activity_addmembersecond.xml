@@ -257,6 +257,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/padding55"
+                        android:gravity="center_vertical"
                         android:layout_marginEnd="@dimen/padding55"
                         app:boxStrokeColor="@color/primaryColor">
 
@@ -329,6 +330,7 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor">
 
                             <com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -336,7 +338,6 @@
                                 style="@android:style/Widget.Spinner.DropDown"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"
@@ -385,6 +386,7 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor"
                             tools:ignore="RtlSymmetry">
 
@@ -392,7 +394,6 @@
                                 android:id="@+id/edit_building_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:inputType="textPostalAddress"
                                 android:textColor="@color/blackColor"
@@ -452,6 +453,7 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor"
                             tools:ignore="RtlSymmetry">
 
@@ -459,7 +461,6 @@
                                 android:id="@+id/edit_address_line1"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:inputType="textPostalAddress"
                                 android:textColor="@color/blackColor"
@@ -500,6 +501,7 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor"
                             tools:ignore="RtlSymmetry">
 
@@ -507,7 +509,6 @@
                                 android:id="@+id/edit_address_line2"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:inputType="textPostalAddress"
                                 android:textColor="@color/blackColor"
@@ -568,13 +569,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:boxStrokeColor="@color/primaryColor"
+                            android:gravity="center_vertical"
                             tools:ignore="RtlSymmetry">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_town_city"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"

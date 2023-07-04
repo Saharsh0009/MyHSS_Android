@@ -117,8 +117,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         val paymentConfiguration = PaymentConfiguration.getInstance(applicationContext)
         val uiCustomization =
             PaymentAuthConfig.Stripe3ds2UiCustomization.Builder().setLabelCustomization(
-                PaymentAuthConfig.Stripe3ds2LabelCustomization.Builder().setTextFontSize(12)
-                    .build()
+                PaymentAuthConfig.Stripe3ds2LabelCustomization.Builder().setTextFontSize(12).build()
             ).build()
         PaymentAuthConfig.init(
             PaymentAuthConfig.Builder().set3ds2Config(
@@ -137,11 +136,31 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
 
     private fun startCheckout() {
         next_layout.setOnClickListener {
-//            paymentIntentClientSecret = "pi_3NNwkdSD1lLtRImz1m73TnGP_secret_a8xvRJGLE6VNWqrEpoXSxfgLF"
+            if (Functions.isConnectingToInternet(this@GuruDakshinaOneTimeFourthActivity)) {
+                if (cardInputWidget.validateAllFields()) {
+                    //            paymentIntentClientSecret = "pi_3NNwkdSD1lLtRImz1m73TnGP_secret_a8xvRJGLE6VNWqrEpoXSxfgLF"
 //            makeStripePayement(paymentIntentClientSecret)
-            callApiForStripeData() //MyHSS API
+                    callApiForStripeData() //MyHSS API
 //              callDemoMethodApiForSTripe() //Demo API work well
+                } else {
+                    Toast.makeText(this, "Please verify the card details.", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+            } else {
+                Toast.makeText(
+                    this@GuruDakshinaOneTimeFourthActivity,
+                    resources.getString(R.string.no_connection),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
+    }
+
+    private fun isValidate(): Boolean {
+        return cardInputWidget.validateAllFields()
+
+
     }
 
     private fun callDemoMethodApiForSTripe() {
@@ -269,9 +288,13 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             }
 
             override fun onFailure(call: Call<StripeDataModel>, t: Throwable) {
-                Toast.makeText(this@GuruDakshinaOneTimeFourthActivity, t.message, Toast.LENGTH_LONG)
-                    .show()
+//                Toast.makeText(this@GuruDakshinaOneTimeFourthActivity, t.message, Toast.LENGTH_LONG)
+//                    .show()
                 pd.dismiss()
+                Functions.showAlertMessageWithOK(
+                    this@GuruDakshinaOneTimeFourthActivity, "Message",
+                    t.message,
+                )
             }
         })
     }
@@ -289,8 +312,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
 //        }
         cardInputWidget.paymentMethodCreateParams?.let { params ->
             val confirmParams = ConfirmPaymentIntentParams.createWithPaymentMethodCreateParams(
-                params,
-                paymentIntentClientSecretKey
+                params, paymentIntentClientSecretKey
             )
             lifecycleScope.launch {
                 paymentLauncher.confirm(confirmParams)
@@ -348,7 +370,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             is PaymentResult.Canceled -> {
                 "Canceled!"
                 paymentStatus = "Canceled"
-                paymentStatusReason = "User canceled the payment"
+                paymentStatusReason = "User has canceled the payment"
             }
 
             is PaymentResult.Failed -> {
@@ -360,7 +382,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             }
         }
         Toast.makeText(
-            this, "Payment Result:" + message, Toast.LENGTH_LONG
+            this, "Payment Result:$message", Toast.LENGTH_LONG
         ).show()
 
         Log.e("Payment Result: ", " Result : $message")
@@ -373,7 +395,12 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             override fun onError(e: Exception) {
                 Log.e("OnError : ", " Error : $e")
                 paymentStatus = "Error"
-                paymentStatusReason = "Unknown Error"
+                paymentStatusReason = "$e"
+                Functions.showAlertMessageWithOK(
+                    this@GuruDakshinaOneTimeFourthActivity,
+                    "Error Message",
+                    "$e"
+                )
                 savePaymentDataintoDB(e.toString())
             }
 
@@ -389,6 +416,11 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                     paymentStatus = "Error"
                     paymentStatusReason = paymentIntent.lastErrorMessage?.orEmpty().toString()
                     savePaymentDataintoDB(paymentIntent.lastErrorMessage?.orEmpty().toString())
+                    Functions.showAlertMessageWithOK(
+                        this@GuruDakshinaOneTimeFourthActivity,
+                        "Failed Message",
+                        "$paymentStatusReason"
+                    )
                 }
             }
         })
@@ -404,6 +436,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         builderData.addFormDataPart("payment_object", toJson)
         builderData.addFormDataPart("payment_status_reason", paymentStatusReason)
         builderData.addFormDataPart("gateway", "stripe")
+        builderData.addFormDataPart("app", "1")
 
         val requestBody: MultipartBody = builderData.build()
         for (i in 0 until requestBody.size) {
@@ -437,15 +470,18 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                         val status = jsonObject.get("status")
                         val message = jsonObject.get("message")
                         if (status == true) {
-                            Toast.makeText(
+//                            Toast.makeText(
+//                                this@GuruDakshinaOneTimeFourthActivity,
+//                                "success : $message",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+                            Functions.showAlertMessageWithOK(
                                 this@GuruDakshinaOneTimeFourthActivity,
-                                "success : $message",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
+                                "Guru Dakshina Payment",
+                                "$message"
+                            )
                             val i = Intent(
-                                this@GuruDakshinaOneTimeFourthActivity,
-                                HomeActivity::class.java
+                                this@GuruDakshinaOneTimeFourthActivity, HomeActivity::class.java
                             )
                             startActivity(i)
                             finishAffinity()
@@ -466,9 +502,14 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Toast.makeText(this@GuruDakshinaOneTimeFourthActivity, t.message, Toast.LENGTH_LONG)
-                    .show()
+//                Toast.makeText(this@GuruDakshinaOneTimeFourthActivity, t.message, Toast.LENGTH_LONG)
+//                    .show()
                 pd1.dismiss()
+                Functions.showAlertMessageWithOK(
+                    this@GuruDakshinaOneTimeFourthActivity,
+                    "Guru Dakshina Payment Failure",
+                    "$t.message"
+                )
             }
         })
     }
