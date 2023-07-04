@@ -694,6 +694,7 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             android:paddingStart="@dimen/font_size15"
                             app:boxStrokeColor="@color/primaryColor"
                             tools:ignore="RtlSymmetry">
@@ -703,7 +704,6 @@
                                 style="@android:style/Widget.Spinner.DropDown"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
@@ -809,6 +809,7 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             android:paddingStart="@dimen/font_size15"
                             app:boxStrokeColor="@color/primaryColor"
                             tools:ignore="RtlSymmetry">
@@ -818,7 +819,6 @@
                                 style="@android:style/Widget.Spinner.DropDown"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
@@ -916,6 +916,7 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             android:paddingStart="@dimen/font_size15"
                             app:boxStrokeColor="@color/primaryColor"
                             tools:ignore="RtlSymmetry">
@@ -925,7 +926,6 @@
                                 style="@android:style/Widget.Spinner.DropDown"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
@@ -1073,6 +1073,6 @@
 
     </LinearLayout>
 
-<!--    <include layout="@layout/select_galley_pdf" />-->
+    <!--    <include layout="@layout/select_galley_pdf" />-->
 
 </RelativeLayout>

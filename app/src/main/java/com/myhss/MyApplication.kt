@@ -3,15 +3,23 @@ package com.myhss
 import android.app.Application
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
+import com.myhss.appConstants.AppParam
+import com.stripe.android.PaymentConfiguration
 import com.uk.myhss.R
 
 
-class AnalyticsApplication : Application() {
+class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         sAnalytics = GoogleAnalytics.getInstance(this)
-    }// To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
 
+        PaymentConfiguration.init(
+            applicationContext,
+            AppParam.publishableKey
+        )
+    }
+
+    // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
     /**
      * Gets the default [Tracker] for this [Application].
      * @return tracker

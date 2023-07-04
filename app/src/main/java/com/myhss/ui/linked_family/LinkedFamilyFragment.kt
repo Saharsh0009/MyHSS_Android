@@ -40,6 +40,7 @@ import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.SwipeleftToRightBack
+import com.myhss.Utils.UtilCommon
 import com.myhss.ui.Barchat.Model.BarchartDataModel
 import com.myhss.ui.Barchat.ViewBarchartActivity
 import com.uk.myhss.AddMember.AddMemberFirstActivity
@@ -114,8 +115,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
 
     private var atheletsBeans: List<Get_Member_Listing_Datum> =
         ArrayList<Get_Member_Listing_Datum>()
-    private var mAdapterGuru: CustomAdapter? = null
-    /*End My Family*/
+    private var mAdapterGuru: CustomAdapter? = null/*End My Family*/
 
 
     /*Start My Shakha*/
@@ -125,8 +125,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var rejected_member: RelativeLayout
     lateinit var sankhya_layout: RelativeLayout
     lateinit var root_view: LinearLayout
-    lateinit var shakha_layout: RelativeLayout
-    /*End My Shakha*/
+    lateinit var shakha_layout: RelativeLayout/*End My Shakha*/
 
     /*Start Guru Dakshina*/
 //    lateinit var guru_dakshina_list: RecyclerView
@@ -263,8 +262,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
             i.putExtra("TYPE_SELF", "family")
 //                i.putExtra("FAMILY", "FAMILY")
             startActivity(i)
-        }
-        /*End*/
+        }/*End*/
 
         /*My Shakha*/
         membership_view = findViewById(R.id.membership_view)
@@ -306,8 +304,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
 
         sankhya_layout.setOnClickListener {
             startActivity(Intent(this@LinkedFamilyFragment, SankhyaActivity::class.java))
-        }
-        /*End My Shakha*/
+        }/*End My Shakha*/
 
         /*Guru Dakshina*/
         one_time_layout = findViewById(R.id.one_time_layout)
@@ -382,8 +379,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                     this@LinkedFamilyFragment, GuruDakshinaRegularFirstActivity::class.java
                 )
             )
-        }
-        /*End*/
+        }/*End*/
 
         if (sessionManager.fetchSHAKHA_TAB() == "yes") {
             myshakha_layout.visibility = View.VISIBLE
@@ -533,8 +529,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 val end: Int = 100
                 val start: Int = 0
 
-                CallGuruDakshinaAPI(start, end)
-                /*if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
+                CallGuruDakshinaAPI(start, end)/*if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
                     USERID = sessionManager.fetchUserID()!!
                     Log.d("USERID", USERID)
                     val LENGTH: String = "10"
@@ -939,7 +934,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         data.setValueTextColor(Color.WHITE)
         pieChart_guru.setData(data)
         pieChart_guru.setDrawEntryLabels(false)
-        pieChart_guru.centerText = "Total\n" + t_count
+        pieChart_guru.centerText = "Total\n" + UtilCommon.roundOffDecimal(t_count)
         pieChart_guru.setCenterTextColor(Color.BLACK)
         pieChart_guru.setCenterTextSize(20f)
         pieChart_guru.invalidate()

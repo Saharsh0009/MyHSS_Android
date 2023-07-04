@@ -3,21 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLayout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include layout="@layout/action_bar" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none" >
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -29,71 +29,71 @@
                 android:id="@+id/guardian_full_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/guardian_information"
-                android:textSize="@dimen/font_size25"
-                android:theme="@style/StyleTextView"
                 android:layout_margin="@dimen/font_size15"
-                android:textColor="@color/blackColor" />
+                android:text="@string/guardian_information"
+                android:textColor="@color/blackColor"
+                android:textSize="@dimen/font_size25"
+                android:theme="@style/StyleTextView" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginStart="@dimen/padding15"
-                android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/guardian_full_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/grayColorColor"
-                android:theme="@style/StyleTextView"
-                android:textSize="@dimen/font_size15"
-                android:text="@string/guardian_name" />
+                android:layout_marginTop="@dimen/padding10"
+                android:orientation="horizontal">
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor"
-                tools:ignore="RtlCompat" />
+                    android:id="@+id/guardian_full_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/guardian_name"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:theme="@style/StyleTextView" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:gravity="center_vertical"
+                    android:text="*"
+                    android:textAlignment="center"
+                    android:textColor="@color/redColor"
+                    android:theme="@style/StyleTextView"
+                    tools:ignore="RtlCompat" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginEnd="@dimen/font_size15"
                 android:background="@drawable/edittext_round"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor"
-                        style="@style/EditText.OutlinedBox">
+                        android:gravity="center_vertical"
+                        app:boxStrokeColor="@color/primaryColor">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:theme="@style/StyleEditTextView"
                             android:id="@+id/edit_guardian_full_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
                             android:inputType="text"
-                            android:layout_marginTop="-5dp"
-                            android:background="@android:color/transparent"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent" />
+                            android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -104,63 +104,63 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginStart="@dimen/padding15"
-                android:layout_marginTop="@dimen/padding10" >
-
-            <TextView
-                android:id="@+id/guardian_contact_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/grayColorColor"
-                android:theme="@style/StyleTextView"
-                android:textSize="@dimen/font_size15"
-                android:text="@string/guardian_contact_number" />
+                android:layout_marginTop="@dimen/padding10"
+                android:orientation="horizontal">
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor"
-                tools:ignore="RtlCompat" />
+                    android:id="@+id/guardian_contact_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/guardian_contact_number"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:theme="@style/StyleTextView" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:gravity="center_vertical"
+                    android:text="*"
+                    android:textAlignment="center"
+                    android:textColor="@color/redColor"
+                    android:theme="@style/StyleTextView"
+                    tools:ignore="RtlCompat" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginEnd="@dimen/font_size15"
                 android:background="@drawable/edittext_round"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor"
-                        style="@style/EditText.OutlinedBox">
+                        android:gravity="center_vertical"
+                        app:boxStrokeColor="@color/primaryColor">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:theme="@style/StyleEditTextView"
                             android:id="@+id/edit_guardian_contact_number"
-                            android:inputType="number"
-                            android:layout_marginTop="-5dp"
-                            android:maxLength="13"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:inputType="number"
+                            android:maxLength="13"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent" />
+                            android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -171,62 +171,62 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="@dimen/padding15"
                 android:layout_marginTop="@dimen/padding10"
-                android:layout_marginStart="@dimen/padding15" >
-
-            <TextView
-                android:id="@+id/guardian_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/grayColorColor"
-                android:theme="@style/StyleTextView"
-                android:textSize="@dimen/font_size15"
-                android:text="@string/guardian_email" />
+                android:orientation="horizontal">
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor"
-                tools:ignore="RtlCompat" />
+                    android:id="@+id/guardian_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/guardian_email"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:theme="@style/StyleTextView" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:gravity="center_vertical"
+                    android:text="*"
+                    android:textAlignment="center"
+                    android:textColor="@color/redColor"
+                    android:theme="@style/StyleTextView"
+                    tools:ignore="RtlCompat" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginEnd="@dimen/font_size15"
                 android:background="@drawable/edittext_round"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor"
-                        style="@style/EditText.OutlinedBox">
+                        android:gravity="center_vertical"
+                        app:boxStrokeColor="@color/primaryColor">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:theme="@style/StyleEditTextView"
                             android:id="@+id/edit_guardian_email"
-                            android:inputType="textEmailAddress"
-                            android:layout_marginTop="-5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:inputType="textEmailAddress"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent" />
+                            android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -237,76 +237,76 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginStart="@dimen/padding15"
-                android:layout_marginTop="@dimen/padding10" >
-
-            <TextView
-                android:id="@+id/guardian_relationship"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/grayColorColor"
-                android:theme="@style/StyleTextView"
-                android:textSize="@dimen/font_size15"
-                android:text="@string/guardian_relationship" />
+                android:layout_marginTop="@dimen/padding10"
+                android:orientation="horizontal">
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor"
-                tools:ignore="RtlCompat" />
+                    android:id="@+id/guardian_relationship"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/guardian_relationship"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:theme="@style/StyleTextView" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:gravity="center_vertical"
+                    android:text="*"
+                    android:textAlignment="center"
+                    android:textColor="@color/redColor"
+                    android:theme="@style/StyleTextView"
+                    tools:ignore="RtlCompat" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginEnd="@dimen/font_size15"
                 android:background="@drawable/edittext_round"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <RelativeLayout
                     android:id="@+id/guardian_relationship_txt"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor"
+                        android:gravity="center_vertical"
                         android:paddingStart="@dimen/font_size15"
-                        style="@style/EditText.OutlinedBox"
+                        app:boxStrokeColor="@color/primaryColor"
                         tools:ignore="RtlSymmetry">
 
                         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                            style="@android:style/Widget.Spinner.DropDown"
-                            android:theme="@style/StyleEditTextView"
                             android:id="@+id/edit_guardian_relationship"
-                            android:background="@android:color/transparent"
-                            android:textColor="@color/blackColor"
-                            android:layout_marginTop="-5dp"
-                            android:tag="@string/occupation_select_other"
-                            android:textColorHint="@color/grayColorColor"
+                            style="@android:style/Widget.Spinner.DropDown"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_width="match_parent" />
+                            android:background="@android:color/transparent"
+                            android:tag="@string/occupation_select_other"
+                            android:textColor="@color/blackColor"
+                            android:textColorHint="@color/grayColorColor"
+                            android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <ImageView
                         android:layout_width="@dimen/padding10"
                         android:layout_height="@dimen/padding10"
-                        android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginEnd="@dimen/padding20"
-                        android:src="@drawable/arrow_drop_down"  />
+                        android:src="@drawable/arrow_drop_down" />
 
                 </RelativeLayout>
 
@@ -321,62 +321,62 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/padding15"
                     android:layout_marginTop="@dimen/padding10"
-                    android:layout_marginStart="@dimen/padding15" >
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/grayColorColor"
-                    android:theme="@style/StyleTextView"
-                    android:textSize="@dimen/font_size15"
-                    android:text="@string/other_relationship_name" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/other_relationship_name"
+                        android:textColor="@color/grayColorColor"
+                        android:textSize="@dimen/font_size15"
+                        android:theme="@style/StyleTextView" />
 
-                <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor"
-                tools:ignore="RtlCompat" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/padding10"
+                        android:gravity="center_vertical"
+                        android:text="*"
+                        android:textAlignment="center"
+                        android:textColor="@color/redColor"
+                        android:theme="@style/StyleTextView"
+                        tools:ignore="RtlCompat" />
 
-        </LinearLayout>
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding10"
                     android:layout_marginStart="@dimen/font_size15"
+                    android:layout_marginTop="@dimen/padding10"
                     android:layout_marginEnd="@dimen/font_size15"
                     android:background="@drawable/edittext_round"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor"
-                            style="@style/EditText.OutlinedBox"
                             tools:ignore="RtlSymmetry">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:theme="@style/StyleEditTextView"
                                 android:id="@+id/edit_emergency_realationship_name"
-                                android:inputType="text"
-                                android:background="@android:color/transparent"
-                                android:textColor="@color/blackColor"
-                                android:layout_marginTop="-5dp"
-                                android:textColorHint="@color/grayColorColor"
+                                android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_width="match_parent" />
+                                android:background="@android:color/transparent"
+                                android:inputType="text"
+                                android:textColor="@color/blackColor"
+                                android:textColorHint="@color/grayColorColor"
+                                android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -388,26 +388,26 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding20"
-                    android:layout_marginEnd="@dimen/padding30"
                     android:layout_gravity="center"
-                    android:layout_marginTop="20dp">
+                    android:layout_marginStart="@dimen/padding20"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="@dimen/padding30">
 
                     <LinearLayout
                         android:id="@+id/back_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:layout_gravity="center"
-                        android:orientation="horizontal"
                         android:background="@drawable/button_orange_round"
+                        android:gravity="center"
+                        android:orientation="horizontal"
                         android:paddingStart="@dimen/padding35"
-                        android:paddingEnd="@dimen/padding35" >
+                        android:paddingEnd="@dimen/padding35">
 
                         <ImageView
                             android:layout_width="@dimen/padding15"
@@ -417,13 +417,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/sourcesanspro_regular"
                             android:gravity="center"
                             android:padding="12dp"
                             android:text="@string/prev"
-                            android:theme="@style/StyleTextView"
-                            android:fontFamily="@font/sourcesanspro_regular"
                             android:textColor="@color/primaryColor"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:theme="@style/StyleTextView" />
 
                     </LinearLayout>
 
@@ -432,33 +432,33 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding30"
-                    android:layout_marginEnd="@dimen/padding20"
                     android:layout_alignParentEnd="true"
                     android:layout_gravity="center"
-                    android:layout_marginTop="20dp">
+                    android:layout_marginStart="@dimen/padding30"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="@dimen/padding20">
 
                     <LinearLayout
                         android:id="@+id/next_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:layout_gravity="center"
-                        android:orientation="horizontal"
                         android:background="@drawable/button_round"
+                        android:gravity="center"
+                        android:orientation="horizontal"
                         android:paddingStart="@dimen/padding35"
-                        android:paddingEnd="@dimen/padding35" >
+                        android:paddingEnd="@dimen/padding35">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/sourcesanspro_regular"
                             android:gravity="center"
                             android:padding="12dp"
                             android:text="@string/next"
-                            android:theme="@style/StyleTextView"
-                            android:fontFamily="@font/sourcesanspro_regular"
                             android:textColor="@color/white"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:theme="@style/StyleTextView" />
 
                         <ImageView
                             android:layout_width="@dimen/padding15"
