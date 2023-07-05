@@ -11,6 +11,7 @@ import android.text.style.ClickableSpan
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -18,16 +19,19 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatCheckBox
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.Login_Registration.Model.RegistrationResponse
 import com.uk.myhss.R
@@ -36,8 +40,6 @@ import com.uk.myhss.Utils.SessionManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 
 class RegistrationActivity : AppCompatActivity() {
@@ -78,14 +80,79 @@ class RegistrationActivity : AppCompatActivity() {
         val rootLayout = findViewById<RelativeLayout>(R.id.rootLayout)
         val already_terms = findViewById<TextView>(R.id.already_terms)
         val checkbox = findViewById<AppCompatCheckBox>(R.id.checkbox)
+        val til_firstname = findViewById<TextInputLayout>(R.id.til_firstname)
+        val til_surname = findViewById<TextInputLayout>(R.id.til_surname)
+        val til_username = findViewById<TextInputLayout>(R.id.til_username)
+        val til_email = findViewById<TextInputLayout>(R.id.til_email)
+        val til_password = findViewById<TextInputLayout>(R.id.til_password)
+        val til_confirmpassword = findViewById<TextInputLayout>(R.id.til_confirmpassword)
 
         checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
 //            Toast.makeText(this,isChecked.toString(),Toast.LENGTH_SHORT).show()
             Check_value = isChecked.toString()
         }
 
-        login_btn.setOnClickListener {
+        //        edit_firstname.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                til_firstname.isErrorEnabled = false
+//            }
+//        }
 
+        edit_firstname.doOnTextChanged { text, start, before, count ->
+            til_firstname.isErrorEnabled = false
+        }
+
+//        edit_surname.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                til_surname.isErrorEnabled = false
+//            }
+//        }
+
+        edit_surname.doOnTextChanged { text, start, before, count ->
+            til_surname.isErrorEnabled = false
+        }
+
+//        edit_username.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                til_username.isErrorEnabled = false
+//            }
+//        }
+
+        edit_username.doOnTextChanged { text, start, before, count ->
+            til_username.isErrorEnabled = false
+        }
+
+//        edit_email.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                til_email.isErrorEnabled = false
+//            }
+//        }
+
+        edit_email.doOnTextChanged { text, start, before, count ->
+            til_email.isErrorEnabled = false
+        }
+
+//        edit_password.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                til_password.isErrorEnabled = false
+//            }
+//        }
+
+        edit_password.doOnTextChanged { text, start, before, count ->
+            til_password.isErrorEnabled = false
+        }
+
+//        edit_confirmpassword.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                til_confirmpassword.isErrorEnabled = false
+//            }
+//        }
+
+        edit_confirmpassword.doOnTextChanged { text, start, before, count ->
+            til_confirmpassword.isErrorEnabled = false
+        }
+
+        login_btn.setOnClickListener {
             val firstname = edit_firstname.text.toString()
             val surname = edit_surname.text.toString()
             val username = edit_username.text.toString()
@@ -94,93 +161,62 @@ class RegistrationActivity : AppCompatActivity() {
             val confirm_password = edit_confirmpassword.text.toString()
 
             if (firstname.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter First name", Snackbar.LENGTH_SHORT).show()
-                edit_firstname.error = "    First name required"
-                edit_firstname.requestFocus()
+                til_firstname.error = getString(R.string.first_name)
+                til_firstname.isErrorEnabled = true
                 return@setOnClickListener
-            } else if (!isOnlyLetters(firstname)) {
-                Snackbar.make(
-                    rootLayout, "Please Enter Valid First Name", Snackbar.LENGTH_SHORT
-                ).show()
-                edit_firstname.error = "    Valid First name required"
-                edit_firstname.requestFocus()
+            } else if (!UtilCommon.isOnlyLetters(firstname)) {
+                til_firstname.error = getString(R.string.valid_first_name)
+                til_firstname.isErrorEnabled = true
                 return@setOnClickListener
             } else if (surname.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter surname", Snackbar.LENGTH_SHORT).show()
-                edit_surname.error = "      Surname required"
-                edit_surname.requestFocus()
+                til_surname.error = getString(R.string.sur_name)
+                til_surname.isErrorEnabled = true
                 return@setOnClickListener
-            } else if (!isOnlyLetters(surname)) {
-                Snackbar.make(
-                    rootLayout, "Please Enter Valid Surname", Snackbar.LENGTH_SHORT
-                ).show()
-                edit_surname.error = "    Valid Surname required"
-                edit_surname.requestFocus()
+            } else if (!UtilCommon.isOnlyLetters(surname)) {
+                til_surname.error = getString(R.string.valid_surname)
+                til_surname.isErrorEnabled = true
                 return@setOnClickListener
             } else if (username.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter User name", Snackbar.LENGTH_SHORT).show()
-                edit_username.error = "     Username required"
-                edit_username.requestFocus()
+                til_username.error = getString(R.string.user_name)
+                til_username.isErrorEnabled = true
+                return@setOnClickListener
+            } else if (!UtilCommon.isValidUserName(username)) {
+                til_username.error = getString(R.string.valid_user_name)
+                til_username.isErrorEnabled = true
                 return@setOnClickListener
             } else if (email.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Email", Snackbar.LENGTH_SHORT).show()
-                edit_email.error = "    Email required"
-                edit_email.requestFocus()
+                til_email.error = getString(R.string.email_id)
+                til_email.isErrorEnabled = true
                 return@setOnClickListener
             } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT).show()
-                edit_email.error = "    Valid Email required"
-                edit_email.requestFocus()
+                til_email.error = getString(R.string.valid_email)
+                til_email.isErrorEnabled = true
                 return@setOnClickListener
             } else if (password.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Password.", Snackbar.LENGTH_SHORT).show()
-                edit_password.error = "     Password required"
-                edit_password.requestFocus()
+                til_password.error = getString(R.string.enter_password)
+                til_password.isErrorEnabled = true
                 return@setOnClickListener
-            } else if (password.length < 8) {
-                Snackbar.make(rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT)
-                    .show()
-                edit_password.error = "     Password required"
-                edit_password.requestFocus()
+            } else if (!UtilCommon.isValidPassword(password)) {
+                til_password.error = getString(R.string.valid_password)
+                til_password.isErrorEnabled = true
                 return@setOnClickListener
             } else if (confirm_password.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Confirm Password.", Snackbar.LENGTH_SHORT)
-                    .show()
-                edit_confirmpassword.error = "      Confirm Password required"
-                edit_confirmpassword.requestFocus()
+                til_confirmpassword.error = getString(R.string.enter_confirm_password)
+                til_confirmpassword.isErrorEnabled = true
                 return@setOnClickListener
-            } else if (confirm_password.length < 8) {
-                Snackbar.make(rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT)
-                    .show()
-                edit_confirmpassword.error = "      Password required"
-                edit_confirmpassword.requestFocus()
+            } else if (!UtilCommon.isValidPassword(confirm_password)) {
+                til_confirmpassword.error = getString(R.string.valid_confirm_password)
+                til_confirmpassword.isErrorEnabled = true
                 return@setOnClickListener
             } else if (password != confirm_password) {
-                Snackbar.make(rootLayout, "Password Not matching", Snackbar.LENGTH_SHORT).show()
+                til_confirmpassword.error = getString(R.string.confirm_both_pass)
+                til_confirmpassword.isErrorEnabled = true
             } else if (Check_value != "true") {
-                Snackbar.make(rootLayout, "Please check terms & conditions", Snackbar.LENGTH_SHORT)
-                    .show()
+                Snackbar.make(rootLayout, getString(R.string.tnc), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else {
                 registration(firstname, surname, username, email, password, m_deviceId)
             }
-
-            /*RetrofitClient.instance.userRegistration(firstname, surname, username, email, password, m_deviceId)
-                    .enqueue(object: Callback<RegistrationResponse> {
-                        override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
-                            Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
-                        }
-
-                        override fun onResponse(call: Call<RegistrationResponse>, response: Response<RegistrationResponse>) {
-                            Log.d("status", response.body()?.status.toString())
-                            if(response.body()?.status!!){
-                                slideUp(registration_success_layout)
-                            }else{
-                                Toast.makeText(applicationContext, response.body()?.message, Toast.LENGTH_LONG).show()
-                            }
-
-                        }
-                    })*/
         }
 
         registration_layout.setOnClickListener {
@@ -311,15 +347,6 @@ class RegistrationActivity : AppCompatActivity() {
         val layoutParams = it.layoutParams
         layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
         it.layoutParams = layoutParams
-    }
-
-    fun isOnlyLetters(password: String?): Boolean {
-        val pattern: Pattern
-        val matcher: Matcher
-        val PASSWORD_PATTERN = "^[A-Za-z]*\$"
-        pattern = Pattern.compile(PASSWORD_PATTERN)
-        matcher = pattern.matcher(password)
-        return matcher.matches()
     }
 
     private fun moveToLoginScreen() {

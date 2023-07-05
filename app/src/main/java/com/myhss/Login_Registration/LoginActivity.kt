@@ -16,6 +16,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -29,6 +30,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -113,8 +115,11 @@ class LoginActivity : AppCompatActivity() {
             sharedPrefFile,
             Context.MODE_PRIVATE
         )*/
-
         val loginButton = findViewById<LoginButton>(R.id.login_button)
+        val til_userName = findViewById<TextInputLayout>(R.id.til_userName)
+        val til_password = findViewById<TextInputLayout>(R.id.til_password)
+
+
         loginButton.setOnClickListener {
             loginButton.setReadPermissions(listOf(EMAIL))
             callbackManager = CallbackManager.Factory.create()
@@ -166,32 +171,31 @@ class LoginActivity : AppCompatActivity() {
             signIn()
         }
 
+        edit_username.doOnTextChanged { text, start, before, count ->
+            til_userName.isErrorEnabled = false
+        }
+
+        edit_password.doOnTextChanged { text, start, before, count ->
+            til_password.isErrorEnabled = false
+        }
+
         // Button click listener
         login_btn.setOnClickListener {
             val user = edit_username.text.toString()
             val password = edit_password.text.toString()
-
-
-
             if (user.isEmpty() && password.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Username & Password", Snackbar.LENGTH_SHORT)
-                    .show()
-                edit_username.error = ""
-                edit_password.error = ""
-                edit_username.requestFocus()
-                edit_password.requestFocus()
+                til_userName.error = getString(R.string.username_required)
+                til_password.error = getString(R.string.password_required)
+                til_userName.isErrorEnabled = true
+                til_password.isErrorEnabled = true
                 return@setOnClickListener
             } else if (user.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Username", Snackbar.LENGTH_SHORT).show()
-//                edit_username.error = "Username required"
-                edit_username.error = ""
-                edit_username.requestFocus()
+                til_userName.error = getString(R.string.username_required)
+                til_userName.isErrorEnabled = true
                 return@setOnClickListener
             } else if (password.isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Password.", Snackbar.LENGTH_SHORT).show()
-//                edit_password.error = "Password required"
-                edit_password.error = ""
-                edit_password.requestFocus()
+                til_password.error = getString(R.string.password_required)
+                til_password.isErrorEnabled = true
                 return@setOnClickListener
             } else {
                 if (Functions.isConnectingToInternet(this@LoginActivity)) {
@@ -321,8 +325,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun login(user: String, password: String, m_deviceId: String, device_type: String) {
         val pd = CustomProgressBar(this@LoginActivity)
-        pd.show()
-        /*val `object` = JsonObject()
+        pd.show()/*val `object` = JsonObject()
         `object`.addProperty("email", user_email)
         `object`.addProperty("password", user_password)
         `object`.addProperty("device_id", m_deviceId)
@@ -456,8 +459,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun forgot(forgotuser: String) {
         val pd = CustomProgressBar(this@LoginActivity)
-        pd.show()
-        /*val `object` = JsonObject()
+        pd.show()/*val `object` = JsonObject()
         `object`.addProperty("email", user_email)
         `object`.addProperty("password", user_password)
         `object`.addProperty("device_id", m_deviceId)

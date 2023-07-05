@@ -177,8 +177,8 @@
     <string name="confirm_password">Confirm password</string>
     <string name="register">Register</string>
     <string name="login_details_register">Login Details</string>
-    <string name="user_note_register">Usernames should be something memorable e.g. firstname.surname. These can contain letters and numbers only (no spaces).</string>
-    <string name="password_note_register">Please use 8 or more characters with a mix of letters, numbers &amp; symbols.</string>
+    <string name="user_note_register">Usernames should be something memorable e.g. firstnamesurname. These can contain letters and numbers only (no spaces &amp; no special characters).</string>
+    <string name="password_note_register">Please use 8 or more characters with a mix of letters, numbers &amp; symbols. e.g. Abcd@123</string>
     <string name="already_user">I already have a membership! </string>
     <!--Choosing Register means that you agree to the HSS (UK) Privacy Policy and the MyHSS Terms & Conditions.-->
     <string name="terms_condtion"><html>Choosing Register means that you agree to the Hss (UK) <a href="https://dev.myhss.org.uk/page/privacy-policy/1">Privacy Policy </a> and the <a href="https://dev.myhss.org.uk/page/privacy-policy/1">MyHss Terms &amp; Conditions</a></html></string>
@@ -421,5 +421,22 @@
     <string name="guest">Guest</string>
     <string name="total">Total</string>
     <string name="add_more">Add More</string>
+    <string name="first_name">Please Enter the First name</string>
+    <string name="valid_first_name">First name should contain alphabetical characters only without any space. e.g. xyz</string>
+    <string name="sur_name">Please Enter the Surname</string>
+    <string name="valid_surname">Surname should contain alphabetical characters only without any space. e.g. xyz</string>
+    <string name="user_name">Please Enter User name</string>
+    <string name="valid_user_name">Username should contain alphabetical and numerical characters only without any space/special character. e.g. xyz.abc</string>
+    <string name="email_id">Please Enter Email</string>
+    <string name="valid_email">Please Enter Valid Email</string>
+    <string name="enter_password">Please Enter Password</string>
+    <string name="valid_password"><![CDATA[Password must have 8 or more characters with a mix of letters with upper and lower combination, numbers &amp; symbols.]]></string>
+    <string name="enter_confirm_password">Please Enter Confirm Password</string>
+    <string name="valid_confirm_password"><![CDATA[Confirm password must have 8 or more characters with a mix of letters with upper and lower combination, numbers &amp; symbols.]]></string>
+    <string name="confirm_both_pass">Password and confirm password must be same</string>
+    <string name="tnc"><![CDATA[Please check terms & conditions]]></string>
+    <string name="can_not_add_sankhya">Can\'t add Sankhya, no members are currently listed as a part of this Shakha</string>
+    <string name="username_required">Username required</string>
+    <string name="password_required">Password required</string>
 
 </resources>
