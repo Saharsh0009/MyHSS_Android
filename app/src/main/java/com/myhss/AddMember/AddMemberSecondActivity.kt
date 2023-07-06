@@ -15,8 +15,10 @@ import android.util.Patterns
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -49,6 +51,10 @@ class AddMemberSecondActivity : AppCompatActivity() {
     private lateinit var edit_address_line2: TextInputEditText
     private lateinit var edit_address_line1: TextInputEditText
     private lateinit var edit_building_name: TextInputEditText
+    private lateinit var til_primary_number: TextInputLayout
+    private lateinit var til_second_number: TextInputLayout
+    private lateinit var til_second_email: TextInputLayout
+    private lateinit var til_postcode: TextInputLayout
     private lateinit var find_address: ImageView
 
     private lateinit var edit_select_address: SearchableSpinner
@@ -108,6 +114,10 @@ class AddMemberSecondActivity : AppCompatActivity() {
         select_address = findViewById(R.id.select_address)
 
         find_address = findViewById(R.id.find_address)
+        til_primary_number = findViewById(R.id.til_primary_number)
+        til_second_number = findViewById(R.id.til_second_number)
+        til_second_email = findViewById(R.id.til_second_email)
+        til_postcode = findViewById(R.id.til_postcode)
 
         header_title.text = intent.getStringExtra("TITLENAME")
 
@@ -276,13 +286,25 @@ class AddMemberSecondActivity : AppCompatActivity() {
             }
         }
 
-        next_layout.setOnClickListener {
+        edit_primary_contact_number.doOnTextChanged { text, start, before, count ->
+            til_primary_number.isErrorEnabled = false
+        }
 
-//            startActivity(Intent(this@AddMemberSecondActivity, AddMemberThirdActivity::class.java))
+        edit_secondary_email.doOnTextChanged { text, start, before, count ->
+            til_second_email.isErrorEnabled = false
+        }
+
+        edit_find_address.doOnTextChanged { text, start, before, count ->
+            til_postcode.isErrorEnabled = false
+        }
+
+        next_layout.setOnClickListener {
             if (edit_primary_contact_number.text.toString().isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Primary Contact", Snackbar.LENGTH_SHORT)
-                    .show()
-                edit_primary_contact_number.error = "Primary contact required"
+//                Snackbar.make(rootLayout, "Please Enter Primary Contact", Snackbar.LENGTH_SHORT)
+//                    .show()
+//                edit_primary_contact_number.error = "Primary contact required"
+                til_primary_number.error = "Please Enter Primary Contact"
+                til_primary_number.isErrorEnabled = true
                 edit_primary_contact_number.requestFocus()
                 return@setOnClickListener
 //            } else if (edit_secondary_contact_number.text.toString().isEmpty()) {
@@ -294,13 +316,17 @@ class AddMemberSecondActivity : AppCompatActivity() {
                     .isEmpty() && !Patterns.EMAIL_ADDRESS.matcher(edit_secondary_email.text.toString())
                     .matches()
             ) {
-                Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT).show()
-                edit_secondary_email.error = "Valid Email required"
+//                Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT).show()
+//                edit_secondary_email.error = "Valid Email required"
+                til_second_email.error = "Please Enter Valid Email"
+                til_second_email.isErrorEnabled = true
                 edit_secondary_email.requestFocus()
                 return@setOnClickListener
             } else if (edit_find_address.text.toString().isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Post Code", Snackbar.LENGTH_SHORT).show()
-                edit_find_address.error = "Post Code required"
+//                Snackbar.make(rootLayout, "Please Enter Post Code", Snackbar.LENGTH_SHORT).show()
+//                edit_find_address.error = "Post Code required"
+                til_postcode.error = "Please Enter Post Code"
+                til_postcode.isErrorEnabled = true
                 edit_find_address.requestFocus()
                 return@setOnClickListener
 //            } else if (edit_building_name.text.toString().isEmpty()) {
@@ -341,7 +367,9 @@ class AddMemberSecondActivity : AppCompatActivity() {
                         i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
                     } else {
                         i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
-                        i.putExtra("OTHER_RELATIONSHIP", intent.getStringExtra("OTHER_RELATIONSHIP"))
+                        i.putExtra(
+                            "OTHER_RELATIONSHIP", intent.getStringExtra("OTHER_RELATIONSHIP")
+                        )
                     }
 
                     if (intent.getStringExtra("OCCUPATION_NAME") == "") {

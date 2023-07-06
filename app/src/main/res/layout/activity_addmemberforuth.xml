@@ -397,6 +397,7 @@
                                 style="@style/EditText.OutlinedBox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
                                 android:paddingStart="@dimen/font_size15"
                                 app:boxStrokeColor="@color/primaryColor"
                                 tools:ignore="RtlSymmetry">
@@ -406,7 +407,6 @@
                                     style="@android:style/Widget.Spinner.DropDown"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_marginTop="-5dp"
                                     android:background="@android:color/transparent"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
@@ -476,6 +476,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/padding10"
+                        android:layout_gravity="center_vertical"
                         android:background="@drawable/edittext_round"
                         app:boxStrokeColor="@color/primaryColor">
 
@@ -546,6 +547,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/padding10"
+                            android:gravity="center_vertical"
                             android:background="@drawable/edittext_round"
                             app:boxStrokeColor="@color/primaryColor">
 
@@ -625,6 +627,7 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             android:layout_marginTop="@dimen/padding10"
                             android:background="@drawable/edittext_round"
                             app:boxStrokeColor="@color/primaryColor">

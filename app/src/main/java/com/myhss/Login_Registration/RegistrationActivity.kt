@@ -163,54 +163,67 @@ class RegistrationActivity : AppCompatActivity() {
             if (firstname.isEmpty()) {
                 til_firstname.error = getString(R.string.first_name)
                 til_firstname.isErrorEnabled = true
+                edit_firstname.requestFocus()
                 return@setOnClickListener
             } else if (!UtilCommon.isOnlyLetters(firstname)) {
                 til_firstname.error = getString(R.string.valid_first_name)
                 til_firstname.isErrorEnabled = true
+                edit_firstname.requestFocus()
                 return@setOnClickListener
             } else if (surname.isEmpty()) {
                 til_surname.error = getString(R.string.sur_name)
                 til_surname.isErrorEnabled = true
+                edit_surname.requestFocus()
                 return@setOnClickListener
             } else if (!UtilCommon.isOnlyLetters(surname)) {
                 til_surname.error = getString(R.string.valid_surname)
                 til_surname.isErrorEnabled = true
+                edit_surname.requestFocus()
                 return@setOnClickListener
             } else if (username.isEmpty()) {
                 til_username.error = getString(R.string.user_name)
                 til_username.isErrorEnabled = true
+                edit_username.requestFocus()
                 return@setOnClickListener
             } else if (!UtilCommon.isValidUserName(username)) {
                 til_username.error = getString(R.string.valid_user_name)
                 til_username.isErrorEnabled = true
+                edit_username.requestFocus()
                 return@setOnClickListener
             } else if (email.isEmpty()) {
                 til_email.error = getString(R.string.email_id)
                 til_email.isErrorEnabled = true
+                edit_email.requestFocus()
                 return@setOnClickListener
             } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 til_email.error = getString(R.string.valid_email)
                 til_email.isErrorEnabled = true
+                edit_email.requestFocus()
                 return@setOnClickListener
             } else if (password.isEmpty()) {
                 til_password.error = getString(R.string.enter_password)
                 til_password.isErrorEnabled = true
+                edit_password.requestFocus()
                 return@setOnClickListener
             } else if (!UtilCommon.isValidPassword(password)) {
                 til_password.error = getString(R.string.valid_password)
                 til_password.isErrorEnabled = true
+                edit_password.requestFocus()
                 return@setOnClickListener
             } else if (confirm_password.isEmpty()) {
                 til_confirmpassword.error = getString(R.string.enter_confirm_password)
                 til_confirmpassword.isErrorEnabled = true
+                edit_confirmpassword.requestFocus()
                 return@setOnClickListener
             } else if (!UtilCommon.isValidPassword(confirm_password)) {
                 til_confirmpassword.error = getString(R.string.valid_confirm_password)
                 til_confirmpassword.isErrorEnabled = true
+                edit_confirmpassword.requestFocus()
                 return@setOnClickListener
             } else if (password != confirm_password) {
                 til_confirmpassword.error = getString(R.string.confirm_both_pass)
                 til_confirmpassword.isErrorEnabled = true
+                edit_confirmpassword.requestFocus()
             } else if (Check_value != "true") {
                 Snackbar.make(rootLayout, getString(R.string.tnc), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener

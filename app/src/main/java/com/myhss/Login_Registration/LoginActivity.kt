@@ -188,14 +188,17 @@ class LoginActivity : AppCompatActivity() {
                 til_password.error = getString(R.string.password_required)
                 til_userName.isErrorEnabled = true
                 til_password.isErrorEnabled = true
+                edit_username.requestFocus()
                 return@setOnClickListener
             } else if (user.isEmpty()) {
                 til_userName.error = getString(R.string.username_required)
                 til_userName.isErrorEnabled = true
+                edit_username.requestFocus()
                 return@setOnClickListener
             } else if (password.isEmpty()) {
                 til_password.error = getString(R.string.password_required)
                 til_password.isErrorEnabled = true
+                edit_password.requestFocus()
                 return@setOnClickListener
             } else {
                 if (Functions.isConnectingToInternet(this@LoginActivity)) {
