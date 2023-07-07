@@ -56,9 +56,8 @@ class SplashActivity : AppCompatActivity() {
     val STATUS_INSTANT = "instant"
     val ANALYTICS_USER_PROP = "app_type"
 
-    private val PERMISSION_REQUEST_CODE = 200
+//    private val PERMISSION_REQUEST_CODE = 200
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -69,47 +68,11 @@ class SplashActivity : AppCompatActivity() {
         Log.i(TAG.toString(), "Setting screen name: ${this@SplashActivity}")
         mTracker!!.setScreenName("Image~${this@SplashActivity}")
         mTracker!!.send(ScreenViewBuilder().build())
-        mTracker!!.send(
-            EventBuilder().setCategory("Action").setAction("Share").build()
-        )
+        mTracker!!.send(EventBuilder().setCategory("Action").setAction("Share").build())
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         sessionManager = SessionManager(this)
-
-        if (!checkPermission()) {
-            requestPermission()
-        } else {
-            Handler().postDelayed({
-                Log.e("TAG-SharedPref", "" + sharedPreferences.getString("USERID", ""))
-                if (sharedPreferences.getString("USERID", "") != "") {
-                    try {
-                        if (sharedPreferences.getString("MEMBERID", "") != "") {
-                            val i = Intent(this@SplashActivity, Passcode_Activity::class.java)
-                            i.putExtra("CHANGE_BIOMETRIC", "")
-                            startActivity(i)
-                            finish()
-                        } else {
-                            startActivity(
-                                Intent(
-                                    this@SplashActivity, WelcomeActivity::class.java
-                                )
-                            )
-                            finish()
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                } else {
-                    startActivity(
-                        Intent(
-                            this@SplashActivity, LoginActivity::class.java
-                        )
-                    )
-                    finish()
-                }
-            }, 500)
-        }
 
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("LaunchVC")
@@ -148,280 +111,303 @@ class SplashActivity : AppCompatActivity() {
                 "Allow_biometric", ""
             ).toString()
         )
-    }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun checkPermission(): Boolean {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val result1 =
-                ContextCompat.checkSelfPermission(applicationContext, permission.READ_MEDIA_IMAGES)
-            val result2 =
-                ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
-            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
-//            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
-            return result1 == PackageManager.PERMISSION_GRANTED && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED
-//                    && result4 == PackageManager.PERMISSION_GRANTED
-        } else {
-            val result1 = ContextCompat.checkSelfPermission(
-                applicationContext, permission.READ_EXTERNAL_STORAGE
-            )
-            val result2 =
-                ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
-            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
+//        if (!checkPermission()) {
+//            requestPermission()
+//        } else {
+//
+//        }
 
-            val result4 = ContextCompat.checkSelfPermission(
-                applicationContext, permission.WRITE_EXTERNAL_STORAGE
-            )
 
-            return result1 == PackageManager.PERMISSION_GRANTED && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED && result4 == PackageManager.PERMISSION_GRANTED
-        }
+//        Handler().postDelayed({
+//            if (Functions.isConnectingToInternet(this@SplashActivity)) {
+//                val OSName = "android"
+//                val app_version = currentVersion
+//                val app_name = "android_hss"//getString(R.string.app_name)
+//                myLatestUpdate(OSName, app_version, app_name)
+//            } else {
+//                Toast.makeText(
+//                    this@SplashActivity,
+//                    resources.getString(R.string.no_connection),
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        }, 500)
 
-    }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun requestPermission() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(
-                    permission.READ_MEDIA_IMAGES, permission.CALL_PHONE, permission.CAMERA
-//                    , permission.WRITE_EXTERNAL_STORAGE
-                ), PERMISSION_REQUEST_CODE
-            )
-        } else {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(
-                    permission.READ_EXTERNAL_STORAGE,
-                    permission.CALL_PHONE,
-                    permission.CAMERA,
-                    permission.WRITE_EXTERNAL_STORAGE
-                ), PERMISSION_REQUEST_CODE
-            )
-        }
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-
-                val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
-                val callAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED
-                val cameraAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (readAccepted && callAccepted && cameraAccepted) {
-                        Handler().postDelayed({
-                            if (Functions.isConnectingToInternet(this@SplashActivity)) {
-                                val OSName = "android"
-                                val app_version = currentVersion
-                                val app_name = "android_hss"//getString(R.string.app_name)
-                                myLatestUpdate(OSName, app_version, app_name)
-                            } else {
-                                Toast.makeText(
-                                    this@SplashActivity,
-                                    resources.getString(R.string.no_connection),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }, 500)
-                    } else {
-                        if (shouldShowRequestPermissionRationale(permission.READ_MEDIA_IMAGES)) {
-                            showMessageOKCancel("You need to allow access to read the permissions",
-                                DialogInterface.OnClickListener { dialog, which ->
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                        requestPermissions(
-                                            arrayOf(
-                                                permission.READ_MEDIA_IMAGES,
-                                                permission.CALL_PHONE,
-                                                permission.CAMERA,
-                                            ), PERMISSION_REQUEST_CODE
-                                        )
-                                    }
-                                })
-                            return
-                        } else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
-                            showMessageOKCancel("You need to allow access to phone the permissions",
-                                DialogInterface.OnClickListener { dialog, which ->
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                        requestPermissions(
-                                            arrayOf(
-                                                permission.READ_MEDIA_IMAGES,
-                                                permission.CALL_PHONE,
-                                                permission.CAMERA
-                                            ), PERMISSION_REQUEST_CODE
-                                        )
-                                    }
-                                })
-                            return
-                        } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
-                            showMessageOKCancel("You need to allow access to Camera the permissions",
-                                DialogInterface.OnClickListener { dialog, which ->
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                        requestPermissions(
-                                            arrayOf(
-                                                permission.READ_MEDIA_IMAGES,
-                                                permission.CALL_PHONE,
-                                                permission.CAMERA
-                                            ), PERMISSION_REQUEST_CODE
-                                        )
-                                    }
-                                })
-                            return
-                        }
-                    }
-                } else {
-                    val writeAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED
-                    if (writeAccepted && readAccepted && callAccepted && cameraAccepted) {
-                        Handler().postDelayed({
-                            if (Functions.isConnectingToInternet(this@SplashActivity)) {
-                                val OSName = "android"
-                                val app_version = currentVersion
-                                val app_name = "android_hss"//getString(R.string.app_name)
-                                myLatestUpdate(OSName, app_version, app_name)
-                            } else {
-                                Toast.makeText(
-                                    this@SplashActivity,
-                                    resources.getString(R.string.no_connection),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }, 500)
-                    } else {
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            if (shouldShowRequestPermissionRationale(permission.WRITE_EXTERNAL_STORAGE)) {
-                                showMessageOKCancel("You need to allow access to Write the permissions",
-                                    DialogInterface.OnClickListener { dialog, which ->
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                            requestPermissions(
-                                                arrayOf(
-                                                    permission.WRITE_EXTERNAL_STORAGE,
-                                                    permission.READ_EXTERNAL_STORAGE,
-                                                    permission.CALL_PHONE,
-                                                    permission.CAMERA,
-                                                ), PERMISSION_REQUEST_CODE
-                                            )
-                                        }
-                                    })
-                                return
-                            } else if (shouldShowRequestPermissionRationale(permission.READ_EXTERNAL_STORAGE)) {
-                                showMessageOKCancel("You need to allow access to read the permissions",
-                                    DialogInterface.OnClickListener { dialog, which ->
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                            requestPermissions(
-                                                arrayOf(
-                                                    permission.WRITE_EXTERNAL_STORAGE,
-                                                    permission.READ_EXTERNAL_STORAGE,
-                                                    permission.CALL_PHONE,
-                                                    permission.CAMERA,
-                                                ), PERMISSION_REQUEST_CODE
-                                            )
-                                        }
-                                    })
-                                return
-                            } else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
-                                showMessageOKCancel("You need to allow access to phone the permissions",
-                                    DialogInterface.OnClickListener { dialog, which ->
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                            requestPermissions(
-                                                arrayOf(
-                                                    permission.WRITE_EXTERNAL_STORAGE,
-                                                    permission.READ_EXTERNAL_STORAGE,
-                                                    permission.CALL_PHONE,
-                                                    permission.CAMERA
-                                                ), PERMISSION_REQUEST_CODE
-                                            )
-                                        }
-                                    })
-                                return
-                            } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
-                                showMessageOKCancel("You need to allow access to Camera the permissions",
-                                    DialogInterface.OnClickListener { dialog, which ->
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                            requestPermissions(
-                                                arrayOf(
-                                                    permission.WRITE_EXTERNAL_STORAGE,
-                                                    permission.READ_EXTERNAL_STORAGE,
-                                                    permission.CALL_PHONE,
-                                                    permission.CAMERA
-                                                ), PERMISSION_REQUEST_CODE
-                                            )
-                                        }
-                                    })
-                                return
-                            }
-                        }
-                    }
-                }
+        Handler().postDelayed({
+            Log.e("TAG-SharedPref", "" + sharedPreferences.getString("USERID", ""))
+            if (Functions.isConnectingToInternet(this@SplashActivity)) {
+                val OSName = "android"
+                val app_version = currentVersion
+                val app_name = "android_hss"//getString(R.string.app_name)
+                myLatestUpdate(OSName, app_version, app_name)
             } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                            this, permission.READ_EXTERNAL_STORAGE
-                        ) || !ActivityCompat.shouldShowRequestPermissionRationale(
-                            this, permission.CALL_PHONE
-                        ) || !ActivityCompat.shouldShowRequestPermissionRationale(
-                            this, permission.CAMERA
-                        )
-                    ) {
-                        showPermissionDeniedDialogSetting()
-                    } else {
-                        reRequestPermissionAccessDialog()
-                    }
-                } else {
-                    if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                            this, permission.READ_EXTERNAL_STORAGE
-                        ) || !ActivityCompat.shouldShowRequestPermissionRationale(
-                            this, permission.CALL_PHONE
-                        ) || !ActivityCompat.shouldShowRequestPermissionRationale(
-                            this, permission.CAMERA
-                        ) || !ActivityCompat.shouldShowRequestPermissionRationale(
-                            this, permission.WRITE_EXTERNAL_STORAGE
-                        )
-                    ) {
-                        showPermissionDeniedDialogSetting()
-                    } else {
-                        reRequestPermissionAccessDialog()
-                    }
-                }
+                Toast.makeText(
+                    this@SplashActivity,
+                    resources.getString(R.string.no_connection),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        }
+        }, 500)
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun reRequestPermissionAccessDialog() {
-        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@SplashActivity)
-        alertDialog.setMessage("In Order to use this application, please accept the requested permission. If You deny the any of permission, this application will not work.")
-        alertDialog.setPositiveButton(
-            "yes"
-        ) { _, _ ->
-            requestPermission()
-        }
-        alertDialog.setNegativeButton(
-            "Close App"
-        ) { _, _ ->
-            finish()
-        }
-        val alert: AlertDialog = alertDialog.create()
-        alert.setCanceledOnTouchOutside(false)
-        alert.show()
-    }
+//    @RequiresApi(Build.VERSION_CODES.Q)
+//    private fun checkPermission(): Boolean {
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            val result1 =
+//                ContextCompat.checkSelfPermission(applicationContext, permission.READ_MEDIA_IMAGES)
+////            val result2 = ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
+////            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
+////            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
+//            return result1 == PackageManager.PERMISSION_GRANTED
+////                    && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED
+////                    && result4 == PackageManager.PERMISSION_GRANTED
+//        } else {
+//            val result1 = ContextCompat.checkSelfPermission(
+//                applicationContext,
+//                permission.READ_EXTERNAL_STORAGE
+//            )
+////            val result2 = ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
+////            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
+////            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
+//
+//            return result1 == PackageManager.PERMISSION_GRANTED
+////                    && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED && result4 == PackageManager.PERMISSION_GRANTED
+//        }
+//    }
 
-    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
-        AlertDialog.Builder(this@SplashActivity).setMessage(message)
-            .setPositiveButton("OK", okListener).setNegativeButton(
-                "Cancel"
-            ) { dialogInterface, i -> finishAffinity() }.create().show()
-    }
+//    @RequiresApi(Build.VERSION_CODES.Q)
+//    private fun requestPermission() {
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            ActivityCompat.requestPermissions(
+//                this, arrayOf(
+//                    permission.READ_MEDIA_IMAGES
+////                    permission.CALL_PHONE, permission.CAMERA
+////                    , permission.WRITE_EXTERNAL_STORAGE
+//                ), PERMISSION_REQUEST_CODE
+//            )
+//        } else {
+//            ActivityCompat.requestPermissions(
+//                this, arrayOf(
+//                    permission.READ_EXTERNAL_STORAGE
+////                    permission.CALL_PHONE,
+////                    permission.CAMERA,
+////                    permission.WRITE_EXTERNAL_STORAGE
+//                ), PERMISSION_REQUEST_CODE
+//            )
+//        }
+//    }
+
+
+//    @RequiresApi(Build.VERSION_CODES.Q)
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        when (requestCode) {
+//            PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+//
+//                val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+////                val callAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED
+////                val cameraAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED
+//
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+////                    if (readAccepted && callAccepted && cameraAccepted) {
+//                    if (readAccepted) {
+//
+//                    } else {
+//                        if (shouldShowRequestPermissionRationale(permission.READ_MEDIA_IMAGES)) {
+//                            showMessageOKCancel("You need to allow access to read the permissions",
+//                                DialogInterface.OnClickListener { dialog, which ->
+//                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                                        requestPermissions(
+//                                            arrayOf(
+//                                                permission.READ_MEDIA_IMAGES
+////                                                permission.CALL_PHONE,
+////                                                permission.CAMERA,
+//                                            ), PERMISSION_REQUEST_CODE
+//                                        )
+//                                    }
+//                                })
+//                            return
+//                        }/* else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
+//                            showMessageOKCancel("You need to allow access to phone the permissions",
+//                                DialogInterface.OnClickListener { dialog, which ->
+//                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                                        requestPermissions(
+//                                            arrayOf(
+//                                                permission.READ_MEDIA_IMAGES,
+//                                                permission.CALL_PHONE,
+//                                                permission.CAMERA
+//                                            ), PERMISSION_REQUEST_CODE
+//                                        )
+//                                    }
+//                                })
+//                            return
+//                        } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
+//                            showMessageOKCancel("You need to allow access to Camera the permissions",
+//                                DialogInterface.OnClickListener { dialog, which ->
+//                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                                        requestPermissions(
+//                                            arrayOf(
+//                                                permission.READ_MEDIA_IMAGES,
+//                                                permission.CALL_PHONE,
+//                                                permission.CAMERA
+//                                            ), PERMISSION_REQUEST_CODE
+//                                        )
+//                                    }
+//                                })
+//                            return
+//                        }*/
+//                    }
+//                } else {
+////                    val writeAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED
+////                    if (writeAccepted && readAccepted && callAccepted && cameraAccepted) {
+//                    if (readAccepted) {
+//                        Handler().postDelayed({
+//                            if (Functions.isConnectingToInternet(this@SplashActivity)) {
+//                                val OSName = "android"
+//                                val app_version = currentVersion
+//                                val app_name = "android_hss"//getString(R.string.app_name)
+//                                myLatestUpdate(OSName, app_version, app_name)
+//                            } else {
+//                                Toast.makeText(
+//                                    this@SplashActivity,
+//                                    resources.getString(R.string.no_connection),
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                            }
+//                        }, 500)
+//                    } else {
+//
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                            /*if (shouldShowRequestPermissionRationale(permission.WRITE_EXTERNAL_STORAGE)) {
+//                                showMessageOKCancel("You need to allow access to Write the permissions",
+//                                    DialogInterface.OnClickListener { dialog, which ->
+//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                                            requestPermissions(
+//                                                arrayOf(
+//                                                    permission.WRITE_EXTERNAL_STORAGE,
+//                                                    permission.READ_EXTERNAL_STORAGE,
+//                                                    permission.CALL_PHONE,
+//                                                    permission.CAMERA,
+//                                                ), PERMISSION_REQUEST_CODE
+//                                            )
+//                                        }
+//                                    })
+//                                return
+//                            } else*/
+//                            if (shouldShowRequestPermissionRationale(permission.READ_EXTERNAL_STORAGE)) {
+//                                showMessageOKCancel("You need to allow access to read the permissions",
+//                                    DialogInterface.OnClickListener { dialog, which ->
+//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                                            requestPermissions(
+//                                                arrayOf(
+////                                                    permission.WRITE_EXTERNAL_STORAGE,
+//                                                    permission.READ_EXTERNAL_STORAGE
+////                                                    permission.CALL_PHONE,
+////                                                    permission.CAMERA,
+//                                                ), PERMISSION_REQUEST_CODE
+//                                            )
+//                                        }
+//                                    })
+//                                return
+//                            } /*else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
+//                                showMessageOKCancel("You need to allow access to phone the permissions",
+//                                    DialogInterface.OnClickListener { dialog, which ->
+//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                                            requestPermissions(
+//                                                arrayOf(
+//                                                    permission.WRITE_EXTERNAL_STORAGE,
+//                                                    permission.READ_EXTERNAL_STORAGE,
+//                                                    permission.CALL_PHONE,
+//                                                    permission.CAMERA
+//                                                ), PERMISSION_REQUEST_CODE
+//                                            )
+//                                        }
+//                                    })
+//                                return
+//                            } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
+//                                showMessageOKCancel("You need to allow access to Camera the permissions",
+//                                    DialogInterface.OnClickListener { dialog, which ->
+//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                                            requestPermissions(
+//                                                arrayOf(
+//                                                    permission.WRITE_EXTERNAL_STORAGE,
+//                                                    permission.READ_EXTERNAL_STORAGE,
+//                                                    permission.CALL_PHONE,
+//                                                    permission.CAMERA
+//                                                ), PERMISSION_REQUEST_CODE
+//                                            )
+//                                        }
+//                                    })
+//                                return
+//                            }*/
+//                        }
+//                    }
+//                }
+//            } else {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                    //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CALL_PHONE)
+//                    //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CAMERA)
+//                    if (!ActivityCompat.shouldShowRequestPermissionRationale(
+//                            this, permission.READ_MEDIA_IMAGES
+//                        )
+//                    ) {
+//                        showPermissionDeniedDialogSetting()
+//                    } else {
+//                        reRequestPermissionAccessDialog()
+//                    }
+//                } else {
+//                    //|| !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CALL_PHONE)
+//                    // || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CAMERA)
+//                    // || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.WRITE_EXTERNAL_STORAGE)
+//                    if (!ActivityCompat.shouldShowRequestPermissionRationale(
+//                            this, permission.READ_EXTERNAL_STORAGE
+//                        )
+//                    ) {
+//                        showPermissionDeniedDialogSetting()
+//                    } else {
+//                        reRequestPermissionAccessDialog()
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+//    @RequiresApi(Build.VERSION_CODES.Q)
+//    private fun reRequestPermissionAccessDialog() {
+//        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@SplashActivity)
+//        alertDialog.setMessage("In order to use MyHSS application, please grant the requested permissions. Without these permissions, the application will not be able to function properly. Thank you for your understanding.")
+//        alertDialog.setPositiveButton(
+//            "yes"
+//        ) { _, _ ->
+//            requestPermission()
+//        }
+//        alertDialog.setNegativeButton(
+//            "Close App"
+//        ) { _, _ ->
+//            finish()
+//        }
+//        val alert: AlertDialog = alertDialog.create()
+//        alert.setCanceledOnTouchOutside(false)
+//        alert.show()
+//    }
+
+//    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+//        AlertDialog.Builder(this@SplashActivity).setMessage(message)
+//            .setPositiveButton("OK", okListener).setNegativeButton(
+//                "Cancel"
+//            ) { dialogInterface, i -> finishAffinity() }.create().show()
+//    }
 
     private fun myLatestUpdate(OSName: String, app_version: String, app_name: String) {
-        val pd = CustomProgressBar(this@SplashActivity)
-        pd.show()
+//        val pd = CustomProgressBar(this@SplashActivity)
+//        pd.show()
         val call: Call<latest_update_response> =
             MyHssApplication.instance!!.api.latestupdate(OSName, app_version, app_name)
         call.enqueue(object : Callback<latest_update_response> {
@@ -437,6 +423,10 @@ class SplashActivity : AppCompatActivity() {
 
                             if (forceUpdateRequired == "false") {
                                 Handler().postDelayed({
+                                    Log.e(
+                                        "TAG-SharedPref",
+                                        "" + sharedPreferences.getString("USERID", "")
+                                    )
                                     if (sharedPreferences.getString("USERID", "") != "") {
                                         try {
                                             if (sharedPreferences.getString("MEMBERID", "") != "") {
@@ -539,12 +529,12 @@ class SplashActivity : AppCompatActivity() {
                         getString(R.string.some_thing_wrong),
                     )
                 }
-                pd.dismiss()
+//                pd.dismiss()
             }
 
             override fun onFailure(call: Call<latest_update_response>, t: Throwable) {
                 Toast.makeText(this@SplashActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
+//                pd.dismiss()
             }
         })
     }
@@ -566,24 +556,23 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private fun showPermissionDeniedDialogSetting() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setMessage("Permissions are required. Please enable it from the app settings.")
-            .setCancelable(false).setPositiveButton("Settings") { _, _ ->
-                // Open app settings
-                openAppSettings()
-            }.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
-                finish()
-            }
-        val dialog = dialogBuilder.create()
-        dialog.show()
-    }
+//    private fun showPermissionDeniedDialogSetting() {
+//        val dialogBuilder = AlertDialog.Builder(this)
+//        dialogBuilder.setMessage("To fully utilize this application, please enable the required permissions from the app settings. Without these permissions, certain features may not be accessible. Thank you for your cooperation.")
+//            .setCancelable(false).setPositiveButton("Settings") { _, _ ->
+//                openAppSettings()
+//            }.setNegativeButton("Cancel") { dialog, _ ->
+//                dialog.cancel()
+//                finish()
+//            }
+//        val dialog = dialogBuilder.create()
+//        dialog.show()
+//    }
 
-    private fun openAppSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri = Uri.fromParts("package", packageName, null)
-        intent.data = uri
-        startActivity(intent)
-    }
+//    private fun openAppSettings() {
+//        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+//        val uri = Uri.fromParts("package", packageName, null)
+//        intent.data = uri
+//        startActivity(intent)
+//    }
 }

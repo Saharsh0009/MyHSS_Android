@@ -3,9 +3,11 @@ package com.uk.myhss.AddMember
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ContentUris
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -16,6 +18,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.provider.Settings
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -24,7 +27,10 @@ import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -83,17 +89,10 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     var firstAidInfoName: List<String> = ArrayList<String>()
     var firstAidInfoID: List<String> = ArrayList<String>()
 
-//    var get_membership_detail: List<Get_CreateMembership_Response> =
-//        ArrayList<Get_CreateMembership_Response>()
-//    var get_profile_detail: List<Get_CreateMembership_Response> =
-//        ArrayList<Get_CreateMembership_Response>()
-
     private var DIETARY_ID: String = ""
     private var SPOKEN_ID: String = ""
     private var ORIGIN_ID: String = ""
     private var FIRSTAID_ID: String = ""
-//    private var PASSWORD: String = ""
-
 
     private lateinit var edit_medical_information_details: TextInputEditText
     private lateinit var edit_date_of_first_aid_qualification: TextView
@@ -133,11 +132,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     private lateinit var checkbox: CheckBox
     private lateinit var agreement_txt: TextView
 
-    //    private lateinit var gallery_pdf_layout: RelativeLayout
     private lateinit var check_box_layout: RelativeLayout
-//    private lateinit var select_gallery: LinearLayout
-//    private lateinit var select_pdf: LinearLayout
-//    private lateinit var close_layout: ImageView
 
     private lateinit var relative_aid_type: RelativeLayout
     private lateinit var edit_profe_body_regis_num: TextInputEditText
@@ -151,7 +146,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     //PDF OR Image upload
     val MEDIA_TYPE_IMAGE = 1
     val MEDIA_TYPE_PDF = 2
-    private val IMAGE_DIRECTORY_NAME = "Hello Camera"
     var mediaFile: File? = null
     private var fileUri: Uri? = null
     private var File_name: String = ""
@@ -159,25 +153,16 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     private val IMAGE_DIRECTORY = "/demonuts_upload_gallery"
 
     //Pdf request code
-    private val PICK_PDF_REQUEST = 1
-    private val REQUEST_CODE = 2
-
-    //storage permission code
-    private val STORAGE_PERMISSION_CODE = 123
-
-    //Uri to store the image uri
+    private val PICK_PDF_REQUEST = 3
     private var filePath: Uri? = null
     private var ImagefilePath: Uri? = null
     var bitmap: Bitmap? = null
 
     //image pick code
-    private val IMAGE_PICK_CODE = 1000;
-
-    //Permission code
-    private val PERMISSION_CODE = 1001;
+    private val IMAGE_PICK_CODE = 1000
     var Upload_file: String = ""
     var mediaFileDoc: File? = null
-
+    private val PERMISSION_REQUEST_CODE = 200
 
     @SuppressLint("NewApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -222,11 +207,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         qualification_file_image = findViewById(R.id.qualification_file_image)
         checkbox = findViewById(R.id.checkbox)
         agreement_txt = findViewById(R.id.agreement_txt)
-//        gallery_pdf_layout = findViewById(R.id.gallery_pdf_layout)
         check_box_layout = findViewById(R.id.check_box_layout)
-//        select_gallery = findViewById(R.id.select_gallery)
-//        select_pdf = findViewById(R.id.select_pdf)
-//        close_layout = findViewById(R.id.close_layout)
         spoken_language_txt_view = findViewById(R.id.spoken_language_txt_view)
         spoken_language_txt_layout = findViewById(R.id.spoken_language_txt_layout)
         spoken_language_txt = findViewById(R.id.spoken_language_txt)
@@ -271,7 +252,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         val qualification_First_no_img = findViewById<ImageView>(R.id.qualification_First_no_img)
 
         checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-//            Toast.makeText(this,isChecked.toString(),Toast.LENGTH_SHORT).show()
             Check_value = isChecked.toString()
         }
         header_title.text = intent.getStringExtra("TITLENAME")
@@ -290,7 +270,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             ).show()
         }
 
-
         back_arrow.setOnClickListener {
             finish()
         }
@@ -300,33 +279,13 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         }
 
         qualification_file.setOnClickListener {
-            openFileUploadDialog()
-            Log.d("File_name", File_name)
+            if (!checkPermission()) {
+                requestPermission()
+            } else {
+                openFileUploadDialog()
+                Log.d("File_name", File_name)
+            }
         }
-
-
-//        select_gallery.setOnClickListener {
-
-
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-//                    //permission denied
-//                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
-//                    //show popup to request runtime permission
-//                    requestPermissions(permissions, PERMISSION_CODE);
-//                } else {
-//                    //permission already granted
-//                    openGalleryForImage()
-//                }
-//            } else {
-//                //system OS is < Marshmallow
-//                openGalleryForImage()
-//            }
-//        }
-
-//        select_pdf.setOnClickListener {
-//            showFileChooser()
-//        }
 
         if (intent.getStringExtra("IS_SELF") != "self") { //  profile or add family
             if (intent.getStringExtra("TITLENAME") == "Profile") { //  only profile
@@ -759,74 +718,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         first_aid_type_view.setOnClickListener {
             SearchSpinner(firstAidInfoName.toTypedArray(), edit_aid_type)
         }
-
-    }
-
-    private fun openFileUploadDialog() {
-        val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
-        val view_d = layoutInflater.inflate(R.layout.dialog_select_galley_pdf, null)
-        val btnClose = view_d.findViewById<ImageView>(R.id.close_layout)
-        val btn_image = view_d.findViewById<LinearLayout>(R.id.select_gallery)
-        val btn_pdf = view_d.findViewById<LinearLayout>(R.id.select_pdf)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            btn_pdf.visibility = View.GONE
-        } else {
-            btn_pdf.visibility = View.VISIBLE
-        }
-
-        btnClose.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        btn_image.setOnClickListener {
-            openFirstAidImage()
-            dialog.dismiss()
-        }
-        btn_pdf.setOnClickListener {
-            showFileChooser()
-            dialog.dismiss()
-        }
-
-        dialog.setCancelable(true)
-        dialog.setContentView(view_d)
-        dialog.show()
-
-    }
-
-    private fun openFirstAidImage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_DENIED) {
-                    //permission denied
-                    val permissions = arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
-                    //show popup to request runtime permission
-                    requestPermissions(permissions, PERMISSION_CODE)
-                } else {
-                    //permission already granted
-                    openGalleryForImage()
-                }
-            } else {
-                //system OS is < Marshmallow
-                openGalleryForImage()
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                    //permission denied
-                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    //show popup to request runtime permission
-                    requestPermissions(permissions, PERMISSION_CODE)
-                } else {
-                    //permission already granted
-                    openGalleryForImage()
-                }
-            } else {
-                //system OS is < Marshmallow
-                openGalleryForImage()
-            }
-        }
-
 
     }
 
@@ -1417,33 +1308,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         })
     }
 
-    //method to show file chooser
-    private fun showFileChooser() {
-
-//        val path = Environment.getExternalStorageDirectory().toString() + "/" + "Downloads" + "/"
-//        val uri = Uri.parse(path)
-//        val intent1 = Intent(Intent.ACTION_PICK)
-//        intent1.type = "application/pdf"
-////        intent1.action = Intent.ACTION_GET_CONTENT
-//        intent1.setDataAndType(uri, "*/*")
-////        startActivity(intent1)
-//        startActivityForResult(Intent.createChooser(intent1, "Select Pdf"), PICK_PDF_REQUEST)
-
-
-        val intent = Intent()
-        intent.type = "application/pdf"
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PICK_PDF_REQUEST)
-
-//        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-//        intent.addCategory(Intent.CATEGORY_OPENABLE)
-//        intent.type = "application/pdf"
-//        startActivityForResult(intent, PICK_PDF_REQUEST)
-
-
-
-    }
-
     //handling the image chooser activity result
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -1569,52 +1433,10 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         return Base64.encodeToString(imgByte, Base64.DEFAULT)
     }
 
-    fun openGalleryForImage() {
-//        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-//        startActivityForResult(gallery, REQUEST_CODE)
-
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, IMAGE_PICK_CODE) // REQUEST_CODE)
-    }
-
-    //handle requested permission result
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            PERMISSION_CODE -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //permission from popup granted
-                    openGalleryForImage()
-                } else {
-                    //permission from popup denied
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
     private fun getOutputMediaFileUri(type: Int): Uri? {
 //        requestRuntimePermission()
         return Uri.fromFile(getOutputMediaFile(type))
     }
-
-//    fun requestRuntimePermission() {
-//        if (Build.VERSION.SDK_INT >= 23) {
-//            if (ContextCompat.checkSelfPermission(
-//                    this@AddMemberForthActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                ) !== PackageManager.PERMISSION_GRANTED
-//            ) {
-//                ActivityCompat.requestPermissions(
-//                    this@AddMemberForthActivity,
-//                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-//                    1
-//                )
-//            }
-//        }
-//    }
 
     @SuppressLint("LongLogTag")
     private fun getOutputMediaFile(type: Int): File? {
@@ -1663,31 +1485,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         return mediaFile
     }
 
-//    private fun requestStoragePermission() {
-//        if (ContextCompat.checkSelfPermission(
-//                this, Manifest.permission.READ_EXTERNAL_STORAGE
-//            ) == PackageManager.PERMISSION_GRANTED
-//        ) return
-//        if (ActivityCompat.shouldShowRequestPermissionRationale(
-//                this, Manifest.permission.READ_EXTERNAL_STORAGE
-//            )
-//        ) {
-//            Functions.showAlertMessageWithOK(
-//                this.applicationContext,
-//                "Permission",
-//                "To upload First Aid PDF file, you  must have to give permission to access location"
-//            )
-//            //If the user has denied the permission previously your code will come to this block
-//            //Here you can explain why you need this permission
-//            //Explain here why you need this permission
-//        }
-//        //And finally ask for the permission
-//        ActivityCompat.requestPermissions(
-//            this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE
-//        )
-//    }
-
-
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -1699,11 +1496,8 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         Log.d("TAG", "Tags changed: ")
         Log.d("TAG", tags.toTypedArray().contentToString())
         Log.d("TAG", tags.toString())
-
         dietary_txt_layout.visibility = View.VISIBLE
-
         dietary_txt.text = tags.toString()
-
         dietary_txt_view.addView(dietary_txt)
         dietary_txt_view.addView(cross_item)
     }
@@ -1713,9 +1507,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         cross_item.setOnClickListener {
             dietary_txt_view.removeView(dietary_txt)
         }
-//        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(mTagsEditText.getWindowToken(), 0);
-//        //mTagsEditText.clearFocus();
     }
 
     private fun callMembershipApi(sType: String, isDoc: Boolean) {
@@ -1777,8 +1568,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         )
         builderData.addFormDataPart("occupation", intent.getStringExtra("OCCUPATION").toString())
         builderData.addFormDataPart(
-            "occupation_name",
-            intent.getStringExtra("OCCUPATION_NAME").toString()
+            "occupation_name", intent.getStringExtra("OCCUPATION_NAME").toString()
         )
         builderData.addFormDataPart("shakha", intent.getStringExtra("SHAKHA").toString())
         builderData.addFormDataPart("mobile", intent.getStringExtra("MOBILE").toString())
@@ -2089,4 +1879,310 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             }
         })
     }
+
+    // Permission code
+    private fun openFileUploadDialog() {
+        val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
+        val view_d = layoutInflater.inflate(R.layout.dialog_select_galley_pdf, null)
+        val btnClose = view_d.findViewById<ImageView>(R.id.close_layout)
+        val btn_image = view_d.findViewById<LinearLayout>(R.id.select_gallery)
+        val btn_pdf = view_d.findViewById<LinearLayout>(R.id.select_pdf)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            btn_pdf.visibility = View.GONE
+        } else {
+            btn_pdf.visibility = View.VISIBLE
+        }
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btn_image.setOnClickListener {
+            openGalleryForImage()
+            dialog.dismiss()
+        }
+        btn_pdf.setOnClickListener {
+            showFileChooserforPDF()
+            dialog.dismiss()
+        }
+        dialog.setCancelable(true)
+        dialog.setContentView(view_d)
+        dialog.show()
+    }
+
+    fun openGalleryForImage() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, IMAGE_PICK_CODE) // REQUEST_CODE)
+    }
+
+    fun showFileChooserforPDF() {
+        val intent = Intent()
+        intent.type = "application/pdf"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PICK_PDF_REQUEST)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun checkPermission(): Boolean {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val result1 =
+                ContextCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.READ_MEDIA_IMAGES
+                )
+//            val result2 = ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
+//            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
+//            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
+            return result1 == PackageManager.PERMISSION_GRANTED
+//                    && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED
+//                    && result4 == PackageManager.PERMISSION_GRANTED
+        } else {
+            val result1 = ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+//            val result2 = ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
+//            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
+//            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
+
+            return result1 == PackageManager.PERMISSION_GRANTED
+//                    && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED && result4 == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun requestPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.READ_MEDIA_IMAGES
+//                    permission.CALL_PHONE, permission.CAMERA
+//                    , permission.WRITE_EXTERNAL_STORAGE
+                ), PERMISSION_REQUEST_CODE
+            )
+        } else {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+//                    permission.CALL_PHONE,
+//                    permission.CAMERA,
+//                    permission.WRITE_EXTERNAL_STORAGE
+                ), PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+
+                val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+//                val callAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED
+//                val cameraAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                    if (readAccepted && callAccepted && cameraAccepted) {
+                    if (readAccepted) {
+                        openFileUploadDialog()
+//                        Log.d("File_name", File_name)
+                    } else {
+                        if (shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_IMAGES)) {
+                            showMessageOKCancel("You need to allow permission, in order to upload Qualification File",
+                                DialogInterface.OnClickListener { dialog, which ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                        requestPermissions(
+                                            arrayOf(
+                                                Manifest.permission.READ_MEDIA_IMAGES
+//                                                permission.CALL_PHONE,
+//                                                permission.CAMERA,
+                                            ), PERMISSION_REQUEST_CODE
+                                        )
+                                    }
+                                })
+                            return
+                        }/* else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
+                            showMessageOKCancel("You need to allow access to phone the permissions",
+                                DialogInterface.OnClickListener { dialog, which ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                        requestPermissions(
+                                            arrayOf(
+                                                permission.READ_MEDIA_IMAGES,
+                                                permission.CALL_PHONE,
+                                                permission.CAMERA
+                                            ), PERMISSION_REQUEST_CODE
+                                        )
+                                    }
+                                })
+                            return
+                        } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
+                            showMessageOKCancel("You need to allow access to Camera the permissions",
+                                DialogInterface.OnClickListener { dialog, which ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                        requestPermissions(
+                                            arrayOf(
+                                                permission.READ_MEDIA_IMAGES,
+                                                permission.CALL_PHONE,
+                                                permission.CAMERA
+                                            ), PERMISSION_REQUEST_CODE
+                                        )
+                                    }
+                                })
+                            return
+                        }*/
+                    }
+                } else {
+//                    val writeAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED
+//                    if (writeAccepted && readAccepted && callAccepted && cameraAccepted) {
+                    if (readAccepted) {
+                        openFileUploadDialog()
+                    } else {
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            /*if (shouldShowRequestPermissionRationale(permission.WRITE_EXTERNAL_STORAGE)) {
+                                showMessageOKCancel("You need to allow access to Write the permissions",
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                            requestPermissions(
+                                                arrayOf(
+                                                    permission.WRITE_EXTERNAL_STORAGE,
+                                                    permission.READ_EXTERNAL_STORAGE,
+                                                    permission.CALL_PHONE,
+                                                    permission.CAMERA,
+                                                ), PERMISSION_REQUEST_CODE
+                                            )
+                                        }
+                                    })
+                                return
+                            } else*/
+                            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                                showMessageOKCancel("You need to allow permission, in order to upload Qualification File",
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                            requestPermissions(
+                                                arrayOf(
+//                                                    permission.WRITE_EXTERNAL_STORAGE,
+                                                    Manifest.permission.READ_EXTERNAL_STORAGE
+//                                                    permission.CALL_PHONE,
+//                                                    permission.CAMERA,
+                                                ), PERMISSION_REQUEST_CODE
+                                            )
+                                        }
+                                    })
+                                return
+                            } /*else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
+                                showMessageOKCancel("You need to allow access to phone the permissions",
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                            requestPermissions(
+                                                arrayOf(
+                                                    permission.WRITE_EXTERNAL_STORAGE,
+                                                    permission.READ_EXTERNAL_STORAGE,
+                                                    permission.CALL_PHONE,
+                                                    permission.CAMERA
+                                                ), PERMISSION_REQUEST_CODE
+                                            )
+                                        }
+                                    })
+                                return
+                            } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
+                                showMessageOKCancel("You need to allow access to Camera the permissions",
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                            requestPermissions(
+                                                arrayOf(
+                                                    permission.WRITE_EXTERNAL_STORAGE,
+                                                    permission.READ_EXTERNAL_STORAGE,
+                                                    permission.CALL_PHONE,
+                                                    permission.CAMERA
+                                                ), PERMISSION_REQUEST_CODE
+                                            )
+                                        }
+                                    })
+                                return
+                            }*/
+                        }
+                    }
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CALL_PHONE)
+                    //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CAMERA)
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                            this, Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                    ) {
+                        showPermissionDeniedDialogSetting()
+                    } else {
+                        reRequestPermissionAccessDialog()
+                    }
+                } else {
+                    //|| !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CALL_PHONE)
+                    // || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CAMERA)
+                    // || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.WRITE_EXTERNAL_STORAGE)
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                            this, Manifest.permission.READ_EXTERNAL_STORAGE
+                        )
+                    ) {
+                        showPermissionDeniedDialogSetting()
+                    } else {
+                        reRequestPermissionAccessDialog()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showPermissionDeniedDialogSetting() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setMessage("To upload Qualification File, please enable the required permission from the app settings. Without this permission, this feature may not be accessible. Thank you for your cooperation.")
+            .setCancelable(false).setPositiveButton("Settings") { _, _ ->
+                openAppSettings()
+            }.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }
+        val dialog = dialogBuilder.create()
+        dialog.show()
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun reRequestPermissionAccessDialog() {
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@AddMemberForthActivity)
+        alertDialog.setMessage("In order to upload Qualification File, please grant the requested permission. Without this permission, the application will not be able to upload file in MyHSS Application. Thank you for your understanding.")
+        alertDialog.setPositiveButton(
+            "yes"
+        ) { _, _ ->
+            requestPermission()
+        }
+        alertDialog.setNegativeButton(
+            "No"
+        ) { _, _ ->
+
+        }
+        val alert: AlertDialog = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
+    }
+
+    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+        AlertDialog.Builder(this@AddMemberForthActivity).setMessage(message)
+            .setPositiveButton("OK", okListener).setNegativeButton(
+                "Cancel"
+            ) { dialogInterface, i -> finishAffinity() }.create().show()
+    }
+
 }

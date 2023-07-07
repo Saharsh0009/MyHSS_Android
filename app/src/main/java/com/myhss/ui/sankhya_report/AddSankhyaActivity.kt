@@ -277,7 +277,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             }, year, month, day)
 //            dialog.datePicker.minDate = calendar.timeInMillis
 //            calendar.add(Calendar.YEAR, 0)
-//            dialog.datePicker.maxDate = calendar.timeInMillis
+            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
         }
 
