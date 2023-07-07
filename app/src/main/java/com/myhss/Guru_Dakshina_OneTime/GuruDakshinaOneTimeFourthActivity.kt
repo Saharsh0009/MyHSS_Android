@@ -1,6 +1,7 @@
 package com.uk.myhss.Guru_Dakshina_OneTime
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -257,8 +258,8 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                         if (status == true) {
                             Toast.makeText(
                                 this@GuruDakshinaOneTimeFourthActivity,
-                                "success : $message",
-                                Toast.LENGTH_SHORT
+                                "$message. Please wait until payment complete.",
+                                Toast.LENGTH_LONG
                             ).show()
                             Log.e(
                                 " payment intent key ",
@@ -381,9 +382,9 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                 paymentStatusReason = paymentResult.throwable.message.toString()
             }
         }
-        Toast.makeText(
-            this, "Payment Result:$message", Toast.LENGTH_LONG
-        ).show()
+//        Toast.makeText(
+//            this, "Payment Result:$message", Toast.LENGTH_LONG
+//        ).show()
 
         Log.e("Payment Result: ", " Result : $message")
     }
@@ -475,16 +476,35 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
 //                                "success : $message",
 //                                Toast.LENGTH_SHORT
 //                            ).show()
-                            Functions.showAlertMessageWithOK(
-                                this@GuruDakshinaOneTimeFourthActivity,
-                                "Guru Dakshina Payment",
-                                "$message"
-                            )
-                            val i = Intent(
-                                this@GuruDakshinaOneTimeFourthActivity, HomeActivity::class.java
-                            )
-                            startActivity(i)
-                            finishAffinity()
+//                            Functions.showAlertMessageWithOK(
+//                                this@GuruDakshinaOneTimeFourthActivity,
+//                                "Guru Dakshina Payment",
+//                                "$message"
+//                            )
+//                            val i = Intent(this@GuruDakshinaOneTimeFourthActivity, HomeActivity::class.java)
+//                            startActivity(i)
+//                            finishAffinity()
+
+                            val alertDialog: AlertDialog.Builder =
+                                AlertDialog.Builder(this@GuruDakshinaOneTimeFourthActivity)
+                            alertDialog.setTitle("Guru Dakshina Payment")
+                            alertDialog.setMessage("$message")
+                            alertDialog.setPositiveButton(
+                                "Okay"
+                            ) { _, _ ->
+                                val i = Intent(
+                                    this@GuruDakshinaOneTimeFourthActivity,
+                                    HomeActivity::class.java
+                                )
+                                startActivity(i)
+                                finishAffinity()
+                            }
+
+                            val alert: AlertDialog = alertDialog.create()
+                            alert.setCanceledOnTouchOutside(false)
+                            alert.show()
+
+
                         } else {
                             Functions.showAlertMessageWithOK(
                                 this@GuruDakshinaOneTimeFourthActivity, "", message.toString()

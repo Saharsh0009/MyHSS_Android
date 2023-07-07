@@ -16,6 +16,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import cl.jesualex.stooltip.Position
 import cl.jesualex.stooltip.Tooltip
 import com.google.android.material.snackbar.Snackbar
@@ -28,6 +29,7 @@ import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.AddMember.GetNagar.Datum_Get_Nagar
 import com.uk.myhss.AddMember.GetNagar.Get_Nagar_Response
@@ -121,6 +123,14 @@ class AddMemberFirstActivity() : AppCompatActivity() {
     private lateinit var edit_confirm_password: TextInputEditText
     private lateinit var edit_realationship_name: TextInputEditText
     private lateinit var edit_dateofbirth: TextInputEditText
+    private lateinit var til_firstName: TextInputLayout
+    private lateinit var til_middleName: TextInputLayout
+    private lateinit var til_surname: TextInputLayout
+    private lateinit var til_username: TextInputLayout
+    private lateinit var til_email: TextInputLayout
+    private lateinit var til_password: TextInputLayout
+    private lateinit var til_confirm_password: TextInputLayout
+    private lateinit var til_dob: TextInputLayout
 
 
     private lateinit var male_view: LinearLayout
@@ -194,9 +204,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         edit_confirm_password = findViewById(R.id.edit_confirm_password)
         edit_realationship_name = findViewById(R.id.edit_realationship_name)
         edit_dateofbirth = findViewById(R.id.edit_dateofbirth)
-
-
-
         male_view = findViewById(R.id.male_view)
         male_txt = findViewById(R.id.male_txt)
         male_right_img = findViewById(R.id.male_right_img)
@@ -208,6 +215,14 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         tooltip_view = findViewById(R.id.tooltip_view)
         age_layout = findViewById(R.id.age_layout)
         age_text = findViewById(R.id.age_text)
+        til_firstName = findViewById(R.id.til_firstName)
+        til_middleName = findViewById(R.id.til_middleName)
+        til_surname = findViewById(R.id.til_surname)
+        til_username = findViewById(R.id.til_username)
+        til_email = findViewById(R.id.til_email)
+        til_password = findViewById(R.id.til_password)
+        til_confirm_password = findViewById(R.id.til_confirm_password)
+        til_dob = findViewById(R.id.til_dob)
 
         Log.d("TYPE_SELF", intent.getStringExtra("TYPE_SELF")!!)
 
@@ -391,31 +406,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         }
 
         back_arrow.setOnClickListener {
-//            Snackbar.make(rootLayout, "Back", Snackbar.LENGTH_SHORT).show()
             finish()
         }
 
-        /*edit_username.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (sessionManager.fetchMEMBERID() != "") {
-                    UserNameCheck(
-                        sessionManager.fetchUserID()!!,
-                        edit_username.text.toString(),
-                        sessionManager.fetchMEMBERID()!!
-                    )
-                } else {
-                    UserNameCheck(sessionManager.fetchUserID()!!, edit_username.text.toString(), "")
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-        })*/
         edit_username.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // Call your code here
@@ -427,10 +420,33 @@ class AddMemberFirstActivity() : AppCompatActivity() {
 
         edit_email.setText(sessionManager.fetchUSEREMAIL())
 
+        edit_firstname.doOnTextChanged { text, start, before, count ->
+            til_firstName.isErrorEnabled = false
+        }
+        edit_middlename.doOnTextChanged { text, start, before, count ->
+            til_middleName.isErrorEnabled = false
+        }
+        edit_surname.doOnTextChanged { text, start, before, count ->
+            til_surname.isErrorEnabled = false
+        }
+        edit_username.doOnTextChanged { text, start, before, count ->
+            til_username.isErrorEnabled = false
+        }
+        edit_email.doOnTextChanged { text, start, before, count ->
+            til_email.isErrorEnabled = false
+        }
+        edit_password.doOnTextChanged { text, start, before, count ->
+            til_password.isErrorEnabled = false
+        }
+        edit_confirm_password.doOnTextChanged { text, start, before, count ->
+            til_confirm_password.isErrorEnabled = false
+        }
+        edit_dateofbirth.doOnTextChanged { text, start, before, count ->
+            til_dob.isErrorEnabled = false
+        }
+
         //Validation Start here
         next_layout.setOnClickListener {
-//            Snackbar.make(rootLayout, "Next", Snackbar.LENGTH_SHORT).show()
-//            startActivity(Intent(this@AddMemberFirstActivity, AddMemberSecondActivity::class.java))
 
             var TYPE_LINKED: String = ""
             var TYPE_SELF: String = ""
@@ -447,373 +463,191 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 TYPE_SELF = intent.getStringExtra("TYPE_SELF").toString()
             }
 
-            /*if (intent.getStringExtra("TYPE_LINKED") == "" && intent.getStringExtra("TYPE_SELF") == "") {
-                TYPE_LINKED = ""
-                TYPE_SELF = ""
-            } else {
-                TYPE_LINKED = intent.getStringExtra("TYPE_LINKED").toString()
-                TYPE_SELF = intent.getStringExtra("TYPE_SELF").toString()
-            }*/
-
             if (intent.getStringExtra("TYPE_SELF") != "self") { // profile or Family member
-
                 if (intent.getStringExtra("FAMILY") != "PROFILE") {// Add family
                     if (edit_firstname.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please Enter First name", Snackbar.LENGTH_SHORT)
-                            .show()
-                        edit_firstname.error = "First name required"
+                        til_firstName.error = getString(R.string.first_name)
+                        til_firstName.isErrorEnabled = true
                         edit_firstname.requestFocus()
                         return@setOnClickListener
-                    } else if (!isOnlyLetters(edit_firstname.text.toString())) {
-                        Snackbar.make(
-                            rootLayout, "Please Enter Valid First Name", Snackbar.LENGTH_SHORT
-                        ).show()
-                        edit_firstname.error = "Valid First name required"
+                    } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
+                        til_firstName.error = getString(R.string.valid_first_name)
+                        til_firstName.isErrorEnabled = true
                         edit_firstname.requestFocus()
                         return@setOnClickListener
-                    } else if (!edit_middlename.text.toString().isEmpty() && !isOnlyLetters(
-                            edit_middlename.text.toString()
-                        )
+                    } else if (!edit_middlename.text.toString()
+                            .isEmpty() && !UtilCommon.isOnlyLetters(edit_middlename.text.toString())
                     ) {
-                        Snackbar.make(
-                            rootLayout, "Please Enter Valid Middle name", Snackbar.LENGTH_SHORT
-                        ).show()
-                        edit_middlename.error = "Valid Middle name required"
+                        til_middleName.error = getString(R.string.valid_middle_name)
+                        til_middleName.isErrorEnabled = true
                         edit_middlename.requestFocus()
                         return@setOnClickListener
                     } else if (edit_surname.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please Enter Surname", Snackbar.LENGTH_SHORT)
-                            .show()
-                        edit_surname.error = "Surname name required"
+                        til_surname.error = getString(R.string.sur_name)
+                        til_surname.isErrorEnabled = true
                         edit_surname.requestFocus()
                         return@setOnClickListener
-                    } else if (!isOnlyLetters(edit_surname.text.toString())) {
-                        Snackbar.make(
-                            rootLayout, "Please Enter Valid Surname", Snackbar.LENGTH_SHORT
-                        ).show()
-                        edit_surname.error = "Valid Surname required"
+                    } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
+                        til_surname.error = getString(R.string.valid_surname)
+                        til_surname.isErrorEnabled = true
                         edit_surname.requestFocus()
                         return@setOnClickListener
                     } else if (edit_username.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please Enter User name", Snackbar.LENGTH_SHORT)
-                            .show()
-                        edit_username.error = "User name required"
+                        til_username.error = getString(R.string.user_name)
+                        til_username.isErrorEnabled = true
+                        edit_username.requestFocus()
+                        return@setOnClickListener
+                    } else if (!UtilCommon.isValidUserName(edit_username.text.toString())) {
+                        til_username.error = getString(R.string.valid_user_name)
+                        til_username.isErrorEnabled = true
                         edit_username.requestFocus()
                         return@setOnClickListener
                     } else if (edit_email.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please Enter Email", Snackbar.LENGTH_SHORT)
-                            .show()
-                        edit_email.error = "Email required"
+                        til_email.error = getString(R.string.email_id)
+                        til_email.isErrorEnabled = true
                         edit_email.requestFocus()
                         return@setOnClickListener
                     } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString())
                             .matches()
                     ) {
-                        Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT)
-                            .show()
-                        edit_email.error = "Valid Email required"
+                        til_email.error = getString(R.string.valid_email)
+                        til_email.isErrorEnabled = true
                         edit_email.requestFocus()
                         return@setOnClickListener
                     } else if (edit_password.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please Enter Password", Snackbar.LENGTH_SHORT)
-                            .show()
-                        edit_password.error = "Password required"
+                        til_password.error = getString(R.string.enter_password)
+                        til_password.isErrorEnabled = true
                         edit_password.requestFocus()
                         return@setOnClickListener
-                    } else if (!isValidPassword(edit_password.text.toString().trim())) {
-                        Log.e("Password test", " " + edit_password.text.toString().trim())
-                        Snackbar.make(
-                            rootLayout, "Please Enter Valid Password", Snackbar.LENGTH_SHORT
-                        ).show()
-                        edit_password.error = "Valid Password required"
-                        edit_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (edit_password.text.toString().length < 8) {
-                        Snackbar.make(
-                            rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT
-                        ).show()
-                        edit_password.error = "Password required 8 characters"
+                    } else if (!UtilCommon.isValidPassword(edit_password.text.toString())) {
+                        til_password.error = getString(R.string.valid_password)
+                        til_password.isErrorEnabled = true
                         edit_password.requestFocus()
                         return@setOnClickListener
                     } else if (edit_confirm_password.text.toString().isEmpty()) {
-                        Snackbar.make(
-                            rootLayout, "Please Enter Confirm Password", Snackbar.LENGTH_SHORT
-                        ).show()
-                        edit_confirm_password.error = "Confirm password required"
+                        til_confirm_password.error = getString(R.string.enter_confirm_password)
+                        til_confirm_password.isErrorEnabled = true
                         edit_confirm_password.requestFocus()
                         return@setOnClickListener
-                    } else if (!isValidPassword(edit_confirm_password.text.toString().trim())) {
-                        Snackbar.make(
-                            rootLayout, "Please Enter Valid Password", Snackbar.LENGTH_SHORT
-                        ).show()
-                        edit_confirm_password.error = "Valid Password required"
-                        edit_confirm_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (edit_confirm_password.text.toString().length < 8) {
-                        Snackbar.make(
-                            rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT
-                        ).show()
-                        edit_confirm_password.error = "Confirm password required 8 characters"
+                    } else if (!UtilCommon.isValidPassword(edit_confirm_password.text.toString())) {
+                        til_confirm_password.error = getString(R.string.valid_confirm_password)
+                        til_confirm_password.isErrorEnabled = true
                         edit_confirm_password.requestFocus()
                         return@setOnClickListener
                     } else if (edit_password.text.toString() != edit_confirm_password.text.toString()) {
-                        Snackbar.make(rootLayout, "Password Not matching", Snackbar.LENGTH_SHORT)
-                            .show()
+                        til_confirm_password.error = getString(R.string.confirm_both_pass)
+                        til_confirm_password.isErrorEnabled = true
+                        edit_confirm_password.requestFocus()
+                    } else if (edit_dateofbirth.text.toString().isEmpty()) {
+                        til_dob.error = getString(R.string.enter_dob)
+                        til_dob.isErrorEnabled = true
+                        edit_dateofbirth.requestFocus()
                     } else if (GENDER == "") {
                         Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT)
                             .show()
-                    } else if (edit_dateofbirth.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
                     } else {
-//                        CallUserNameMethod()
                         CallNextMethod()
-//                        CallDateValidation()
                     }
-                    /*if (edit_password.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please Enter Password", Snackbar.LENGTH_SHORT).show()
-                        edit_password.error = "Password required"
-                        edit_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (isValidPassword(edit_password.text.toString().trim())) {
-                        Snackbar.make(rootLayout, "Please Enter Valid Password", Snackbar.LENGTH_SHORT).show()
-                        edit_password.error = "Valid Password required"
-                        edit_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (edit_password.text.toString().length < 8) {
-                        Snackbar.make(
-                            rootLayout,
-                            "Please Enter 8 characters.",
-                            Snackbar.LENGTH_SHORT
-                        )
-                            .show()
-                        edit_password.error = "Password required 8 characters"
-                        edit_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (edit_confirm_password.text.toString().isEmpty()) {
-                        Snackbar.make(
-                            rootLayout,
-                            "Please Enter Confirm Password",
-                            Snackbar.LENGTH_SHORT
-                        )
-                            .show()
-                        edit_confirm_password.error = "Confirm password required"
-                        edit_confirm_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (isValidPassword(edit_confirm_password.text.toString().trim())) {
-                        Snackbar.make(rootLayout, "Please Enter Valid Password", Snackbar.LENGTH_SHORT).show()
-                        edit_confirm_password.error = "Valid Password required"
-                        edit_confirm_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (edit_confirm_password.text.toString().length < 8) {
-                        Snackbar.make(
-                            rootLayout,
-                            "Please Enter 8 characters.",
-                            Snackbar.LENGTH_SHORT
-                        )
-                            .show()
-                        edit_confirm_password.error = "Confirm password required 8 characters"
-                        edit_confirm_password.requestFocus()
-                        return@setOnClickListener
-                    } else if(edit_password.text.toString() != edit_confirm_password.text.toString()) {
-                        Snackbar.make(rootLayout, "Password Not matching", Snackbar.LENGTH_SHORT).show()
-                    }*/
                 }
 
                 // Edit profile
                 if (edit_firstname.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter First name", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_firstname.error = "First name required"
+                    til_firstName.error = getString(R.string.first_name)
+                    til_firstName.isErrorEnabled = true
                     edit_firstname.requestFocus()
                     return@setOnClickListener
-                } else if (!isOnlyLetters(edit_firstname.text.toString())) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Valid First Name", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_firstname.error = "Valid First name required"
+                } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
+                    til_firstName.error = getString(R.string.valid_first_name)
+                    til_firstName.isErrorEnabled = true
                     edit_firstname.requestFocus()
                     return@setOnClickListener
-                } else if (!edit_middlename.text.toString().isEmpty() && !isOnlyLetters(
+                } else if (!edit_middlename.text.toString().isEmpty() && !UtilCommon.isOnlyLetters(
                         edit_middlename.text.toString()
                     )
                 ) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Valid Middle name", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_middlename.error = "Valid Middle name required"
+                    til_middleName.error = getString(R.string.valid_middle_name)
+                    til_middleName.isErrorEnabled = true
                     edit_middlename.requestFocus()
                     return@setOnClickListener
                 } else if (edit_surname.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter Surname", Snackbar.LENGTH_SHORT).show()
-                    edit_surname.error = "Surname name required"
+                    til_surname.error = getString(R.string.sur_name)
+                    til_surname.isErrorEnabled = true
                     edit_surname.requestFocus()
                     return@setOnClickListener
-                } else if (!isOnlyLetters(edit_surname.text.toString())) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Valid Surname", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_surname.error = "Valid Surname required"
+                } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
+                    til_surname.error = getString(R.string.valid_surname)
+                    til_surname.isErrorEnabled = true
                     edit_surname.requestFocus()
                     return@setOnClickListener
-                } else if (edit_username.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter User name", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_username.error = "User name required"
-                    edit_username.requestFocus()
+                }/* else if (edit_username.text.toString().isEmpty()) {
+                    til_username.error = getString(R.string.user_name)
+                    til_username.isErrorEnabled = true
+                    return@setOnClickListener
+                } else if (!UtilCommon.isValidUserName(edit_username.text.toString())) {
+                    til_username.error = getString(R.string.valid_user_name)
+                    til_username.isErrorEnabled = true
                     return@setOnClickListener
                 } else if (edit_email.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter Email", Snackbar.LENGTH_SHORT).show()
-                    edit_email.error = "Email required"
+                    til_email.error = getString(R.string.email_id)
+                    til_email.isErrorEnabled = true
+                    return@setOnClickListener
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString()).matches()) {
+                    til_email.error = getString(R.string.valid_email)
+                    til_email.isErrorEnabled = true
+                    return@setOnClickListener
+                }*/ else if (GENDER == "") {
+                    Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
+                } else if (edit_dateofbirth.text.toString().isEmpty()) {
+                    Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
+                } else {
+                    CallNextMethod()
+                }
+            } else {
+                // Add Self
+                if (edit_firstname.text.toString().isEmpty()) {
+                    til_firstName.error = getString(R.string.first_name)
+                    til_firstName.isErrorEnabled = true
+                    edit_firstname.requestFocus()
+                    return@setOnClickListener
+                } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
+                    til_firstName.error = getString(R.string.valid_first_name)
+                    til_firstName.isErrorEnabled = true
+                    edit_firstname.requestFocus()
+                    return@setOnClickListener
+                } else if (!edit_middlename.text.toString().isEmpty() && !UtilCommon.isOnlyLetters(
+                        edit_middlename.text.toString()
+                    )
+                ) {
+                    til_middleName.error = getString(R.string.valid_middle_name)
+                    til_middleName.isErrorEnabled = true
+                    edit_middlename.requestFocus()
+                    return@setOnClickListener
+                } else if (edit_surname.text.toString().isEmpty()) {
+                    til_surname.error = getString(R.string.sur_name)
+                    til_surname.isErrorEnabled = true
+                    edit_surname.requestFocus()
+                    return@setOnClickListener
+                } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
+                    til_surname.error = getString(R.string.valid_surname)
+                    til_surname.isErrorEnabled = true
+                    edit_surname.requestFocus()
+                    return@setOnClickListener
+                } else if (edit_email.text.toString().isEmpty()) {
+                    til_email.error = getString(R.string.email_id)
+                    til_email.isErrorEnabled = true
                     edit_email.requestFocus()
                     return@setOnClickListener
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString()).matches()) {
-                    Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_email.error = "Valid Email required"
+                    til_email.error = getString(R.string.valid_email)
+                    til_email.isErrorEnabled = true
                     edit_email.requestFocus()
                     return@setOnClickListener
-//                    } else if (edit_password.text.toString().isEmpty()) {
-//                        Snackbar.make(rootLayout, "Please Enter Password", Snackbar.LENGTH_SHORT).show()
-//                        edit_password.error = "Password required"
-//                        edit_password.requestFocus()
-//                        return@setOnClickListener
-//                    } else if (isValidPassword(edit_password.text.toString().trim())) {
-//                        Snackbar.make(rootLayout, "Please Enter Valid Password", Snackbar.LENGTH_SHORT).show()
-//                        edit_password.error = "Valid Password required"
-//                        edit_password.requestFocus()
-//                        return@setOnClickListener
-//                    } else if (edit_password.text.toString().length < 8) {
-//                        Snackbar.make(
-//                            rootLayout,
-//                            "Please Enter 8 characters.",
-//                            Snackbar.LENGTH_SHORT
-//                        )
-//                            .show()
-//                        edit_password.error = "Password required 8 characters"
-//                        edit_password.requestFocus()
-//                        return@setOnClickListener
-//                    } else if (edit_confirm_password.text.toString().isEmpty()) {
-//                        Snackbar.make(
-//                            rootLayout,
-//                            "Please Enter Confirm Password",
-//                            Snackbar.LENGTH_SHORT
-//                        )
-//                            .show()
-//                        edit_confirm_password.error = "Confirm password required"
-//                        edit_confirm_password.requestFocus()
-//                        return@setOnClickListener
-//                    } else if (isValidPassword(edit_confirm_password.text.toString().trim())) {
-//                        Snackbar.make(rootLayout, "Please Enter Valid Password", Snackbar.LENGTH_SHORT).show()
-//                        edit_confirm_password.error = "Valid Password required"
-//                        edit_confirm_password.requestFocus()
-//                        return@setOnClickListener
-//                    } else if (edit_confirm_password.text.toString().length < 8) {
-//                        Snackbar.make(
-//                            rootLayout,
-//                            "Please Enter 8 characters.",
-//                            Snackbar.LENGTH_SHORT
-//                        )
-//                            .show()
-//                        edit_confirm_password.error = "Confirm password required 8 characters"
-//                        edit_confirm_password.requestFocus()
-//                        return@setOnClickListener
-//                    } else if(edit_password.text.toString() != edit_confirm_password.text.toString()) {
-//                        Snackbar.make(rootLayout, "Password Not matching", Snackbar.LENGTH_SHORT).show()
                 } else if (GENDER == "") {
                     Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
                 } else if (edit_dateofbirth.text.toString().isEmpty()) {
                     Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
                 } else {
-//                        CallUserNameMethod()
                     CallNextMethod()
-//                        CallDateValidation()
-                }
-            } else {
-                // Add Self
-                if (edit_firstname.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter First name", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_firstname.error = "First name required"
-                    edit_firstname.requestFocus()
-                    return@setOnClickListener
-                } else if (!isOnlyLetters(edit_firstname.text.toString())) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Valid First Name", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_firstname.error = "Valid First name required"
-                    edit_firstname.requestFocus()
-                    return@setOnClickListener
-                } else if (!edit_middlename.text.toString().isEmpty() && !isOnlyLetters(
-                        edit_middlename.text.toString()
-                    )
-                ) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Valid Middle name", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_middlename.error = "Valid Middle name required"
-                    edit_middlename.requestFocus()
-                    return@setOnClickListener
-                } else if (edit_surname.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter Surname", Snackbar.LENGTH_SHORT).show()
-                    edit_surname.error = "Surname name required"
-                    edit_surname.requestFocus()
-                    return@setOnClickListener
-                } else if (!isOnlyLetters(edit_surname.text.toString())) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Valid Surname", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_surname.error = "Valid Surname required"
-                    edit_surname.requestFocus()
-                    return@setOnClickListener
-                } /*else if (edit_username.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please Enter User name", Snackbar.LENGTH_SHORT).show()
-                        edit_username.error = "User name required"
-                        edit_username.requestFocus()
-                        return@setOnClickListener
-                    } */ else if (edit_email.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter Email", Snackbar.LENGTH_SHORT).show()
-                    edit_email.error = "Email required"
-                    edit_email.requestFocus()
-                    return@setOnClickListener
-                } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString()).matches()) {
-                    Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_email.error = "Valid Email required"
-                    edit_email.requestFocus()
-                    return@setOnClickListener
-                } /*else if (edit_password.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please Enter Password", Snackbar.LENGTH_SHORT).show()
-                        edit_password.error = "Password required"
-                        edit_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (edit_password.text.toString().length < 8) {
-                        Snackbar.make(rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT)
-                            .show()
-                        edit_password.error = "Password required 8 characters"
-                        edit_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (edit_confirm_password.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please Enter Confirm Password", Snackbar.LENGTH_SHORT)
-                            .show()
-                        edit_confirm_password.error = "Confirm password required"
-                        edit_confirm_password.requestFocus()
-                        return@setOnClickListener
-                    } else if (edit_confirm_password.text.toString().length < 8) {
-                        Snackbar.make(rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT)
-                            .show()
-                        edit_confirm_password.error = "Confirm password required 8 characters"
-                        edit_confirm_password.requestFocus()
-                        return@setOnClickListener
-                    } else if(edit_password.text.toString() != edit_confirm_password.text.toString()) {
-                        Snackbar.make(rootLayout, "Password Not matching", Snackbar.LENGTH_SHORT).show()
-                    } */ else if (GENDER == "") {
-                    Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
-                } else if (edit_dateofbirth.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
-                } else {
-//                        CallUserNameMethod()
-                    CallNextMethod()
-//                        CallDateValidation()
                 }
             }
         }
@@ -888,14 +722,14 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     Functions.showAlertMessageWithOK(
                         this@AddMemberFirstActivity,
                         "As your age is not 18 years",
-                        "Please enter vaild DOB"
+                        "Please enter valid DOB"
                     )
                 } else if (edit_dateofbirth.text.toString() > strCurrentDatenew) {
                     Functions.printLog("Date", "Current else Future Date")
                     Functions.showAlertMessageWithOK(
                         this@AddMemberFirstActivity,
                         "As your age is under 3 year",
-                        "Please enter vaild DOB"
+                        "Please enter valid DOB"
                     )
                 } else if (edit_dateofbirth.text.toString() == strCurrentDatenew) {
                     Functions.printLog("Date", "Under 18")

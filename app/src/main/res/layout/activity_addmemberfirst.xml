@@ -78,16 +78,17 @@
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_firstName"
                         style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         app:boxStrokeColor="@color/primaryColor">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_firstname"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="-5dp"
                             android:background="@android:color/transparent"
                             android:inputType="text"
                             android:textColor="@color/blackColor"
@@ -133,16 +134,17 @@
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_middleName"
                         style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         app:boxStrokeColor="@color/primaryColor">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_middlename"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="-5dp"
                             android:background="@android:color/transparent"
                             android:inputType="text"
                             android:textColor="@color/blackColor"
@@ -209,16 +211,17 @@
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_surname"
                         style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         app:boxStrokeColor="@color/primaryColor">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_surname"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="-5dp"
                             android:background="@android:color/transparent"
                             android:inputType="text"
                             android:textColor="@color/blackColor"
@@ -299,16 +302,17 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_username"
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_username"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:imeOptions="actionDone"
                                 android:inputType="text"
@@ -386,16 +390,17 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_email"
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_email"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"
@@ -461,16 +466,17 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_password"
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_password"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^_+\|"
                                 android:inputType="textPassword"
@@ -537,16 +543,17 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_confirm_password"
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_confirm_password"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="-5dp"
                                 android:background="@android:color/transparent"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"
@@ -639,21 +646,21 @@
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_dob"
                         style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:paddingStart="@dimen/font_size15"
+                        android:gravity="center_vertical"
                         app:boxStrokeColor="@color/primaryColor"
                         tools:ignore="RtlSymmetry">
 
-                        <!--                    <TextView-->
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_dateofbirth"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="-5dp"
                             android:background="@android:color/transparent"
                             android:focusable="false"
                             android:focusableInTouchMode="false"
@@ -872,15 +879,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <!--<com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:boxStrokeColor="@color/primaryColor"
-                            android:paddingStart="@dimen/font_size15"
-                            android:layout_centerVertical="true"
-                            style="@style/EditText.OutlinedBox"
-                            tools:ignore="RtlSymmetry">-->
-
                         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                             android:id="@+id/edit_realationship_txt"
                             style="@android:style/Widget.Spinner.DropDown"
@@ -892,8 +890,6 @@
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
                             android:theme="@style/StyleEditTextView" />
-
-                        <!--</com.google.android.material.textfield.TextInputLayout>-->
 
                         <ImageView
                             android:layout_width="@dimen/padding10"
@@ -959,6 +955,7 @@
                                 style="@style/EditText.OutlinedBox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
                                 app:boxStrokeColor="@color/primaryColor"
                                 tools:ignore="RtlSymmetry">
 
@@ -966,7 +963,6 @@
                                     android:id="@+id/edit_realationship_name"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_marginTop="-5dp"
                                     android:background="@android:color/transparent"
                                     android:inputType="text"
                                     android:textColor="@color/blackColor"
@@ -1026,29 +1022,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!--<com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor"
-                        android:paddingStart="@dimen/padding5"
-                        android:layout_centerVertical="true"
-                        style="@style/EditText.OutlinedBox"
-                        tools:ignore="RtlSymmetry">-->
-
                     <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                         android:id="@+id/edit_occupation_select_other"
                         style="@android:style/Widget.Spinner.DropDown"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
-                        android:layout_marginTop="-20dp"
                         android:background="@android:color/transparent"
                         android:padding="@dimen/padding10"
                         android:textColor="@color/blackColor"
                         android:textColorHint="@color/grayColorColor"
                         android:theme="@style/StyleEditTextView" />
-
-                    <!--</com.google.android.material.textfield.TextInputLayout>-->
 
                     <ImageView
                         android:layout_width="@dimen/padding10"
@@ -1114,6 +1098,7 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor"
                             tools:ignore="RtlSymmetry">
 
@@ -1121,7 +1106,6 @@
                                 android:id="@+id/edit_occupation_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginTop="-20dp"
                                 android:background="@android:color/transparent"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"
@@ -1193,29 +1177,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!--<com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor"
-                        android:paddingStart="@dimen/padding5"
-                        android:layout_centerVertical="true"
-                        style="@style/EditText.OutlinedBox"
-                        tools:ignore="RtlSymmetry">-->
-
                     <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                         android:id="@+id/edit_vibhag_region"
                         style="@android:style/Widget.Spinner.DropDown"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
-                        android:layout_marginTop="-20dp"
                         android:background="@android:color/transparent"
                         android:padding="@dimen/padding10"
                         android:textColor="@color/blackColor"
                         android:textColorHint="@color/grayColorColor"
                         android:theme="@style/StyleEditTextView" />
-
-                    <!--</com.google.android.material.textfield.TextInputLayout>-->
 
                     <ImageView
                         android:layout_width="@dimen/padding10"
@@ -1286,29 +1258,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!--<com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor"
-                        android:paddingStart="@dimen/padding5"
-                        android:layout_centerVertical="true"
-                        style="@style/EditText.OutlinedBox"
-                        tools:ignore="RtlSymmetry">-->
-
                     <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                         android:id="@+id/edit_nagar_town"
                         style="@android:style/Widget.Spinner.DropDown"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
-                        android:layout_marginTop="-20dp"
                         android:background="@android:color/transparent"
                         android:padding="@dimen/padding10"
                         android:textColor="@color/blackColor"
                         android:textColorHint="@color/grayColorColor"
                         android:theme="@style/StyleEditTextView" />
-
-                    <!--</com.google.android.material.textfield.TextInputLayout>-->
 
                     <ImageView
                         android:layout_width="@dimen/padding10"
@@ -1379,29 +1339,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!--<com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor"
-                        android:paddingStart="@dimen/padding5"
-                        android:layout_centerVertical="true"
-                        style="@style/EditText.OutlinedBox"
-                        tools:ignore="RtlSymmetry">-->
-
                     <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                         android:id="@+id/edit_shakha_branch"
                         style="@android:style/Widget.Spinner.DropDown"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
-                        android:layout_marginTop="-20dp"
                         android:background="@android:color/transparent"
                         android:padding="@dimen/padding10"
                         android:textColor="@color/blackColor"
                         android:textColorHint="@color/grayColorColor"
                         android:theme="@style/StyleEditTextView" />
-
-                    <!--</com.google.android.material.textfield.TextInputLayout>-->
 
                     <ImageView
                         android:layout_width="@dimen/padding10"

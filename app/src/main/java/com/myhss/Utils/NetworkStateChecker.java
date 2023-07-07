@@ -1,4 +1,4 @@
-package com.uk.myhss.Utils;
+package com.myhss.Utils;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

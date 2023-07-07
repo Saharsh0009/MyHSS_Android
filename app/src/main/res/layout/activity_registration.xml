@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background"
-    tools:context="com.uk.myhss.Login_Registration.LoginActivity">
+    tools:context="com.uk.myhss.Login_Registration.RegistrationActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -64,6 +64,7 @@
                         android:src="@drawable/first_name" />
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_firstname"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -97,6 +98,7 @@
                         android:src="@drawable/last_name" />
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_surname"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -144,6 +146,7 @@
                         android:src="@drawable/user_img" />
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -175,7 +178,7 @@
                     android:fontFamily="@font/sourcesanspro_semibold"
                     android:text="@string/user_note_register"
                     android:textColor="@color/text_hint_color"
-                    android:textSize="@dimen/font_size11"
+                    android:textSize="@dimen/font_size15"
                     android:theme="@style/StyleTextView" />
 
                 <LinearLayout
@@ -192,6 +195,7 @@
                         android:src="@drawable/email_img" />
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -227,6 +231,7 @@
                         android:src="@drawable/lock_dark" />
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -264,6 +269,7 @@
                         android:src="@drawable/lock_dark" />
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_confirmpassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -297,7 +303,7 @@
                     android:fontFamily="@font/sourcesanspro_semibold"
                     android:text="@string/password_note_register"
                     android:textColor="@color/text_hint_color"
-                    android:textSize="@dimen/font_size11"
+                    android:textSize="@dimen/font_size15"
                     android:theme="@style/StyleTextView" />
 
 
@@ -384,9 +390,9 @@
             android:layout_toStartOf="@+id/registration_btn"
             android:layout_toLeftOf="@+id/registration_btn"
             android:fontFamily="@font/sourcesanspro_regular"
-            android:text="@string/already_user"
-            android:paddingBottom="@dimen/padding5"
             android:paddingTop="@dimen/padding10"
+            android:paddingBottom="@dimen/padding5"
+            android:text="@string/already_user"
             android:textColor="@color/blackColor"
             android:textSize="@dimen/font_size15"
             android:textStyle="bold" />
@@ -397,15 +403,15 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="@dimen/padding5"
-            android:text="@string/login"
-            android:paddingBottom="@dimen/padding5"
             android:paddingTop="@dimen/padding10"
+            android:paddingBottom="@dimen/padding5"
+            android:text="@string/login"
             android:textColor="@color/blueColor"
             android:textSize="@dimen/font_size15"
             android:textStyle="bold" />
 
     </RelativeLayout>
 
-<!--    <include layout="@layout/registrationsuccessactivity" />-->
+    <!--    <include layout="@layout/registrationsuccessactivity" />-->
 
 </RelativeLayout>

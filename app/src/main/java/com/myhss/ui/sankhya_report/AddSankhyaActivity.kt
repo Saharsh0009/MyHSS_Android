@@ -993,7 +993,9 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                         }
                     } else {
                         Functions.showAlertMessageWithOK(
-                            this@AddSankhyaActivity, "Message", response.body()?.message
+                            this@AddSankhyaActivity,
+                            "Message",
+                            getString(R.string.can_not_add_sankhya)
                         )
                     }
                 } else {
