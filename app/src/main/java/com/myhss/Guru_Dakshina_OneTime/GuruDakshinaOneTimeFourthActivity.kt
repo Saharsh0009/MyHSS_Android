@@ -126,12 +126,12 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                     .setUiCustomization(uiCustomization).build()
             ).build()
         )
-        paymentLauncher = PaymentLauncher.Companion.create(
-            this,
-            paymentConfiguration.publishableKey,
-            paymentConfiguration.stripeAccountId,
-            ::onPaymentResult
-        )
+//        paymentLauncher = PaymentLauncher.Companion.create(
+//            this,
+//            paymentConfiguration.publishableKey,
+//            paymentConfiguration.stripeAccountId,
+//            ::onPaymentResult
+//        )
         startCheckout()
     }
 
@@ -139,8 +139,6 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         next_layout.setOnClickListener {
             if (Functions.isConnectingToInternet(this@GuruDakshinaOneTimeFourthActivity)) {
                 if (cardInputWidget.validateAllFields()) {
-                    //            paymentIntentClientSecret = "pi_3NNwkdSD1lLtRImz1m73TnGP_secret_a8xvRJGLE6VNWqrEpoXSxfgLF"
-//            makeStripePayement(paymentIntentClientSecret)
                     callApiForStripeData() //MyHSS API
 //              callDemoMethodApiForSTripe() //Demo API work well
                 } else {
@@ -172,7 +170,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         val stringRequest: StringRequest = object : StringRequest(Method.POST,
             url,
             com.android.volley.Response.Listener<String> { response ->
-                Log.e("Response : ", "Response is: $response")
+                DebugLog.e("Response : " + "Response is: $response")
 
                 try {
                     val responseJson = JSONObject(response)
@@ -182,12 +180,12 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                 } catch (e: JSONException) {
                     e.printStackTrace()
                     // Handle JSON parsing error
-                    Log.e("Error Response Issue : ", "That didn't work! ${e.toString()}")
+                    DebugLog.e("Error Response Issue : " + "That didn't work! ${e.toString()}")
                 }
 
             },
             com.android.volley.Response.ErrorListener { error ->
-                Log.e("Error Response : ", "That didn't work!")
+                DebugLog.e("Error Response : " + "That didn't work!")
                 error.printStackTrace()
 
             }) {
@@ -241,7 +239,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                 requestBody.writeTo(buffer)
                 buffer.readUtf8()
             } ?: ""
-            Log.e("Param : ", "$key: $value")
+            DebugLog.e("Param : " + "$key: $value")
         }
 
         val call: Call<StripeDataModel> =
@@ -261,17 +259,13 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 "$message. Please wait until payment complete.",
                                 Toast.LENGTH_LONG
                             ).show()
-                            Log.e(
-                                " payment intent key ",
-                                "payment intent key : " + response.body()!!.info.payment_intent_client_secret
-                            )
+                            DebugLog.e(" payment intent key  payment intent key : " + response.body()!!.info.payment_intent_client_secret)
                             paymentIntentClientSecret =
                                 response.body()!!.info.payment_intent_client_secret
                             paymentID = response.body()!!.dakshina_pay_intent_id
-                            Log.e(
-                                "Secret ",
-                                "paymentIntentClientSecret : " + paymentIntentClientSecret
-                            )
+                            DebugLog.e("Secret paymentIntentClientSecret : " + paymentIntentClientSecret)
+                            DebugLog.e("paymentID " + paymentID)
+
                             makeStripePayement(paymentIntentClientSecret)
                         } else {
                             Functions.showAlertMessageWithOK(
@@ -301,7 +295,6 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
     }
 
     private fun makeStripePayement(paymentIntentClientSecretKey: String) {
-        Log.e("SecretKey ", "SecretKey : " + paymentIntentClientSecretKey)
         DebugLog.e("SecretKey : " + paymentIntentClientSecretKey)
 //        val paymentIntentClientSecretKey_1 = paymentIntentClientSecretKey.replace("^\"|\"$", "");
 //        cardInputWidget.paymentMethodCreateParams?.let { params ->
@@ -315,9 +308,9 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             val confirmParams = ConfirmPaymentIntentParams.createWithPaymentMethodCreateParams(
                 params, paymentIntentClientSecretKey
             )
-            lifecycleScope.launch {
-                paymentLauncher.confirm(confirmParams)
-            }
+//            lifecycleScope.launch {
+//                paymentLauncher.confirm(confirmParams)
+//            }
             stripe.confirmPayment(this, confirmParams)
         }
     }
@@ -359,61 +352,54 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         }
     }
 
-    private fun onPaymentResult(paymentResult: PaymentResult) {
-        val message = when (paymentResult) {
-            is PaymentResult.Completed -> {
-                "Completed!"
-                paymentStatus = "Completed"
-                paymentStatusReason = ""
-
-            }
-
-            is PaymentResult.Canceled -> {
-                "Canceled!"
-                paymentStatus = "Canceled"
-                paymentStatusReason = "User has canceled the payment"
-            }
-
-            is PaymentResult.Failed -> {
-                // This string comes from the PaymentIntent's error message.
-                // See here: https://stripe.com/docs/api/payment_intents/object#payment_intent_object-last_payment_error-message
-                "Failed: " + paymentResult.throwable.message
-                paymentStatus = "Failed"
-                paymentStatusReason = paymentResult.throwable.message.toString()
-            }
-        }
-//        Toast.makeText(
-//            this, "Payment Result:$message", Toast.LENGTH_LONG
-//        ).show()
-
-        Log.e("Payment Result: ", " Result : $message")
-    }
+//    private fun onPaymentResult(paymentResult: PaymentResult) {
+//        val message = when (paymentResult) {
+//            is PaymentResult.Completed -> {
+//                "Completed!"
+//                paymentStatus = "Completed"
+//                paymentStatusReason = ""
+//                DebugLog.e("Completed")
+//            }
+//
+//            is PaymentResult.Canceled -> {
+//                "Canceled!"
+//                paymentStatus = "Canceled"
+//                paymentStatusReason = "User has canceled the payment"
+//                DebugLog.e("Canceled")
+//            }
+//
+//            is PaymentResult.Failed -> {
+//                // This string comes from the PaymentIntent's error message.
+//                // See here: https://stripe.com/docs/api/payment_intents/object#payment_intent_object-last_payment_error-message
+//                "Failed: " + paymentResult.throwable.message
+//                paymentStatus = "Failed"
+//                paymentStatusReason = paymentResult.throwable.message.toString()
+//                DebugLog.e("paymentStatusReason : " + paymentStatusReason)
+//            }
+//        }
+////        Toast.makeText(
+////            this, "Payment Result:$message", Toast.LENGTH_LONG
+////        ).show()
+//
+//        DebugLog.e("Payment Result: " + " Result : $message")
+//        DebugLog.e("describeContents Result: " + " Result : ${paymentResult.describeContents()}")
+//        DebugLog.e("describeContents toString: " + " Result : ${paymentResult.toString()}")
+//    }
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         stripe.onPaymentResult(requestCode, data, object : ApiResultCallback<PaymentIntentResult> {
-            override fun onError(e: Exception) {
-                Log.e("OnError : ", " Error : $e")
-                paymentStatus = "Error"
-                paymentStatusReason = "$e"
-                Functions.showAlertMessageWithOK(
-                    this@GuruDakshinaOneTimeFourthActivity,
-                    "Error Message",
-                    "$e"
-                )
-                savePaymentDataintoDB(e.toString())
-            }
-
             override fun onSuccess(result: PaymentIntentResult) {
                 val paymentIntent = result.intent
                 if (paymentIntent.status == StripeIntent.Status.Succeeded) {
                     val gson = GsonBuilder().setPrettyPrinting().create()
-                    Log.e("Succeeded : ", " Response : " + gson.toJson(paymentIntent))
+                    DebugLog.e("Succeeded : " + " Response : " + gson.toJson(paymentIntent))
                     paymentStatus = "Completed"
+                    paymentStatusReason = ""
                     savePaymentDataintoDB(gson.toJson(paymentIntent))
                 } else if (paymentIntent.status == StripeIntent.Status.RequiresPaymentMethod) {
-                    Log.e("Failed : ", " Response : " + paymentIntent.lastErrorMessage?.orEmpty())
+                    DebugLog.e("Failed : " + " Response : " + paymentIntent.lastErrorMessage?.orEmpty())
                     paymentStatus = "Error"
                     paymentStatusReason = paymentIntent.lastErrorMessage?.orEmpty().toString()
                     savePaymentDataintoDB(paymentIntent.lastErrorMessage?.orEmpty().toString())
@@ -423,6 +409,16 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                         "$paymentStatusReason"
                     )
                 }
+            }
+
+            override fun onError(e: Exception) {
+                DebugLog.e("OnError : " + " Error : $e")
+                paymentStatus = "Error"
+                paymentStatusReason = "$e"
+                Functions.showAlertMessageWithOK(
+                    this@GuruDakshinaOneTimeFourthActivity, "Error Message", "$e"
+                )
+                savePaymentDataintoDB(e.toString())
             }
         })
     }
@@ -449,7 +445,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                 requestBody.writeTo(buffer)
                 buffer.readUtf8()
             } ?: ""
-            Log.e("Param : ", "$key: $value")
+            DebugLog.e("Param : " + "$key: $value")
         }
 
         val call: Call<JsonObject> =
@@ -471,20 +467,6 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                         val status = jsonObject.get("status")
                         val message = jsonObject.get("message")
                         if (status == true) {
-//                            Toast.makeText(
-//                                this@GuruDakshinaOneTimeFourthActivity,
-//                                "success : $message",
-//                                Toast.LENGTH_SHORT
-//                            ).show()
-//                            Functions.showAlertMessageWithOK(
-//                                this@GuruDakshinaOneTimeFourthActivity,
-//                                "Guru Dakshina Payment",
-//                                "$message"
-//                            )
-//                            val i = Intent(this@GuruDakshinaOneTimeFourthActivity, HomeActivity::class.java)
-//                            startActivity(i)
-//                            finishAffinity()
-
                             val alertDialog: AlertDialog.Builder =
                                 AlertDialog.Builder(this@GuruDakshinaOneTimeFourthActivity)
                             alertDialog.setTitle("Guru Dakshina Payment")
@@ -493,8 +475,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 "Okay"
                             ) { _, _ ->
                                 val i = Intent(
-                                    this@GuruDakshinaOneTimeFourthActivity,
-                                    HomeActivity::class.java
+                                    this@GuruDakshinaOneTimeFourthActivity, HomeActivity::class.java
                                 )
                                 startActivity(i)
                                 finishAffinity()
@@ -503,8 +484,6 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                             val alert: AlertDialog = alertDialog.create()
                             alert.setCanceledOnTouchOutside(false)
                             alert.show()
-
-
                         } else {
                             Functions.showAlertMessageWithOK(
                                 this@GuruDakshinaOneTimeFourthActivity, "", message.toString()
@@ -522,8 +501,6 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-//                Toast.makeText(this@GuruDakshinaOneTimeFourthActivity, t.message, Toast.LENGTH_LONG)
-//                    .show()
                 pd1.dismiss()
                 Functions.showAlertMessageWithOK(
                     this@GuruDakshinaOneTimeFourthActivity,

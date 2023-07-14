@@ -486,6 +486,18 @@ interface ApiInterface {
         @Field("chapter_id") chapter_id: String
     ): Call<Get_Member_Listing_Response>
 
+    @FormUrlEncoded
+    @POST("api/v1/member/memberlist")
+    fun get_member_listing_shakha(
+        @Field("user_id") user_id: String,
+        @Field("tab") tab: String,
+        @Field("member_id") member_id: String,
+        @Field("status") status: String,
+        @Field("length") length: String,
+        @Field("start") start: String,
+        @Field("search") search: String
+    ): Call<Get_Member_Listing_Response>
+
     /*Post member delete*/
     @FormUrlEncoded
     @POST("api/v1/member/delete")

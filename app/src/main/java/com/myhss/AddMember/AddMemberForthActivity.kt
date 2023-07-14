@@ -11,11 +11,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
@@ -23,7 +21,6 @@ import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
-import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -154,9 +151,9 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 
     //Pdf request code
     private val PICK_PDF_REQUEST = 3
-    private var filePath: Uri? = null
+    private var pdfFilePath: Uri? = null
     private var ImagefilePath: Uri? = null
-    var bitmap: Bitmap? = null
+//    var bitmap: Bitmap? = null
 
     //image pick code
     private val IMAGE_PICK_CODE = 1000
@@ -506,7 +503,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         )
 
         next_layout.setOnClickListener {
-            if (filePath != null) {
+            if (pdfFilePath != null) {
 //            val path: String
 //                Upload_file = getpath(filePath.toString()).toString()
 //                FilePath.getPath(this, filePath)
@@ -1308,183 +1305,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         })
     }
 
-    //handling the image chooser activity result
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
-            filePath = data.data
-            DebugLog.e("filePath==> " + data?.data.toString())
-
-            qualification_file_image.visibility = View.GONE
-
-            val uriString: String = filePath.toString()
-            val myFile = File(uriString)
-            DebugLog.e("ioooo=>> " + myFile.toString())
-
-            Upload_file = myFile.toString()
-
-            val pdfPath: String = getPath(this@AddMemberForthActivity, filePath)
-//            val pdfPath: String = getPDFPath(filePath)
-            DebugLog.e("pdfPath Path=> " + pdfPath)
-            if (pdfPath == "Not found" || pdfPath == "") {
-                Functions.showAlertMessageWithOK(
-                    this, "PDF Upload Error", "Please select the file from the File Manager."
-                )
-            } else {
-                val pathA = File(pdfPath)
-                var length: Long = pathA.length()
-                length = length / 1024
-                DebugLog.e("File size => $length")
-                if (length >= 2000) {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberForthActivity, "File Upload Error",
-                        "Please select file size lessthan 2MB.",
-                    )
-                } else {
-                    mediaFileDoc = File(pdfPath)
-                }
-            }
-        }
-
-        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            ImagefilePath = data?.data
-            val picturePath: String = getPath(this@AddMemberForthActivity, ImagefilePath)
-            DebugLog.e("Picture Path => " + picturePath)
-            val pathA = File(picturePath)
-            var length: Long = pathA.length()
-            length = length / 1024
-            DebugLog.e("File size => $length")
-            if (length >= 2000) {
-                Functions.showAlertMessageWithOK(
-                    this@AddMemberForthActivity, "File Upload Error",
-                    "Please select file size lessthan 2MB.",
-                )
-            } else {
-                mediaFileDoc = pathA
-                Upload_file = pathA.toString()
-                qualification_file_image.visibility = View.VISIBLE
-                qualification_file_image.setImageURI(data?.data)
-
-                val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
-                val cursor: Cursor =
-                    contentResolver.query(ImagefilePath!!, filePathColumn, null, null, null)!!
-                cursor.moveToFirst()
-//                DebugLog.e("cursor==> " + cursor.toString())
-//            Upload_file = cursor.toString()
-//            Functions.printLog("cursor==>Upload_file", Upload_file)
-//            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE)
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(contentResolver, ImagefilePath)
-//                imageView.setImageBitmap(bitmap)
-//                Upload_file = convertToString()!!
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
-
-    fun getPDFPath(uri: Uri?): String {
-        var result: String? = null
-        val id = DocumentsContract.getDocumentId(uri)
-        val contentUri = ContentUris.withAppendedId(
-            Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
-//            Uri.parse("content://downloads/my_downloads"), java.lang.Long.valueOf(id)
-        )
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = contentResolver.query(contentUri, projection, null, null, null)
-//        if (cursor != null) {
-//            if (cursor.moveToFirst()) {
-//                val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-//                result = cursor.getString(column_index)
-//            }
-//            cursor.close()
-//        }
-//        if (result == null) {
-//            result = "Not found"
-//        }
-//        return result
-        val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor.moveToFirst()
-        return cursor.getString(column_index)
-    }
-
-    fun getPath(context: Context, uri: Uri?): String {
-        var result: String? = null
-        val proj = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor: Cursor? = context.contentResolver.query(uri!!, proj, null, null, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                val column_index = cursor.getColumnIndexOrThrow(proj[0])
-                result = cursor.getString(column_index)
-            }
-            cursor.close()
-        }
-        if (result == null) {
-            result = "Not found"
-        }
-        return result
-    }
-
-    private fun convertToString(): String? {
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val imgByte: ByteArray = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(imgByte, Base64.DEFAULT)
-    }
-
-    private fun getOutputMediaFileUri(type: Int): Uri? {
-//        requestRuntimePermission()
-        return Uri.fromFile(getOutputMediaFile(type))
-    }
-
-    @SuppressLint("LongLogTag")
-    private fun getOutputMediaFile(type: Int): File? {
-        val mediaStorageDir = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-//            IMAGE_DIRECTORY_NAME
-            IMAGE_DIRECTORY
-        )
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d(
-                    IMAGE_DIRECTORY, ("Oops! Failed create " + IMAGE_DIRECTORY) + " directory"
-                )
-                return null
-            }
-        }
-        // Create a media file name
-        val timeStamp = SimpleDateFormat(
-            "yyyyMMdd_HHmmss", Locale.getDefault()
-        ).format(Date())
-        if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = File(
-                mediaStorageDir.path + File.separator.toString() + "IMG_" + timeStamp.toString() + ".jpg"
-            )
-        } else if (type == MEDIA_TYPE_PDF) {
-            mediaFile = File(
-                mediaStorageDir.path + File.separator.toString() + "PDF_" + timeStamp.toString() + ".pdf"
-            )
-        } else {
-            return null
-        }
-        DebugLog.e("path media file=>>>>> :-$mediaFile")
-        DebugLog.e("path media file=>>>>:-IMG_$timeStamp.jpg")
-        if (type == MEDIA_TYPE_IMAGE) {
-            edit_qualification_file.text = "IMG_$timeStamp.jpg"
-        } else if (type == MEDIA_TYPE_PDF) {
-            edit_qualification_file.text = "PDF_$timeStamp.pdf"
-        }
-//        Upload_file = mediaFile.toString()
-
-        val uriString: String = mediaFile.toString()
-        val myFile = File(uriString)
-        DebugLog.e("myFile " + " media myFile:-$myFile")
-//        Upload_file = myFile.toString()
-//        getPath(fileUri)
-        return mediaFile
-    }
-
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -1880,7 +1700,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         })
     }
 
-    // Permission code
+    // File select dialog
     private fun openFileUploadDialog() {
         val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
         val view_d = layoutInflater.inflate(R.layout.dialog_select_galley_pdf, null)
@@ -1888,11 +1708,13 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         val btn_image = view_d.findViewById<LinearLayout>(R.id.select_gallery)
         val btn_pdf = view_d.findViewById<LinearLayout>(R.id.select_pdf)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            btn_pdf.visibility = View.GONE
-        } else {
-            btn_pdf.visibility = View.VISIBLE
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            btn_pdf.visibility = View.GONE
+//        } else {
+//            btn_pdf.visibility = View.VISIBLE
+//        }
+
+        btn_pdf.visibility = View.GONE
 
         btnClose.setOnClickListener {
             dialog.dismiss()
@@ -1924,6 +1746,124 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PICK_PDF_REQUEST)
     }
 
+
+    //handling the image chooser activity result
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //PDF result
+        if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
+            pdfFilePath = data?.data
+            DebugLog.e("filePath==> " + data?.data.toString())
+            qualification_file_image.visibility = View.GONE
+            val uriString: String = pdfFilePath.toString()
+            val myFile = File(uriString)
+            DebugLog.e("ioooo=>> " + myFile.toString())
+            Upload_file = myFile.toString()
+//            val pdfPath: String
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                pdfPath = getPDFPath(this@AddMemberForthActivity, pdfFilePath)
+//            } else {
+//                pdfPath = getPath(this@AddMemberForthActivity, pdfFilePath)
+//            }
+//            val pdfPath: String = getPDFPath(filePath)
+                val pdfPath = getPath(this@AddMemberForthActivity, pdfFilePath)
+            DebugLog.e("pdfPath Path=> " + pdfPath)
+            if (pdfPath == "Not found" || pdfPath == "") {
+                Functions.showAlertMessageWithOK(
+                    this, "PDF Upload Error", "Please select the file from the File Manager."
+                )
+            } else {
+                val pathA = File(pdfPath)
+                var length: Long = pathA.length()
+                length = length / 1024
+                DebugLog.e("File size => $length")
+                if (length >= 2000) {
+                    Functions.showAlertMessageWithOK(
+                        this@AddMemberForthActivity, "File Upload Error",
+                        "Please select file size less than 2MB.",
+                    )
+                } else {
+                    mediaFileDoc = File(pdfPath)
+                }
+            }
+        }
+        //Image result
+        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
+            ImagefilePath = data?.data
+            val picturePath: String = getPath(this@AddMemberForthActivity, ImagefilePath)
+            DebugLog.e("Picture Path => " + picturePath)
+            val pathA = File(picturePath)
+            var length: Long = pathA.length()
+            length = length / 1024
+            DebugLog.e("File size => $length")
+            if (length >= 2000) {
+                Functions.showAlertMessageWithOK(
+                    this@AddMemberForthActivity, "File Upload Error",
+                    "Please select file size less than 2MB.",
+                )
+            } else {
+                mediaFileDoc = pathA
+                Upload_file = pathA.toString()
+                qualification_file_image.visibility = View.VISIBLE
+                qualification_file_image.setImageURI(data?.data)
+
+                val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
+                val cursor: Cursor =
+                    contentResolver.query(ImagefilePath!!, filePathColumn, null, null, null)!!
+                cursor.moveToFirst()
+            }
+        }
+    }
+
+    fun getPath(context: Context, uri: Uri?): String {
+        var result: String? = null
+        val proj = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor: Cursor? = context.contentResolver.query(uri!!, proj, null, null, null)
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val column_index = cursor.getColumnIndexOrThrow(proj[0])
+                result = cursor.getString(column_index)
+            }
+            cursor.close()
+        }
+        if (result == null) {
+            result = "Not found"
+        }
+        return result
+    }
+
+    fun getPDFPath(context: Context, uri: Uri?): String {
+        var result: String? = null
+        val proj = arrayOf(MediaStore.Files.FileColumns.DATA)
+        val cursor: Cursor? = context.contentResolver.query(uri!!, proj, null, null, null)
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val column_index = cursor.getColumnIndexOrThrow(proj[0])
+                result = cursor.getString(column_index)
+            }
+            cursor.close()
+        }
+        if (result == null) {
+            result = "Not found"
+        }
+        return result
+
+//        val id = DocumentsContract.getDocumentId(uri)
+//        val contentUri = ContentUris.withAppendedId(
+//            Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
+//        )
+//
+//        val projection = arrayOf(MediaStore.Images.Media.DATA)
+//        val cursor = contentResolver.query(contentUri, projection, null, null, null)
+//        val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+//        cursor!!.moveToFirst()
+//        DebugLog.e("getPDFPATH => " + cursor!!.getString(column_index))
+//        return cursor!!.getString(column_index)
+
+
+    }
+
+    // Permission code
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun checkPermission(): Boolean {
 
@@ -1933,10 +1873,14 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                     applicationContext,
                     Manifest.permission.READ_MEDIA_IMAGES
                 )
-//            val result2 = ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
+//            val result2 = ContextCompat.checkSelfPermission(
+//                applicationContext,
+//                Manifest.permission.READ_EXTERNAL_STORAGE
+//            )
 //            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
 //            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
             return result1 == PackageManager.PERMISSION_GRANTED
+//                    && result2 == PackageManager.PERMISSION_GRANTED
 //                    && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED
 //                    && result4 == PackageManager.PERMISSION_GRANTED
         } else {
@@ -1960,7 +1904,8 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             ActivityCompat.requestPermissions(
                 this, arrayOf(
                     Manifest.permission.READ_MEDIA_IMAGES
-//                    permission.CALL_PHONE, permission.CAMERA
+//                    Manifest.permission.READ_EXTERNAL_STORAGE
+//                    permission.CAMERA
 //                    , permission.WRITE_EXTERNAL_STORAGE
                 ), PERMISSION_REQUEST_CODE
             )
@@ -1985,7 +1930,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
 
                 val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
-//                val callAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED
+//                val readExternalStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED
 //                val cameraAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -2001,6 +1946,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                         requestPermissions(
                                             arrayOf(
                                                 Manifest.permission.READ_MEDIA_IMAGES
+//                                                Manifest.permission.READ_EXTERNAL_STORAGE
 //                                                permission.CALL_PHONE,
 //                                                permission.CAMERA,
                                             ), PERMISSION_REQUEST_CODE
@@ -2008,7 +1954,22 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                     }
                                 })
                             return
-                        }/* else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
+                        } /*else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                            showMessageOKCancel("You need to allow permission, in order to upload Qualification File",
+                                DialogInterface.OnClickListener { dialog, which ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                        requestPermissions(
+                                            arrayOf(
+                                                Manifest.permission.READ_MEDIA_IMAGES,
+                                                Manifest.permission.READ_EXTERNAL_STORAGE
+//                                                permission.CALL_PHONE,
+//                                                permission.CAMERA,
+                                            ), PERMISSION_REQUEST_CODE
+                                        )
+                                    }
+                                })
+                            return
+                        }*/ /* else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
                             showMessageOKCancel("You need to allow access to phone the permissions",
                                 DialogInterface.OnClickListener { dialog, which ->
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -2116,7 +2077,8 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                     //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CALL_PHONE)
                     //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CAMERA)
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                            this, Manifest.permission.READ_MEDIA_IMAGES
+                            this,
+                            Manifest.permission.READ_MEDIA_IMAGES
                         )
                     ) {
                         showPermissionDeniedDialogSetting()

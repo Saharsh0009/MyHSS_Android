@@ -165,7 +165,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         back_arrow = findViewById(R.id.back_arrow)
         header_title = findViewById(R.id.header_title)
         header_title.text = intent.getStringExtra("headerName")
-        DebugLog.e("Linked Family fragment")
+//        DebugLog.e("Linked Family fragment")
         back_arrow.setOnClickListener {
             val i = Intent(this@LinkedFamilyFragment, HomeActivity::class.java)
             startActivity(i)
@@ -209,16 +209,15 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         my_family_list.layoutManager = mLayoutManager
 
         DebugLog.d("Dashboard => " + intent.getStringExtra("DashBoard").toString())
-
         if (intent.getStringExtra("DashBoard") == "SHAKHAVIEW") {
             Handler().postDelayed({ myshakha_view.callOnClick() }, 100)
             val end: Int = 100
             val start: Int = 0
-            CallAPI(start, end)
+            CallAPI(start, end, true)
         } else {
             val end: Int = 100
             val start: Int = 0
-            CallAPI(start, end)
+            CallAPI(start, end, false)
         }
         search_fields.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -230,7 +229,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                     Log.d("USERID", USERID)
                     TAB = "family"
                     MEMBERID = sessionManager.fetchMEMBERID()!!
-                    STATUS = "all"
+                    STATUS = "1"
                     LENGTH = end.toString()
                     START = start.toString()
                     SEARCH = s.toString()
@@ -445,27 +444,9 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                     this@LinkedFamilyFragment, R.color.grayColorColor
                 )
             )
-
             val end: Int = 100
             val start: Int = 0
-            if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
-                USERID = sessionManager.fetchUserID()!!
-                Log.d("USERID", USERID)
-                TAB = "family"
-                MEMBERID = sessionManager.fetchMEMBERID()!!
-                STATUS = "0"
-                LENGTH = end.toString()
-                START = start.toString()
-                SEARCH = ""
-                CHAPTERID = ""
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
-            } else {
-                Toast.makeText(
-                    this@LinkedFamilyFragment,
-                    resources.getString(R.string.no_connection),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            CallAPI(start, end, false)
         }
 
         myshakha_view.setOnClickListener {
@@ -496,6 +477,11 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                     this@LinkedFamilyFragment, R.color.grayColorColor
                 )
             )
+
+            val end: Int = 100
+            val start: Int = 0
+            CallAPI(start, end, true)
+
         }
 
         gurudakshina_view.setOnClickListener {
@@ -572,18 +558,28 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         }
     }
 
-    fun CallAPI(PAGE: Int, END: Int) {
+    fun CallAPI(PAGE: Int, END: Int, isSankhya: Boolean) {
         if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
-            USERID = sessionManager.fetchUserID()!!
-            Log.d("USERID", USERID)
-            TAB = "family"
-            MEMBERID = sessionManager.fetchMEMBERID()!!
-            STATUS = "0"
-            LENGTH = END.toString()
-            START = PAGE.toString()
-            SEARCH = ""
-            CHAPTERID = ""
-            myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+            if (isSankhya) {
+                USERID = sessionManager.fetchUserID()!!
+                TAB = "shakha"
+                MEMBERID = sessionManager.fetchMEMBERID()!!
+                STATUS = "0"
+                LENGTH = END.toString()
+                START = PAGE.toString()
+                SEARCH = ""
+                shakhaMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH)
+            } else {
+                USERID = sessionManager.fetchUserID()!!
+                TAB = "family"
+                MEMBERID = sessionManager.fetchMEMBERID()!!
+                STATUS = "1"
+                LENGTH = END.toString()
+                START = PAGE.toString()
+                SEARCH = ""
+                CHAPTERID = ""
+                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+            }
         } else {
             Toast.makeText(
                 this@LinkedFamilyFragment,
@@ -591,6 +587,70 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    private fun shakhaMemberList(
+        userid: String,
+        tab: String,
+        memberid: String,
+        status: String,
+        length: String,
+        start: String,
+        search: String
+
+    ) {
+        val pd = CustomProgressBar(this@LinkedFamilyFragment)
+        pd.show()
+        val call: Call<Get_Member_Listing_Response> =
+            MyHssApplication.instance!!.api.get_member_listing_shakha(
+                userid,
+                tab,
+                memberid,
+                status,
+                length,
+                start,
+                search
+            )
+        call.enqueue(object : Callback<Get_Member_Listing_Response> {
+            override fun onResponse(
+                call: Call<Get_Member_Listing_Response>,
+                response: Response<Get_Member_Listing_Response>
+            ) {
+                if (response.code() == 200 && response.body() != null) {
+                    Log.d("status", response.body()?.status.toString())
+                    if (response.body()?.status!!) {
+                        data_not_found_layout.visibility = View.GONE
+                        try {
+                            atheletsBeans = response.body()!!.data!!
+                            if (atheletsBeans.isNotEmpty()) {
+                                member_count_layout.visibility = View.VISIBLE
+                                member_count.text = atheletsBeans.size.toString()
+                            }
+                        } catch (e: ArithmeticException) {
+                            println(e)
+                        } finally {
+                            println("Family")
+                        }
+                    } else {
+                        data_not_found_layout.visibility = View.VISIBLE
+                        member_count_layout.visibility = View.GONE
+                    }
+                } else {
+                    member_count_layout.visibility = View.GONE
+                    Functions.showAlertMessageWithOK(
+                        this@LinkedFamilyFragment, "Message",
+                        getString(R.string.some_thing_wrong),
+                    )
+                }
+                pd.dismiss()
+            }
+
+            override fun onFailure(call: Call<Get_Member_Listing_Response>, t: Throwable) {
+                member_count_layout.visibility = View.GONE
+                Toast.makeText(this@LinkedFamilyFragment, t.message, Toast.LENGTH_LONG).show()
+                pd.dismiss()
+            }
+        })
     }
 
     fun ShakhaCountDialog(
@@ -647,16 +707,16 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                         data_not_found_layout.visibility = View.GONE
                         try {
                             atheletsBeans = response.body()!!.data!!
-                            Log.d("atheletsBeans", atheletsBeans.toString())
-                            for (i in 1 until atheletsBeans.size) {
-                                Log.d("firstName", atheletsBeans[i].firstName.toString())
-                            }
-                            Log.d("count=>", atheletsBeans.size.toString())
+//                            Log.d("atheletsBeans", atheletsBeans.toString())
+//                            for (i in 1 until atheletsBeans.size) {
+//                                Log.d("firstName", atheletsBeans[i].firstName.toString())
+//                            }
+//                            Log.d("count=>", atheletsBeans.size.toString())
 
-                            if (atheletsBeans.isNotEmpty()) {
-                                member_count_layout.visibility = View.VISIBLE // nik
-                                member_count.text = atheletsBeans.size.toString()
-                            }
+//                            if (atheletsBeans.isNotEmpty()) {
+//                                member_count_layout.visibility = View.VISIBLE // nik
+//                                member_count.text = atheletsBeans.size.toString()
+//                            }
                             mAdapterGuru = CustomAdapter(atheletsBeans)
                             my_family_list.adapter = mAdapterGuru
                             mAdapterGuru!!.notifyDataSetChanged()

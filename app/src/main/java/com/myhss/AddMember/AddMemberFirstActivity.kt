@@ -226,6 +226,19 @@ class AddMemberFirstActivity() : AppCompatActivity() {
 
         Log.d("TYPE_SELF", intent.getStringExtra("TYPE_SELF")!!)
 
+        if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
+            myRelationship()
+            myOccupation()
+            myVibhag()
+        } else {
+            Toast.makeText(
+                this@AddMemberFirstActivity,
+                resources.getString(R.string.no_connection),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+
         var calendar = Calendar.getInstance(Locale.getDefault())
         val simpledateFormat = SimpleDateFormat("dd/MM/yyyy")
         strCurrentDate = simpledateFormat.format(calendar.time)
@@ -306,14 +319,12 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
                 edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
 
-                Functions.printLog("VIBHAG", sessionManager.fetchVIBHAGID())
-                Functions.printLog("NAGAR", sessionManager.fetchNAGARID())
-                Functions.printLog("SHAKHA", sessionManager.fetchSHAKHAID())
-                Functions.printLog("RELATIONSHIP", sessionManager.fetchRELATIONSHIPNAME())
-                Functions.printLog(
-                    "OTHER_RELATIONSHIP", sessionManager.fetchRELATIONSHIPNAME_OTHER()
-                )
-                Functions.printLog("OCCUPATION", sessionManager.fetchOCCUPATIONNAME())
+                DebugLog.e("VIBHAG " + sessionManager.fetchVIBHAGNAME())
+                DebugLog.e("NAGAR " + sessionManager.fetchNAGARNAME())
+                DebugLog.e("SHAKHA " + sessionManager.fetchSHAKHANAME())
+                DebugLog.e("RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME())
+                DebugLog.e("OTHER_RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME_OTHER())
+                DebugLog.e("OCCUPATION " + sessionManager.fetchOCCUPATIONNAME())
 
 
                 if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
@@ -756,20 +767,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         edit_dateofbirth.setOnClickListener {
             openDatePickerForDOB()
         }
-
-
-        if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-            myRelationship()
-            myOccupation()
-            myVibhag()
-        } else {
-            Toast.makeText(
-                this@AddMemberFirstActivity,
-                resources.getString(R.string.no_connection),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
         occupation_other_view.visibility = View.GONE
 //        if (edit_occupation_select_other.equals("Other")) {
 //            occupation_other_view.visibility = View.VISIBLE
@@ -1292,7 +1289,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                             edit_vibhag_region.setSelection(VibhagName.indexOf(data_getprofile[0].vibhag))
                             edit_nagar_town.setSelection(NagarName.indexOf(data_getprofile[0].nagar))
                             edit_shakha_branch.setSelection(ShakhaName.indexOf(data_getprofile[0].shakha))
-//                        dgjhgh
+
 
                         } catch (e: ArithmeticException) {
                             println(e)
@@ -1386,9 +1383,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-                            Log.d("list==>", list.toString())
+//                            Log.d("list==>", list.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1398,9 +1395,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         }
 
                         for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
+//                            Log.d("list==>", listnew.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1531,9 +1528,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-                            Log.d("list==>", list.toString())
+//                            Log.d("list==>", list.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1543,9 +1540,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         }
 
                         for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
+//                            Log.d("list==>", listnew.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1571,9 +1568,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                                         sessionManager.fetchOCCUPATIONNAME()
                                     )
                                 )
-//                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-//                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-//                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
+//                                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
+//                                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
+//                                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
                             }
                         }
 
@@ -1688,9 +1685,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-                            Log.d("list==>", list.toString())
+//                            Log.d("list==>", list.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1700,9 +1697,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         }
 
                         for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
+//                            Log.d("list==>", listnew.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1727,7 +1724,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                                 vibhag_select_default.visibility = View.VISIBLE
                                 vibhag_select_default.text = sessionManager.fetchVIBHAGNAME()
 //                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
-//                                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
+                                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
 //                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
 //                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
                             }
@@ -1851,9 +1848,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-                            Log.d("list==>", list.toString())
+//                            Log.d("list==>", list.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1862,9 +1859,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         }
 
                         for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
+//                            Log.d("list==>", listnew.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1890,7 +1887,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                                 nagar_select_default.text = sessionManager.fetchNAGARNAME()
 //                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
 //                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-//                                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
+                                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
 //                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
                             }
                         }
@@ -2011,9 +2008,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-                            Log.d("list==>", list.toString())
+//                            Log.d("list==>", list.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -2023,9 +2020,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         }
 
                         for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
+//                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
+//                            Log.d("list==>", listnew.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -2053,7 +2050,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
 //                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
 //                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
 //                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-//                                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
+                                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
                             }
                         }
 

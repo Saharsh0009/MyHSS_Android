@@ -226,6 +226,7 @@
                                     android:layout_width="@dimen/padding200"
                                     android:layout_height="@dimen/padding200"
                                     android:scaleType="fitCenter"
+                                    android:layout_margin="@dimen/padding5"
                                     android:visibility="visible" />
 
                                 <RelativeLayout

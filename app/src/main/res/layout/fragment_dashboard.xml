@@ -1,165 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:id="@+id/rootview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
+        tools:ignore="MissingConstraints">
+
+        <include layout="@layout/action_bar" />
 
         <LinearLayout
-            android:id="@+id/rootview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:scrollbars="vertical"
-            tools:ignore="MissingConstraints">
-
-            <include layout="@layout/action_bar" />
-
+            android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/myfamily_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/myfamily_layout"
+                <TextView
+                    android:id="@+id/myfamily_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:padding="@dimen/padding10"
+                    android:text="@string/my_family"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:theme="@style/StyleTextView" />
 
-                    <TextView
-                        android:id="@+id/myfamily_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/sourcesanspro_semibold"
-                        android:padding="@dimen/padding10"
-                        android:text="@string/my_family"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/grayColorColor"
-                        android:textSize="@dimen/font_size15"
-                        android:theme="@style/StyleTextView" />
-
-                    <ImageView
-                        android:id="@+id/myfamily_line"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/padding10"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/tick_icon" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/myshakha_layout"
+                <ImageView
+                    android:id="@+id/myfamily_line"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/myshakha_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/sourcesanspro_semibold"
-                        android:padding="@dimen/padding10"
-                        android:text="@string/my_shakha"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/grayColorColor"
-                        android:textSize="@dimen/font_size15"
-                        android:theme="@style/StyleTextView" />
-
-                    <ImageView
-                        android:id="@+id/myshakha_line"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/padding10"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/tick_icon" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/gurudakshina_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/gurudakshina_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/sourcesanspro_semibold"
-                        android:padding="@dimen/padding10"
-                        android:text="@string/guru_dakshina"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/grayColorColor"
-                        android:textSize="@dimen/font_size15"
-                        android:theme="@style/StyleTextView" />
-
-                    <ImageView
-                        android:id="@+id/gurudakshina_line"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/padding10"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/tick_icon" />
-
-                </LinearLayout>
+                    android:layout_height="@dimen/padding10"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/tick_icon" />
 
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/myshakha_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <include
-                    layout="@layout/no_data_found_view"
+                <TextView
+                    android:id="@+id/myshakha_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:padding="@dimen/padding10"
+                    android:text="@string/my_shakha"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:theme="@style/StyleTextView" />
 
-                <include layout="@layout/fragment_my_family" />
+                <ImageView
+                    android:id="@+id/myshakha_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/padding10"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/tick_icon" />
 
-                <include layout="@layout/fragment_shakha" />
+            </LinearLayout>
 
-                <include layout="@layout/fragment_guru_dakshina" />
-
-            </RelativeLayout>
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout"
+            <LinearLayout
+                android:id="@+id/gurudakshina_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:theme="@style/StyleTextView"
-                android:visibility="gone"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/primaryColor"
-                app:tabIndicatorFullWidth="true"
-                app:tabIndicatorHeight="2dp"
-                app:tabSelectedTextColor="@color/black"
-                app:tabTextAppearance="@dimen/font_size11"
-                app:tabTextColor="@color/grayColorColor">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            </com.google.android.material.tabs.TabLayout>
+                <TextView
+                    android:id="@+id/gurudakshina_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:padding="@dimen/padding10"
+                    android:text="@string/guru_dakshina"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15"
+                    android:theme="@style/StyleTextView" />
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@+id/tabLayout">
+                <ImageView
+                    android:id="@+id/gurudakshina_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/padding10"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/tick_icon" />
 
-            </androidx.viewpager.widget.ViewPager>
+            </LinearLayout>
 
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include
+                layout="@layout/no_data_found_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <include layout="@layout/fragment_my_family" />
+
+            <include layout="@layout/fragment_shakha" />
+
+            <include layout="@layout/fragment_guru_dakshina" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
