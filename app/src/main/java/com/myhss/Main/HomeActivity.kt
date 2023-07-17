@@ -242,7 +242,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             val member_id = sessionManager.fetchMEMBERID()
             val devicetype = "A"
             val device_token = sessionManager.fetchFCMDEVICE_TOKEN()
-            Log.d("device_token", device_token!!)
+            DebugLog.d("device_token" + device_token!!)
 //            myPrivileges("1", "approve")
 //            if (sessionManager.fetchMEMBERID() != "") {
             myProfile(user_id!!, member_id!!, devicetype, device_token)
@@ -282,6 +282,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
                                     .commit()
                             }
+
                             1 -> {
                                 // # QR Code Fragment
                                 val i = Intent(this@HomeActivity, LinkedFamilyFragment::class.java)
@@ -342,6 +343,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     )
                                 }
                             }
+
                             3 -> {
                                 toolbar.title = "Change Password"
                                 toolbar_logo.visibility = View.GONE
@@ -353,6 +355,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     R.id.activity_main_content_id, organisationFragment
                                 ).commit()
                             }
+
                             4 -> {
                                 /*val i = Intent(this@HomeActivity, Passcode_Activity::class.java)
                                 i.putExtra("CHANGE_BIOMETRIC", "CHANGE_BIOMETRIC")
@@ -368,6 +371,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     R.id.activity_main_content_id, organisationFragment
                                 ).commit()
                             }
+
                             5 -> {
                                 toolbar.title = "Policies"
 //                        activity_main_toolbar_title.setText("Policies")
@@ -380,6 +384,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     R.id.activity_main_content_id, organisationFragment
                                 ).commit()
                             }
+
                             6 -> {
                                 val alertDialog: AlertDialog.Builder =
                                     AlertDialog.Builder(this@HomeActivity)
@@ -511,6 +516,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     )
                                 }
                             }
+
                             2 -> {
                                 toolbar.title = "Change Password"
 //                        activity_main_toolbar_title.setText("Policies")
@@ -523,6 +529,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     R.id.activity_main_content_id, organisationFragment
                                 ).commit()
                             }
+
                             3 -> {
                                 toolbar.title = "Change Biometric"
                                 toolbar_logo.visibility = View.GONE
@@ -538,6 +545,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 startActivity(i)
                                 finish()*/
                             }
+
                             4 -> {
                                 toolbar.title = "Policies"
 //                        activity_main_toolbar_title.setText("Policies")
@@ -550,6 +558,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     R.id.activity_main_content_id, organisationFragment
                                 ).commit()
                             }
+
                             5 -> {
                                 val alertDialog: AlertDialog.Builder =
                                     AlertDialog.Builder(this@HomeActivity)
@@ -1096,8 +1105,8 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             sessionManager.saveCOUNTRY(data_getmember[0].country.toString())
                             sessionManager.savePOSTCODE(data_getmember[0].postalCode.toString())
                             sessionManager.saveSHAKHA_TAB(data_getmember[0].shakha_tab.toString())
-                            var s_count  = data_getmember[0].shakha_sankhya_avg.toString()
-                            if(s_count.length ==0){
+                            var s_count = data_getmember[0].shakha_sankhya_avg.toString()
+                            if (s_count.length == 0) {
                                 s_count = "0"
                             }
                             sessionManager.saveSHAKHA_SANKHYA_AVG(s_count)
@@ -1179,6 +1188,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                 LocationSettingsStatusCodes.SUCCESS -> Log.i(
                     TAG, "All location settings are satisfied."
                 )
+
                 LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                     Log.i(
                         TAG,
@@ -1194,6 +1204,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                         Log.i(TAG, "PendingIntent unable to execute request.")
                     }
                 }
+
                 LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> Log.i(
                     TAG,
                     "Location settings are inadequate, and cannot be fixed here. Dialog not created."

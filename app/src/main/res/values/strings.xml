@@ -421,6 +421,7 @@
     <string name="guest">Guest</string>
     <string name="total">Total</string>
     <string name="add_more">Add More</string>
+    <string name="add_date">Add Date</string>
     <string name="first_name">Please Enter the First name</string>
     <string name="valid_first_name">First name should contain alphabetical characters only without any space. e.g. xyz</string>
     <string name="valid_middle_name">Middle name should contain alphabetical characters only without any space. e.g. xyz</string>

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.content.DialogInterface
@@ -140,20 +141,14 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 
     private lateinit var mTagsEditText: TagsEditText
 
-    //PDF OR Image upload
-    val MEDIA_TYPE_IMAGE = 1
-    val MEDIA_TYPE_PDF = 2
-    var mediaFile: File? = null
-    private var fileUri: Uri? = null
     private var File_name: String = ""
     var Check_value: String = ""
-    private val IMAGE_DIRECTORY = "/demonuts_upload_gallery"
+
 
     //Pdf request code
     private val PICK_PDF_REQUEST = 3
     private var pdfFilePath: Uri? = null
     private var ImagefilePath: Uri? = null
-//    var bitmap: Bitmap? = null
 
     //image pick code
     private val IMAGE_PICK_CODE = 1000
@@ -503,18 +498,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         )
 
         next_layout.setOnClickListener {
-            if (pdfFilePath != null) {
-//            val path: String
-//                Upload_file = getpath(filePath.toString()).toString()
-//                FilePath.getPath(this, filePath)
-//                Upload_file = FilePath.getPath(this@AddMemberForthActivity, filePath)
-                Functions.printLog("Upload_file==", Upload_file)
-            } else if (ImagefilePath != null) {
-//                    Upload_file = ImagefilePath.toString()
-                Functions.printLog("Upload_file==", Upload_file)
-            }
-//            edit_qualification_file.text = Upload_file
-
             /*Add Member First*/
             val first_name = intent.getStringExtra("FIRST_NAME")
             val middle_name = intent.getStringExtra("MIDDLE_NAME")
@@ -954,11 +937,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         Functions.displayMessage(
                             this@AddMemberForthActivity, response.body()?.message
                         )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberForthActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -1062,11 +1040,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         Functions.displayMessage(
                             this@AddMemberForthActivity, response.body()?.message
                         )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberForthActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -1708,14 +1681,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         val btn_image = view_d.findViewById<LinearLayout>(R.id.select_gallery)
         val btn_pdf = view_d.findViewById<LinearLayout>(R.id.select_pdf)
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            btn_pdf.visibility = View.GONE
-//        } else {
-//            btn_pdf.visibility = View.VISIBLE
-//        }
-
-        btn_pdf.visibility = View.GONE
-
         btnClose.setOnClickListener {
             dialog.dismiss()
         }
@@ -1759,18 +1724,13 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             val myFile = File(uriString)
             DebugLog.e("ioooo=>> " + myFile.toString())
             Upload_file = myFile.toString()
-//            val pdfPath: String
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//                pdfPath = getPDFPath(this@AddMemberForthActivity, pdfFilePath)
-//            } else {
-//                pdfPath = getPath(this@AddMemberForthActivity, pdfFilePath)
-//            }
-//            val pdfPath: String = getPDFPath(filePath)
-                val pdfPath = getPath(this@AddMemberForthActivity, pdfFilePath)
+            val pdfPath = pdfFilePath?.let { getPathFromUri(this@AddMemberForthActivity, it) }
             DebugLog.e("pdfPath Path=> " + pdfPath)
             if (pdfPath == "Not found" || pdfPath == "") {
                 Functions.showAlertMessageWithOK(
-                    this, "PDF Upload Error", "Please select the file from the File Manager."
+                    this,
+                    "PDF Upload Error",
+                    "This file can not be open, please download new or create new file to upload."
                 )
             } else {
                 val pathA = File(pdfPath)
@@ -1817,11 +1777,14 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 
     fun getPath(context: Context, uri: Uri?): String {
         var result: String? = null
-        val proj = arrayOf(MediaStore.Images.Media.DATA)
+        val proj = arrayOf(MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME)
         val cursor: Cursor? = context.contentResolver.query(uri!!, proj, null, null, null)
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 val column_index = cursor.getColumnIndexOrThrow(proj[0])
+                val fileNameColumn = cursor.getColumnIndexOrThrow(proj[1])
+                val fileName = cursor.getString(fileNameColumn)
+                edit_qualification_file.text = fileName
                 result = cursor.getString(column_index)
             }
             cursor.close()
@@ -1832,35 +1795,37 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         return result
     }
 
-    fun getPDFPath(context: Context, uri: Uri?): String {
-        var result: String? = null
-        val proj = arrayOf(MediaStore.Files.FileColumns.DATA)
-        val cursor: Cursor? = context.contentResolver.query(uri!!, proj, null, null, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                val column_index = cursor.getColumnIndexOrThrow(proj[0])
-                result = cursor.getString(column_index)
+    fun getPathFromUri(context: Context, uri: Uri): String? {
+        val contentResolver: ContentResolver = context.contentResolver
+        val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME)
+        val cursor = contentResolver.query(uri, projection, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val fileNameColumn = it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+                val fileName = it.getString(fileNameColumn)
+                val cacheDir = context.cacheDir
+                val file = File(cacheDir, fileName)
+                if (file.exists()) {
+                    edit_qualification_file.text = fileName
+                    return file.absolutePath
+                }
+                val inputStream = contentResolver.openInputStream(uri)
+                inputStream?.use { input ->
+                    val outputStream = file.outputStream()
+                    outputStream.use { output ->
+                        val buffer = ByteArray(4 * 1024) // 4k buffer
+                        while (true) {
+                            val byteCount = input.read(buffer)
+                            if (byteCount < 0) break
+                            output.write(buffer, 0, byteCount)
+                        }
+                        output.flush()
+                        return file.absolutePath
+                    }
+                }
             }
-            cursor.close()
         }
-        if (result == null) {
-            result = "Not found"
-        }
-        return result
-
-//        val id = DocumentsContract.getDocumentId(uri)
-//        val contentUri = ContentUris.withAppendedId(
-//            Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
-//        )
-//
-//        val projection = arrayOf(MediaStore.Images.Media.DATA)
-//        val cursor = contentResolver.query(contentUri, projection, null, null, null)
-//        val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-//        cursor!!.moveToFirst()
-//        DebugLog.e("getPDFPATH => " + cursor!!.getString(column_index))
-//        return cursor!!.getString(column_index)
-
-
+        return null
     }
 
     // Permission code
