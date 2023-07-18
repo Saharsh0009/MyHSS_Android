@@ -709,14 +709,20 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             }
         })
 
-//        edit_dateofbirth.onDone { CallDateValidation() }
-
         edit_dateofbirth.setOnEditorActionListener { _, actionId, _ ->
             age_layout.visibility = View.GONE
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // Call your code here
 //                CallDateValidation()
                 calendar = Calendar.getInstance()
+
+                if (edit_dateofbirth.text?.isNotEmpty() == true) {
+                    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val initialDate =
+                        dateFormat.parse(edit_dateofbirth.text.toString())
+                    calendar.time = initialDate
+                }
+
                 calendar.add(Calendar.YEAR, -3)
                 year = calendar.get(Calendar.YEAR)
                 month = calendar.get(Calendar.MONTH)
@@ -885,7 +891,14 @@ class AddMemberFirstActivity() : AppCompatActivity() {
 
     private fun openDatePickerForDOB() {
         calendar = Calendar.getInstance()
-        calendar.add(Calendar.YEAR, -3)
+        if (edit_dateofbirth.text?.isNotEmpty() == true) {
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val initialDate = dateFormat.parse(edit_dateofbirth.text.toString())
+            calendar.time = initialDate
+        } else {
+            calendar.add(Calendar.YEAR, -3)
+        }
+
         year = calendar.get(Calendar.YEAR)
         month = calendar.get(Calendar.MONTH)
         day = calendar.get(Calendar.DAY_OF_MONTH)

@@ -653,6 +653,15 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         edit_date_of_first_aid_qualification.setOnClickListener {
             calendar = Calendar.getInstance()
 //            calendar.add(Calendar.YEAR, -3)
+
+            if (edit_date_of_first_aid_qualification.text.length > 0) {
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val initialDate =
+                    dateFormat.parse(edit_date_of_first_aid_qualification.text.toString())
+                calendar.time = initialDate
+            }
+
+
             year = calendar.get(Calendar.YEAR)
             month = calendar.get(Calendar.MONTH)
             day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -667,7 +676,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             }, year, month, day)
 //            dialog.datePicker.minDate = calendar.timeInMillis
 //            calendar.add(Calendar.YEAR, 0)
-            dialog.datePicker.maxDate = calendar.timeInMillis
+//            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
         }
 

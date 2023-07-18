@@ -445,7 +445,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.uk.myhss.Utils.NetworkStateChecker"
+            android:name="com.myhss.Utils.NetworkStateChecker"
             android:exported="false">
             <intent-filter>
                 <action

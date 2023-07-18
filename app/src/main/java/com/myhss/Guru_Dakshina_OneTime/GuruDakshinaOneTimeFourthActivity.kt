@@ -68,6 +68,8 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
     private lateinit var paymentStatus: String
     private lateinit var paymentStatusReason: String
     private lateinit var paymentLauncher: PaymentLauncher
+    private lateinit var pd3: CustomProgressBar
+
 
     @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -254,6 +256,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                         val status = response.body()!!.status
                         val message = response.body()!!.message
                         if (status == true) {
+                            pd.dismiss()
                             Toast.makeText(
                                 this@GuruDakshinaOneTimeFourthActivity,
                                 "$message. Please wait until payment complete.",
@@ -268,18 +271,20 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
 
                             makeStripePayement(paymentIntentClientSecret)
                         } else {
+                            pd.dismiss()
                             Functions.showAlertMessageWithOK(
                                 this@GuruDakshinaOneTimeFourthActivity, "", message.toString()
                             )
                         }
                     }
                 } else {
+                    pd.dismiss()
                     Functions.showAlertMessageWithOK(
                         this@GuruDakshinaOneTimeFourthActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
                 }
-                pd.dismiss()
+
             }
 
             override fun onFailure(call: Call<StripeDataModel>, t: Throwable) {
@@ -295,6 +300,9 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
     }
 
     private fun makeStripePayement(paymentIntentClientSecretKey: String) {
+
+        pd3 = CustomProgressBar(this@GuruDakshinaOneTimeFourthActivity)
+        pd3.show()
         DebugLog.e("SecretKey : " + paymentIntentClientSecretKey)
 //        val paymentIntentClientSecretKey_1 = paymentIntentClientSecretKey.replace("^\"|\"$", "");
 //        cardInputWidget.paymentMethodCreateParams?.let { params ->
@@ -397,17 +405,19 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                     DebugLog.e("Succeeded : " + " Response : " + gson.toJson(paymentIntent))
                     paymentStatus = "Completed"
                     paymentStatusReason = ""
+                    pd3.dismiss()
                     savePaymentDataintoDB(gson.toJson(paymentIntent))
                 } else if (paymentIntent.status == StripeIntent.Status.RequiresPaymentMethod) {
                     DebugLog.e("Failed : " + " Response : " + paymentIntent.lastErrorMessage?.orEmpty())
                     paymentStatus = "Error"
                     paymentStatusReason = paymentIntent.lastErrorMessage?.orEmpty().toString()
-                    savePaymentDataintoDB(paymentIntent.lastErrorMessage?.orEmpty().toString())
+                    pd3.dismiss()
                     Functions.showAlertMessageWithOK(
                         this@GuruDakshinaOneTimeFourthActivity,
                         "Failed Message",
                         "$paymentStatusReason"
                     )
+                    savePaymentDataintoDB(paymentIntent.lastErrorMessage?.orEmpty().toString())
                 }
             }
 
@@ -415,6 +425,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                 DebugLog.e("OnError : " + " Error : $e")
                 paymentStatus = "Error"
                 paymentStatusReason = "$e"
+                pd3.dismiss()
                 Functions.showAlertMessageWithOK(
                     this@GuruDakshinaOneTimeFourthActivity, "Error Message", "$e"
                 )
