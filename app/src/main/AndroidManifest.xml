@@ -51,7 +51,6 @@
     <application
         android:name="com.myhss.MyApplication"
         android:allowAudioPlaybackCapture="true"
-        android:allowBackup="true"
         android:allowClearUserData="true"
         android:allowClearUserDataOnFailedRestore="true"
         android:hardwareAccelerated="false"
@@ -65,7 +64,8 @@
         android:supportsMultipleDisplays="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
-        tools:ignore="AllowBackup">
+        tools:ignore="AllowBackup"
+        android:fullBackupContent="false">
 
         <provider
             android:name="androidx.core.content.FileProvider"

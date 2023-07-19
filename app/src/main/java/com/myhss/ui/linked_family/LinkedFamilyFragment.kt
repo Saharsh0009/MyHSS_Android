@@ -632,7 +632,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                             println("Family")
                         }
                     } else {
-                        data_not_found_layout.visibility = View.VISIBLE
+                        data_not_found_layout.visibility = View.GONE
                         member_count_layout.visibility = View.GONE
                     }
                 } else {
