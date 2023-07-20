@@ -475,8 +475,8 @@
                         style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/padding10"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/padding10"
                         android:background="@drawable/edittext_round"
                         app:boxStrokeColor="@color/primaryColor">
 
@@ -547,8 +547,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/padding10"
-                            android:gravity="center_vertical"
                             android:background="@drawable/edittext_round"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor">
 
                             <TextView
@@ -627,9 +627,9 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginTop="@dimen/padding10"
                             android:background="@drawable/edittext_round"
+                            android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor">
 
                             <!--                    <com.google.android.material.textfield.TextInputEditText-->
@@ -989,26 +989,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:orientation="horizontal"
-                    android:weightSum="3">
+                    android:weightSum="2">
 
                     <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginStart="@dimen/padding5"
+                        android:layout_marginStart="@dimen/padding10"
                         android:layout_marginEnd="@dimen/padding10"
                         android:layout_weight="1">
 
                         <LinearLayout
                             android:id="@+id/back_layout"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="@drawable/button_orange_round"
                             android:gravity="center"
-                            android:orientation="horizontal"
-                            android:paddingStart="@dimen/padding35"
-                            android:paddingEnd="@dimen/padding35">
+                            android:orientation="horizontal">
 
                             <ImageView
                                 android:layout_width="@dimen/padding15"
@@ -1031,12 +1029,12 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginStart="@dimen/padding10"
                         android:layout_marginEnd="@dimen/padding10"
-                        android:layout_weight="2">
+                        android:layout_weight="1">
 
                         <LinearLayout
                             android:id="@+id/next_layout"

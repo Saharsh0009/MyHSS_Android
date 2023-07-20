@@ -47,15 +47,6 @@
         android:layout_below="@+id/search_fields_layout"
         android:visibility="gone" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/gray_round_border"
-        android:text="Load more"
-        android:textColor="@color/black"
-        android:textSize="@dimen/padding15"
-        android:visibility="gone" />
-
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart_guru"
         android:layout_width="350dp"

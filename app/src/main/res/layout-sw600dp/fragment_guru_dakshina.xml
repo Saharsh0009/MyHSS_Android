@@ -46,6 +46,23 @@
         android:layout_below="@+id/search_fields_layout"
         android:visibility="gone" />
 
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart_guru"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:id="@+id/layout_pieChart_lable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pieChart_guru"
+        android:layout_marginLeft="@dimen/padding20"
+        android:layout_marginRight="@dimen/padding20"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/view_view"
         android:layout_width="match_parent"

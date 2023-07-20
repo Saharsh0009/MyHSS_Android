@@ -53,12 +53,14 @@
                         android:id="@+id/pieChart_surya"
                         android:layout_width="350dp"
                         android:layout_height="350dp"
+                        android:layout_gravity="center_horizontal"
                         android:layout_margin="@dimen/padding20" />
 
                     <LinearLayout
                         android:id="@+id/layout_pieChart_lable"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:layout_marginLeft="@dimen/padding20"
                         android:layout_marginRight="@dimen/padding20"
                         android:orientation="vertical">

@@ -149,7 +149,7 @@ class MemberShipActivity : AppCompatActivity() {
             if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                 USERID = sessionManager.fetchUserID()!!
                 Log.d("USERID", USERID)
-                TAB = "family"
+                TAB = "shakha"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
 //                STATUS = "all"
                 STATUS = "0"
@@ -157,7 +157,7 @@ class MemberShipActivity : AppCompatActivity() {
                 START = start.toString()
                 SEARCH = ""
                 CHAPTERID = ""
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH)
             } else {
                 Toast.makeText(
                     this@MemberShipActivity,
@@ -173,14 +173,14 @@ class MemberShipActivity : AppCompatActivity() {
             if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                 USERID = sessionManager.fetchUserID()!!
                 Log.d("USERID", USERID)
-                TAB = "family"
+                TAB = "shakha"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
                 STATUS = "1"
                 LENGTH = end.toString()
                 START = start.toString()
                 SEARCH = ""
                 CHAPTERID = ""
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH)
             } else {
                 Toast.makeText(
                     this@MemberShipActivity,
@@ -196,14 +196,14 @@ class MemberShipActivity : AppCompatActivity() {
             if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                 USERID = sessionManager.fetchUserID()!!
                 Log.d("USERID", USERID)
-                TAB = "family"
+                TAB = "shakha"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
                 STATUS = "4"
                 LENGTH = end.toString()
                 START = start.toString()
                 SEARCH = ""
                 CHAPTERID = ""
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH)
             } else {
                 Toast.makeText(
                     this@MemberShipActivity,
@@ -219,14 +219,14 @@ class MemberShipActivity : AppCompatActivity() {
             if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                 USERID = sessionManager.fetchUserID()!!
                 Log.d("USERID", USERID)
-                TAB = "family"
+                TAB = "shakha"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
                 STATUS = "3"
                 LENGTH = end.toString()
                 START = start.toString()
                 SEARCH = ""
                 CHAPTERID = ""
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH)
             } else {
                 Toast.makeText(
                     this@MemberShipActivity,
@@ -364,15 +364,15 @@ class MemberShipActivity : AppCompatActivity() {
                     if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                         USERID = sessionManager.fetchUserID()!!
                         Log.d("USERID", USERID)
-                        TAB = "family"
+                        TAB = "shakha"
                         MEMBERID = sessionManager.fetchMEMBERID()!!
-                        STATUS = "all"
+                        STATUS = "0"
                         LENGTH = end.toString()
                         START = start.toString()
                         SEARCH = s.toString()
                         CHAPTERID = ""
                         mySearchMemberList(
-                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID
+                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH
                         )
                     } else {
                         Toast.makeText(
@@ -389,7 +389,7 @@ class MemberShipActivity : AppCompatActivity() {
                     if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                         USERID = sessionManager.fetchUserID()!!
                         Log.d("USERID", USERID)
-                        TAB = "family"
+                        TAB = "shakha"
                         MEMBERID = sessionManager.fetchMEMBERID()!!
                         STATUS = "1"
                         LENGTH = end.toString()
@@ -397,7 +397,7 @@ class MemberShipActivity : AppCompatActivity() {
                         SEARCH = s.toString()
                         CHAPTERID = ""
                         mySearchMemberList(
-                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID
+                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH
                         )
                     } else {
                         Toast.makeText(
@@ -414,7 +414,7 @@ class MemberShipActivity : AppCompatActivity() {
                     if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                         USERID = sessionManager.fetchUserID()!!
                         Log.d("USERID", USERID)
-                        TAB = "family"
+                        TAB = "shakha"
                         MEMBERID = sessionManager.fetchMEMBERID()!!
                         STATUS = "4"
                         LENGTH = end.toString()
@@ -422,7 +422,7 @@ class MemberShipActivity : AppCompatActivity() {
                         SEARCH = s.toString()
                         CHAPTERID = ""
                         mySearchMemberList(
-                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID
+                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH
                         )
                     } else {
                         Toast.makeText(
@@ -439,7 +439,7 @@ class MemberShipActivity : AppCompatActivity() {
                     if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                         USERID = sessionManager.fetchUserID()!!
                         Log.d("USERID", USERID)
-                        TAB = "family"
+                        TAB = "shakha"
                         MEMBERID = sessionManager.fetchMEMBERID()!!
                         STATUS = "3"
                         LENGTH = end.toString()
@@ -447,7 +447,7 @@ class MemberShipActivity : AppCompatActivity() {
                         SEARCH = s.toString()
                         CHAPTERID = ""
                         mySearchMemberList(
-                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID
+                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH
                         )
                     } else {
                         Toast.makeText(
@@ -470,8 +470,7 @@ class MemberShipActivity : AppCompatActivity() {
 
         add_family_layout.setOnClickListener {
 //            Snackbar.make(rootview, "Add Sankhya", Snackbar.LENGTH_SHORT).show()
-            startActivity(Intent(this@MemberShipActivity, AddSankhyaActivity::class.java))
-            /*val i = Intent(this, AddMemberFirstActivity::class.java)
+            startActivity(Intent(this@MemberShipActivity, AddSankhyaActivity::class.java))/*val i = Intent(this, AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family");
             startActivity(i)*/
         }
@@ -485,14 +484,13 @@ class MemberShipActivity : AppCompatActivity() {
         status: String,
         length: String,
         start: String,
-        search: String,
-        chapter_id: String
+        search: String
     ) {
         val pd = CustomProgressBar(this@MemberShipActivity)
         pd.show()
         val call: Call<Get_Member_Listing_Response> =
-            MyHssApplication.instance!!.api.get_member_listing(
-                user_id, tab, member_id, status, length, start, search, chapter_id
+            MyHssApplication.instance!!.api.get_member_listing_shakha(
+                user_id, tab, member_id, status, length, start, search
             )
         call.enqueue(object : Callback<Get_Member_Listing_Response> {
             override fun onResponse(
@@ -550,14 +548,13 @@ class MemberShipActivity : AppCompatActivity() {
         status: String,
         length: String,
         start: String,
-        search: String,
-        chapter_id: String
+        search: String
     ) {
 //        val pd = CustomProgressBar(this@MemberShipActivity)
 //        pd.show()
         val call: Call<Get_Member_Listing_Response> =
-            MyHssApplication.instance!!.api.get_member_listing(
-                user_id, tab, member_id, status, length, start, search, chapter_id
+            MyHssApplication.instance!!.api.get_member_listing_shakha(
+                user_id, tab, member_id, status, length, start, search
             )
         call.enqueue(object : Callback<Get_Member_Listing_Response> {
             override fun onResponse(
@@ -690,25 +687,13 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
 
             if (sessionManager.fetchUSERROLE()?.contains("Sankhya Pramukh", false) == true) {
 //            if (true) {
-            Log.e("Role : ", " Role : " + sessionManager.fetchUSERROLE())
-
+                Log.e("Role : ", " Role : " + sessionManager.fetchUSERROLE())
                 righr_menu.visibility = View.GONE
             } else {
                 righr_menu.visibility = View.VISIBLE
             }
 
             if (SHOW_HIDE == "ALLSHOW") {
-//                if (my_family_DatumGurudakshina.status.toString()!! == "0") {
-//                    active_txt.visibility = View.VISIBLE
-//                    reject_txt.visibility = View.VISIBLE
-//                    reject_layout.visibility = View.VISIBLE
-//                    active_layout.visibility = View.VISIBLE
-//                } else {
-//                    active_txt.visibility = View.GONE
-//                    reject_txt.visibility = View.GONE
-//                    reject_layout.visibility = View.GONE
-//                    active_layout.visibility = View.GONE
-//                }
                 active_txt.visibility = View.VISIBLE
                 reject_txt.visibility = View.VISIBLE
                 reject_layout.visibility = View.VISIBLE

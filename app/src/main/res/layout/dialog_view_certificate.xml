@@ -15,12 +15,11 @@
 
     <ImageView
         android:id="@+id/image_file_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_below="@+id/image_close"
         android:layout_centerHorizontal="true"
-        android:scaleType="fitCenter"
-        android:src="@drawable/active_icon" />
+        android:scaleType="fitCenter"/>
 
 
 </RelativeLayout>

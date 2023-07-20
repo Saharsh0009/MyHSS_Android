@@ -226,6 +226,7 @@
                                     android:id="@+id/image_file_view"
                                     android:layout_width="@dimen/padding150"
                                     android:layout_height="@dimen/padding150"
+                                    android:layout_margin="@dimen/padding5"
                                     android:scaleType="fitCenter"
                                     android:visibility="visible" />
 
@@ -233,6 +234,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
+                                    android:layout_margin="@dimen/padding5"
                                     android:layout_toRightOf="@+id/image_file_view">
 
                                     <TextView

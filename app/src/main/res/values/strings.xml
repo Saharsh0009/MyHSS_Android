@@ -105,7 +105,7 @@
     <string name="baalika_content">5 to 11 Years - Primary School</string>
     <string name="kishore">Kishore</string>
     <string name="kishori">Kishori</string>
-    <string name="kishori_content">11 to 16 Years - Hight School</string>
+    <string name="kishori_content">11 to 16 Years - High School</string>
     <string name="tarun">Tarun</string>
     <string name="taruni">Taruni</string>
     <string name="taruni_content">16 to 30 years</string>
@@ -421,6 +421,7 @@
     <string name="guest">Guest</string>
     <string name="total">Total</string>
     <string name="add_more">Add More</string>
+    <string name="add_date">Add Date</string>
     <string name="first_name">Please Enter the First name</string>
     <string name="valid_first_name">First name should contain alphabetical characters only without any space. e.g. xyz</string>
     <string name="valid_middle_name">Middle name should contain alphabetical characters only without any space. e.g. xyz</string>

@@ -295,6 +295,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                                 DATE = "" + select_date.text.toString()
                                 COUNT = "" + edit_count.text.toString()
                             }
+
                             else -> {
                                 DATE += "," + select_date.text.toString()
                                 COUNT += "," + edit_count.text.toString()

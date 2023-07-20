@@ -9,6 +9,7 @@ import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
@@ -24,9 +25,7 @@ class DialogViewCertificate : DialogFragment() {
     private lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         return inflater.inflate(R.layout.dialog_view_certificate, container, false)
@@ -39,8 +38,9 @@ class DialogViewCertificate : DialogFragment() {
         image_close = view.findViewById(R.id.image_close)
 
         Glide.with(requireContext())
-            .load(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
-            .into(
+            .load(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE()).apply(
+                RequestOptions.placeholderOf(R.drawable.ic_loading_img).error(R.drawable.ic_error)
+            ).into(
                 image_file_view
             )
 

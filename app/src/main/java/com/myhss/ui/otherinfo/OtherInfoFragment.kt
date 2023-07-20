@@ -10,8 +10,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.Placeholder
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -114,11 +116,15 @@ class OtherInfoFragment : Fragment() {
                 qualification_first_date.text = sessionManager.fetchQUALIFICATION_DATE()
                 layout_first_aid_pro_body.visibility = View.GONE
 
+//                Glide.with(requireContext())
+//                    .load(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
+//                    .apply(Placeholder(R.drawable.ic_logout))
+//                    .into(image_file_view)
+
                 Glide.with(requireContext())
                     .load(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
-                    .into(
-                        image_file_view
-                    )
+                    .apply(RequestOptions.placeholderOf(R.drawable.ic_loading_img).error(R.drawable.ic_error))
+                    .into(image_file_view)
 
             } else {
                 layout_first_aid_qualification_file.visibility = View.GONE
