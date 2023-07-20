@@ -242,7 +242,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             val member_id = sessionManager.fetchMEMBERID()
             val devicetype = "A"
             val device_token = sessionManager.fetchFCMDEVICE_TOKEN()
-            DebugLog.d("device_token" + device_token!!)
+            DebugLog.e("device_token => " + device_token!!)
 //            myPrivileges("1", "approve")
 //            if (sessionManager.fetchMEMBERID() != "") {
             myProfile(user_id!!, member_id!!, devicetype, device_token)

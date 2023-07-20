@@ -117,17 +117,7 @@ class SplashActivity : AppCompatActivity() {
                 val app_name = "android_hss"//getString(R.string.app_name)
                 myLatestUpdate(OSName, app_version, app_name)
             } else {
-                val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@SplashActivity)
-                alertDialog.setTitle("No Internet")
-                alertDialog.setMessage("Please check your internet connection!")
-                alertDialog.setPositiveButton(
-                    "Ok"
-                ) { _, _ ->
-                    finish()
-                }
-                val alert: AlertDialog = alertDialog.create()
-                alert.setCanceledOnTouchOutside(false)
-                alert.show()
+                showAlertDialogforfinish("No Internet", "Please check your internet connection!")
             }
         }, 500)
     }
@@ -238,29 +228,24 @@ class SplashActivity : AppCompatActivity() {
                                 alert.show()
                             }
                         } catch (e: ArithmeticException) {
-                            println(e.toString())
-                        } finally {
-                            println("forceUpdateRequired")
+                            showAlertDialogforfinish(
+                                "Error Message",
+                                getString(R.string.some_thing_wrong)
+                            )
                         }
 
                     } else {
-                        Functions.showAlertMessageWithOK(
-                            this@SplashActivity, "Message", response.body()?.message
+                        showAlertDialogforfinish(
+                            "Error Message", response.body()?.message.toString()
                         )
                     }
                 } else {
-                    Functions.showAlertMessageWithOK(
-                        this@SplashActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
+                    showAlertDialogforfinish("Error Message", getString(R.string.some_thing_wrong))
                 }
             }
 
             override fun onFailure(call: Call<latest_update_response>, t: Throwable) {
-                Functions.showAlertMessageWithOK(
-                    this@SplashActivity, "Message",
-                    t.message,
-                )
+                showAlertDialogforfinish("Error Message", t.message.toString())
             }
         })
     }
@@ -280,5 +265,19 @@ class SplashActivity : AppCompatActivity() {
                 )
             )
         }
+    }
+
+    fun showAlertDialogforfinish(sTitle: String, sBody: String) {
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@SplashActivity)
+        alertDialog.setTitle(sTitle)
+        alertDialog.setMessage(sBody)
+        alertDialog.setPositiveButton(
+            "Ok"
+        ) { _, _ ->
+            finish()
+        }
+        val alert: AlertDialog = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
     }
 }
