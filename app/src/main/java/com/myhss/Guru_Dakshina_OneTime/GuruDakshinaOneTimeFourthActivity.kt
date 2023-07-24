@@ -37,18 +37,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.lifecycleScope
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.google.gson.JsonObject
 import com.stripe.android.PaymentAuthConfig
-import com.stripe.android.payments.paymentlauncher.PaymentLauncher
-import com.stripe.android.payments.paymentlauncher.PaymentResult
 import com.uk.myhss.Main.HomeActivity
-import kotlinx.coroutines.launch
 import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 
 
 class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
@@ -60,14 +52,13 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
     private lateinit var next_layout: LinearLayout
     private lateinit var edit_payment: ImageView
     private lateinit var donate_amount_txt: TextView
-    lateinit var cardInputWidget: CardMultilineWidget
 
+    private lateinit var cardInputWidget: CardMultilineWidget
     private lateinit var stripe: Stripe
     private lateinit var paymentIntentClientSecret: String
     private lateinit var paymentID: String
     private lateinit var paymentStatus: String
     private lateinit var paymentStatusReason: String
-    private lateinit var paymentLauncher: PaymentLauncher
     private lateinit var pd3: CustomProgressBar
 
 
@@ -113,27 +104,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         back_layout.setOnClickListener {
             finish()
         }
-
         cardInputWidget.setShouldShowPostalCode(false) // to hide and show postal code
-        stripe = Stripe(this, PaymentConfiguration.getInstance(applicationContext).publishableKey)
-
-        val paymentConfiguration = PaymentConfiguration.getInstance(applicationContext)
-        val uiCustomization =
-            PaymentAuthConfig.Stripe3ds2UiCustomization.Builder().setLabelCustomization(
-                PaymentAuthConfig.Stripe3ds2LabelCustomization.Builder().setTextFontSize(12).build()
-            ).build()
-        PaymentAuthConfig.init(
-            PaymentAuthConfig.Builder().set3ds2Config(
-                PaymentAuthConfig.Stripe3ds2Config.Builder().setTimeout(5)
-                    .setUiCustomization(uiCustomization).build()
-            ).build()
-        )
-//        paymentLauncher = PaymentLauncher.Companion.create(
-//            this,
-//            paymentConfiguration.publishableKey,
-//            paymentConfiguration.stripeAccountId,
-//            ::onPaymentResult
-//        )
         startCheckout()
     }
 
@@ -142,12 +113,10 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             if (Functions.isConnectingToInternet(this@GuruDakshinaOneTimeFourthActivity)) {
                 if (cardInputWidget.validateAllFields()) {
                     callApiForStripeData() //MyHSS API
-//              callDemoMethodApiForSTripe() //Demo API work well
                 } else {
                     Toast.makeText(this, "Please verify the card details.", Toast.LENGTH_SHORT)
                         .show()
                 }
-
             } else {
                 Toast.makeText(
                     this@GuruDakshinaOneTimeFourthActivity,
@@ -156,49 +125,6 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                 ).show()
             }
         }
-    }
-
-    private fun isValidate(): Boolean {
-        return cardInputWidget.validateAllFields()
-
-
-    }
-
-    private fun callDemoMethodApiForSTripe() {
-        val pd = CustomProgressBar(this@GuruDakshinaOneTimeFourthActivity)
-        pd.show()
-        val queue = Volley.newRequestQueue(this)
-        val url = "https://demo.codeseasy.com/apis/stripe/"
-        val stringRequest: StringRequest = object : StringRequest(Method.POST,
-            url,
-            com.android.volley.Response.Listener<String> { response ->
-                DebugLog.e("Response : " + "Response is: $response")
-
-                try {
-                    val responseJson = JSONObject(response)
-                    val paymentIntent = responseJson.getString("paymentIntent")
-                    paymentIntentClientSecret = paymentIntent
-                    makeStripePayement(paymentIntentClientSecret)
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                    // Handle JSON parsing error
-                    DebugLog.e("Error Response Issue : " + "That didn't work! ${e.toString()}")
-                }
-
-            },
-            com.android.volley.Response.ErrorListener { error ->
-                DebugLog.e("Error Response : " + "That didn't work!")
-                error.printStackTrace()
-
-            }) {
-            override fun getParams(): Map<String, String>? {
-                val paramV: MutableMap<String, String> = HashMap()
-                paramV["authKey"] = "abc"
-                return paramV
-            }
-        }
-        queue.add(stringRequest)
-        pd.dismiss()
     }
 
     private fun callApiForStripeData() {
@@ -262,14 +188,13 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 "$message. Please wait until payment complete.",
                                 Toast.LENGTH_LONG
                             ).show()
-                            DebugLog.e(" payment intent key  payment intent key : " + response.body()!!.info.payment_intent_client_secret)
                             paymentIntentClientSecret =
                                 response.body()!!.info.payment_intent_client_secret
                             paymentID = response.body()!!.dakshina_pay_intent_id
-                            DebugLog.e("Secret paymentIntentClientSecret : " + paymentIntentClientSecret)
-                            DebugLog.e("paymentID " + paymentID)
-
-                            makeStripePayement(paymentIntentClientSecret)
+                            makeStripePayement(
+                                paymentIntentClientSecret,
+                                response.body()!!.info.publishableKey
+                            )
                         } else {
                             pd.dismiss()
                             Functions.showAlertMessageWithOK(
@@ -299,26 +224,29 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         })
     }
 
-    private fun makeStripePayement(paymentIntentClientSecretKey: String) {
+    private fun makeStripePayement(paymentIntentClientSecretKey: String, sPublishableKey: String) {
+        PaymentConfiguration.init(
+            applicationContext,
+            sPublishableKey
+        )
+        stripe = Stripe(this, PaymentConfiguration.getInstance(applicationContext).publishableKey)
+        val uiCustomization = PaymentAuthConfig.Stripe3ds2UiCustomization.Builder()
+            .setLabelCustomization(
+                PaymentAuthConfig.Stripe3ds2LabelCustomization.Builder().setTextFontSize(12).build()
+            ).build()
+        PaymentAuthConfig.init(
+            PaymentAuthConfig.Builder().set3ds2Config(
+                PaymentAuthConfig.Stripe3ds2Config.Builder().setTimeout(5)
+                    .setUiCustomization(uiCustomization).build()
+            ).build()
+        )
 
         pd3 = CustomProgressBar(this@GuruDakshinaOneTimeFourthActivity)
         pd3.show()
-        DebugLog.e("SecretKey : " + paymentIntentClientSecretKey)
-//        val paymentIntentClientSecretKey_1 = paymentIntentClientSecretKey.replace("^\"|\"$", "");
-//        cardInputWidget.paymentMethodCreateParams?.let { params ->
-//            val confirmParams = ConfirmPaymentIntentParams.createWithPaymentMethodCreateParams(
-//                params,
-//                paymentIntentClientSecretKey
-//            )
-//            stripe.confirmPayment(this, confirmParams)
-//        }
         cardInputWidget.paymentMethodCreateParams?.let { params ->
             val confirmParams = ConfirmPaymentIntentParams.createWithPaymentMethodCreateParams(
                 params, paymentIntentClientSecretKey
             )
-//            lifecycleScope.launch {
-//                paymentLauncher.confirm(confirmParams)
-//            }
             stripe.confirmPayment(this, confirmParams)
         }
     }
@@ -359,40 +287,6 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             }
         }
     }
-
-//    private fun onPaymentResult(paymentResult: PaymentResult) {
-//        val message = when (paymentResult) {
-//            is PaymentResult.Completed -> {
-//                "Completed!"
-//                paymentStatus = "Completed"
-//                paymentStatusReason = ""
-//                DebugLog.e("Completed")
-//            }
-//
-//            is PaymentResult.Canceled -> {
-//                "Canceled!"
-//                paymentStatus = "Canceled"
-//                paymentStatusReason = "User has canceled the payment"
-//                DebugLog.e("Canceled")
-//            }
-//
-//            is PaymentResult.Failed -> {
-//                // This string comes from the PaymentIntent's error message.
-//                // See here: https://stripe.com/docs/api/payment_intents/object#payment_intent_object-last_payment_error-message
-//                "Failed: " + paymentResult.throwable.message
-//                paymentStatus = "Failed"
-//                paymentStatusReason = paymentResult.throwable.message.toString()
-//                DebugLog.e("paymentStatusReason : " + paymentStatusReason)
-//            }
-//        }
-////        Toast.makeText(
-////            this, "Payment Result:$message", Toast.LENGTH_LONG
-////        ).show()
-//
-//        DebugLog.e("Payment Result: " + " Result : $message")
-//        DebugLog.e("describeContents Result: " + " Result : ${paymentResult.describeContents()}")
-//        DebugLog.e("describeContents toString: " + " Result : ${paymentResult.toString()}")
-//    }
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -522,4 +416,3 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         })
     }
 }
-
