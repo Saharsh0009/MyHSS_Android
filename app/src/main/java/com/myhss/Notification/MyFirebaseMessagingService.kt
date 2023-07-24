@@ -19,6 +19,7 @@ import com.uk.myhss.Splash.SplashActivity
 import com.uk.myhss.Utils.SessionManager
 import java.util.*
 import android.graphics.Bitmap
+import com.myhss.Utils.DebugLog
 import java.io.InputStream
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -36,11 +37,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // [START_EXCLUDE]
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: ${remoteMessage.from}")
+        DebugLog.d("From : ${remoteMessage.from}")
 
         // Check if message contains a data payload.
         if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Message data payload: ${remoteMessage.data}")
+            DebugLog.d("Message data payload : ${remoteMessage.data}")
 
             // Compose and show notification
             if (!remoteMessage.data.isNullOrEmpty()) {
@@ -60,8 +61,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // Check if message contains a notification payload.
         remoteMessage.notification?.let {
-            Log.d(TAG, "Message Notification Body: ${it.body}")
-            sendNotification(remoteMessage.notification?.title!!, remoteMessage.notification?.body!!)
+            DebugLog.d("Message Notification Body : ${it.body}")
+            sendNotification(
+                remoteMessage.notification?.title!!,
+                remoteMessage.notification?.body!!
+            )
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -74,7 +78,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         sessionManager = SessionManager(this)
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
 
-        Log.d(TAG, "Refreshed token: $token")
+        DebugLog.d("Refreshed token : $token")
         sessionManager.saveFCMDEVICE_TOKEN(token)
 
         // If you want to send messages to this application instance or
@@ -98,12 +102,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      * Handle time allotted to BroadcastReceivers.
      */
     private fun handleNow() {
-        Log.d(TAG, "Short lived task is done.")
+        DebugLog.d("Short lived task is done.")
     }
 
     private fun sendRegistrationToServer(token: String?) {
         // TODO: Implement this method to send token to your app server.
-        Log.d(TAG, "sendRegistrationTokenToServer($token)")
+        DebugLog.d("sendRegistrationTokenToServer($token)")
     }
 
     /**
@@ -114,36 +118,57 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun sendNotification(title: String, messageBody: String) {
         val intent = Intent(this, SplashActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, getNotificationId() /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = PendingIntent.getActivity(
+            this, getNotificationId() /* Request code */, intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val channelId = getString(R.string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.app_logo)
-                .setContentTitle(title)  // getString(R.string.app_name)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.splash))
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent)
-                .setDefaults(DEFAULT_VIBRATE)
+            .setSmallIcon(R.drawable.app_logo)
+            .setContentTitle(title)  // getString(R.string.app_name)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.splash))
+            .setContentText(messageBody)
+            .setAutoCancel(true)
+            .setSound(defaultSoundUri)
+            .setContentIntent(pendingIntent)
+            .setDefaults(DEFAULT_VIBRATE)
 //                .setStyle(NotificationCompat.BigPictureStyle().
 //                 bigPicture(BitmapFactory.decodeResource(resources, R.drawable.splash)))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId,
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(
+                channelId,
+                "Channel human readable title",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(getNotificationId() /* ID of notification */, notificationBuilder.build())
+        notificationManager.notify(
+            getNotificationId() /* ID of notification */,
+            notificationBuilder.build()
+        )
+    }
+
+    fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "all_notifications" // You should create a String resource for this instead of storing in a variable
+            val mChannel = NotificationChannel(
+                channelId,
+                "General Notifications",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            mChannel.description = "This is default channel used for all other notifications"
+
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(mChannel)
+        }
     }
 
     /*
@@ -168,8 +193,4 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val rnd = Random()
         return 100 + rnd.nextInt(9000)
     }
-    /*companion object {
-
-        private const val TAG = "MyFirebaseMsgService"
-    }*/
 }
