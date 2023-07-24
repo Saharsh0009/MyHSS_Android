@@ -150,7 +150,10 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         builderData.addFormDataPart(
             "card_number", cardInputWidget.cardNumberEditText.text.toString()
         )
-        builderData.addFormDataPart("name", "TEST TEST")// need to replace with name
+        builderData.addFormDataPart(
+            "name",
+            sessionManager.fetchFIRSTNAME().toString() + sessionManager.fetchSURNAME().toString()
+        )// need to replace with name
         builderData.addFormDataPart(
             "card_expiry", cardInputWidget.expiryDateEditText.text.toString()
         )
