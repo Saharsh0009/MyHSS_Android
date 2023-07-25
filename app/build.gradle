@@ -36,9 +36,8 @@ android {
         applicationId "com.uk.myhss"
         minSdkVersion 21
         targetSdk 33
-        versionCode 19
-        versionName "1.5" //1.12 <-Development Version ->Current Live Version 18 (1.11) 28 Jan 2023
-//        versionName "1.0.5" // Testiing
+        versionCode 21
+        versionName "1.6"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
