@@ -10,7 +10,6 @@ import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -50,13 +49,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 sendNotification(title, msg)
             }
 
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use WorkManager.
-//                scheduleJob()
-            } else {
-                // Handle message within 10 seconds
-//                handleNow()
-            }
+//            if (/* Check if data needs to be processed by long running job */ true) {
+//                // For long-running tasks (10 seconds or more) use WorkManager.
+////                scheduleJob()
+//            } else {
+//                // Handle message within 10 seconds
+////                handleNow()
+//            }
         }
 
         // Check if message contains a notification payload.
@@ -122,7 +121,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             this, getNotificationId() /* Request code */, intent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
-
+        // code change test
         val channelId = getString(R.string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
