@@ -90,19 +90,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     /**
      * Schedule async work using WorkManager.
      */
-    private fun scheduleJob() {
-        // [START dispatch_job]
-//        val work = OneTimeWorkRequest.Builder(MyWorker::class.java).build()
-//        WorkManager.getInstance().beginWith(work).enqueue()
-        // [END dispatch_job]
-    }
+//    private fun scheduleJob() {
+//        // [START dispatch_job]
+////        val work = OneTimeWorkRequest.Builder(MyWorker::class.java).build()
+////        WorkManager.getInstance().beginWith(work).enqueue()
+//        // [END dispatch_job]
+//    }
 
     /**
      * Handle time allotted to BroadcastReceivers.
      */
-    private fun handleNow() {
-        DebugLog.d("Short lived task is done.")
-    }
+//    private fun handleNow() {
+//        DebugLog.d("Short lived task is done.")
+//    }
 
     private fun sendRegistrationToServer(token: String?) {
         // TODO: Implement this method to send token to your app server.
@@ -155,38 +155,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         )
     }
 
-    fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelId = "all_notifications" // You should create a String resource for this instead of storing in a variable
-            val mChannel = NotificationChannel(
-                channelId,
-                "General Notifications",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            mChannel.description = "This is default channel used for all other notifications"
-
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
-        }
-    }
-
     /*
     *To get a Bitmap image from the URL received
     * */
-    fun getBitmapfromUrl(imageUrl: String?): Bitmap? {
-        return try {
-            val url = URL(imageUrl)
-            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-            connection.setDoInput(true)
-            connection.connect()
-            val input: InputStream = connection.getInputStream()
-            BitmapFactory.decodeStream(input)
-        } catch (e: Exception) {
-            // TODO Auto-generated catch block
-            e.printStackTrace()
-            null
-        }
-    }
+//    fun getBitmapfromUrl(imageUrl: String?): Bitmap? {
+//        return try {
+//            val url = URL(imageUrl)
+//            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+//            connection.setDoInput(true)
+//            connection.connect()
+//            val input: InputStream = connection.getInputStream()
+//            BitmapFactory.decodeStream(input)
+//        } catch (e: Exception) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace()
+//            null
+//        }
+//    }
 
     private fun getNotificationId(): Int {
         val rnd = Random()
