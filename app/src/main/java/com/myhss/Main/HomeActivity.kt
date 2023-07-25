@@ -465,9 +465,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 alertDialog.setNegativeButton(
                                     "No"
                                 ) { _, _ ->
-                                    val i = Intent(this@HomeActivity, HomeActivity::class.java)
-                                    startActivity(i)
-                                    finishAffinity()
+
                                 }
                                 val alert: AlertDialog = alertDialog.create()
                                 alert.setCanceledOnTouchOutside(false)

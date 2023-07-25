@@ -36,9 +36,8 @@ android {
         applicationId "com.uk.myhss"
         minSdkVersion 21
         targetSdk 33
-        versionCode 19
-        versionName "1.5" //1.12 <-Development Version ->Current Live Version 18 (1.11) 28 Jan 2023
-//        versionName "1.0.5" // Testiing
+        versionCode 21
+        versionName "1.6"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -128,19 +127,19 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:21.3.0'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.3.0'
 
-    implementation 'com.google.firebase:firebase-crashlytics:18.3.7'
+    implementation 'com.google.firebase:firebase-crashlytics:18.4.0'
 
-    implementation 'com.google.firebase:firebase-messaging:23.1.2'
+    implementation 'com.google.firebase:firebase-messaging:23.2.0'
     implementation 'com.google.firebase:firebase-core:21.1.1'
 
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.2.0'
 
     implementation 'com.google.firebase:firebase-appcheck-debug:17.0.1'
 
     implementation 'com.github.mabbas007:TagsEditText:1.0.5'
 
     // Google Drive
-    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.google.android.gms:play-services-auth:20.6.0'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 
