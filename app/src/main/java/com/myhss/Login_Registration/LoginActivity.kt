@@ -56,17 +56,8 @@ import java.util.*
 
 
 class LoginActivity : AppCompatActivity() {
-    //    private val sessionManager: SessionManager? = null
-//    private val sh: SharedPreferences? = null
-//    private val sh1: SharedPreferences.Editor? = null
-//    var isMapInfoShown: Boolean = false
     lateinit var sharedPreferences: SharedPreferences
     private lateinit var sessionManager: SessionManager
-
-    private val sharedPrefFile = "MyHss"
-
-    var DeviceId = "deviceid"
-
     var m_deviceId: String = ""
     var device_type: String = "A"
 
@@ -133,7 +124,6 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(
                         Intent(
                             applicationContext, HomeActivity::class.java
-//                            MainActivity::class.java
                         )
                     )// App code
                 }
@@ -155,9 +145,6 @@ class LoginActivity : AppCompatActivity() {
 
                     override fun onError(exception: FacebookException) { // App code
                     }
-
-                    val accessToken = AccessToken.getCurrentAccessToken()
-//                    accessToken != null && !accessToken.isExpired
                 })
         }
 
@@ -214,47 +201,6 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-
-        edit_password.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // Call your code here
-                val user = edit_username.text.toString()
-                val password = edit_password.text.toString()
-
-                if (user.isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter Username", Snackbar.LENGTH_SHORT).show()
-                    edit_username.error = "     Username required"
-                    edit_username.requestFocus()
-                } else if (password.isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter Password.", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_password.error = "     Password required"
-                    edit_password.requestFocus()
-                } else {
-                    if (Functions.isConnectingToInternet(this@LoginActivity)) {
-                        sessionManager.saveDEVICE_TOKEN(m_deviceId)
-                        sessionManager.savePASSWORD(password)
-                        login(user, password, m_deviceId, device_type)
-                    } else {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            resources.getString(R.string.no_connection),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-                true
-            }
-            false
-        }
-
-        /*hide_show.setOnClickListener {
-            if(isMapInfoShown){
-                hide_show.visibility = View.VISIBLE
-            } else{
-                hide_show.visibility = View.INVISIBLE
-            }
-        }*/
 
         registration_layout.setOnClickListener {
             val i = Intent(this@LoginActivity, RegistrationActivity::class.java)

@@ -67,10 +67,12 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:hint="@string/username"
                             android:inputType="text"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:textSize="@dimen/font_size18"
                             android:theme="@style/StyleEditTextView" />
 
@@ -106,25 +108,18 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:hint="@string/password"
                                 android:imeOptions="actionDone"
                                 android:inputType="textPassword"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:textSize="@dimen/font_size18"
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
-
-                        <!--<ImageView
-                            android:id="@+id/hide_show"
-                            android:layout_width="@dimen/padding20"
-                            android:layout_height="@dimen/padding20"
-                            android:layout_centerVertical="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginEnd="@dimen/padding10"
-                            android:src="@drawable/show_password" />-->
-
+                        
                     </RelativeLayout>
 
                 </LinearLayout>
