@@ -30,14 +30,13 @@ android {
             keyAlias 'myhss'
             keyPassword 'myhssandroid'
         }
-
     }
     defaultConfig {
         applicationId "com.uk.myhss"
         minSdkVersion 21
         targetSdk 33
-        versionCode 21
-        versionName "1.6"
+        versionCode 22
+        versionName "1.7"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
