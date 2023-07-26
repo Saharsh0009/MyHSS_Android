@@ -1258,7 +1258,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         return false
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+
     override fun onRestart() {
         super.onRestart()
 //        displayLocationSettingsRequest(this)
