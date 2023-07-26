@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootLayout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include layout="@layout/action_bar" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none" >
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -26,49 +26,49 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/grayColorColor"
-                android:textAllCaps="true"
-                android:theme="@style/StyleTextView"
                 android:layout_marginStart="@dimen/font_size15"
-                android:layout_marginEnd="@dimen/font_size15"
                 android:layout_marginTop="@dimen/padding10"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:text="@string/name_txt"
+                android:textAllCaps="true"
+                android:textColor="@color/grayColorColor"
                 android:textSize="@dimen/font_size15"
-                android:text="@string/username" />
+                android:theme="@style/StyleTextView" />
 
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textAllCaps="true"
-                android:theme="@style/StyleTextView"
                 android:layout_marginStart="@dimen/font_size15"
-                android:layout_marginEnd="@dimen/font_size15"
                 android:layout_marginTop="@dimen/padding10"
-                android:textSize="@dimen/font_size15" />
+                android:layout_marginEnd="@dimen/font_size15"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size15"
+                android:theme="@style/StyleTextView" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/grayColorColor"
-                android:theme="@style/StyleTextView"
                 android:layout_marginStart="@dimen/font_size15"
-                android:layout_marginEnd="@dimen/font_size15"
                 android:layout_marginTop="@dimen/padding10"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:text="@string/shakha_name"
+                android:textColor="@color/grayColorColor"
                 android:textSize="@dimen/font_size15"
-                android:text="@string/shakha_name" />
+                android:theme="@style/StyleTextView" />
 
             <TextView
                 android:id="@+id/shakha_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textAllCaps="true"
-                android:theme="@style/StyleTextView"
                 android:layout_marginStart="@dimen/font_size15"
-                android:layout_marginEnd="@dimen/font_size15"
                 android:layout_marginTop="@dimen/padding10"
-                android:textSize="@dimen/font_size15" />
+                android:layout_marginEnd="@dimen/font_size15"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size15"
+                android:theme="@style/StyleTextView" />
 
             <View
                 android:layout_width="match_parent"
@@ -79,46 +79,47 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginStart="@dimen/padding15"
                 android:layout_marginTop="@dimen/padding20"
-                android:layout_marginEnd="@dimen/padding15" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:theme="@style/StyleTextView"
-                android:fontFamily="@font/sourcesanspro_bold"
-                android:textSize="@dimen/font_size15"
-                android:text="@string/how_much_would_you_like_donate" />
+                android:layout_marginEnd="@dimen/padding15"
+                android:orientation="horizontal">
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sourcesanspro_bold"
+                    android:text="@string/how_much_would_you_like_donate"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size15"
+                    android:theme="@style/StyleTextView" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:gravity="center_vertical"
+                    android:text="*"
+                    android:textColor="@color/redColor"
+                    android:theme="@style/StyleTextView" />
+
+            </LinearLayout>
 
             <EditText
-                android:theme="@style/StyleEditTextView"
                 android:id="@+id/edit_amount"
-                android:inputType="number"
-                android:hint="\u00a3  Amount"
-                android:layout_marginTop="@dimen/padding10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginEnd="@dimen/font_size15"
                 android:background="@color/light_gray_background"
-                android:textColor="@color/blackColor"
+                android:hint="\u00a3  Amount"
+                android:inputType="number"
+                android:maxLength="8"
                 android:padding="@dimen/padding15"
+                android:textColor="@color/blackColor"
                 android:textColorHint="@color/grayColorColor"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent" />
+                android:theme="@style/StyleEditTextView" />
 
             <View
                 android:layout_width="match_parent"
@@ -167,38 +168,38 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="1"
                 android:layout_marginTop="@dimen/padding35"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="@dimen/padding10"
                     android:layout_marginEnd="@dimen/padding10"
-                    android:layout_weight="1"
-                    android:layout_gravity="center" >
+                    android:layout_weight="1">
 
                     <LinearLayout
                         android:id="@+id/next_layout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center"
                         android:layout_gravity="center"
-                        android:orientation="horizontal"
                         android:layout_marginStart="@dimen/padding50"
                         android:layout_marginEnd="@dimen/padding50"
                         android:background="@drawable/button_round"
+                        android:gravity="center"
+                        android:orientation="horizontal"
                         android:paddingStart="@dimen/padding35"
-                        android:paddingEnd="@dimen/padding35" >
+                        android:paddingEnd="@dimen/padding35">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/sourcesanspro_regular"
                             android:gravity="center"
                             android:padding="12dp"
                             android:text="@string/next"
-                            android:fontFamily="@font/sourcesanspro_regular"
                             android:textColor="@color/white"
                             android:textSize="18sp" />
 
@@ -215,8 +216,8 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_below="@+id/submit_layout"
-                android:layout_height="@dimen/padding20" />
+                android:layout_height="@dimen/padding20"
+                android:layout_below="@+id/submit_layout" />
 
         </LinearLayout>
 

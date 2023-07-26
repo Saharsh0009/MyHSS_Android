@@ -58,7 +58,7 @@ class GuruDakshinaRegularFirstActivity() : AppCompatActivity() {
 
         info_tooltip.visibility = View.VISIBLE
 
-        header_title.text = getString(R.string.regular)
+        header_title.text = getString(R.string.regular_dakshina)
 
         MESSAGE = "Namaste,\n" +
                 "\n" +

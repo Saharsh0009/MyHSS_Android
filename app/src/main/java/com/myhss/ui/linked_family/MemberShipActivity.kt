@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings.Global.getString
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -75,7 +76,9 @@ class MemberShipActivity : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("MembershipApplicationsVC")
-        sessionManager.firebaseAnalytics.setUserProperty("MembershipApplicationsVC", "MemberShipActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "MembershipApplicationsVC", "MemberShipActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -86,25 +89,33 @@ class MemberShipActivity : AppCompatActivity() {
         val header_title = findViewById<TextView>(R.id.header_title)
 
         if (intent.getStringExtra("MEMBERS") == "ALL_MEMBERS") {
-            header_title.text = getString(R.string.membership)
+            header_title.text = getString(R.string.membership_applications_new)
             SHOW_HIDE = "ALLSHOW"
             sessionManager.firebaseAnalytics.setUserId("MembershipApplicationsVC")
-            sessionManager.firebaseAnalytics.setUserProperty("MembershipApplicationsVC", "MemberShipActivity")
+            sessionManager.firebaseAnalytics.setUserProperty(
+                "MembershipApplicationsVC", "MemberShipActivity"
+            )
         } else if (intent.getStringExtra("MEMBERS") == "ACTIVE_MEMBERS") {
             header_title.text = "Active " + getString(R.string.members)
             SHOW_HIDE = "ACTIVE"
             sessionManager.firebaseAnalytics.setUserId("ActiveMembersVC")
-            sessionManager.firebaseAnalytics.setUserProperty("ActiveMembersVC", "MemberShipActivity")
+            sessionManager.firebaseAnalytics.setUserProperty(
+                "ActiveMembersVC", "MemberShipActivity"
+            )
         } else if (intent.getStringExtra("MEMBERS") == "INACTIVE_MEMBERS") {
-            header_title.text = "InActive " + getString(R.string.members)
+            header_title.text = "Inactive " + getString(R.string.members)
             SHOW_HIDE = "INACTIVE"
             sessionManager.firebaseAnalytics.setUserId("InactiveMembersVC")
-            sessionManager.firebaseAnalytics.setUserProperty("InactiveMembersVC", "MemberShipActivity")
+            sessionManager.firebaseAnalytics.setUserProperty(
+                "InactiveMembersVC", "MemberShipActivity"
+            )
         } else if (intent.getStringExtra("MEMBERS") == "REJECTED_MEMBERS") {
             header_title.text = "Rejected " + getString(R.string.members)
             SHOW_HIDE = "REJECT"
             sessionManager.firebaseAnalytics.setUserId("RejectedMembersVC")
-            sessionManager.firebaseAnalytics.setUserProperty("RejectedMembersVC", "MemberShipActivity")
+            sessionManager.firebaseAnalytics.setUserProperty(
+                "RejectedMembersVC", "MemberShipActivity"
+            )
         }
 
         back_arrow.setOnClickListener {
@@ -132,20 +143,21 @@ class MemberShipActivity : AppCompatActivity() {
 
         if (intent.getStringExtra("MEMBERS") == "ALL_MEMBERS") {
 
-            val end:Int = 100
-            val start:Int = 0
+            val end: Int = 100
+            val start: Int = 0
 
             if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                 USERID = sessionManager.fetchUserID()!!
                 Log.d("USERID", USERID)
-                TAB = "family"
+                TAB = "shakha"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
-                STATUS = "all"
+//                STATUS = "all"
+                STATUS = "0"
                 LENGTH = end.toString()
                 START = start.toString()
                 SEARCH = ""
                 CHAPTERID = ""
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH)
             } else {
                 Toast.makeText(
                     this@MemberShipActivity,
@@ -155,20 +167,20 @@ class MemberShipActivity : AppCompatActivity() {
             }
         } else if (intent.getStringExtra("MEMBERS") == "ACTIVE_MEMBERS") {
 
-            val end:Int = 100
-            val start:Int = 0
+            val end: Int = 100
+            val start: Int = 0
 
             if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                 USERID = sessionManager.fetchUserID()!!
                 Log.d("USERID", USERID)
-                TAB = "family"
+                TAB = "shakha"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
                 STATUS = "1"
                 LENGTH = end.toString()
                 START = start.toString()
                 SEARCH = ""
                 CHAPTERID = ""
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH)
             } else {
                 Toast.makeText(
                     this@MemberShipActivity,
@@ -178,20 +190,20 @@ class MemberShipActivity : AppCompatActivity() {
             }
         } else if (intent.getStringExtra("MEMBERS") == "INACTIVE_MEMBERS") {
 
-            val end:Int = 100
-            val start:Int = 0
+            val end: Int = 100
+            val start: Int = 0
 
             if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                 USERID = sessionManager.fetchUserID()!!
                 Log.d("USERID", USERID)
-                TAB = "family"
+                TAB = "shakha"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
                 STATUS = "4"
                 LENGTH = end.toString()
                 START = start.toString()
                 SEARCH = ""
                 CHAPTERID = ""
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH)
             } else {
                 Toast.makeText(
                     this@MemberShipActivity,
@@ -201,20 +213,20 @@ class MemberShipActivity : AppCompatActivity() {
             }
         } else if (intent.getStringExtra("MEMBERS") == "REJECTED_MEMBERS") {
 
-            val end:Int = 100
-            val start:Int = 0
+            val end: Int = 100
+            val start: Int = 0
 
             if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                 USERID = sessionManager.fetchUserID()!!
                 Log.d("USERID", USERID)
-                TAB = "family"
+                TAB = "shakha"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
                 STATUS = "3"
                 LENGTH = end.toString()
                 START = start.toString()
                 SEARCH = ""
                 CHAPTERID = ""
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH)
             } else {
                 Toast.makeText(
                     this@MemberShipActivity,
@@ -339,37 +351,28 @@ class MemberShipActivity : AppCompatActivity() {
         val bestCities =
             listOf("Lahore", "Berlin", "Lisbon", "Tokyo", "Toronto", "Sydney", "Osaka", "Istanbul")
         val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            bestCities
+            this, android.R.layout.simple_list_item_1, bestCities
         )
 
         search_fields.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (intent.getStringExtra("MEMBERS") == "ALL_MEMBERS") {
 
-                    val end:Int = 100
-                    val start:Int = 0
+                    val end: Int = 100
+                    val start: Int = 0
 
                     if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                         USERID = sessionManager.fetchUserID()!!
                         Log.d("USERID", USERID)
-                        TAB = "family"
+                        TAB = "shakha"
                         MEMBERID = sessionManager.fetchMEMBERID()!!
-                        STATUS = "all"
+                        STATUS = "0"
                         LENGTH = end.toString()
                         START = start.toString()
                         SEARCH = s.toString()
                         CHAPTERID = ""
                         mySearchMemberList(
-                            USERID,
-                            TAB,
-                            MEMBERID,
-                            STATUS,
-                            LENGTH,
-                            START,
-                            SEARCH,
-                            CHAPTERID
+                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH
                         )
                     } else {
                         Toast.makeText(
@@ -380,13 +383,13 @@ class MemberShipActivity : AppCompatActivity() {
                     }
                 } else if (intent.getStringExtra("MEMBERS") == "ACTIVE_MEMBERS") {
 
-                    val end:Int = 100
-                    val start:Int = 0
+                    val end: Int = 100
+                    val start: Int = 0
 
                     if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                         USERID = sessionManager.fetchUserID()!!
                         Log.d("USERID", USERID)
-                        TAB = "family"
+                        TAB = "shakha"
                         MEMBERID = sessionManager.fetchMEMBERID()!!
                         STATUS = "1"
                         LENGTH = end.toString()
@@ -394,14 +397,7 @@ class MemberShipActivity : AppCompatActivity() {
                         SEARCH = s.toString()
                         CHAPTERID = ""
                         mySearchMemberList(
-                            USERID,
-                            TAB,
-                            MEMBERID,
-                            STATUS,
-                            LENGTH,
-                            START,
-                            SEARCH,
-                            CHAPTERID
+                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH
                         )
                     } else {
                         Toast.makeText(
@@ -412,13 +408,13 @@ class MemberShipActivity : AppCompatActivity() {
                     }
                 } else if (intent.getStringExtra("MEMBERS") == "INACTIVE_MEMBERS") {
 
-                    val end:Int = 100
-                    val start:Int = 0
+                    val end: Int = 100
+                    val start: Int = 0
 
                     if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                         USERID = sessionManager.fetchUserID()!!
                         Log.d("USERID", USERID)
-                        TAB = "family"
+                        TAB = "shakha"
                         MEMBERID = sessionManager.fetchMEMBERID()!!
                         STATUS = "4"
                         LENGTH = end.toString()
@@ -426,14 +422,7 @@ class MemberShipActivity : AppCompatActivity() {
                         SEARCH = s.toString()
                         CHAPTERID = ""
                         mySearchMemberList(
-                            USERID,
-                            TAB,
-                            MEMBERID,
-                            STATUS,
-                            LENGTH,
-                            START,
-                            SEARCH,
-                            CHAPTERID
+                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH
                         )
                     } else {
                         Toast.makeText(
@@ -444,13 +433,13 @@ class MemberShipActivity : AppCompatActivity() {
                     }
                 } else if (intent.getStringExtra("MEMBERS") == "REJECTED_MEMBERS") {
 
-                    val end:Int = 100
-                    val start:Int = 0
+                    val end: Int = 100
+                    val start: Int = 0
 
                     if (Functions.isConnectingToInternet(this@MemberShipActivity)) {
                         USERID = sessionManager.fetchUserID()!!
                         Log.d("USERID", USERID)
-                        TAB = "family"
+                        TAB = "shakha"
                         MEMBERID = sessionManager.fetchMEMBERID()!!
                         STATUS = "3"
                         LENGTH = end.toString()
@@ -458,14 +447,7 @@ class MemberShipActivity : AppCompatActivity() {
                         SEARCH = s.toString()
                         CHAPTERID = ""
                         mySearchMemberList(
-                            USERID,
-                            TAB,
-                            MEMBERID,
-                            STATUS,
-                            LENGTH,
-                            START,
-                            SEARCH,
-                            CHAPTERID
+                            USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH
                         )
                     } else {
                         Toast.makeText(
@@ -488,8 +470,7 @@ class MemberShipActivity : AppCompatActivity() {
 
         add_family_layout.setOnClickListener {
 //            Snackbar.make(rootview, "Add Sankhya", Snackbar.LENGTH_SHORT).show()
-            startActivity(Intent(this@MemberShipActivity, AddSankhyaActivity::class.java))
-            /*val i = Intent(this, AddMemberFirstActivity::class.java)
+            startActivity(Intent(this@MemberShipActivity, AddSankhyaActivity::class.java))/*val i = Intent(this, AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family");
             startActivity(i)*/
         }
@@ -497,15 +478,19 @@ class MemberShipActivity : AppCompatActivity() {
     }
 
     private fun myMemberList(
-        user_id: String, tab: String, member_id: String, status: String,
-        length: String, start: String, search: String, chapter_id: String
+        user_id: String,
+        tab: String,
+        member_id: String,
+        status: String,
+        length: String,
+        start: String,
+        search: String
     ) {
         val pd = CustomProgressBar(this@MemberShipActivity)
         pd.show()
         val call: Call<Get_Member_Listing_Response> =
-            MyHssApplication.instance!!.api.get_member_listing(
-                user_id, tab, member_id,
-                status, length, start, search, chapter_id
+            MyHssApplication.instance!!.api.get_member_listing_shakha(
+                user_id, tab, member_id, status, length, start, search
             )
         call.enqueue(object : Callback<Get_Member_Listing_Response> {
             override fun onResponse(
@@ -557,15 +542,19 @@ class MemberShipActivity : AppCompatActivity() {
     }
 
     private fun mySearchMemberList(
-        user_id: String, tab: String, member_id: String, status: String,
-        length: String, start: String, search: String, chapter_id: String
+        user_id: String,
+        tab: String,
+        member_id: String,
+        status: String,
+        length: String,
+        start: String,
+        search: String
     ) {
 //        val pd = CustomProgressBar(this@MemberShipActivity)
 //        pd.show()
         val call: Call<Get_Member_Listing_Response> =
-            MyHssApplication.instance!!.api.get_member_listing(
-                user_id, tab, member_id,
-                status, length, start, search, chapter_id
+            MyHssApplication.instance!!.api.get_member_listing_shakha(
+                user_id, tab, member_id, status, length, start, search
             )
         call.enqueue(object : Callback<Get_Member_Listing_Response> {
             override fun onResponse(
@@ -592,7 +581,7 @@ class MemberShipActivity : AppCompatActivity() {
                             println("Family")
                         }
                     } else {
-                        Functions.displayMessage(this@MemberShipActivity,response.body()?.message)
+                        Functions.displayMessage(this@MemberShipActivity, response.body()?.message)
 //                        Functions.showAlertMessageWithOK(
 //                            this@MemberShipActivity, "",
 ////                        "Message",
@@ -676,12 +665,15 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
             val righr_menu = itemView.findViewById(R.id.righr_menu) as ImageView
             val adapter_view = itemView.findViewById(R.id.adapter_view) as LinearLayout
             if (my_family_DatumGurudakshina.middleName != "") {
-                family_name.text = my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.middleName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
+                family_name.text =
+                    my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " + my_family_DatumGurudakshina.middleName!!.capitalize(
+                        Locale.ROOT
+                    ) + " " + my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
             } else {
-                family_name.text = my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
+                family_name.text =
+                    my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " + my_family_DatumGurudakshina.lastName!!.capitalize(
+                        Locale.ROOT
+                    )
             }
             family_address.text = my_family_DatumGurudakshina.chapterName!!.capitalize(Locale.ROOT)
             email_txt.text = my_family_DatumGurudakshina.email!!
@@ -692,6 +684,14 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
 //            reject_txt.visibility = View.GONE
 
             active_inactive_txt.text = my_family_DatumGurudakshina.ageCategories
+
+            if (sessionManager.fetchUSERROLE()?.contains("Sankhya Pramukh", false) == true) {
+//            if (true) {
+                Log.e("Role : ", " Role : " + sessionManager.fetchUSERROLE())
+                righr_menu.visibility = View.GONE
+            } else {
+                righr_menu.visibility = View.VISIBLE
+            }
 
             if (SHOW_HIDE == "ALLSHOW") {
                 active_txt.visibility = View.VISIBLE
@@ -725,8 +725,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 ) { _, _ ->
                     if (Functions.isConnectingToInternet(itemView.context)) {
                         myApproved(
-                            sessionManager.fetchUserID()!!,
-                            my_family_DatumGurudakshina.memberId!!
+                            sessionManager.fetchUserID()!!, my_family_DatumGurudakshina.memberId!!
                         )
                     } else {
                         Toast.makeText(
@@ -756,20 +755,19 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 }*/
             }
 
-            reject_txt.text = itemView.context.getString(R.string.inactive_txt)
+            reject_txt.text = itemView.context.getString(R.string.inactivate_txt)
 
             reject_txt.setOnClickListener {
 //                Toast.makeText(itemView.context, "Rejected", Toast.LENGTH_SHORT).show()
                 val alertDialog: AlertDialog.Builder = AlertDialog.Builder(itemView.context)
 //            alertDialog.setTitle("Logout")
-                alertDialog.setMessage("Are you sure you want to inactive this member?")
+                alertDialog.setMessage("Are you sure you want to inactivate this member?")
                 alertDialog.setPositiveButton(
                     "yes"
                 ) { _, _ ->
                     if (Functions.isConnectingToInternet(itemView.context)) {
                         myInactive(
-                            sessionManager.fetchUserID()!!,
-                            my_family_DatumGurudakshina.memberId!!
+                            sessionManager.fetchUserID()!!, my_family_DatumGurudakshina.memberId!!
                         )
 //                    myRejected(
 //                        sessionManager.fetchUserID()!!,
@@ -802,8 +800,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 ) { _, _ ->
                     if (Functions.isConnectingToInternet(itemView.context)) {
                         myDelete(
-                            sessionManager.fetchUserID()!!,
-                            my_family_DatumGurudakshina.memberId!!
+                            sessionManager.fetchUserID()!!, my_family_DatumGurudakshina.memberId!!
                         )
                     } else {
                         Toast.makeText(
@@ -882,8 +879,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = call
                 if (ActivityCompat.checkSelfPermission(
-                        itemView.context,
-                        Manifest.permission.CALL_PHONE
+                        itemView.context, Manifest.permission.CALL_PHONE
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     itemView.context.startActivity(intent)
@@ -919,9 +915,15 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                 alertBuilder.setPositiveButton(
                                     "OK"
                                 ) { dialog, which ->
-                                    val i = Intent(itemView.context, LinkedFamilyFragment::class.java)
+
+                                    val i =
+                                        Intent(itemView.context, LinkedFamilyFragment::class.java)
                                     i.putExtra("DashBoard", "SHAKHAVIEW")
+                                    i.putExtra(
+                                        "headerName", itemView.context.getString(R.string.my_shakha)
+                                    )
                                     itemView.context.startActivity(i)
+
                                     (itemView.context as AppCompatActivity).finishAffinity()
 
 //                                    itemView.context.startActivity(
@@ -940,7 +942,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                 println("Family")
                             }
                         } else {
-                            Functions.displayMessage(itemView.context,response.body()?.message)
+                            Functions.displayMessage(itemView.context, response.body()?.message)
 //                            Functions.showAlertMessageWithOK(
 //                                itemView.context, "",
 ////                            "Message",
@@ -991,8 +993,12 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                 alertBuilder.setPositiveButton(
                                     "OK"
                                 ) { dialog, which ->
-                                    val i = Intent(itemView.context, LinkedFamilyFragment::class.java)
+                                    val i =
+                                        Intent(itemView.context, LinkedFamilyFragment::class.java)
                                     i.putExtra("DashBoard", "SHAKHAVIEW")
+                                    i.putExtra(
+                                        "headerName", itemView.context.getString(R.string.my_shakha)
+                                    )
                                     itemView.context.startActivity(i)
                                     (itemView.context as AppCompatActivity).finishAffinity()
 //                                    itemView.context.startActivity(
@@ -1011,7 +1017,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                 println("Family")
                             }
                         } else {
-                            Functions.displayMessage(itemView.context,response.body()?.message)
+                            Functions.displayMessage(itemView.context, response.body()?.message)
 //                            Functions.showAlertMessageWithOK(
 //                                itemView.context, "",
 ////                            "Message",
@@ -1169,8 +1175,12 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                 alertBuilder.setPositiveButton(
                                     "OK"
                                 ) { dialog, which ->
-                                    val i = Intent(itemView.context, LinkedFamilyFragment::class.java)
+                                    val i =
+                                        Intent(itemView.context, LinkedFamilyFragment::class.java)
                                     i.putExtra("DashBoard", "SHAKHAVIEW")
+                                    i.putExtra(
+                                        "headerName", itemView.context.getString(R.string.my_shakha)
+                                    )
                                     itemView.context.startActivity(i)
                                     (itemView.context as AppCompatActivity).finishAffinity()
 //                                    itemView.context.startActivity(
@@ -1189,7 +1199,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                 println("Family")
                             }
                         } else {
-                            Functions.displayMessage(itemView.context,response.body()?.message)
+                            Functions.displayMessage(itemView.context, response.body()?.message)
 //                            Functions.showAlertMessageWithOK(
 //                                itemView.context, "",
 ////                            "Message",

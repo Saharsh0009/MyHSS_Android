@@ -47,6 +47,10 @@ class LoginResponse {
     @Expose
     var memberId: String? = null
 
+    @SerializedName("member_status")
+    @Expose
+    var memberStatus: String? = null
+
     @SerializedName("security_key")
     @Expose
     var securityKey: String? = null

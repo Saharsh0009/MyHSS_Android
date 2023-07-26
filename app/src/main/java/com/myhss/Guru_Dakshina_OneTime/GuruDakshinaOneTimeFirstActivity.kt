@@ -42,7 +42,9 @@ class GuruDakshinaOneTimeFirstActivity() : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("OneTimeDakshinaStep1VC")
-        sessionManager.firebaseAnalytics.setUserProperty("OneTimeDakshinaStep1VC", "GuruDakshinaOneTimeFirstActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "OneTimeDakshinaStep1VC", "GuruDakshinaOneTimeFirstActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -52,7 +54,7 @@ class GuruDakshinaOneTimeFirstActivity() : AppCompatActivity() {
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
 
-        header_title.text = getString(R.string.one_time)
+        header_title.text = getString(R.string.one_time_dakshina)
 
         user_name = findViewById(R.id.user_name)
         shakha_name = findViewById(R.id.shakha_name)
@@ -66,25 +68,21 @@ class GuruDakshinaOneTimeFirstActivity() : AppCompatActivity() {
         back_arrow.setOnClickListener {
             finish()
         }
-
         next_layout.setOnClickListener {
             Amount = edit_amount.text.toString()
+            edit_amount.filters = arrayOf<InputFilter>(InputFilterMinMax("1", "10000"))
             if (edit_amount.text.toString().isNotEmpty()) {
-                edit_amount.filters = arrayOf<InputFilter>(
-                    InputFilterMinMax(
-                        "1",
-                        "10000"
+                if (Integer.valueOf(edit_amount.text.toString()) > 0 && Integer.valueOf(edit_amount.text.toString()) <= 10000) {
+                    val i = Intent(
+                        this@GuruDakshinaOneTimeFirstActivity,
+                        GuruDakshinaOneTimeSecondActivity::class.java
                     )
-                )
-                if (Integer.valueOf(edit_amount.text.toString()) > 0 && Integer.valueOf(edit_amount.text.toString()) <= 1000) {
-                    val i =
-                        Intent(this@GuruDakshinaOneTimeFirstActivity, GuruDakshinaOneTimeSecondActivity::class.java)
                     i.putExtra("Amount", Amount)
                     startActivity(i)
                 } else {
-                    Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
+                        .show()
                 }
-
             } else {
                 Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }

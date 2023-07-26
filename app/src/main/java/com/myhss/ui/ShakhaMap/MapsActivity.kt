@@ -614,7 +614,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
+    override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap!!.clear()
         mMap!!.cameraPosition
@@ -1212,6 +1212,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
 //        super.onBackPressed()
         val i = Intent(this@MapsActivity, HomeActivity::class.java)

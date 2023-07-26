@@ -3,31 +3,33 @@ package com.uk.myhss.AddMember
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.provider.Settings
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
-import android.util.Base64
 import android.util.Log
 import android.view.View
-import android.view.animation.TranslateAnimation
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -35,10 +37,12 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
+import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
+import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
-import com.uk.myhss.AddMember.Get_CreateMember.Get_CreateMembership_Response
 import com.uk.myhss.AddMember.Get_Dietaries.Datum_Get_Dietaries
 import com.uk.myhss.AddMember.Get_Dietaries.Get_Dietaries_Response
 import com.uk.myhss.AddMember.Get_Indianstates.Datum_Get_Indianstates
@@ -54,6 +58,7 @@ import mabbas007.tagsedittext.TagsEditText
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okio.Buffer
 import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Callback
@@ -72,8 +77,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 
     private var medical_info: String = ""
     private var qualified_info: String = ""
-    private var File_name: String = ""
-    var Check_value: String = ""
 
     var dietaryName: List<String> = ArrayList<String>()
     var dietaryID: List<String> = ArrayList<String>()
@@ -81,18 +84,13 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     var spokenID: List<String> = ArrayList<String>()
     var originName: List<String> = ArrayList<String>()
     var originID: List<String> = ArrayList<String>()
-
-    var get_membership_detail: List<Get_CreateMembership_Response> =
-        ArrayList<Get_CreateMembership_Response>()
-    var get_profile_detail: List<Get_CreateMembership_Response> =
-        ArrayList<Get_CreateMembership_Response>()
+    var firstAidInfoName: List<String> = ArrayList<String>()
+    var firstAidInfoID: List<String> = ArrayList<String>()
 
     private var DIETARY_ID: String = ""
     private var SPOKEN_ID: String = ""
     private var ORIGIN_ID: String = ""
-//    private var PASSWORD: String = ""
-
-    private val IMAGE_DIRECTORY = "/demonuts_upload_gallery"
+    private var FIRSTAID_ID: String = ""
 
     private lateinit var edit_medical_information_details: TextInputEditText
     private lateinit var edit_date_of_first_aid_qualification: TextView
@@ -132,39 +130,31 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     private lateinit var checkbox: CheckBox
     private lateinit var agreement_txt: TextView
 
-    private lateinit var gallery_pdf_layout: RelativeLayout
     private lateinit var check_box_layout: RelativeLayout
-    private lateinit var select_gallery: LinearLayout
-    private lateinit var select_pdf: LinearLayout
-    private lateinit var close_layout: ImageView
 
-    //Pdf request code
-    private val PICK_PDF_REQUEST = 1
-    private val REQUEST_CODE = 2
-
-    //storage permission code
-    private val STORAGE_PERMISSION_CODE = 123
-
-    //Uri to store the image uri
-    private var filePath: Uri? = null
-    private var ImagefilePath: Uri? = null
-    var bitmap: Bitmap? = null
-
-    //image pick code
-    private val IMAGE_PICK_CODE = 1000;
-
-    //Permission code
-    private val PERMISSION_CODE = 1001;
-
-    var Upload_file: String = ""
+    private lateinit var relative_aid_type: RelativeLayout
+    private lateinit var edit_profe_body_regis_num: TextInputEditText
+    private lateinit var professionl_body_regi_view: LinearLayout
+    private lateinit var edit_aid_type: SearchableSpinner
+    private lateinit var first_aid_type_view: LinearLayout
+    private lateinit var data_firstaidInfo: List<DataFirstAidInfo>
 
     private lateinit var mTagsEditText: TagsEditText
 
-    val MEDIA_TYPE_IMAGE = 1
-    val MEDIA_TYPE_PDF = 2
-    private val IMAGE_DIRECTORY_NAME = "Hello Camera"
-    var mediaFile: File? = null
-    private var fileUri: Uri? = null
+    private var File_name: String = ""
+    var Check_value: String = ""
+
+
+    //Pdf request code
+    private val PICK_PDF_REQUEST = 3
+    private var pdfFilePath: Uri? = null
+    private var ImagefilePath: Uri? = null
+
+    //image pick code
+    private val IMAGE_PICK_CODE = 1000
+    var Upload_file: String = ""
+    var mediaFileDoc: File? = null
+    private val PERMISSION_REQUEST_CODE = 200
 
     @SuppressLint("NewApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -177,10 +167,8 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("AddMemberStep4VC")
         sessionManager.firebaseAnalytics.setUserProperty(
-            "AddMemberStep4VC",
-            "AddMemberForthActivity"
+            "AddMemberStep4VC", "AddMemberForthActivity"
         )
-
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
@@ -188,81 +176,67 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
-
         edit_medical_information_details = findViewById(R.id.edit_medical_information_details)
-
         edit_special_dietary_requirements = findViewById(R.id.edit_special_dietary_requirements)
         edit_spoken_language = findViewById(R.id.edit_spoken_language)
         edit_originating_state_in_india = findViewById(R.id.edit_originating_state_in_india)
-
         originating_state_in_india_view = findViewById(R.id.originating_state_in_india_view)
         spoken_language_view = findViewById(R.id.spoken_language_view)
         special_dietary_requirements_view = findViewById(R.id.special_dietary_requirements_view)
-
-
         medical_information_view = findViewById(R.id.medical_information_view)
         medical_information_no_view = findViewById(R.id.medical_information_no_view)
         qualification_First_view = findViewById(R.id.qualification_First_view)
         qualification_First_no_view = findViewById(R.id.qualification_First_no_view)
-
         medical_information_details_view = findViewById(R.id.medical_information_details_view)
         date_of_first_aid_qualification_view =
             findViewById(R.id.date_of_first_aid_qualification_view)
         qualification_file_view = findViewById(R.id.qualification_file_view)
-
         dietary_txt_layout = findViewById(R.id.dietary_txt_layout)
         dietary_txt_view = findViewById(R.id.dietary_txt_view)
         dietary_txt = findViewById(R.id.dietary_txt)
         cross_item = findViewById(R.id.cross_item)
         qualification_file = findViewById(R.id.qualification_file)
         qualification_file_image = findViewById(R.id.qualification_file_image)
-
         checkbox = findViewById(R.id.checkbox)
         agreement_txt = findViewById(R.id.agreement_txt)
-
-        gallery_pdf_layout = findViewById(R.id.gallery_pdf_layout)
         check_box_layout = findViewById(R.id.check_box_layout)
-        select_gallery = findViewById(R.id.select_gallery)
-        select_pdf = findViewById(R.id.select_pdf)
-        close_layout = findViewById(R.id.close_layout)
-
         spoken_language_txt_view = findViewById(R.id.spoken_language_txt_view)
         spoken_language_txt_layout = findViewById(R.id.spoken_language_txt_layout)
         spoken_language_txt = findViewById(R.id.spoken_language_txt)
         spoken_languagecross_item = findViewById(R.id.spoken_languagecross_item)
-
         back_layout = findViewById(R.id.back_layout)
         next_layout = findViewById(R.id.next_layout)
-
         edit_date_of_first_aid_qualification =
             findViewById(R.id.edit_date_of_first_aid_qualification)
         edit_qualification_file = findViewById(R.id.edit_qualification_file)
+        // first aid
+        first_aid_type_view = findViewById(R.id.first_air_type_view)
+        edit_aid_type = findViewById(R.id.edit_aid_type)
+        relative_aid_type = findViewById(R.id.relative_aid_type)
+        professionl_body_regi_view = findViewById(R.id.professionl_body_regi_view)
+        edit_profe_body_regis_num = findViewById<TextInputEditText>(R.id.edit_profe_body_regis_num)
 
         mTagsEditText = findViewById<View>(R.id.tagsEditText) as TagsEditText
+
         mTagsEditText.visibility = View.GONE
         mTagsEditText.hint = "Enter names of fruits"
         mTagsEditText.setTagsListener(this@AddMemberForthActivity)
         mTagsEditText.setTagsWithSpacesEnabled(true)
         mTagsEditText.setAdapter(
             ArrayAdapter(
-                this,
-                android.R.layout.simple_dropdown_item_1line, dietaryName
+                this, android.R.layout.simple_dropdown_item_1line, dietaryName
             )
-//                resources.getStringArray(R.array.fruits)
-//            )
         )
         mTagsEditText.threshold = 1
 
         val rootLayout = findViewById<RelativeLayout>(R.id.rootLayout)
         val edit_date_of_first_aid_qualification =
             findViewById<TextView>(R.id.edit_date_of_first_aid_qualification)
-
         val medical_information_yes_txt = findViewById<TextView>(R.id.medical_information_yes_txt)
         val medical_information_no_txt = findViewById<TextView>(R.id.medical_information_no_txt)
         val medical_information_yes_icon =
             findViewById<ImageView>(R.id.medical_information_yes_icon)
         val medical_information_no_img = findViewById<ImageView>(R.id.medical_information_no_img)
-
         val qualification_First_yes_txt = findViewById<TextView>(R.id.qualification_First_yes_txt)
         val qualification_First_no_txt = findViewById<TextView>(R.id.qualification_First_no_txt)
         val qualification_First_yes_icon =
@@ -270,12 +244,23 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         val qualification_First_no_img = findViewById<ImageView>(R.id.qualification_First_no_img)
 
         checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-//            Toast.makeText(this,isChecked.toString(),Toast.LENGTH_SHORT).show()
             Check_value = isChecked.toString()
         }
-
         header_title.text = intent.getStringExtra("TITLENAME")
-//        header_title.text = getString(R.string.Add_family_member)
+
+
+        if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
+            myDietaryRequirements()
+            mySpokenLanguage()
+            OriginatingState()
+            firstAidInforApi()
+        } else {
+            Toast.makeText(
+                this@AddMemberForthActivity,
+                resources.getString(R.string.no_connection),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
 
         back_arrow.setOnClickListener {
             finish()
@@ -286,53 +271,26 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         }
 
         qualification_file.setOnClickListener {
-            slideUp(gallery_pdf_layout)
-//            getFileChooserIntent()
-            Log.d("File_name", File_name)
-        }
-
-        close_layout.setOnClickListener {
-            slideDown(gallery_pdf_layout)
-        }
-
-        select_gallery.setOnClickListener {
-            slideDown(gallery_pdf_layout)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
-                    PackageManager.PERMISSION_DENIED
-                ) {
-                    //permission denied
-                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
-                    //show popup to request runtime permission
-                    requestPermissions(permissions, PERMISSION_CODE);
-                } else {
-                    //permission already granted
-                    openGalleryForImage()
-                }
+            if (!checkPermission()) {
+                requestPermission()
             } else {
-                //system OS is < Marshmallow
-                openGalleryForImage()
+                openFileUploadDialog()
+                Log.d("File_name", File_name)
             }
         }
 
-        select_pdf.setOnClickListener {
-            showFileChooser()
-            slideDown(gallery_pdf_layout)
-        }
-
-        if (intent.getStringExtra("IS_SELF") != "self") {
-
-            if (intent.getStringExtra("TITLENAME") == "Profile") {
+        if (intent.getStringExtra("IS_SELF") != "self") { //  profile or add family
+            if (intent.getStringExtra("TITLENAME") == "Profile") { //  only profile
 
                 check_box_layout.visibility = View.GONE
-
                 edit_medical_information_details.setText(sessionManager.fetchMEDICAL_OTHER_INFO())
                 edit_date_of_first_aid_qualification.text = sessionManager.fetchQUALIFICATION_DATE()
                 edit_qualification_file.text = sessionManager.fetchQUALIFICATION_FILE()
                 dietary_txt.text = sessionManager.fetchDIETARY()
                 spoken_language_txt.text = sessionManager.fetchSPOKKENLANGUAGE()
                 edit_originating_state_in_india.setSelection(originName.indexOf(sessionManager.fetchSTATE_IN_INDIA()))
+//                edit_aid_type.setSelection(firstAidInfoName.indexOf(sessionManager.fetchQUALIFICATION_VALUE())) // nik
+
 
                 Functions.printLog("MEDICAL_OTHER_INFO", sessionManager.fetchMEDICAL_OTHER_INFO())
                 Functions.printLog("QUALIFICATION_DATE", sessionManager.fetchQUALIFICATION_DATE())
@@ -342,78 +300,67 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                 if (sessionManager.fetchDOHAVEMEDICAL() == "1") {
                     medical_information_view.setBackgroundResource(R.drawable.edit_primery_color_round)
                     medical_information_no_view.setBackgroundResource(R.drawable.edittext_round)
-
                     medical_information_yes_txt.setTextColor(getColor(R.color.primaryColor))
                     medical_information_yes_icon.setImageResource(R.drawable.righttikmark)
 //            medical_information_yes_icon.setColorFilter(ContextCompat.getColor(this, R.color.primaryColor), android.graphics.PorterDuff.Mode.MULTIPLY)
-
                     medical_information_no_txt.setTextColor(getColor(R.color.grayColorColor))
                     medical_information_no_img.setImageResource(R.drawable.righttikmark_gray_icon)
 //            medical_information_no_img.setColorFilter(ContextCompat.getColor(this, R.color.grayColorColor), android.graphics.PorterDuff.Mode.MULTIPLY)
-
                     medical_information_details_view.visibility = View.VISIBLE
-
                     medical_info = "1"
                 } else {
                     medical_information_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
                     medical_information_view.setBackgroundResource(R.drawable.edittext_round)
-
                     medical_information_yes_txt.setTextColor(getColor(R.color.grayColorColor))
                     medical_information_yes_icon.setImageResource(R.drawable.righttikmark_gray_icon)
 //            medical_information_yes_icon.setColorFilter(ContextCompat.getColor(this, R.color.grayColorColor), android.graphics.PorterDuff.Mode.MULTIPLY)
-
                     medical_information_no_txt.setTextColor(getColor(R.color.primaryColor))
                     medical_information_no_img.setImageResource(R.drawable.righttikmark)
 //            medical_information_no_img.setColorFilter(ContextCompat.getColor(this, R.color.primaryColor), android.graphics.PorterDuff.Mode.MULTIPLY)
-
                     medical_information_details_view.visibility = View.GONE
-
                     medical_info = "0"
                 }
 
                 if (sessionManager.fetchQUALIFICATIONAID() == "1") {
                     qualification_First_view.setBackgroundResource(R.drawable.edit_primery_color_round)
                     qualification_First_no_view.setBackgroundResource(R.drawable.edittext_round)
-
                     qualification_First_yes_txt.setTextColor(getColor(R.color.primaryColor))
                     qualification_First_yes_icon.setImageResource(R.drawable.righttikmark)
-
                     qualification_First_no_txt.setTextColor(getColor(R.color.grayColorColor))
                     qualification_First_no_img.setImageResource(R.drawable.righttikmark_gray_icon)
 //            qualification_First_no_img.setColorFilter(ContextCompat.getColor(this, R.color.grayColorColor), android.graphics.PorterDuff.Mode.MULTIPLY)
 
+                    first_aid_type_view.visibility = View.VISIBLE
+
                     date_of_first_aid_qualification_view.visibility = View.VISIBLE
                     qualification_file_view.visibility = View.VISIBLE
+
+//                    setFirstAidInfo(sessionManager.fetchQUALIFICATION_VALUE().toString())
 
                     qualified_info = "1"
                 } else {
                     qualification_First_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
                     qualification_First_view.setBackgroundResource(R.drawable.edittext_round)
-
                     qualification_First_yes_txt.setTextColor(getColor(R.color.grayColorColor))
                     qualification_First_yes_icon.setImageResource(R.drawable.righttikmark_gray_icon)
 //            qualification_First_yes_icon.setColorFilter(ContextCompat.getColor(this, R.color.grayColorColor), android.graphics.PorterDuff.Mode.MULTIPLY)
-
                     qualification_First_no_txt.setTextColor(getColor(R.color.primaryColor))
                     qualification_First_no_img.setImageResource(R.drawable.righttikmark)
 
                     date_of_first_aid_qualification_view.visibility = View.GONE
                     qualification_file_view.visibility = View.GONE
+                    first_aid_type_view.visibility = View.GONE
+                    professionl_body_regi_view.visibility = View.GONE
 
                     qualified_info = "0"
                 }
-
 //                PASSWORD = sessionManager.fetchPASSWORD()!!
             }
-
 //            PASSWORD = intent.getStringExtra("PASSWORD").toString()
         }
 
         val membership = " HSS (UK) Membership AgreementHSS."
-
-        val span = Spannable.Factory.getInstance()
-            .newSpannable("I am agreeing to the $membership")
-
+        val span = Spannable.Factory.getInstance().newSpannable("I am agreeing to the $membership")
         val webClickSpan: ClickableSpan = object : ClickableSpan() {
             override fun onClick(v: View) {
                 val uriUrl: Uri =
@@ -422,11 +369,8 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                 startActivity(launchBrowser)
             }
         }
-
         span.setSpan(webClickSpan, 21, 21 + membership.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
         agreement_txt.text = span
-
         agreement_txt.movementMethod = LinkMovementMethod.getInstance()
 
         medical_information_view.setOnClickListener {
@@ -474,9 +418,26 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             qualification_First_no_img.setImageResource(R.drawable.righttikmark_gray_icon)
 //            qualification_First_no_img.setColorFilter(ContextCompat.getColor(this, R.color.grayColorColor), android.graphics.PorterDuff.Mode.MULTIPLY)
 
-            date_of_first_aid_qualification_view.visibility = View.VISIBLE
-            qualification_file_view.visibility = View.VISIBLE
+            first_aid_type_view.visibility = View.VISIBLE
+            //  if profile pass session id, if add self or family pass 1
 
+            var visible_value = "1"
+            if (intent.getStringExtra("TYPE_SELF") != "self") {
+                if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
+                    visible_value = sessionManager.fetchQUALIFICATION_VALUE().toString()
+                }
+            }
+            DebugLog.e("visibile value 1   " + visible_value)
+            setFirstAidInfo(visible_value)
+
+
+            edit_aid_type.setTitle("Select First Aid Qualification Type")
+            edit_aid_type.setSelection(0)
+
+//            }
+//            date_of_first_aid_qualification_view.visibility = View.VISIBLE
+//            qualification_file_view.visibility = View.VISIBLE
+//            professionl_body_regi_view.visibility = View.VISIBLE
             qualified_info = "1"
         }
 
@@ -491,76 +452,53 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             qualification_First_no_txt.setTextColor(getColor(R.color.primaryColor))
             qualification_First_no_img.setImageResource(R.drawable.righttikmark)
 
+            first_aid_type_view.visibility = View.GONE
             date_of_first_aid_qualification_view.visibility = View.GONE
             qualification_file_view.visibility = View.GONE
+            professionl_body_regi_view.visibility = View.GONE
 
             qualified_info = "0"
         }
 
         Log.d(
             "Fetch_Data three-->",
-            "--FIRST_NAME" + intent.getStringExtra("FIRST_NAME") + "--MIDDLE_NAME" +
-                    intent.getStringExtra("MIDDLE_NAME") + "--LAST_NAME" + intent.getStringExtra("LAST_NAME") + "--" + intent.getStringExtra(
+            "  --FIRST_NAME : " + intent.getStringExtra("FIRST_NAME") + "  --MIDDLE_NAME : " + intent.getStringExtra(
+                "MIDDLE_NAME"
+            ) + "  --LAST_NAME : " + intent.getStringExtra("LAST_NAME") + "  --USERNAME : " + intent.getStringExtra(
                 "USERNAME"
-            ) + "--EMAIL" +
-                    intent.getStringExtra("EMAIL") + "--PASSWORD" + intent.getStringExtra("PASSWORD") + "--GENDER" + intent.getStringExtra(
-                "GENDER"
-            ) + "--DOB" + intent.getStringExtra("DOB") + "--RELATIONSHIP" +
-                    intent.getStringExtra("RELATIONSHIP") + "--OTHER_RELATIONSHIP" + intent.getStringExtra(
+            ) + "  --EMAIL : " + intent.getStringExtra("EMAIL") + "  --PASSWORD : " + intent.getStringExtra(
+                "PASSWORD"
+            ) + "  --GENDER: " + intent.getStringExtra("GENDER") + "  --DOB: " + intent.getStringExtra(
+                "DOB"
+            ) + "  --RELATIONSHIP: " + intent.getStringExtra("RELATIONSHIP") + "  --OTHER_RELATIONSHIP: " + intent.getStringExtra(
                 "OTHER_RELATIONSHIP"
-            ) + "--OCCUPATION" + intent.getStringExtra(
-                "OCCUPATION"
-            ) + "--OCCUPATION_NAME" +
-                    intent.getStringExtra("OCCUPATION_NAME") + "--SHAKHA" + intent.getStringExtra("SHAKHA") + "--AGE" + intent.getStringExtra(
+            ) + "  --OCCUPATION: " + intent.getStringExtra("OCCUPATION") + "  --OCCUPATION_NAME: " + intent.getStringExtra(
+                "OCCUPATION_NAME"
+            ) + "  --SHAKHA: " + intent.getStringExtra("SHAKHA") + "  --AGE: " + intent.getStringExtra(
                 "AGE"
-            ) + "--IS_LINKED" + intent.getStringExtra("IS_LINKED") + "--" +
-                    intent.getStringExtra("IS_SELF") + "--TYPE" + intent.getStringExtra("TYPE") + "--PARENT_MEMBER" + intent.getStringExtra(
+            ) + "  --IS_LINKED: " + intent.getStringExtra("IS_LINKED") + "  --IS_SELF: " + intent.getStringExtra(
+                "IS_SELF"
+            ) + "  --TYPE: " + intent.getStringExtra("TYPE") + "  --PARENT_MEMBER: " + intent.getStringExtra(
                 "PARENT_MEMBER"
-            )
-                    + "--MOBILE" + intent.getStringExtra("MOBILE") + "--SECOND_EMAIL" + intent.getStringExtra(
+            ) + "  --MOBILE: " + intent.getStringExtra("MOBILE") + "  --SECOND_EMAIL: " + intent.getStringExtra(
                 "SECOND_EMAIL"
-            ) + "--LAND_LINE" + intent.getStringExtra(
-                "LAND_LINE"
-            ) + "--POST_CODE" + intent.getStringExtra(
+            ) + "  --LAND_LINE: " + intent.getStringExtra("LAND_LINE") + "  --POST_CODE: " + intent.getStringExtra(
                 "POST_CODE"
-            )
-                    + "--BUILDING_NAME" + intent.getStringExtra("BUILDING_NAME") + "--ADDRESS_ONE" + intent.getStringExtra(
+            ) + "  --BUILDING_NAME: " + intent.getStringExtra("BUILDING_NAME") + "  --ADDRESS_ONE: " + intent.getStringExtra(
                 "ADDRESS_ONE"
-            ) + "--ADDRESS_TWO" + intent.getStringExtra(
-                "ADDRESS_TWO"
-            )
-                    + "--POST_TOWN" + intent.getStringExtra("POST_TOWN") + "--COUNTY" + intent.getStringExtra(
-                "COUNTY"
-            ) + "--EMERGENCY_NAME" + intent.getStringExtra(
+            ) + "  --ADDRESS_TWO: " + intent.getStringExtra("ADDRESS_TWO") + "  --POST_TOWN: " + intent.getStringExtra(
+                "POST_TOWN"
+            ) + "  --COUNTY: " + intent.getStringExtra("COUNTY") + "  --EMERGENCY_NAME: " + intent.getStringExtra(
                 "EMERGENCY_NAME"
-            )
-                    + "--EMERGENCY_PHONE" + intent.getStringExtra("EMERGENCY_PHONE") + "--EMERGENCY_EMAIL" + intent.getStringExtra(
+            ) + "  --EMERGENCY_PHONE: " + intent.getStringExtra("EMERGENCY_PHONE") + "  --EMERGENCY_EMAIL: " + intent.getStringExtra(
                 "EMERGENCY_EMAIL"
-            ) + "--EMERGENCY_RELATIONSHIP" + intent.getStringExtra(
-                "EMERGENCY_RELATIONSHIP"
+            ) + "  --EMERGENCY_RELATIONSHIP: " + intent.getStringExtra("EMERGENCY_RELATIONSHIP") + "  --OTHER_EMERGENCY_RELATIONSHIP: " + intent.getStringExtra(
+                "OTHER_EMERGENCY_RELATIONSHIP"
             )
-                    + "--OTHER_EMERGENCY_RELATIONSHIP" + intent.getStringExtra("OTHER_EMERGENCY_RELATIONSHIP")
         )
 
         next_layout.setOnClickListener {
-//            Snackbar.make(rootLayout, "Submit", Snackbar.LENGTH_SHORT).show()
             /*Add Member First*/
-
-            //getting the actual path of the image
-            //getting the actual path of the image
-            if (filePath != null) {
-//            val path: String
-//                Upload_file = getpath(filePath.toString()).toString()
-//                FilePath.getPath(this, filePath)
-//                Upload_file = FilePath.getPath(this@AddMemberForthActivity, filePath)
-                Functions.printLog("Upload_file==", Upload_file)
-            } else if (ImagefilePath != null) {
-//                    Upload_file = ImagefilePath.toString()
-                Functions.printLog("Upload_file==", Upload_file)
-            }
-
-//            edit_qualification_file.text = Upload_file
-
             val first_name = intent.getStringExtra("FIRST_NAME")
             val middle_name = intent.getStringExtra("MIDDLE_NAME")
             val last_name = intent.getStringExtra("LAST_NAME")
@@ -604,6 +542,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             val special_med_dietry_info = DIETARY_ID
             val language = SPOKEN_ID
             val state = ORIGIN_ID
+            val firstAid: String = FIRSTAID_ID
 
             /*Default*/
             val parent_member_id = intent.getStringExtra("PARENT_MEMBER")
@@ -614,19 +553,13 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 
             if (medical_info == "") {
                 Snackbar.make(
-                    rootLayout,
-                    "Please select medical information",
-                    Snackbar.LENGTH_SHORT
-                )
-                    .show()
+                    rootLayout, "Please select medical information", Snackbar.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             } else if (qualified_info == "") {
                 Snackbar.make(
-                    rootLayout,
-                    "Please select qualification information",
-                    Snackbar.LENGTH_SHORT
-                )
-                    .show()
+                    rootLayout, "Please select qualification information", Snackbar.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
 //            } else if (Check_value != "true") {
 //                Snackbar.make(
@@ -637,12 +570,18 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 //                    .show()
 //                return@setOnClickListener
             } else {
-
-                if (qualified_info == "0") {
-
-                    if (intent.getStringExtra("IS_SELF") != "self") {
+                DebugLog.e("qualified_info : " + qualified_info)
+                if (qualified_info == "0") {// docs upload = no
+                    if (intent.getStringExtra("IS_SELF") != "self") { // Profile or add family
                         if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
-                            update_membershipWithoutImage()
+                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
+                                //call Edit profile API here
+                                callEditProfileApi(false)
+                                DebugLog.e("Profile : Edit proile without Doc upload")
+                            } else {
+                                callMembershipApi("family", false)
+                                DebugLog.e("Add Family : without doc upload")
+                            }
                         } else {
                             Toast.makeText(
                                 this@AddMemberForthActivity,
@@ -650,51 +589,17 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                    } else {
+                    } else { // Add Self
                         if (Check_value != "true") {
                             Snackbar.make(
                                 rootLayout,
                                 "Please check Membership AgreementHSS",
                                 Snackbar.LENGTH_SHORT
-                            )
-                                .show()
+                            ).show()
                             return@setOnClickListener
-                        } else
-                            if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
-                                update_profileWithoutImage()
-                            } else {
-                                Toast.makeText(
-                                    this@AddMemberForthActivity,
-                                    resources.getString(R.string.no_connection),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                    }
-
-                } else {
-
-                if (intent.getStringExtra("IS_SELF") != "self") {
-                    if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
-                        update_membership()
-                    } else {
-                        Toast.makeText(
-                            this@AddMemberForthActivity,
-                            resources.getString(R.string.no_connection),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                } else {
-                    if (Check_value != "true") {
-                        Snackbar.make(
-                            rootLayout,
-                            "Please check Membership AgreementHSS",
-                            Snackbar.LENGTH_SHORT
-                        )
-                            .show()
-                        return@setOnClickListener
-                    } else
-                        if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
-                            update_profile()
+                        } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
+                            callMembershipApi("self", false)
+                            DebugLog.e("Add Self =>  Without Image")
                         } else {
                             Toast.makeText(
                                 this@AddMemberForthActivity,
@@ -702,14 +607,61 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
+                    }
+
+                } else { // docs upload = yes
+                    if (intent.getStringExtra("IS_SELF") != "self") {// Edit Profile or Add family
+                        if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
+                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
+                                callEditProfileApi(true)
+                                DebugLog.e("Profile : Edit profile with doc file")
+                            } else {
+                                callMembershipApi("family", true)
+                                DebugLog.e("Add Family : with doc file")
+                            }
+
+                        } else {
+                            Toast.makeText(
+                                this@AddMemberForthActivity,
+                                resources.getString(R.string.no_connection),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else { // Add self
+                        if (Check_value != "true") {
+                            Snackbar.make(
+                                rootLayout,
+                                "Please check Membership AgreementHSS",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                            return@setOnClickListener
+                        } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
+                            callMembershipApi("self", true)
+                            DebugLog.e("Add Self :  with doc file")
+                        } else {
+                            Toast.makeText(
+                                this@AddMemberForthActivity,
+                                resources.getString(R.string.no_connection),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 }
             }
-        }
         }
 
         edit_date_of_first_aid_qualification.setOnClickListener {
             calendar = Calendar.getInstance()
 //            calendar.add(Calendar.YEAR, -3)
+
+            if (edit_date_of_first_aid_qualification.text.length > 0) {
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val initialDate =
+                    dateFormat.parse(edit_date_of_first_aid_qualification.text.toString())
+                calendar.time = initialDate
+            }
+
+
             year = calendar.get(Calendar.YEAR)
             month = calendar.get(Calendar.MONTH)
             day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -724,33 +676,23 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             }, year, month, day)
 //            dialog.datePicker.minDate = calendar.timeInMillis
 //            calendar.add(Calendar.YEAR, 0)
-            dialog.datePicker.maxDate = calendar.timeInMillis
+//            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
         }
 
-        if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
-            myDietaryRequirements()
-            mySpokenLanguage()
-            OriginatingState()
-        } else {
-            Toast.makeText(
-                this@AddMemberForthActivity,
-                resources.getString(R.string.no_connection),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        edit_special_dietary_requirements.onItemSelectedListener =
-            mOnItemSelectedListener_originating
+        edit_special_dietary_requirements.onItemSelectedListener = mOnItemSelectedListener_dietary
         edit_spoken_language.onItemSelectedListener = mOnItemSelectedListener_spoken
-        edit_originating_state_in_india.onItemSelectedListener = mOnItemSelectedListener_special
+        edit_originating_state_in_india.onItemSelectedListener = mOnItemSelectedListener_origin
+        edit_aid_type.onItemSelectedListener = mOnItemSelectedListener_firstAid
 
         edit_special_dietary_requirements.setTitle("Select Special Dietary")
         edit_spoken_language.setTitle("Select Spoken Language")
         edit_originating_state_in_india.setTitle("Select Originationg State In India")
+        edit_aid_type.setTitle("Select First Aid Qualification Type")
 
         originating_state_in_india_view.setOnClickListener {
-            SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
+//            SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
+            SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
         }
 
         spoken_language_view.setOnClickListener {
@@ -758,106 +700,162 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         }
 
         special_dietary_requirements_view.setOnClickListener {
-            SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
+//            SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
+            SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
+        }
+
+        first_aid_type_view.setOnClickListener {
+            SearchSpinner(firstAidInfoName.toTypedArray(), edit_aid_type)
         }
 
     }
 
     private fun SearchSpinner(
-        spinner_search: Array<String>,
-        edit_txt: SearchableSpinner
+        spinner_search: Array<String>, edit_txt: SearchableSpinner
     ) {
         val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item,
-            spinner_search
+            this, android.R.layout.simple_spinner_item, spinner_search
         )
         searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         edit_txt.adapter = searchmethod
 
         if (intent.getStringExtra("TYPE_SELF") != "self") {
             if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
-//                edit_special_dietary_requirements.setSelection(dietaryName.indexOf(sessionManager.fetchDIETARY()))
-//                edit_spoken_language.setSelection(spokenName.indexOf(sessionManager.fetchSPOKKENLANGUAGE()))
+                edit_special_dietary_requirements.setSelection(dietaryName.indexOf(sessionManager.fetchDIETARY()))
+                edit_spoken_language.setSelection(spokenName.indexOf(sessionManager.fetchSPOKKENLANGUAGE()))
                 edit_originating_state_in_india.setSelection(originName.indexOf(sessionManager.fetchSTATE_IN_INDIA()))
             }
         }
     }
 
-    private val mOnItemSelectedListener_originating: AdapterView.OnItemSelectedListener = object :
-        AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+    private val mOnItemSelectedListener_dietary: AdapterView.OnItemSelectedListener =
+        object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
 //            TODO("Not yet implemented")
-            Log.d("Name", dietaryName[position])
-            Log.d("Postion", dietaryID[position])
-            DIETARY_ID = dietaryID[position]
+                Log.d("Name", dietaryName[position])
+                Log.d("Postion", dietaryID[position])
+                DIETARY_ID = dietaryID[position]
 
-            val N = dietaryID.size
+                val N = dietaryID.size
 
-            dietary_txt_layout.visibility = View.VISIBLE
+                dietary_txt_layout.visibility = View.VISIBLE
 
-            dietary_txt.text = dietaryName[position]
+                dietary_txt.text = dietaryName[position]
 
-            for (i in 0..N) {
+                for (i in 0..N) {
 
-                dietary_txt_view.removeView(dietary_txt)
-                dietary_txt_view.removeView(cross_item)
-                dietary_txt_view.addView(dietary_txt)
-                dietary_txt_view.addView(cross_item)
-
-                cross_item.setOnClickListener {
                     dietary_txt_view.removeView(dietary_txt)
+                    dietary_txt_view.removeView(cross_item)
+                    dietary_txt_view.addView(dietary_txt)
+                    dietary_txt_view.addView(cross_item)
+
+                    cross_item.setOnClickListener {
+                        dietary_txt_view.removeView(dietary_txt)
+                    }
+
                 }
+            }
 
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+//            TODO("Not yet implemented")
+                dietary_txt_layout.visibility = View.GONE
             }
         }
 
-        override fun onNothingSelected(parent: AdapterView<*>?) {
+    private val mOnItemSelectedListener_spoken: AdapterView.OnItemSelectedListener =
+        object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
 //            TODO("Not yet implemented")
-            dietary_txt_layout.visibility = View.GONE
-        }
-    }
+                Log.d("Name", spokenName[position])
+                Log.d("Postion", spokenID[position])
+                SPOKEN_ID = spokenID[position]
 
-    private val mOnItemSelectedListener_spoken: AdapterView.OnItemSelectedListener = object :
-        AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//            TODO("Not yet implemented")
-            Log.d("Name", spokenName[position])
-            Log.d("Postion", spokenID[position])
-            SPOKEN_ID = spokenID[position]
+                spoken_language_txt_layout.visibility = View.VISIBLE
 
-            spoken_language_txt_layout.visibility = View.VISIBLE
+                spoken_language_txt.text = spokenName[position]
 
-            spoken_language_txt.text = spokenName[position]
-
-            spoken_language_txt_view.removeView(spoken_language_txt)
-            spoken_language_txt_view.removeView(spoken_languagecross_item)
-            spoken_language_txt_view.addView(spoken_language_txt)
-            spoken_language_txt_view.addView(spoken_languagecross_item)
-
-            spoken_languagecross_item.setOnClickListener {
                 spoken_language_txt_view.removeView(spoken_language_txt)
+                spoken_language_txt_view.removeView(spoken_languagecross_item)
+                spoken_language_txt_view.addView(spoken_language_txt)
+                spoken_language_txt_view.addView(spoken_languagecross_item)
+
+                spoken_languagecross_item.setOnClickListener {
+                    spoken_language_txt_view.removeView(spoken_language_txt)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+//            TODO("Not yet implemented")
+                spoken_language_txt_layout.visibility = View.GONE
             }
         }
 
-        override fun onNothingSelected(parent: AdapterView<*>?) {
+    private val mOnItemSelectedListener_origin: AdapterView.OnItemSelectedListener =
+        object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
 //            TODO("Not yet implemented")
-            spoken_language_txt_layout.visibility = View.GONE
+                Log.d("Name", originName[position])
+                Log.d("Postion", originID[position])
+                ORIGIN_ID = originID[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+//            TODO("Not yet implemented")
+            }
+        }
+
+
+    private val mOnItemSelectedListener_firstAid: AdapterView.OnItemSelectedListener =
+        object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
+//            TODO("Not yet implemented")
+                DebugLog.e("Name : " + firstAidInfoName[position])
+                DebugLog.e("Postion : " + firstAidInfoID[position])
+                FIRSTAID_ID = firstAidInfoID[position]
+                setFirstAidInfo(FIRSTAID_ID)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+//            TODO("Not yet implemented")
+            }
+        }
+
+    private fun setFirstAidInfo(firstaidId: String) {
+
+        for (n in data_firstaidInfo.indices) {
+            if (data_firstaidInfo.get(n).id == firstaidId) {
+                when (data_firstaidInfo.get(n).is_doc) {
+                    "1" -> {
+                        date_of_first_aid_qualification_view.visibility = View.VISIBLE
+                        qualification_file_view.visibility = View.VISIBLE
+                        professionl_body_regi_view.visibility = View.GONE
+                        edit_profe_body_regis_num.setText("")
+
+                    }
+
+                    "0" -> {
+                        date_of_first_aid_qualification_view.visibility = View.GONE
+                        qualification_file_view.visibility = View.GONE
+                        professionl_body_regi_view.visibility = View.VISIBLE
+                        edit_profe_body_regis_num.setText(
+                            sessionManager.fetchQUALIFICATION_PRO_BODY_RED_NO().toString()
+                        )
+                    }
+                }
+                edit_aid_type.setSelection(n) // nik
+                break
+            }
         }
     }
 
-    private val mOnItemSelectedListener_special: AdapterView.OnItemSelectedListener = object :
-        AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//            TODO("Not yet implemented")
-            Log.d("Name", originName[position])
-            Log.d("Postion", originID[position])
-            ORIGIN_ID = originID[position]
-        }
-
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-        }
-    }
 
     /*Relationship API*/
     private fun myDietaryRequirements() {
@@ -866,8 +864,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         val call: Call<Get_Dietaries_Response> = MyHssApplication.instance!!.api.get_dietaries()
         call.enqueue(object : Callback<Get_Dietaries_Response> {
             override fun onResponse(
-                call: Call<Get_Dietaries_Response>,
-                response: Response<Get_Dietaries_Response>
+                call: Call<Get_Dietaries_Response>, response: Response<Get_Dietaries_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -946,12 +943,9 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
 
                     } else {
-                        Functions.displayMessage(this@AddMemberForthActivity,response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberForthActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
+                        Functions.displayMessage(
+                            this@AddMemberForthActivity, response.body()?.message
+                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -976,8 +970,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         val call: Call<Get_Language_Response> = MyHssApplication.instance!!.api.get_languages()
         call.enqueue(object : Callback<Get_Language_Response> {
             override fun onResponse(
-                call: Call<Get_Language_Response>,
-                response: Response<Get_Language_Response>
+                call: Call<Get_Language_Response>, response: Response<Get_Language_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -1053,12 +1046,9 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         SearchSpinner(spokenName.toTypedArray(), edit_spoken_language)
 
                     } else {
-                        Functions.displayMessage(this@AddMemberForthActivity,response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberForthActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
+                        Functions.displayMessage(
+                            this@AddMemberForthActivity, response.body()?.message
+                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -1084,8 +1074,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             MyHssApplication.instance!!.api.get_indianstates()
         call.enqueue(object : Callback<Get_Indianstates_Response> {
             override fun onResponse(
-                call: Call<Get_Indianstates_Response>,
-                response: Response<Get_Indianstates_Response>
+                call: Call<Get_Indianstates_Response>, response: Response<Get_Indianstates_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -1161,7 +1150,9 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
 
                     } else {
-                        Functions.displayMessage(this@AddMemberForthActivity,response.body()?.message)
+                        Functions.displayMessage(
+                            this@AddMemberForthActivity, response.body()?.message
+                        )
 //                        Functions.showAlertMessageWithOK(
 //                            this@AddMemberForthActivity, "",
 ////                        "Message",
@@ -1184,1284 +1175,101 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         })
     }
 
-    //method to show file chooser
-    private fun showFileChooser() {
-        val intent = Intent()
-        intent.type = "application/pdf"
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PICK_PDF_REQUEST)
-    }
-
-    //handling the image chooser activity result
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
-            filePath = data.data
-            Functions.printLog("filePath==>", data?.data.toString())
-//            edit_qualification_file.text = filePath.toString()
-            qualification_file_image.visibility = View.GONE
-
-            val uriString: String = filePath.toString()
-            val myFile = File(uriString)
-            Log.d("ioooo", myFile.toString())
-            Upload_file = myFile.toString()
-
-//            val file = File(filePath.toString())
-//            Upload_file = file.absolutePath
-//            Upload_file = FilePath.getPath(this@AddMemberForthActivity, filePath)
-//            Log.d("pdfPath Path", Upload_file)
-//            val pdfPath: String = getPDFPath(filePath)
-//            Log.d("pdfPath Path", pdfPath)
-//            val pathA = File(pdfPath)
-//            Upload_file = pathA.toString()
-
-            val pdfPath: String =
-                getPath(this@AddMemberForthActivity, filePath)
-            Log.d("pdfPath Path", pdfPath)
-
-            val pathA = File(pdfPath)
-//            Upload_file = pathA.toString()
-
-//            fileUri = getOutputMediaFileUri(MEDIA_TYPE_PDF)
-
-//            Upload_file = myFile.toString()
-        }
-
-        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            ImagefilePath = data?.data
-            Functions.printLog("Image==>", data?.data.toString())
-            Functions.printLog("ImagefilePath==>", ImagefilePath.toString())
-            qualification_file_image.visibility = View.VISIBLE
-            qualification_file_image.setImageURI(data?.data)
-//            edit_qualification_file.text = ImagefilePath.toString()
-
-            val picturePath: String =
-                getPath(this@AddMemberForthActivity, ImagefilePath)
-            Log.d("Picture Path", picturePath)
-
-            val pathA = File(picturePath)
-            Upload_file = pathA.toString()
-
-            val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
-
-            val cursor: Cursor =
-                contentResolver.query(ImagefilePath!!, filePathColumn, null, null, null)!!
-            cursor.moveToFirst()
-            Functions.printLog("cursor==>", cursor.toString())
-//            Upload_file = cursor.toString()
-//            Functions.printLog("cursor==>Upload_file", Upload_file)
-
-//            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE)
-
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(contentResolver, ImagefilePath)
-//                imageView.setImageBitmap(bitmap)
-
-//                Upload_file = convertToString()!!
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    fun getPDFPath(uri: Uri?): String {
-        var result: String? = null
-        val id = DocumentsContract.getDocumentId(uri)
-        val contentUri = ContentUris.withAppendedId(
-            Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
-//            Uri.parse("content://downloads/my_downloads"), java.lang.Long.valueOf(id)
-        )
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = contentResolver.query(contentUri, projection, null, null, null)
-//        if (cursor != null) {
-//            if (cursor.moveToFirst()) {
-//                val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-//                result = cursor.getString(column_index)
-//            }
-//            cursor.close()
-//        }
-//        if (result == null) {
-//            result = "Not found"
-//        }
-//        return result
-        val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor.moveToFirst()
-        return cursor.getString(column_index)
-    }
-
-    fun getPath(context: Context, uri: Uri?): String {
-        var result: String? = null
-        val proj = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor: Cursor? = context.contentResolver.query(uri!!, proj, null, null, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                val column_index = cursor.getColumnIndexOrThrow(proj[0])
-                result = cursor.getString(column_index)
-            }
-            cursor.close()
-        }
-        if (result == null) {
-            result = "Not found"
-        }
-        return result
-    }
-
-    private fun convertToString(): String? {
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val imgByte: ByteArray = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(imgByte, Base64.DEFAULT)
-    }
-
-    fun openGalleryForImage() {
-//        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-//        startActivityForResult(gallery, REQUEST_CODE)
-
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, IMAGE_PICK_CODE) // REQUEST_CODE)
-    }
-
-    //handle requested permission result
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            PERMISSION_CODE -> {
-                if (grantResults.size > 0 && grantResults[0] ==
-                    PackageManager.PERMISSION_GRANTED
-                ) {
-                    //permission from popup granted
-                    openGalleryForImage()
-                } else {
-                    //permission from popup denied
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-
-    /*Without Image*/
-
-    /*Update member*/
-    private fun update_membershipWithoutImage() {
+    private fun firstAidInforApi() {
         val pd = CustomProgressBar(this@AddMemberForthActivity)
         pd.show()
-
-//        val pathA = File(Upload_file)
-//
-//        println("pathA>>>$pathA")
-//
-//        val requestFile: RequestBody =
-//            RequestBody.create("multipart/form-data".toMediaTypeOrNull(), pathA)
-//
-//        println("requestFile>>>$requestFile")
-//
-//        val body =
-//            MultipartBody.Part.createFormData("qualification_file", pathA.name, requestFile)
-
-        val user_id = RequestBody.create(
-            MultipartBody.FORM,
-            sessionManager.fetchUserID().toString()
-        )
-        val first_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("FIRST_NAME").toString()
-        )
-        val middle_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("MIDDLE_NAME").toString()
-        )
-        val last_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("LAST_NAME").toString()
-        )
-        val username = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("USERNAME").toString()
-        )
-        val email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMAIL").toString()
-        )
-        val password = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("PASSWORD").toString()
-        )
-        val gender = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("GENDER").toString()
-        )
-        val dob = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("DOB").toString()
-        )
-        val age = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("AGE").toString()
-        )
-        val relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("RELATIONSHIP").toString()
-        )
-        val other_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OTHER_RELATIONSHIP").toString()
-        )
-        val occupation = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OCCUPATION").toString()
-        )
-        val occupation_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OCCUPATION_NAME").toString()
-        )
-        val shakha = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("SHAKHA").toString()
-        )
-        val mobile = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("MOBILE").toString()
-        )
-        val land_line = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("LAND_LINE").toString()
-        )
-        val secondary_email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("SECOND_EMAIL").toString()
-        )
-        val post_code = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("POST_CODE").toString()
-        )
-        val building_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("BUILDING_NAME").toString()
-        )
-        val address_line_1 = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("ADDRESS_ONE").toString()
-        )
-        val address_line_2 = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("ADDRESS_TWO").toString()
-        )
-        val post_town = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("POST_TOWN").toString()
-        )
-        val county = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("COUNTY").toString()
-        )
-        val emergency_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_NAME").toString()
-        )
-        val emergency_phone = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_PHONE").toString()
-        )
-        val emergency_email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_EMAIL").toString()
-        )
-        val emergency_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_RELATIONSHIP").toString()
-        )
-        val other_emergency_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OTHER_EMERGENCY_RELATIONSHIP").toString()
-        )
-        val medical_information = RequestBody.create(
-            MultipartBody.FORM,
-            medical_info
-        )
-        val provide_details = RequestBody.create(
-            MultipartBody.FORM,
-            edit_medical_information_details.text.toString()
-        )
-        val is_qualified_in_first_aid = RequestBody.create(
-            MultipartBody.FORM,
-            qualified_info
-        )
-        val date_of_first_aid_qualification = RequestBody.create(
-            MultipartBody.FORM,
-            edit_date_of_first_aid_qualification.text.toString()
-        )
-        val special_med_dietry_info = RequestBody.create(
-            MultipartBody.FORM,
-            DIETARY_ID
-        )
-        val language = RequestBody.create(
-            MultipartBody.FORM,
-            SPOKEN_ID
-        )
-        val state = RequestBody.create(
-            MultipartBody.FORM,
-            ORIGIN_ID
-        )
-        val parent_member_id = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("PARENT_MEMBER").toString()
-        )
-        val type = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("TYPE").toString()
-        )
-        val is_linked = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("IS_LINKED").toString()
-        )
-        val is_self = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("IS_SELF").toString()
-        )
-        val app = RequestBody.create(
-            MultipartBody.FORM,
-            "yes"
-        )
-
-        val call: Call<JsonObject> =
-            MyHssApplication.instance!!.api.updateMembershipWithoutImage(
-//                body,
-                user_id,
-                first_name,
-                middle_name,
-                last_name,
-                username,
-                email,
-                password,
-                gender,
-                dob,
-                age,
-                relationship,
-                other_relationship,
-                occupation,
-                occupation_name,
-                shakha,
-                mobile,
-                land_line,
-                secondary_email,
-                post_code,
-                building_name,
-                address_line_1,
-                address_line_2,
-                post_town,
-                county,
-                emergency_name,
-                emergency_phone,
-                emergency_email,
-                emergency_relationship,
-                other_emergency_relationship,
-                medical_information,
-                provide_details,
-                is_qualified_in_first_aid,
-                date_of_first_aid_qualification,
-                special_med_dietry_info,
-                language,
-                state,
-                parent_member_id,
-                type,
-                is_linked,
-                is_self,
-                app
-            )
-        call.enqueue(object : Callback<JsonObject> {
+        val call: Call<FirstAidInfo> = MyHssApplication.instance!!.api.getFirstAidInfor()
+        call.enqueue(object : Callback<FirstAidInfo> {
             override fun onResponse(
-                call: Call<JsonObject>,
-                response: Response<JsonObject>
+                call: Call<FirstAidInfo>, response: Response<FirstAidInfo>
             ) {
                 if (response.code() == 200 && response.body() != null) {
+                    DebugLog.e("Status : " + response.body()?.status.toString())
 
-                    if (response.isSuccessful) {
-                        var resp = ""
-
-                        if (response.body().toString().startsWith("{")) {
-
-                            resp = "[" + response.body().toString() + "]"
+                    if (response.body()?.status!!) {
+                        data_firstaidInfo = ArrayList<DataFirstAidInfo>()
+                        data_firstaidInfo = response.body()!!.data!!
+                        DebugLog.e("atheletsBeans " + data_firstaidInfo.toString())
+                        for (i in 1 until data_firstaidInfo.size) {
+                            DebugLog.e("First aid info " + data_firstaidInfo[i].name.toString())
                         }
+                        firstAidInfoName = listOf(arrayOf(data_firstaidInfo).toString())
+                        firstAidInfoID = listOf(arrayOf(data_firstaidInfo).toString())
 
-                        System.out.println("family_details>>>$resp")
-
-                        val jsonObj = JSONArray(resp)
-                        val jsonObject = jsonObj.getJSONObject(0)
-
-                        val status = jsonObject.get("status")
-                        val message = jsonObject.get("message")
-
-                        if (status == true) {
-                            val i = Intent(this@AddMemberForthActivity, HomeActivity::class.java)
-                            i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
-                            startActivity(i)
-                            finishAffinity()
-                        } else {
-//                            Functions.displayMessage(this@AddMemberForthActivity,message.toString())
-                            Functions.showAlertMessageWithOK(
-                                this@AddMemberForthActivity, "",
-//                                      "Message",
-                                message.toString()
+                        val mStringList = ArrayList<String>()
+                        for (i in 0 until data_firstaidInfo.size) {
+                            mStringList.add(
+                                data_firstaidInfo[i].name.toString()
                             )
                         }
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberForthActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
-            }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
-    }
-
-
-    /*Update profile*/
-    private fun update_profileWithoutImage() {
-        val pd = CustomProgressBar(this@AddMemberForthActivity)
-        pd.show()
-
-//        val pathA = File(Upload_file)
-//
-//        println("pathA>>>$pathA")
-//
-//        val requestFile: RequestBody =
-//            RequestBody.create("multipart/form-data".toMediaTypeOrNull(), pathA)
-//
-//        println("requestFile>>>$requestFile")
-//
-//        val body = MultipartBody.Part.createFormData("qualification_file", pathA.name, requestFile)
-
-        val user_id = RequestBody.create(
-            MultipartBody.FORM,
-            sessionManager.fetchUserID().toString()
-        )
-        val first_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("FIRST_NAME").toString()
-        )
-        val middle_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("MIDDLE_NAME").toString()
-        )
-        val last_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("LAST_NAME").toString()
-        )
-        val username = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("USERNAME").toString()
-        )
-        val email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMAIL").toString()
-        )
-        val password = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("PASSWORD").toString()
-        )
-        val gender = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("GENDER").toString()
-        )
-        val dob = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("DOB").toString()
-        )
-        val age = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("AGE").toString()
-        )
-//        val relationship = RequestBody.create(MultipartBody.FORM,
-//            intent.getStringExtra("RELATIONSHIP").toString()
-//        )
-//        val other_relationship = RequestBody.create(MultipartBody.FORM,
-//            intent.getStringExtra("OTHER_RELATIONSHIP").toString()
-//        )
-        val occupation = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OCCUPATION").toString()
-        )
-        val occupation_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OCCUPATION_NAME").toString()
-        )
-        val shakha = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("SHAKHA").toString()
-        )
-        val mobile = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("MOBILE").toString()
-        )
-        val land_line = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("LAND_LINE").toString()
-        )
-        val secondary_email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("SECOND_EMAIL").toString()
-        )
-        val post_code = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("POST_CODE").toString()
-        )
-        val building_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("BUILDING_NAME").toString()
-        )
-        val address_line_1 = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("ADDRESS_ONE").toString()
-        )
-        val address_line_2 = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("ADDRESS_TWO").toString()
-        )
-        val post_town = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("POST_TOWN").toString()
-        )
-        val county = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("COUNTY").toString()
-        )
-        val emergency_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_NAME").toString()
-        )
-        val emergency_phone = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_PHONE").toString()
-        )
-        val emergency_email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_EMAIL").toString()
-        )
-        val emergency_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_RELATIONSHIP").toString()
-        )
-        val other_emergency_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OTHER_EMERGENCY_RELATIONSHIP").toString()
-        )
-        val medical_information = RequestBody.create(
-            MultipartBody.FORM,
-            medical_info
-        )
-        val provide_details = RequestBody.create(
-            MultipartBody.FORM,
-            edit_medical_information_details.text.toString()
-        )
-        val is_qualified_in_first_aid = RequestBody.create(
-            MultipartBody.FORM,
-            qualified_info
-        )
-        val date_of_first_aid_qualification = RequestBody.create(
-            MultipartBody.FORM,
-            edit_date_of_first_aid_qualification.text.toString()
-        )
-        val special_med_dietry_info = RequestBody.create(
-            MultipartBody.FORM,
-            DIETARY_ID
-        )
-        val language = RequestBody.create(
-            MultipartBody.FORM,
-            SPOKEN_ID
-        )
-        val state = RequestBody.create(
-            MultipartBody.FORM,
-            ORIGIN_ID
-        )
-        val parent_member_id = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("PARENT_MEMBER").toString()
-        )
-        val type = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("TYPE").toString()
-        )
-        val is_linked = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("IS_LINKED").toString()
-        )
-        val is_self = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("IS_SELF").toString()
-        )
-        val app = RequestBody.create(
-            MultipartBody.FORM,
-            "yes"
-        )
-
-        val call: Call<JsonObject> =
-            MyHssApplication.instance!!.api.updateProfileWithoutImage(
-//                body,
-                user_id,
-                first_name,
-                middle_name,
-                last_name,
-                username,
-                email,
-                password,
-                gender,
-                dob,
-                age,
-                occupation,
-                occupation_name,
-                shakha,
-                mobile,
-                land_line,
-                secondary_email,
-                post_code,
-                building_name,
-                address_line_1,
-                address_line_2,
-                post_town,
-                county,
-                emergency_name,
-                emergency_phone,
-                emergency_email,
-                emergency_relationship,
-                other_emergency_relationship,
-                medical_information,
-                provide_details,
-                is_qualified_in_first_aid,
-                date_of_first_aid_qualification,
-                special_med_dietry_info,
-                language,
-                state,
-                parent_member_id,
-                type,
-                is_linked,
-                is_self,
-                app
-            )
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(
-                call: Call<JsonObject>,
-                response: Response<JsonObject>
-            ) {
-
-                if (response.code() == 200 && response.body() != null) {
-
-                    if (response.isSuccessful) {
-                        var resp = ""
-
-                        if (response.body().toString().startsWith("{")) {
-
-                            resp = "[" + response.body().toString() + "]"
+                        val mStringListnew = ArrayList<String>()
+                        for (i in 0 until data_firstaidInfo.size) {
+                            mStringListnew.add(
+                                data_firstaidInfo[i].id.toString()
+                            )
                         }
 
-                        System.out.println("family_details>>>$resp")
+                        var mStringArray = mStringList.toArray()
+                        var mStringArraynew = mStringList.toArray()
 
-                        val jsonObj = JSONArray(resp)
-                        val jsonObject = jsonObj.getJSONObject(0)
+                        for (i in mStringArray.indices) {
+                            DebugLog.e("string is " + mStringArray[i] as String)
+                        }
 
-                        val status = jsonObject.get("status")
-                        val message = jsonObject.get("message")
+                        for (i in mStringArraynew.indices) {
+                            DebugLog.e("mStringArraynew is " + mStringArraynew[i] as String)
+                        }
 
-                        if (status.equals(true)) {
-                            if (intent.getStringExtra("IS_SELF") != "self") {
-                                val i =
-                                    Intent(this@AddMemberForthActivity, HomeActivity::class.java)
-                                i.putExtra("FAMILY", intent.getStringExtra("PROFILE"))
-                                startActivity(i)
-                                finishAffinity()
-                            } else {
-                                val i =
-                                    Intent(this@AddMemberForthActivity, WelcomeActivity::class.java)
-//                        i.putExtra("FAMILY", intent.getStringExtra("PROFILE"))
-                                startActivity(i)
-                                finishAffinity()
+                        mStringArray = mStringList.toArray(mStringArray)
+                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
+
+                        val list: ArrayList<String> = arrayListOf<String>()
+                        val listnew: ArrayList<String> = arrayListOf<String>()
+
+                        for (element in mStringArray) {
+                            DebugLog.e("LIST==> " + element.toString())
+                            list.add(element.toString())
+                            DebugLog.e("list==> " + list.toString())
+                            val listn = arrayOf(element)
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                firstAidInfoName =
+                                    list//listOf(listn.toCollection(ArrayList()).toString())
                             }
-                        } else {
-                            Functions.showAlertMessageWithOK(
-                                this@AddMemberForthActivity, "",
-//                                      "Message",
-                                message.toString()
-                            )
-                        }
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberForthActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
-            }
-
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
-    }
-
-    /***********/
-
-
-    /*Update member*/
-    private fun update_membership() {
-        val pd = CustomProgressBar(this@AddMemberForthActivity)
-        pd.show()
-
-        val pathA = File(Upload_file)
-
-        println("pathA>>>$pathA")
-
-        val requestFile: RequestBody =
-            RequestBody.create("multipart/form-data".toMediaTypeOrNull(), pathA)
-
-        println("requestFile>>>$requestFile")
-
-        val body =
-            MultipartBody.Part.createFormData("qualification_file", pathA.name, requestFile)
-
-        val user_id = RequestBody.create(
-            MultipartBody.FORM,
-            sessionManager.fetchUserID().toString()
-        )
-        val first_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("FIRST_NAME").toString()
-        )
-        val middle_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("MIDDLE_NAME").toString()
-        )
-        val last_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("LAST_NAME").toString()
-        )
-        val username = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("USERNAME").toString()
-        )
-        val email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMAIL").toString()
-        )
-        val password = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("PASSWORD").toString()
-        )
-        val gender = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("GENDER").toString()
-        )
-        val dob = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("DOB").toString()
-        )
-        val age = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("AGE").toString()
-        )
-        val relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("RELATIONSHIP").toString()
-        )
-        val other_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OTHER_RELATIONSHIP").toString()
-        )
-        val occupation = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OCCUPATION").toString()
-        )
-        val occupation_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OCCUPATION_NAME").toString()
-        )
-        val shakha = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("SHAKHA").toString()
-        )
-        val mobile = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("MOBILE").toString()
-        )
-        val land_line = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("LAND_LINE").toString()
-        )
-        val secondary_email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("SECOND_EMAIL").toString()
-        )
-        val post_code = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("POST_CODE").toString()
-        )
-        val building_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("BUILDING_NAME").toString()
-        )
-        val address_line_1 = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("ADDRESS_ONE").toString()
-        )
-        val address_line_2 = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("ADDRESS_TWO").toString()
-        )
-        val post_town = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("POST_TOWN").toString()
-        )
-        val county = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("COUNTY").toString()
-        )
-        val emergency_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_NAME").toString()
-        )
-        val emergency_phone = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_PHONE").toString()
-        )
-        val emergency_email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_EMAIL").toString()
-        )
-        val emergency_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_RELATIONSHIP").toString()
-        )
-        val other_emergency_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OTHER_EMERGENCY_RELATIONSHIP").toString()
-        )
-        val medical_information = RequestBody.create(
-            MultipartBody.FORM,
-            medical_info
-        )
-        val provide_details = RequestBody.create(
-            MultipartBody.FORM,
-            edit_medical_information_details.text.toString()
-        )
-        val is_qualified_in_first_aid = RequestBody.create(
-            MultipartBody.FORM,
-            qualified_info
-        )
-        val date_of_first_aid_qualification = RequestBody.create(
-            MultipartBody.FORM,
-            edit_date_of_first_aid_qualification.text.toString()
-        )
-        val special_med_dietry_info = RequestBody.create(
-            MultipartBody.FORM,
-            DIETARY_ID
-        )
-        val language = RequestBody.create(
-            MultipartBody.FORM,
-            SPOKEN_ID
-        )
-        val state = RequestBody.create(
-            MultipartBody.FORM,
-            ORIGIN_ID
-        )
-        val parent_member_id = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("PARENT_MEMBER").toString()
-        )
-        val type = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("TYPE").toString()
-        )
-        val is_linked = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("IS_LINKED").toString()
-        )
-        val is_self = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("IS_SELF").toString()
-        )
-        val app = RequestBody.create(
-            MultipartBody.FORM,
-            "yes"
-        )
-
-        val call: Call<JsonObject> =
-            MyHssApplication.instance!!.api.updateMembership(
-                body,
-                user_id,
-                first_name,
-                middle_name,
-                last_name,
-                username,
-                email,
-                password,
-                gender,
-                dob,
-                age,
-                relationship,
-                other_relationship,
-                occupation,
-                occupation_name,
-                shakha,
-                mobile,
-                land_line,
-                secondary_email,
-                post_code,
-                building_name,
-                address_line_1,
-                address_line_2,
-                post_town,
-                county,
-                emergency_name,
-                emergency_phone,
-                emergency_email,
-                emergency_relationship,
-                other_emergency_relationship,
-                medical_information,
-                provide_details,
-                is_qualified_in_first_aid,
-                date_of_first_aid_qualification,
-                special_med_dietry_info,
-                language,
-                state,
-                parent_member_id,
-                type,
-                is_linked,
-                is_self,
-                app
-            )
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(
-                call: Call<JsonObject>,
-                response: Response<JsonObject>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-
-                    if (response.isSuccessful) {
-                        var resp = ""
-
-                        if (response.body().toString().startsWith("{")) {
-
-                            resp = "[" + response.body().toString() + "]"
                         }
 
-                        System.out.println("family_details>>>$resp")
+                        for (element in mStringArraynew) {
+                            DebugLog.e("LIST==> " + element.toString())
+                            listnew.add(element.toString())
+                            DebugLog.e("list==>" + listnew.toString())
 
-                        val jsonObj = JSONArray(resp)
-                        val jsonObject = jsonObj.getJSONObject(0)
-
-                        val status = jsonObject.get("status")
-                        val message = jsonObject.get("message")
-
-                        if (status == true) {
-                            val i = Intent(this@AddMemberForthActivity, HomeActivity::class.java)
-                            i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
-                            startActivity(i)
-                            finishAffinity()
-                        } else {
-                            Functions.showAlertMessageWithOK(
-                                this@AddMemberForthActivity, "",
-//                                      "Message",
-                                message.toString()
-                            )
-                        }
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberForthActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
-            }
-
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
-    }
-
-
-    /*Update profile*/
-    private fun update_profile() {
-        val pd = CustomProgressBar(this@AddMemberForthActivity)
-        pd.show()
-
-        val pathA = File(Upload_file)
-
-        println("pathA>>>$pathA")
-
-        val requestFile: RequestBody =
-            RequestBody.create("multipart/form-data".toMediaTypeOrNull(), pathA)
-
-        println("requestFile>>>$requestFile")
-
-        val body = MultipartBody.Part.createFormData("qualification_file", pathA.name, requestFile)
-
-        val user_id = RequestBody.create(
-            MultipartBody.FORM,
-            sessionManager.fetchUserID().toString()
-        )
-        val first_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("FIRST_NAME").toString()
-        )
-        val middle_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("MIDDLE_NAME").toString()
-        )
-        val last_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("LAST_NAME").toString()
-        )
-        val username = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("USERNAME").toString()
-        )
-        val email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMAIL").toString()
-        )
-        val password = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("PASSWORD").toString()
-        )
-        val gender = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("GENDER").toString()
-        )
-        val dob = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("DOB").toString()
-        )
-        val age = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("AGE").toString()
-        )
-//        val relationship = RequestBody.create(MultipartBody.FORM,
-//            intent.getStringExtra("RELATIONSHIP").toString()
-//        )
-//        val other_relationship = RequestBody.create(MultipartBody.FORM,
-//            intent.getStringExtra("OTHER_RELATIONSHIP").toString()
-//        )
-        val occupation = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OCCUPATION").toString()
-        )
-        val occupation_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OCCUPATION_NAME").toString()
-        )
-        val shakha = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("SHAKHA").toString()
-        )
-        val mobile = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("MOBILE").toString()
-        )
-        val land_line = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("LAND_LINE").toString()
-        )
-        val secondary_email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("SECOND_EMAIL").toString()
-        )
-        val post_code = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("POST_CODE").toString()
-        )
-        val building_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("BUILDING_NAME").toString()
-        )
-        val address_line_1 = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("ADDRESS_ONE").toString()
-        )
-        val address_line_2 = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("ADDRESS_TWO").toString()
-        )
-        val post_town = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("POST_TOWN").toString()
-        )
-        val county = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("COUNTY").toString()
-        )
-        val emergency_name = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_NAME").toString()
-        )
-        val emergency_phone = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_PHONE").toString()
-        )
-        val emergency_email = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_EMAIL").toString()
-        )
-        val emergency_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("EMERGENCY_RELATIONSHIP").toString()
-        )
-        val other_emergency_relationship = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("OTHER_EMERGENCY_RELATIONSHIP").toString()
-        )
-        val medical_information = RequestBody.create(
-            MultipartBody.FORM,
-            medical_info
-        )
-        val provide_details = RequestBody.create(
-            MultipartBody.FORM,
-            edit_medical_information_details.text.toString()
-        )
-        val is_qualified_in_first_aid = RequestBody.create(
-            MultipartBody.FORM,
-            qualified_info
-        )
-        val date_of_first_aid_qualification = RequestBody.create(
-            MultipartBody.FORM,
-            edit_date_of_first_aid_qualification.text.toString()
-        )
-        val special_med_dietry_info = RequestBody.create(
-            MultipartBody.FORM,
-            DIETARY_ID
-        )
-        val language = RequestBody.create(
-            MultipartBody.FORM,
-            SPOKEN_ID
-        )
-        val state = RequestBody.create(
-            MultipartBody.FORM,
-            ORIGIN_ID
-        )
-        val parent_member_id = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("PARENT_MEMBER").toString()
-        )
-        val type = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("TYPE").toString()
-        )
-        val is_linked = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("IS_LINKED").toString()
-        )
-        val is_self = RequestBody.create(
-            MultipartBody.FORM,
-            intent.getStringExtra("IS_SELF").toString()
-        )
-        val app = RequestBody.create(
-            MultipartBody.FORM,
-            "yes"
-        )
-
-        val call: Call<JsonObject> =
-            MyHssApplication.instance!!.api.updateProfile(
-                body,
-                user_id,
-                first_name,
-                middle_name,
-                last_name,
-                username,
-                email,
-                password,
-                gender,
-                dob,
-                age,
-                occupation,
-                occupation_name,
-                shakha,
-                mobile,
-                land_line,
-                secondary_email,
-                post_code,
-                building_name,
-                address_line_1,
-                address_line_2,
-                post_town,
-                county,
-                emergency_name,
-                emergency_phone,
-                emergency_email,
-                emergency_relationship,
-                other_emergency_relationship,
-                medical_information,
-                provide_details,
-                is_qualified_in_first_aid,
-                date_of_first_aid_qualification,
-                special_med_dietry_info,
-                language,
-                state,
-                parent_member_id,
-                type,
-                is_linked,
-                is_self,
-                app
-            )
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(
-                call: Call<JsonObject>,
-                response: Response<JsonObject>
-            ) {
-
-                if (response.code() == 200 && response.body() != null) {
-
-                    if (response.isSuccessful) {
-                        var resp = ""
-
-                        if (response.body().toString().startsWith("{")) {
-
-                            resp = "[" + response.body().toString() + "]"
-                        }
-
-                        System.out.println("family_details>>>$resp")
-
-                        val jsonObj = JSONArray(resp)
-                        val jsonObject = jsonObj.getJSONObject(0)
-
-                        val status = jsonObject.get("status")
-                        val message = jsonObject.get("message")
-
-                        if (status.equals(true)) {
-                            if (intent.getStringExtra("IS_SELF") != "self") {
-                                val i =
-                                    Intent(this@AddMemberForthActivity, HomeActivity::class.java)
-                                i.putExtra("FAMILY", intent.getStringExtra("PROFILE"))
-                                startActivity(i)
-                                finishAffinity()
-                            } else {
-                                val i =
-                                    Intent(this@AddMemberForthActivity, WelcomeActivity::class.java)
-//                        i.putExtra("FAMILY", intent.getStringExtra("PROFILE"))
-                                startActivity(i)
-                                finishAffinity()
+                            val listn = arrayOf(element)
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                firstAidInfoID =
+                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
                             }
-                        } else {
-                            Functions.showAlertMessageWithOK(
-                                this@AddMemberForthActivity, "",
-//                                      "Message",
-                                message.toString()
-                            )
                         }
+
+                        DebugLog.e("firstAidInfoName==> " + firstAidInfoName.toString())
+                        SearchSpinner(firstAidInfoName.toTypedArray(), edit_aid_type)
+
+
+                        if (intent.getStringExtra("TYPE_SELF") != "self") {
+                            if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra(
+                                    "TITLENAME"
+                                ) == "Profile"
+                            ) {
+                                setFirstAidInfo(
+                                    sessionManager.fetchQUALIFICATION_VALUE().toString()
+                                )
+                            }
+                        }
+
+
+                    } else {
+                        Functions.displayMessage(
+                            this@AddMemberForthActivity, response.body()?.message
+                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -2472,85 +1280,11 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                 pd.dismiss()
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            override fun onFailure(call: Call<FirstAidInfo>, t: Throwable) {
                 Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
             }
         })
-    }
-
-    private fun getOutputMediaFileUri(type: Int): Uri? {
-//        requestRuntimePermission()
-        return Uri.fromFile(getOutputMediaFile(type))
-    }
-
-    fun requestRuntimePermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (ContextCompat.checkSelfPermission(
-                    this@AddMemberForthActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-                !== PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this@AddMemberForthActivity,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    1
-                )
-            }
-        }
-    }
-
-    @SuppressLint("LongLogTag")
-    private fun getOutputMediaFile(type: Int): File? {
-        val mediaStorageDir = File(
-            Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-//            IMAGE_DIRECTORY_NAME
-            IMAGE_DIRECTORY
-        )
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d(
-                    IMAGE_DIRECTORY, ("Oops! Failed create "
-                            + IMAGE_DIRECTORY) + " directory"
-                )
-                return null
-            }
-        }
-        // Create a media file name
-        val timeStamp = SimpleDateFormat(
-            "yyyyMMdd_HHmmss",
-            Locale.getDefault()
-        ).format(Date())
-        if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = File(
-                mediaStorageDir.path + File.separator
-                    .toString() + "IMG_" + timeStamp.toString() + ".jpg"
-            )
-        } else if (type == MEDIA_TYPE_PDF) {
-            mediaFile = File(
-                mediaStorageDir.path + File.separator
-                    .toString() + "PDF_" + timeStamp.toString() + ".pdf"
-            )
-        } else {
-            return null
-        }
-        Log.e("path", "media file:-$mediaFile")
-        Log.e("path", "media file:-IMG_$timeStamp.jpg")
-        if (type == MEDIA_TYPE_IMAGE) {
-            edit_qualification_file.text = "IMG_$timeStamp.jpg"
-        } else if (type == MEDIA_TYPE_PDF) {
-            edit_qualification_file.text = "PDF_$timeStamp.pdf"
-        }
-//        Upload_file = mediaFile.toString()
-
-        val uriString: String = mediaFile.toString()
-        val myFile = File(uriString)
-        Log.e("myFile", "media myFile:-$myFile")
-//        Upload_file = myFile.toString()
-//        getPath(fileUri)
-        return mediaFile
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -2564,11 +1298,8 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         Log.d("TAG", "Tags changed: ")
         Log.d("TAG", tags.toTypedArray().contentToString())
         Log.d("TAG", tags.toString())
-
         dietary_txt_layout.visibility = View.VISIBLE
-
         dietary_txt.text = tags.toString()
-
         dietary_txt_view.addView(dietary_txt)
         dietary_txt_view.addView(cross_item)
     }
@@ -2578,36 +1309,816 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         cross_item.setOnClickListener {
             dietary_txt_view.removeView(dietary_txt)
         }
-//        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(mTagsEditText.getWindowToken(), 0);
-//        //mTagsEditText.clearFocus();
     }
 
-    // slide the view from below itself to the current position
-    fun slideUp(view: View) {
-        view.visibility = View.VISIBLE
-        val animate = TranslateAnimation(
-            0F,  // fromXDelta
-            0F,  // toXDelta
-            view.height.toFloat(),  // fromYDelta
-            0F
-        ) // toYDelta
-        animate.duration = 500
-        animate.fillAfter = true
-        view.startAnimation(animate)
+    private fun callMembershipApi(sType: String, isDoc: Boolean) {
+        val pd = CustomProgressBar(this@AddMemberForthActivity)
+        pd.show()
+        DebugLog.e(
+            sType + " , " + " isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF")
+                .toString()
+        )
+
+        var first_aid_date = edit_date_of_first_aid_qualification.text.toString()
+        var first_aid_pro_body = edit_profe_body_regis_num.text.toString()
+
+        when (qualified_info) {
+            "0" -> {
+                FIRSTAID_ID = ""
+                first_aid_pro_body = ""
+                first_aid_date = ""
+                mediaFileDoc = null
+            }
+
+            "1" -> {
+                for (n in data_firstaidInfo.indices) {
+                    if (data_firstaidInfo.get(n).id == FIRSTAID_ID) {
+                        when (data_firstaidInfo.get(n).is_doc) {
+                            "1" -> {
+                                first_aid_pro_body = ""
+                            }
+
+                            "0" -> {
+                                first_aid_date = ""
+                                mediaFileDoc = null
+                            }
+                        }
+                        break
+                    }
+                }
+            }
+        }
+
+
+        val builderData: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
+
+        builderData.addFormDataPart("user_id", sessionManager.fetchUserID().toString())
+        builderData.addFormDataPart("first_name", intent.getStringExtra("FIRST_NAME").toString())
+        builderData.addFormDataPart("middle_name", intent.getStringExtra("MIDDLE_NAME").toString())
+        builderData.addFormDataPart("last_name", intent.getStringExtra("LAST_NAME").toString())
+        builderData.addFormDataPart("username", intent.getStringExtra("USERNAME").toString())
+        builderData.addFormDataPart("email", intent.getStringExtra("EMAIL").toString())
+        builderData.addFormDataPart("password", intent.getStringExtra("PASSWORD").toString())
+        builderData.addFormDataPart("gender", intent.getStringExtra("GENDER").toString())
+        builderData.addFormDataPart("dob", intent.getStringExtra("DOB").toString())
+        builderData.addFormDataPart("age", intent.getStringExtra("AGE").toString())
+        builderData.addFormDataPart(
+            "relationship", intent.getStringExtra("RELATIONSHIP").toString()
+        )
+        builderData.addFormDataPart(
+            "other_relationship", intent.getStringExtra("OTHER_RELATIONSHIP").toString()
+        )
+        builderData.addFormDataPart("occupation", intent.getStringExtra("OCCUPATION").toString())
+        builderData.addFormDataPart(
+            "occupation_name", intent.getStringExtra("OCCUPATION_NAME").toString()
+        )
+        builderData.addFormDataPart("shakha", intent.getStringExtra("SHAKHA").toString())
+        builderData.addFormDataPart("mobile", intent.getStringExtra("MOBILE").toString())
+        builderData.addFormDataPart("land_line", intent.getStringExtra("LAND_LINE").toString())
+        builderData.addFormDataPart(
+            "secondary_email", intent.getStringExtra("SECOND_EMAIL").toString()
+        )
+        builderData.addFormDataPart("post_code", intent.getStringExtra("POST_CODE").toString())
+        builderData.addFormDataPart(
+            "building_name", intent.getStringExtra("BUILDING_NAME").toString()
+        )
+        builderData.addFormDataPart(
+            "address_line_1", intent.getStringExtra("ADDRESS_ONE").toString()
+        )
+        builderData.addFormDataPart(
+            "address_line_2", intent.getStringExtra("ADDRESS_TWO").toString()
+        )
+        builderData.addFormDataPart("post_town", intent.getStringExtra("POST_TOWN").toString())
+        builderData.addFormDataPart("county", intent.getStringExtra("COUNTY").toString())
+        builderData.addFormDataPart(
+            "emergency_name", intent.getStringExtra("EMERGENCY_NAME").toString()
+        )
+        builderData.addFormDataPart(
+            "emergency_phone", intent.getStringExtra("EMERGENCY_PHONE").toString()
+        )
+        builderData.addFormDataPart(
+            "emergency_email", intent.getStringExtra("EMERGENCY_EMAIL").toString()
+        )
+        builderData.addFormDataPart(
+            "emergency_relationship", intent.getStringExtra("EMERGENCY_RELATIONSHIP").toString()
+        )
+        builderData.addFormDataPart(
+            "other_emergency_relationship",
+            intent.getStringExtra("OTHER_EMERGENCY_RELATIONSHIP").toString()
+        )
+        builderData.addFormDataPart("medical_information", medical_info)
+        builderData.addFormDataPart(
+            "provide_details", edit_medical_information_details.text.toString()
+        )
+        builderData.addFormDataPart("special_med_dietry_info", DIETARY_ID)
+        builderData.addFormDataPart("language", SPOKEN_ID).addFormDataPart("state", ORIGIN_ID)
+        builderData.addFormDataPart(
+            "parent_member_id", intent.getStringExtra("PARENT_MEMBER").toString()
+        )
+        builderData.addFormDataPart("type", intent.getStringExtra("TYPE").toString())
+        builderData.addFormDataPart("is_linked", intent.getStringExtra("IS_LINKED").toString())
+        builderData.addFormDataPart("is_self", sType).addFormDataPart("app", "yes")
+        builderData.addFormDataPart("is_qualified_in_first_aid", qualified_info) // 1 or 0
+        builderData.addFormDataPart("first_aid_qualification_val", FIRSTAID_ID) // value of list
+        builderData.addFormDataPart("date_of_first_aid_qualification", first_aid_date) // date
+        builderData.addFormDataPart(
+            "professional_body_registartion_number", first_aid_pro_body
+        )// pro body number
+        if (mediaFileDoc != null) {
+            builderData.addFormDataPart(
+                "qualification_file",
+                mediaFileDoc?.getName(),
+                RequestBody.create("multipart/form-data".toMediaTypeOrNull(), mediaFileDoc!!)
+            )//File
+        } else {
+            builderData.addFormDataPart("qualification_file", "")
+        }
+
+        val requestBody: MultipartBody = builderData.build()
+        for (i in 0 until requestBody.size) {
+            val part = requestBody.part(i)
+            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+                ?.substringBefore("\"")
+            val value = part.body?.let { requestBody ->
+                val buffer = Buffer()
+                requestBody.writeTo(buffer)
+                buffer.readUtf8()
+            } ?: ""
+            DebugLog.e("$key: $value")
+        }
+
+
+        val call: Call<JsonObject> =
+            MyHssApplication.instance!!.api.postAddOrCreateMembership(requestBody)
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.code() == 200 && response.body() != null) {
+                    if (response.isSuccessful) {
+                        var resp = ""
+                        if (response.body().toString().startsWith("{")) {
+                            resp = "[" + response.body().toString() + "]"
+                        }
+                        DebugLog.e(resp)
+                        val jsonObj = JSONArray(resp)
+                        val jsonObject = jsonObj.getJSONObject(0)
+                        val status = jsonObject.get("status")
+                        val message = jsonObject.get("message")
+                        if (status == true) {
+                            when (sType) {
+                                "family" -> {
+                                    val i = Intent(
+                                        this@AddMemberForthActivity, HomeActivity::class.java
+                                    )
+                                    i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
+                                    startActivity(i)
+                                    finishAffinity()
+                                }
+
+                                "self" -> {
+                                    val i = Intent(
+                                        this@AddMemberForthActivity, WelcomeActivity::class.java
+                                    )
+                                    startActivity(i)
+                                    finishAffinity()
+                                }
+                            }
+                        } else {
+                            Functions.showAlertMessageWithOK(
+                                this@AddMemberForthActivity, "", message.toString()
+                            )
+                        }
+                    }
+                } else {
+                    Functions.showAlertMessageWithOK(
+                        this@AddMemberForthActivity, "Message",
+                        getString(R.string.some_thing_wrong),
+                    )
+                }
+                pd.dismiss()
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
+                pd.dismiss()
+            }
+        })
     }
 
-    // slide the view from its current position to below itself
-    fun slideDown(view: View) {
-        view.visibility = View.GONE
-        val animate = TranslateAnimation(
-            0F,  // fromXDelta
-            0F,  // toXDelta
-            0F,  // fromYDelta
-            view.height.toFloat()
-        ) // toYDelta
-        animate.duration = 500
-        animate.fillAfter = true
-        view.startAnimation(animate)
+    private fun callEditProfileApi(isDoc: Boolean) {
+        DebugLog.e(
+            "PROFILE, isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF").toString()
+        )
+
+        val pd = CustomProgressBar(this@AddMemberForthActivity)
+        pd.show()
+
+        var first_aid_date = edit_date_of_first_aid_qualification.text.toString()
+        var first_aid_pro_body = edit_profe_body_regis_num.text.toString()
+
+        when (qualified_info) {
+            "0" -> {
+                FIRSTAID_ID = ""
+                first_aid_pro_body = ""
+                first_aid_date = ""
+                mediaFileDoc = null
+            }
+
+            "1" -> {
+                for (n in data_firstaidInfo.indices) {
+                    if (data_firstaidInfo.get(n).id == FIRSTAID_ID) {
+                        when (data_firstaidInfo.get(n).is_doc) {
+                            "1" -> {
+                                first_aid_pro_body = ""
+                            }
+
+                            "0" -> {
+                                first_aid_date = ""
+                                mediaFileDoc = null
+                            }
+                        }
+                        break
+                    }
+                }
+            }
+        }
+
+        val builderData: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
+        builderData.addFormDataPart("member_id", sessionManager.fetchMEMBERID().toString())
+        builderData.addFormDataPart("first_name", intent.getStringExtra("FIRST_NAME").toString())
+        builderData.addFormDataPart("middle_name", intent.getStringExtra("MIDDLE_NAME").toString())
+        builderData.addFormDataPart("last_name", intent.getStringExtra("LAST_NAME").toString())
+//            .addFormDataPart("username", intent.getStringExtra("USERNAME").toString())
+//            .addFormDataPart("email", intent.getStringExtra("EMAIL").toString())
+//            .addFormDataPart("password", intent.getStringExtra("PASSWORD").toString())
+        builderData.addFormDataPart("gender", intent.getStringExtra("GENDER").toString())
+        builderData.addFormDataPart("dob", intent.getStringExtra("DOB").toString())
+        builderData.addFormDataPart("age", intent.getStringExtra("AGE").toString())
+        builderData.addFormDataPart(
+            "relationship", intent.getStringExtra("RELATIONSHIP").toString()
+        )
+        builderData.addFormDataPart(
+            "other_relationship", intent.getStringExtra("OTHER_RELATIONSHIP").toString()
+        )
+        builderData.addFormDataPart("occupation", intent.getStringExtra("OCCUPATION").toString())
+//        builderData.addFormDataPart("occupation_name", intent.getStringExtra("OCCUPATION_NAME").toString())
+        builderData.addFormDataPart("shakha", intent.getStringExtra("SHAKHA").toString())
+        builderData.addFormDataPart("mobile", intent.getStringExtra("MOBILE").toString())
+        builderData.addFormDataPart("land_line", intent.getStringExtra("LAND_LINE").toString())
+//            .addFormDataPart("secondary_email", intent.getStringExtra("SECOND_EMAIL").toString())
+        builderData.addFormDataPart("post_code", intent.getStringExtra("POST_CODE").toString())
+        builderData.addFormDataPart(
+            "building_name", intent.getStringExtra("BUILDING_NAME").toString()
+        )
+        builderData.addFormDataPart(
+            "address_line_1", intent.getStringExtra("ADDRESS_ONE").toString()
+        )
+        builderData.addFormDataPart(
+            "address_line_2", intent.getStringExtra("ADDRESS_TWO").toString()
+        )
+        builderData.addFormDataPart("post_town", intent.getStringExtra("POST_TOWN").toString())
+        builderData.addFormDataPart("county", intent.getStringExtra("COUNTY").toString())
+        builderData.addFormDataPart(
+            "emergency_name", intent.getStringExtra("EMERGENCY_NAME").toString()
+        )
+        builderData.addFormDataPart(
+            "emergency_phone", intent.getStringExtra("EMERGENCY_PHONE").toString()
+        )
+        builderData.addFormDataPart(
+            "emergency_email", intent.getStringExtra("EMERGENCY_EMAIL").toString()
+        )
+        builderData.addFormDataPart(
+            "emergency_relationship", intent.getStringExtra("EMERGENCY_RELATIONSHIP").toString()
+        )
+        builderData.addFormDataPart(
+            "other_emergency_relationship",
+            intent.getStringExtra("OTHER_EMERGENCY_RELATIONSHIP").toString()
+        )
+        builderData.addFormDataPart("medical_information", medical_info)
+        builderData.addFormDataPart(
+            "provide_details", edit_medical_information_details.text.toString()
+        )
+        builderData.addFormDataPart("special_med_dietry_info", DIETARY_ID)
+        builderData.addFormDataPart("language", SPOKEN_ID)
+        builderData.addFormDataPart("state", ORIGIN_ID)
+        builderData.addFormDataPart(
+            "parent_member_id", intent.getStringExtra("PARENT_MEMBER").toString()
+        )
+        builderData.addFormDataPart("type", intent.getStringExtra("TYPE").toString())
+        builderData.addFormDataPart("is_linked", intent.getStringExtra("IS_LINKED").toString())
+        builderData.addFormDataPart("app", "true")
+        builderData.addFormDataPart("update_by", sessionManager.fetchMEMBERID().toString())
+        builderData.addFormDataPart("country", sessionManager.fetchCOUNTRY().toString())
+        builderData.addFormDataPart("is_qualified_in_first_aid", qualified_info) // 1 or 0
+        builderData.addFormDataPart("first_aid_qualification_val", FIRSTAID_ID) // value of list
+        builderData.addFormDataPart("date_of_first_aid_qualification", first_aid_date) // date
+        builderData.addFormDataPart(
+            "professional_body_registartion_number", first_aid_pro_body
+        )// pro body number
+        if (mediaFileDoc != null) {
+            builderData.addFormDataPart(
+                "qualification_file",
+                mediaFileDoc?.getName(),
+                RequestBody.create("multipart/form-data".toMediaTypeOrNull(), mediaFileDoc!!)
+            )//File
+        } else {
+            builderData.addFormDataPart("qualification_file", "")
+        }
+
+        val requestBody: MultipartBody = builderData.build()
+        for (i in 0 until requestBody.size) {
+            val part = requestBody.part(i)
+            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+                ?.substringBefore("\"")
+            val value = part.body?.let { requestBody ->
+                val buffer = Buffer()
+                requestBody.writeTo(buffer)
+                buffer.readUtf8()
+            } ?: ""
+            DebugLog.e("$key: $value")
+        }
+
+
+        val call: Call<JsonObject> =
+            MyHssApplication.instance!!.api.postUpdateMembership(requestBody)
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.code() == 200 && response.body() != null) {
+                    if (response.isSuccessful) {
+                        var resp = ""
+                        if (response.body().toString().startsWith("{")) {
+                            resp = "[" + response.body().toString() + "]"
+                        }
+                        DebugLog.e(resp)
+                        val jsonObj = JSONArray(resp)
+                        val jsonObject = jsonObj.getJSONObject(0)
+                        val status = jsonObject.get("status")
+                        val message = jsonObject.get("message")
+                        if (status == true) {
+                            val i = Intent(
+                                this@AddMemberForthActivity, HomeActivity::class.java
+                            )
+                            startActivity(i)
+                            finishAffinity()
+
+                        } else {
+                            Functions.showAlertMessageWithOK(
+                                this@AddMemberForthActivity, "", message.toString()
+                            )
+                        }
+                    }
+                } else {
+                    Functions.showAlertMessageWithOK(
+                        this@AddMemberForthActivity, "Message",
+                        getString(R.string.some_thing_wrong),
+                    )
+                }
+                pd.dismiss()
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
+                pd.dismiss()
+            }
+        })
     }
+
+    // File select dialog
+    private fun openFileUploadDialog() {
+        val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
+        val view_d = layoutInflater.inflate(R.layout.dialog_select_galley_pdf, null)
+        val btnClose = view_d.findViewById<ImageView>(R.id.close_layout)
+        val btn_image = view_d.findViewById<LinearLayout>(R.id.select_gallery)
+        val btn_pdf = view_d.findViewById<LinearLayout>(R.id.select_pdf)
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btn_image.setOnClickListener {
+            openGalleryForImage()
+            dialog.dismiss()
+        }
+        btn_pdf.setOnClickListener {
+            showFileChooserforPDF()
+            dialog.dismiss()
+        }
+        dialog.setCancelable(true)
+        dialog.setContentView(view_d)
+        dialog.show()
+    }
+
+    fun openGalleryForImage() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, IMAGE_PICK_CODE) // REQUEST_CODE)
+    }
+
+    fun showFileChooserforPDF() {
+        val intent = Intent()
+        intent.type = "application/pdf"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PICK_PDF_REQUEST)
+    }
+
+
+    //handling the image chooser activity result
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //PDF result
+        if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
+            pdfFilePath = data?.data
+            DebugLog.e("filePath==> " + data?.data.toString())
+            qualification_file_image.visibility = View.GONE
+            val uriString: String = pdfFilePath.toString()
+            val myFile = File(uriString)
+            DebugLog.e("ioooo=>> " + myFile.toString())
+            Upload_file = myFile.toString()
+            val pdfPath = pdfFilePath?.let { getPathFromUri(this@AddMemberForthActivity, it) }
+            DebugLog.e("pdfPath Path=> " + pdfPath)
+            if (pdfPath == "Not found" || pdfPath == "") {
+                Functions.showAlertMessageWithOK(
+                    this,
+                    "PDF Upload Error",
+                    "This file can not be open, please download new or create new file to upload."
+                )
+            } else {
+                val pathA = File(pdfPath)
+                var length: Long = pathA.length()
+                length = length / 1024
+                DebugLog.e("File size => $length")
+                if (length >= 2000) {
+                    Functions.showAlertMessageWithOK(
+                        this@AddMemberForthActivity, "File Upload Error",
+                        "Please select file size less than 2MB.",
+                    )
+                } else {
+                    mediaFileDoc = File(pdfPath)
+                }
+            }
+        }
+        //Image result
+        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
+            ImagefilePath = data?.data
+            val picturePath: String = getPath(this@AddMemberForthActivity, ImagefilePath)
+            DebugLog.e("Picture Path => " + picturePath)
+            val pathA = File(picturePath)
+            var length: Long = pathA.length()
+            length = length / 1024
+            DebugLog.e("File size => $length")
+            if (length >= 2000) {
+                Functions.showAlertMessageWithOK(
+                    this@AddMemberForthActivity, "File Upload Error",
+                    "Please select file size less than 2MB.",
+                )
+            } else {
+                mediaFileDoc = pathA
+                Upload_file = pathA.toString()
+                qualification_file_image.visibility = View.VISIBLE
+                qualification_file_image.setImageURI(data?.data)
+
+                val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
+                val cursor: Cursor =
+                    contentResolver.query(ImagefilePath!!, filePathColumn, null, null, null)!!
+                cursor.moveToFirst()
+            }
+        }
+    }
+
+    fun getPath(context: Context, uri: Uri?): String {
+        var result: String? = null
+        val proj = arrayOf(MediaStore.Images.Media.DATA, MediaStore.Images.Media.DISPLAY_NAME)
+        val cursor: Cursor? = context.contentResolver.query(uri!!, proj, null, null, null)
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val column_index = cursor.getColumnIndexOrThrow(proj[0])
+                val fileNameColumn = cursor.getColumnIndexOrThrow(proj[1])
+                val fileName = cursor.getString(fileNameColumn)
+                edit_qualification_file.text = fileName
+                result = cursor.getString(column_index)
+            }
+            cursor.close()
+        }
+        if (result == null) {
+            result = "Not found"
+        }
+        return result
+    }
+
+    fun getPathFromUri(context: Context, uri: Uri): String? {
+        val contentResolver: ContentResolver = context.contentResolver
+        val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME)
+        val cursor = contentResolver.query(uri, projection, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val fileNameColumn = it.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+                val fileName = it.getString(fileNameColumn)
+                val cacheDir = context.cacheDir
+                val file = File(cacheDir, fileName)
+                if (file.exists()) {
+                    edit_qualification_file.text = fileName
+                    return file.absolutePath
+                }
+                val inputStream = contentResolver.openInputStream(uri)
+                inputStream?.use { input ->
+                    val outputStream = file.outputStream()
+                    outputStream.use { output ->
+                        val buffer = ByteArray(4 * 1024) // 4k buffer
+                        while (true) {
+                            val byteCount = input.read(buffer)
+                            if (byteCount < 0) break
+                            output.write(buffer, 0, byteCount)
+                        }
+                        output.flush()
+                        return file.absolutePath
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    // Permission code
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun checkPermission(): Boolean {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val result1 =
+                ContextCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.READ_MEDIA_IMAGES
+                )
+//            val result2 = ContextCompat.checkSelfPermission(
+//                applicationContext,
+//                Manifest.permission.READ_EXTERNAL_STORAGE
+//            )
+//            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
+//            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
+            return result1 == PackageManager.PERMISSION_GRANTED
+//                    && result2 == PackageManager.PERMISSION_GRANTED
+//                    && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED
+//                    && result4 == PackageManager.PERMISSION_GRANTED
+        } else {
+            val result1 = ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+//            val result2 = ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
+//            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
+//            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
+
+            return result1 == PackageManager.PERMISSION_GRANTED
+//                    && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED && result4 == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun requestPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.READ_MEDIA_IMAGES
+//                    Manifest.permission.READ_EXTERNAL_STORAGE
+//                    permission.CAMERA
+//                    , permission.WRITE_EXTERNAL_STORAGE
+                ), PERMISSION_REQUEST_CODE
+            )
+        } else {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+//                    permission.CALL_PHONE,
+//                    permission.CAMERA,
+//                    permission.WRITE_EXTERNAL_STORAGE
+                ), PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+
+                val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+//                val readExternalStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED
+//                val cameraAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                    if (readAccepted && callAccepted && cameraAccepted) {
+                    if (readAccepted) {
+                        openFileUploadDialog()
+//                        Log.d("File_name", File_name)
+                    } else {
+                        if (shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_IMAGES)) {
+                            showMessageOKCancel("You need to allow permission, in order to upload Qualification File",
+                                DialogInterface.OnClickListener { dialog, which ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                        requestPermissions(
+                                            arrayOf(
+                                                Manifest.permission.READ_MEDIA_IMAGES
+//                                                Manifest.permission.READ_EXTERNAL_STORAGE
+//                                                permission.CALL_PHONE,
+//                                                permission.CAMERA,
+                                            ), PERMISSION_REQUEST_CODE
+                                        )
+                                    }
+                                })
+                            return
+                        } /*else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                            showMessageOKCancel("You need to allow permission, in order to upload Qualification File",
+                                DialogInterface.OnClickListener { dialog, which ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                        requestPermissions(
+                                            arrayOf(
+                                                Manifest.permission.READ_MEDIA_IMAGES,
+                                                Manifest.permission.READ_EXTERNAL_STORAGE
+//                                                permission.CALL_PHONE,
+//                                                permission.CAMERA,
+                                            ), PERMISSION_REQUEST_CODE
+                                        )
+                                    }
+                                })
+                            return
+                        }*/ /* else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
+                            showMessageOKCancel("You need to allow access to phone the permissions",
+                                DialogInterface.OnClickListener { dialog, which ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                        requestPermissions(
+                                            arrayOf(
+                                                permission.READ_MEDIA_IMAGES,
+                                                permission.CALL_PHONE,
+                                                permission.CAMERA
+                                            ), PERMISSION_REQUEST_CODE
+                                        )
+                                    }
+                                })
+                            return
+                        } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
+                            showMessageOKCancel("You need to allow access to Camera the permissions",
+                                DialogInterface.OnClickListener { dialog, which ->
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                        requestPermissions(
+                                            arrayOf(
+                                                permission.READ_MEDIA_IMAGES,
+                                                permission.CALL_PHONE,
+                                                permission.CAMERA
+                                            ), PERMISSION_REQUEST_CODE
+                                        )
+                                    }
+                                })
+                            return
+                        }*/
+                    }
+                } else {
+//                    val writeAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED
+//                    if (writeAccepted && readAccepted && callAccepted && cameraAccepted) {
+                    if (readAccepted) {
+                        openFileUploadDialog()
+                    } else {
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            /*if (shouldShowRequestPermissionRationale(permission.WRITE_EXTERNAL_STORAGE)) {
+                                showMessageOKCancel("You need to allow access to Write the permissions",
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                            requestPermissions(
+                                                arrayOf(
+                                                    permission.WRITE_EXTERNAL_STORAGE,
+                                                    permission.READ_EXTERNAL_STORAGE,
+                                                    permission.CALL_PHONE,
+                                                    permission.CAMERA,
+                                                ), PERMISSION_REQUEST_CODE
+                                            )
+                                        }
+                                    })
+                                return
+                            } else*/
+                            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                                showMessageOKCancel("You need to allow permission, in order to upload Qualification File",
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                            requestPermissions(
+                                                arrayOf(
+//                                                    permission.WRITE_EXTERNAL_STORAGE,
+                                                    Manifest.permission.READ_EXTERNAL_STORAGE
+//                                                    permission.CALL_PHONE,
+//                                                    permission.CAMERA,
+                                                ), PERMISSION_REQUEST_CODE
+                                            )
+                                        }
+                                    })
+                                return
+                            } /*else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
+                                showMessageOKCancel("You need to allow access to phone the permissions",
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                            requestPermissions(
+                                                arrayOf(
+                                                    permission.WRITE_EXTERNAL_STORAGE,
+                                                    permission.READ_EXTERNAL_STORAGE,
+                                                    permission.CALL_PHONE,
+                                                    permission.CAMERA
+                                                ), PERMISSION_REQUEST_CODE
+                                            )
+                                        }
+                                    })
+                                return
+                            } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
+                                showMessageOKCancel("You need to allow access to Camera the permissions",
+                                    DialogInterface.OnClickListener { dialog, which ->
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                            requestPermissions(
+                                                arrayOf(
+                                                    permission.WRITE_EXTERNAL_STORAGE,
+                                                    permission.READ_EXTERNAL_STORAGE,
+                                                    permission.CALL_PHONE,
+                                                    permission.CAMERA
+                                                ), PERMISSION_REQUEST_CODE
+                                            )
+                                        }
+                                    })
+                                return
+                            }*/
+                        }
+                    }
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CALL_PHONE)
+                    //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CAMERA)
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                            this,
+                            Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                    ) {
+                        showPermissionDeniedDialogSetting()
+                    } else {
+                        reRequestPermissionAccessDialog()
+                    }
+                } else {
+                    //|| !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CALL_PHONE)
+                    // || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CAMERA)
+                    // || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.WRITE_EXTERNAL_STORAGE)
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                            this, Manifest.permission.READ_EXTERNAL_STORAGE
+                        )
+                    ) {
+                        showPermissionDeniedDialogSetting()
+                    } else {
+                        reRequestPermissionAccessDialog()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showPermissionDeniedDialogSetting() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setMessage("To upload Qualification File, please enable the required permission from the app settings. Without this permission, this feature may not be accessible. Thank you for your cooperation.")
+            .setCancelable(false).setPositiveButton("Settings") { _, _ ->
+                openAppSettings()
+            }.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }
+        val dialog = dialogBuilder.create()
+        dialog.show()
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun reRequestPermissionAccessDialog() {
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@AddMemberForthActivity)
+        alertDialog.setMessage("In order to upload Qualification File, please grant the requested permission. Without this permission, the application will not be able to upload file in MyHSS Application. Thank you for your understanding.")
+        alertDialog.setPositiveButton(
+            "yes"
+        ) { _, _ ->
+            requestPermission()
+        }
+        alertDialog.setNegativeButton(
+            "No"
+        ) { _, _ ->
+
+        }
+        val alert: AlertDialog = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
+    }
+
+    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+        AlertDialog.Builder(this@AddMemberForthActivity).setMessage(message)
+            .setPositiveButton("OK", okListener).setNegativeButton(
+                "Cancel"
+            ) { dialogInterface, i -> finishAffinity() }.create().show()
+    }
+
 }

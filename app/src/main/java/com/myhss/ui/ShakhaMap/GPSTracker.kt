@@ -187,6 +187,7 @@ class GPSTracker(private val mContext: Context) : LocationListener {
     override fun onLocationChanged(location: Location) {}
     override fun onProviderDisabled(provider: String) {}
     override fun onProviderEnabled(provider: String) {}
+    @Deprecated("Deprecated in Java")
     override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
 
     companion object {

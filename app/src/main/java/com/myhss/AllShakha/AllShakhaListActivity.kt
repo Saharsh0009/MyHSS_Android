@@ -413,6 +413,7 @@ class AllShakhaListActivity : AppCompatActivity() {
 //        }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         super.onBackPressed()
         val i = Intent(this@AllShakhaListActivity, HomeActivity::class.java)

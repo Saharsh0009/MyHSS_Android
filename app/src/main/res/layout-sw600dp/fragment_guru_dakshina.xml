@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/guru_dakshina_layout">
+    android:id="@+id/guru_dakshina_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/search_fields_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding5"
-        android:background="@drawable/edittext_round"
-        android:layout_marginTop="@dimen/padding10"
         android:layout_marginStart="@dimen/padding10"
-        android:layout_marginEnd="@dimen/padding10" >
+        android:layout_marginTop="@dimen/padding10"
+        android:layout_marginEnd="@dimen/padding10"
+        android:background="@drawable/edittext_round"
+        android:padding="@dimen/padding5"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="@dimen/padding20"
             android:layout_height="@dimen/padding20"
-            android:src="@drawable/search_icon"
             android:layout_centerVertical="true"
+            android:src="@drawable/search_icon"
             app:tint="@color/grayColorColor" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/guru_dakshinasearch_fields"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/padding10"
-            android:imeOptions="actionDone"
-            android:textColor="@color/black"
-            android:hint="Search..."
-            android:textColorHint="@color/grayColorColor"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/padding30"
             android:background="@color/white"
-            android:layout_marginStart="@dimen/padding30" />
+            android:hint="Search..."
+            android:imeOptions="actionDone"
+            android:padding="@dimen/padding10"
+            android:textColor="@color/black"
+            android:textColorHint="@color/grayColorColor" />
 
     </RelativeLayout>
 
@@ -41,24 +42,33 @@
         android:id="@+id/guru_dakshina_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/view_view"
         android:layout_below="@+id/search_fields_layout"
-        android:layout_above="@+id/view_view"/>
+        android:visibility="gone" />
 
-    <Button
-        android:layout_width="wrap_content"
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart_guru"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:id="@+id/layout_pieChart_lable"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gray_round_border"
-        android:text="Load more"
-        android:visibility="invisible"
-        android:textSize="@dimen/padding15"
-        android:textColor="@color/black"/>
+        android:layout_below="@+id/pieChart_guru"
+        android:layout_marginLeft="@dimen/padding20"
+        android:layout_marginRight="@dimen/padding20"
+        android:orientation="vertical">
+
+    </LinearLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/view_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center">
 
         <LinearLayout
@@ -71,11 +81,11 @@
                 android:id="@+id/one_time_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
                 android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:background="@color/orangeColor" >
+                android:layout_weight="1"
+                android:background="@color/orangeColor"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="@dimen/padding25"
@@ -85,10 +95,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/sourcesanspro_semibold"
                     android:gravity="center"
                     android:padding="12dp"
                     android:text="@string/one_time_dakshina"
-                    android:fontFamily="@font/sourcesanspro_semibold"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_size15" />
 
@@ -98,11 +108,11 @@
                 android:id="@+id/regular_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_weight="1"
                 android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:background="@color/primaryColor" >
+                android:layout_weight="1"
+                android:background="@color/primaryColor"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="@dimen/padding25"
@@ -112,10 +122,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/sourcesanspro_semibold"
                     android:gravity="center"
                     android:padding="12dp"
                     android:text="@string/regular_dakshina"
-                    android:fontFamily="@font/sourcesanspro_semibold"
                     android:textColor="@color/white"
                     android:textSize="@dimen/font_size15" />
 
@@ -124,10 +134,4 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_below="@+id/submit_layout"
-        android:layout_height="@dimen/padding20" />
-
 </RelativeLayout>

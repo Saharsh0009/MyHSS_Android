@@ -1,19 +1,19 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+
 //apply plugin: 'com.google.gms.google-services'
 //apply plugin: 'com.google.firebase.crashlytics'
 //apply plugin: 'com.github.dcendents.android-maven'
 
 group = "cl.jesualex.stooltip"
-ext.versionName = "1.5"
+ext.versionName = "1.8.21"
 
 android {
-    compileSdkVersion 30
-
+    compileSdkVersion 33
+    namespace 'cl.jesualex.stooltip'
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 33
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -24,15 +24,21 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility "17"
+        targetCompatibility "17"
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:29.0.0'
-    implementation 'com.google.firebase:firebase-analytics:19.0.1'
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.1'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

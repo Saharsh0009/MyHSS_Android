@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/family_layout">
+    android:id="@+id/family_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/search_fields_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding5"
-        android:background="@drawable/edittext_round"
-        android:layout_marginTop="@dimen/padding10"
         android:layout_marginStart="@dimen/padding10"
-        android:layout_marginEnd="@dimen/padding10" >
+        android:layout_marginTop="@dimen/padding10"
+        android:layout_marginEnd="@dimen/padding10"
+        android:background="@drawable/edittext_round"
+        android:padding="@dimen/padding5">
 
         <ImageView
             android:layout_width="@dimen/padding20"
             android:layout_height="@dimen/padding20"
-            android:src="@drawable/search_icon"
             android:layout_centerVertical="true"
+            android:src="@drawable/search_icon"
             app:tint="@color/grayColorColor" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/search_fields"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/padding10"
-            android:imeOptions="actionDone"
-            android:textColor="@color/black"
-            android:hint="Search..."
-            android:textColorHint="@color/grayColorColor"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/padding30"
             android:background="@color/white"
-            android:layout_marginStart="@dimen/padding30" />
+            android:hint="Search..."
+            android:imeOptions="actionDone"
+            android:padding="@dimen/padding10"
+            android:textColor="@color/black"
+            android:textColorHint="@color/grayColorColor" />
 
     </RelativeLayout>
 
@@ -41,25 +41,25 @@
         android:id="@+id/my_family_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/search_fields_layout"
-        android:layout_above="@+id/view_view"/>
+        android:layout_above="@+id/view_view"
+        android:layout_below="@+id/search_fields_layout" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/view_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center">
 
         <LinearLayout
             android:id="@+id/add_family_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:background="@color/orangeColor" >
+            android:background="@color/orangeColor"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="@dimen/padding15"
@@ -70,13 +70,13 @@
                 android:id="@+id/registration_success_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/sourcesanspro_regular"
                 android:gravity="center"
-                android:theme="@style/StyleTextView"
                 android:padding="12dp"
                 android:text="@string/Add_family_member"
-                android:fontFamily="@font/sourcesanspro_regular"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:theme="@style/StyleTextView" />
 
         </LinearLayout>
 

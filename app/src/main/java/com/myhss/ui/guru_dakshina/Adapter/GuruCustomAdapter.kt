@@ -63,7 +63,9 @@ class GuruCustomAdapter(val userList: List<Datum_guru_dakshina>) :
             }
 
             username_name.text =
-                my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " + my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
+                my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " + my_family_DatumGurudakshina.lastName!!.capitalize(
+                    Locale.ROOT
+                )
 
             /*if (my_family_DatumGurudakshina.middleName == "") {
                 username_name.text =
@@ -72,7 +74,8 @@ class GuruCustomAdapter(val userList: List<Datum_guru_dakshina>) :
                 username_name.text =
                     my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " + my_family_DatumGurudakshina.middleName!!.capitalize(Locale.ROOT) + " " + my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
             }*/
-            user_shakha_type.text = my_family_DatumGurudakshina.chapterName!!.capitalize(Locale.ROOT)
+            user_shakha_type.text =
+                my_family_DatumGurudakshina.chapterName!!.capitalize(Locale.ROOT)
             amount_txt.text = "\u00a3" + my_family_DatumGurudakshina.paidAmount
             regular_onetime_type.text = my_family_DatumGurudakshina.dakshina
             regular_onetime_id.text = my_family_DatumGurudakshina.orderId
@@ -98,8 +101,7 @@ class GuruCustomAdapter(val userList: List<Datum_guru_dakshina>) :
             }
 
             adapter_view.setOnClickListener {
-                val i =
-                    Intent(itemView.context, GuruDakshinaRegularDetail::class.java)
+                val i = Intent(itemView.context, GuruDakshinaRegularDetail::class.java)
                 i.putExtra("username_name", username_name.text.toString())
                 i.putExtra("user_shakha_type", user_shakha_type.text.toString())
                 i.putExtra("amount_txt", amount_txt.text.toString())

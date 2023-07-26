@@ -334,6 +334,7 @@
 
         <RelativeLayout
             android:id="@+id/other_hide_show_layout"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_gray_background"
@@ -367,6 +368,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:visibility="gone"
             android:background="@color/lightGrayColor" />
 
         <com.myhss.Utils.ScrollableGridView
@@ -374,6 +376,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fastScrollEnabled="true"
+            android:visibility="gone"
             android:nestedScrollingEnabled="true"
             android:gravity="center"
             android:horizontalSpacing="1dp"

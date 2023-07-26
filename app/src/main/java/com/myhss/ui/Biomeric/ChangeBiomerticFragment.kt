@@ -1,6 +1,6 @@
 package com.myhss.ui.Biomeric
 
-import `in`.arjsna.passcodeview.PassCodeView
+//import `in`.arjsna.passcodeview.PassCodeView
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.TargetApi
@@ -57,20 +57,9 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
     private lateinit var sessionManager: SessionManager
     lateinit var sharedPreferences: SharedPreferences
 
-    val passCodeView: PassCodeView? = null
+    //    val passCodeView: PassCodeView? = null
     var isRePass = false
     private var isNew: Boolean = false
-    val onetxt: TextView? = null
-    private var twotxt: TextView? = null
-    private var threetxt: TextView? = null
-    private var fourtxt: TextView? = null
-    private var fivetxt: TextView? = null
-    private var sixtxt: TextView? = null
-    private var seventxt: TextView? = null
-    private var eighttxt: TextView? = null
-    private var ninetxt: TextView? = null
-    private var zerotxt: TextView? = null
-    private var erazetxt: TextView? = null
 
     private var btnOne: TextView? = null
     private var btnTwo: TextView? = null
@@ -154,7 +143,8 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
         btnDalet = root.findViewById(R.id.btnDalet) as RelativeLayout?
         mainLayout = root.findViewById(R.id.mainLayout) as LinearLayout?
         passcode_img_btn = root.findViewById(R.id.passcode_img_btn) as LinearLayout
-        val passcode_border_logo_view = root.findViewById(R.id.passcode_border_logo_view) as LinearLayout
+        val passcode_border_logo_view =
+            root.findViewById(R.id.passcode_border_logo_view) as LinearLayout
         txtEnterPasscode = root.findViewById(R.id.txtEnterPasscode) as TextView?
         txtWrongPasscode = root.findViewById(R.id.txtWrongPwd) as TextView
         txtusername = root.findViewById(R.id.txtusername) as TextView
@@ -217,7 +207,8 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
 
                 txtusername!!.visibility = View.VISIBLE
                 val FUsername: String =
-                    (sharedPreferences.getString("FIRSTNAME", "").toString()).capitalize(Locale.ROOT)
+                    (sharedPreferences.getString("FIRSTNAME", "")
+                        .toString()).capitalize(Locale.ROOT)
                 val LUsername: String =
                     (sharedPreferences.getString("SURNAME", "").toString()).capitalize(Locale.ROOT)
                 val othertext: String = getColoredSpanned("Welcome \n", "#142F4D")!!
@@ -256,7 +247,8 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 }
                 txtusername!!.visibility = View.VISIBLE
                 val FUsername: String =
-                    (sharedPreferences.getString("FIRSTNAME", "").toString()).capitalize(Locale.ROOT)
+                    (sharedPreferences.getString("FIRSTNAME", "")
+                        .toString()).capitalize(Locale.ROOT)
                 val LUsername: String =
                     (sharedPreferences.getString("SURNAME", "").toString()).capitalize(Locale.ROOT)
                 val othertext: String = getColoredSpanned("Last logged in as \n", "#142F4D")!!
@@ -298,12 +290,12 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
         btnDalet!!.setOnClickListener(this)
         imgBackDelete!!.setOnClickListener(this)
         passcode_logout!!.setOnClickListener(this)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if (checkPermission()) {
-            } else {
-                requestPermission()
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//            if (checkPermission()) {
+//            } else {
+//                requestPermission()
+//            }
+//        }
     }
 
     fun adjustPassCodeScreen() {
@@ -445,13 +437,13 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
 
 
                         if (strPasslock == response.body()!!.data!!.biometricKey) {
-                                startActivity(
-                                    Intent(
-                                        requireContext(),
-                                        HomeActivity::class.java
-                                    )
+                            startActivity(
+                                Intent(
+                                    requireContext(),
+                                    HomeActivity::class.java
                                 )
-                                (context as Activity).finish()
+                            )
+                            (context as Activity).finish()
                         } else {
                             Functions.showAlertMessageWithOK(
                                 requireContext(),
@@ -599,161 +591,212 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
     override fun onAuthenticationCancelled() {}
 
     override fun onAuthenticationSuccessful() {
-            startActivity(Intent(requireContext(), HomeActivity::class.java))
-            (context as Activity).finish()
+        startActivity(Intent(requireContext(), HomeActivity::class.java))
+        (context as Activity).finish()
     }
 
     override fun onAuthenticationHelp(helpCode: Int, helpString: CharSequence?) {}
 
     override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {}
 
-    fun checkPermission(): Boolean {
-        val result_read = ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-        val result_write = ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        return if (result_write == PackageManager.PERMISSION_GRANTED && result_read == PackageManager.PERMISSION_GRANTED) {
-            true
-        } else {
-            false
-        }
-    }
+//    fun checkPermission(): Boolean {
+//        val result_read = ContextCompat.checkSelfPermission(
+//            requireContext(),
+//            Manifest.permission.READ_EXTERNAL_STORAGE
+//        )
+//        val result_write = ContextCompat.checkSelfPermission(
+//            requireContext(),
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE
+//        )
+//        return if (result_write == PackageManager.PERMISSION_GRANTED && result_read == PackageManager.PERMISSION_GRANTED) {
+//            true
+//        } else {
+//            false
+//        }
+//    }
 
-    fun requestPermission() {
-        ActivityCompat.requestPermissions(
-            requireContext() as Activity,
-            arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ),
-            PERMISSION_REQUEST_CODE
-        )
-    }
+//    fun requestPermission() {
+//        ActivityCompat.requestPermissions(
+//            requireContext() as Activity,
+//            arrayOf(
+//                Manifest.permission.READ_EXTERNAL_STORAGE,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE
+//            ),
+//            PERMISSION_REQUEST_CODE
+//        )
+//    }
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.btnOne -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnOne!!.text.toString()
-                    setPointView()
-                }
+            R.id.btnOne -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnOne!!.text.toString()
+                setPointView()
             }
-            R.id.btnTwo -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnTwo!!.getText().toString()
-                    setPointView()
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnOne!!.text.toString()
+//                    setPointView()
+//                }
+//            }
+            R.id.btnTwo -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnTwo!!.getText().toString()
+                setPointView()
             }
-            R.id.btnThree -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnThree!!.getText().toString()
-                    setPointView()
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnTwo!!.getText().toString()
+//                    setPointView()
+//                }
+//            }
+
+            R.id.btnThree -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnThree!!.getText().toString()
+                setPointView()
             }
-            R.id.btnFour -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnFour!!.getText().toString()
-                    setPointView()
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnThree!!.getText().toString()
+//                    setPointView()
+//                }
+//            }
+
+            R.id.btnFour -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnFour!!.getText().toString()
+                setPointView()
             }
-            R.id.btnFive -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnFive!!.getText().toString()
-                    setPointView()
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnFour!!.getText().toString()
+//                    setPointView()
+//                }
+//            }
+
+            R.id.btnFive -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnFive!!.getText().toString()
+                setPointView()
             }
-            R.id.btnSix -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnSix!!.getText().toString()
-                    setPointView()
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnFive!!.getText().toString()
+//                    setPointView()
+//                }
+//            }
+
+            R.id.btnSix -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnSix!!.getText().toString()
+                setPointView()
             }
-            R.id.btnSeven -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnSeven!!.getText().toString()
-                    setPointView()
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnSix!!.getText().toString()
+//                    setPointView()
+//                }
+//            }
+
+            R.id.btnSeven -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnSeven!!.getText().toString()
+                setPointView()
             }
-            R.id.btnEight -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnEight!!.getText().toString()
-                    setPointView()
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnSeven!!.getText().toString()
+//                    setPointView()
+//                }
+//            }
+
+            R.id.btnEight -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnEight!!.getText().toString()
+                setPointView()
             }
-            R.id.btnNine -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnNine!!.getText().toString()
-                    setPointView()
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnEight!!.getText().toString()
+//                    setPointView()
+//                }
+//            }
+
+            R.id.btnNine -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnNine!!.getText().toString()
+                setPointView()
             }
-            R.id.btnZero -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-                Functions.showAlertMessageWithOK(
-                    requireContext(), "",
-                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-                )
-            } else {
-                if (strPasslock.length < 4) {
-                    strPasslock = strPasslock + btnZero!!.getText().toString()
-                    setPointView()
-                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnNine!!.getText().toString()
+//                    setPointView()
+//                }
+//            }
+
+            R.id.btnZero -> if (strPasslock.length < 4) {
+                strPasslock = strPasslock + btnZero!!.getText().toString()
+                setPointView()
             }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
+//                Functions.showAlertMessageWithOK(
+//                    requireContext(), "",
+//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
+//                )
+//            } else {
+//                if (strPasslock.length < 4) {
+//                    strPasslock = strPasslock + btnZero!!.getText().toString()
+//                    setPointView()
+//                }
+//            }
+
             R.id.btnDalet -> if (strPasslock.length > 0) {
                 strPasslock = strPasslock.substring(0, strPasslock.length - 1)
                 setPointView()
             }
+
             R.id.imgBackDelete -> if (strPasslock.length > 0) {
                 strPasslock = strPasslock.substring(0, strPasslock.length - 1)
                 setPointView()
             }
+
             R.id.passcode_logout -> {
                 val alertDialog: AlertDialog.Builder =
                     AlertDialog.Builder(requireContext())
@@ -785,6 +828,12 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                     sessionManager.saveGENDER("")
                     sessionManager.saveAGE("")
                     sessionManager.saveQUALIFICATIONAID("")
+                    sessionManager.saveQUALIFICATION_VALUE("")
+                    sessionManager.saveQUALIFICATION_VALUE_NAME("")
+                    sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
+                    sessionManager.saveQUALIFICATION_DATE("")
+                    sessionManager.saveQUALIFICATION_FILE("")
+                    sessionManager.saveQUALIFICATION_IS_DOC("")
                     sessionManager.saveDOB("")
                     sessionManager.saveVIBHAGNAME("")
                     sessionManager.saveSPOKKENLANGUAGE("")
@@ -805,8 +854,6 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                     sessionManager.saveDIETARYID("")
                     sessionManager.saveVIBHAGID("")
                     sessionManager.saveSTATE_IN_INDIA("")
-                    sessionManager.saveQUALIFICATION_FILE("")
-                    sessionManager.saveQUALIFICATION_DATE("")
                     sessionManager.saveSHAKHAID("")
 
                     sharedPreferences.edit().apply {
@@ -836,6 +883,7 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 alert.setCanceledOnTouchOutside(false)
                 alert.show()
             }
+
             else -> {
             }
         }

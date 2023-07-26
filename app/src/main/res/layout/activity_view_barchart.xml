@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.myhss.ui.Barchat.ViewBarchartActivity">
+
+    <include layout="@layout/action_bar" />
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart_surya"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/padding10"
+        android:layout_marginTop="@dimen/padding40"
+        android:layout_marginRight="@dimen/padding10"
+        android:layout_marginBottom="@dimen/padding40" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

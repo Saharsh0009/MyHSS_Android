@@ -2,6 +2,7 @@ package com.uk.myhss.ui.guru_dakshina
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -11,6 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.SwipeleftToRightBack
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
 import java.util.*
@@ -22,6 +24,7 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
     private lateinit var user_name_txt: TextView
     private lateinit var shakha_name_txt: TextView
     private lateinit var frequency_of_donation_txt: TextView
+    private lateinit var frequency_of_donation_value: TextView
     private lateinit var gift_aid_txt: TextView
     private lateinit var date_txt: TextView
     private lateinit var status_txt: TextView
@@ -42,7 +45,9 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("GuruDakshinaaVC")
-        sessionManager.firebaseAnalytics.setUserProperty("GuruDakshinaaVC", "GuruDakshinaRegularDetail")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "GuruDakshinaaVC", "GuruDakshinaRegularDetail"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -57,6 +62,7 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
         user_name_txt = findViewById(R.id.user_name_txt)
         shakha_name_txt = findViewById(R.id.shakha_name_txt)
         frequency_of_donation_txt = findViewById(R.id.frequency_of_donation_txt)
+        frequency_of_donation_value = findViewById(R.id.frequency_of_donation_value)
         gift_aid_txt = findViewById(R.id.gift_aid_txt)
         date_txt = findViewById(R.id.date_txt)
         status_txt = findViewById(R.id.status_txt)
@@ -64,27 +70,37 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
         contribution_type_txt = findViewById(R.id.contribution_type_txt)
         guru_dakshina_txt = findViewById(R.id.guru_dakshina_txt)
         close_layout = findViewById(R.id.close_layout)
-
         rootLayout = findViewById(R.id.rootLayout)
-
-        frequency_of_donation_txt.visibility = View.GONE
-
+        if (intent.getStringExtra("dakshina").toString() == "One-Time") {
+            frequency_of_donation_txt.visibility = View.GONE
+            frequency_of_donation_value.visibility = View.GONE
+        } else {
+            frequency_of_donation_txt.visibility = View.VISIBLE
+            frequency_of_donation_value.visibility = View.VISIBLE
+        }
         user_name_txt.text = intent.getStringExtra("username_name")!!.capitalize(Locale.ROOT)
         shakha_name_txt.text = intent.getStringExtra("user_shakha_type")!!.capitalize(Locale.ROOT)
-        frequency_of_donation_txt.text = intent.getStringExtra("recurring")
+        frequency_of_donation_value.text = intent.getStringExtra("recurring")
         gift_aid_txt.text = intent.getStringExtra("giftAid")!!.capitalize(Locale.ROOT)
         date_txt.text = intent.getStringExtra("date_txt")
         status_txt.text = intent.getStringExtra("status")
         reference_txt.text = intent.getStringExtra("order_id")
         contribution_type_txt.text = intent.getStringExtra("dakshina")
         guru_dakshina_txt.text = intent.getStringExtra("amount_txt")
-
         back_arrow.setOnClickListener {
             finish()
         }
-
         close_layout.setOnClickListener {
             finish()
         }
+
+//        SwipeleftToRightBack.enableSwipeBack(this)
+//        SwipeleftToRightBack.enableSwipeBackFullView(this)
     }
+
+//    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+//        return SwipeleftToRightBack.dispatchTouchEvent(this, event) || super.dispatchTouchEvent(
+//            event
+//        )
+//    }
 }
