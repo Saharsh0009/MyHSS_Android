@@ -25,8 +25,7 @@ class SessionManager(private val _context: Context) {
     lateinit var firebaseAnalytics: FirebaseAnalytics
 
     private var prefs: SharedPreferences = _context.getSharedPreferences(
-        _context.getString(R.string.app_name),
-        Context.MODE_PRIVATE
+        _context.getString(R.string.app_name), Context.MODE_PRIVATE
     )
 
     @SuppressLint("ObsoleteSdkInt")
@@ -47,7 +46,7 @@ class SessionManager(private val _context: Context) {
             _context.finishAffinity()
         }
     }
-    
+
     val isLoggedIn: Boolean
         get() = pref.getBoolean(IS_LOGIN, false)
 
@@ -93,7 +92,7 @@ class SessionManager(private val _context: Context) {
         const val GUAEMRRELATIONSHIP = "guaemr_relation"
         const val GUAEMRRELATIONSHIP_OTHER = "guaemr_relation_other"
         const val DOHAVEMEDICAL = "do_have_medical"
-        const val QUALIFICATIONAID = "qualification_aid"
+
         const val AGE = "age"
         const val GENDER = "gender"
         const val CITY = "city"
@@ -104,11 +103,18 @@ class SessionManager(private val _context: Context) {
         const val SELECTED_ALL = "selected_all"
         const val SELECTED_TRUE = "selected_true"
         const val SELECTED_FALSE = "selected_false"
-//        const val MEDICAL_INFO = "medical_info"
+
+        //        const val MEDICAL_INFO = "medical_info"
         const val MEDICAL_OTHER_INFO = "medical_other_info"
-//        const val QUALIFICATION_INFO = "qualification_info"
-        const val QUALIFICATION_DATE = "qualification_date"
-        const val QUALIFICATION_FILE = "qualification_file"
+        const val QUALIFICATION_INFO = "qualification_info"
+        const val QUALIFICATIONAID = "qualification_aid"// first aid yes or no
+        const val QUALIFICATION_VALUE = "qualification_value" // first aid type
+        const val QUALIFICATION_DATE = "qualification_date" // first aid
+        const val QUALIFICATION_FILE = "qualification_file" // first aid
+        const val QUALIFICATION_PRO_BODY_REG_NUMBER = "qualification_pro_body_reg_number" // first aid
+        const val QUALIFICATION_VALUE_NAME = "first_aid_qualification_name" // first aid name
+        const val QUALIFICATION_IS_DOC = "first_aid_qualification_is_doc" // first aid is doc true
+
         const val DIETARY = "dietary_txt"
         const val DIETARYID = "dietary_id"
         const val STATE_IN_INDIA = "state_in_india"
@@ -130,8 +136,8 @@ class SessionManager(private val _context: Context) {
     }
 
     fun isConnectingToInternet(mContext: Context): Boolean {
-        val connectivity = mContext
-            .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivity =
+            mContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (connectivity != null) {
             val info = connectivity.allNetworkInfo
             if (info != null) for (i in info.indices) if (info[i].state == NetworkInfo.State.CONNECTED) {
@@ -221,33 +227,25 @@ class SessionManager(private val _context: Context) {
 
     fun getDEVICE_FACEID(): String? {
         return SharedPreferences_String_Name.getShared(
-            _context,
-            SharedPreferences_String_Name.DEVICE_FACEID,
-            ""
+            _context, SharedPreferences_String_Name.DEVICE_FACEID, ""
         )
     }
 
     fun setDEVICE_FACEID(DEVICE_FACEID: String?) {
         SharedPreferences_String_Name.setShared(
-            _context,
-            SharedPreferences_String_Name.DEVICE_FACEID,
-            DEVICE_FACEID
+            _context, SharedPreferences_String_Name.DEVICE_FACEID, DEVICE_FACEID
         )
     }
 
     fun getDEVICE_FINGERID(): String? {
         return SharedPreferences_String_Name.getShared(
-            _context,
-            SharedPreferences_String_Name.DEVICE_FINGERID,
-            ""
+            _context, SharedPreferences_String_Name.DEVICE_FINGERID, ""
         )
     }
 
     fun setDEVICE_FINGERID(DEVICE_FINGERID: String?) {
         SharedPreferences_String_Name.setShared(
-            _context,
-            SharedPreferences_String_Name.DEVICE_FINGERID,
-            DEVICE_FINGERID
+            _context, SharedPreferences_String_Name.DEVICE_FINGERID, DEVICE_FINGERID
         )
     }
 
@@ -736,6 +734,61 @@ class SessionManager(private val _context: Context) {
 
     fun fetchMEDICAL_OTHER_INFO(): String? {
         return prefs.getString(MEDICAL_OTHER_INFO, null)
+    }
+
+    /*QUALIFICATION_INFO Name*/
+    fun saveQUALIFICATION_INFO(skey: String) {
+        val editor = prefs.edit()
+        editor.putString(QUALIFICATION_INFO, skey)
+        editor.apply()
+    }
+
+    fun fetchQUALIFICATION_INFO(): String? {
+        return prefs.getString(QUALIFICATION_INFO, null)
+    }
+
+    /*QUALIFICATION_VALUE Name*/
+    fun saveQUALIFICATION_VALUE(skey: String) {
+        val editor = prefs.edit()
+        editor.putString(QUALIFICATION_VALUE, skey)
+        editor.apply()
+    }
+
+    fun fetchQUALIFICATION_VALUE(): String? {
+        return prefs.getString(QUALIFICATION_VALUE, null)
+    }
+
+    /*QUALIFICATION_PRO BOY TYPE Name*/
+    fun saveQUALIFICATION_PRO_BODY_RED_NO(skey: String) {
+        val editor = prefs.edit()
+        editor.putString(QUALIFICATION_PRO_BODY_REG_NUMBER, skey)
+        editor.apply()
+    }
+
+    fun fetchQUALIFICATION_PRO_BODY_RED_NO(): String? {
+        return prefs.getString(QUALIFICATION_PRO_BODY_REG_NUMBER, null)
+    }
+
+    /*QUALIFICATION_value Name*/
+    fun saveQUALIFICATION_VALUE_NAME(skey: String) {
+        val editor = prefs.edit()
+        editor.putString(QUALIFICATION_VALUE_NAME, skey)
+        editor.apply()
+    }
+
+    fun fetchQUALIFICATION_VALUE_NAME(): String? {
+        return prefs.getString(QUALIFICATION_VALUE_NAME, null)
+    }
+
+    /*QUALIFICATION_ is doc available*/
+    fun saveQUALIFICATION_IS_DOC(skey: String) {
+        val editor = prefs.edit()
+        editor.putString(QUALIFICATION_IS_DOC, skey)
+        editor.apply()
+    }
+
+    fun fetchQUALIFICATION_IS_DOC(): String? {
+        return prefs.getString(QUALIFICATION_IS_DOC, null)
     }
 
     /*QUALIFICATION_DATE Name*/

@@ -54,7 +54,7 @@ class ShakhaFragment : Fragment() {
         root_view = root.findViewById(R.id.root_view)
         shakha_layout = root.findViewById(R.id.shakha_layout)
 
-        rejected_member.visibility = View.GONE
+        rejected_member.visibility = View.VISIBLE
 
         membership_view.setOnClickListener {
 //            Snackbar.make(root_view, "Member Ship", Snackbar.LENGTH_SHORT).show()

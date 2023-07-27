@@ -71,7 +71,10 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("RegularGuruDakshinaStep3VC")
-        sessionManager.firebaseAnalytics.setUserProperty("RegularGuruDakshinaStep3VC", "GuruDakshinaRegularThirdActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "RegularGuruDakshinaStep3VC",
+            "GuruDakshinaRegularThirdActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true)
@@ -81,7 +84,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
 
-        header_title.text = getString(R.string.regular)
+        header_title.text = getString(R.string.regular_dakshina)
 
         rootLayout = findViewById(R.id.rootLayout)
         back_layout = findViewById(R.id.back_layout)
@@ -249,7 +252,8 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                 city,
                 country,
                 postal_code,
-                dakshina
+                dakshina,
+                "1"
             )
         call.enqueue(object : Callback<Get_Create_Regular> {
             override fun onResponse(
@@ -296,7 +300,10 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                         alertDialog.show()
 
                     } else {
-                        Functions.displayMessage(this@GuruDakshinaRegularThirdActivity,response.body()?.message)
+                        Functions.displayMessage(
+                            this@GuruDakshinaRegularThirdActivity,
+                            response.body()?.message
+                        )
 //                        Functions.showAlertMessageWithOK(
 //                            this@GuruDakshinaRegularThirdActivity,
 //                            "Message",

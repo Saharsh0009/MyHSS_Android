@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My HSS</string>
+    <string name="app_name">MyHSS</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -26,7 +26,7 @@
     <string name="menu_policiies">Policies</string>
     <string name="menu_logout">Logout</string>
     <string name="default_notification_channel_id">AIzaSyBk7PnvOUhDTD-elGpVpgjXNK-UX05xto4</string>
-    <string name="unlock_myhss">Unlock MyHss</string>
+    <string name="unlock_myhss">Unlock MyHSS</string>
     <string name="confirm_screen_pin">Confirm your screen lock PIN, Pattern or Password</string>
 
     <!--Camera String-->
@@ -53,7 +53,7 @@
     <string name="billing_information">Billing Information</string>
     <string name="card_number">Card Number</string>
     <string name="expiration_date">Expiration date</string>
-    <string name="expiration_dd_yy">DD/YYYY</string>
+    <string name="expiration_dd_yy">MM/YYYY</string>
     <string name="ccv_no">Ccv</string>
     <string name="card_holder_name">Card Holder Name</string>
     <string name="donate">Donate</string>
@@ -105,7 +105,7 @@
     <string name="baalika_content">5 to 11 Years - Primary School</string>
     <string name="kishore">Kishore</string>
     <string name="kishori">Kishori</string>
-    <string name="kishori_content">11 to 16 Years - Hight School</string>
+    <string name="kishori_content">11 to 16 Years - High School</string>
     <string name="tarun">Tarun</string>
     <string name="taruni">Taruni</string>
     <string name="taruni_content">16 to 30 years</string>
@@ -177,8 +177,8 @@
     <string name="confirm_password">Confirm password</string>
     <string name="register">Register</string>
     <string name="login_details_register">Login Details</string>
-    <string name="user_note_register">Usernames should be something memorable e.g. firstname.surname. These can contain letters and numbers only (no spaces).</string>
-    <string name="password_note_register">Please use 8 or more characters with a mix of letters, numbers &amp; symbols.</string>
+    <string name="user_note_register">Usernames should be something memorable e.g. FirstnameSurname. These can contain letters and numbers only (no spaces &amp; no special characters).</string>
+    <string name="password_note_register">Please use 8 or more characters with a mix of letters, numbers &amp; symbols. e.g. Abcd@123</string>
     <string name="already_user">I already have a membership! </string>
     <!--Choosing Register means that you agree to the HSS (UK) Privacy Policy and the MyHSS Terms & Conditions.-->
     <string name="terms_condtion"><html>Choosing Register means that you agree to the Hss (UK) <a href="https://dev.myhss.org.uk/page/privacy-policy/1">Privacy Policy </a> and the <a href="https://dev.myhss.org.uk/page/privacy-policy/1">MyHss Terms &amp; Conditions</a></html></string>
@@ -237,6 +237,7 @@
     <string name="member_view">Members View</string>
     <string name="attended">All Attended</string>
     <string name="review">Review</string>
+    <string name="preview">Preview</string>
     <string name="prev">Prev</string>
     <string name="guardian_name">Guardian Name</string>
     <string name="guardian_full_name">Guardian full name</string>
@@ -247,6 +248,7 @@
     <string name="present_txt">Present</string>
     <string name="absent_txt">Absent</string>
     <string name="inactive_txt">Inactive</string>
+    <string name="inactivate_txt">Inactivate</string>
     <string name="active_txt">Active</string>
     <string name="pending_txt">Pending</string>
 
@@ -292,10 +294,12 @@
     <string name="shobha_com">shobha@gmail.com </string>
     <string name="to_verify_your_account">to verify your account.</string>
     <string name="membership_applications">Membership</string>  <!--Applications-->
+    <string name="membership_applications_new">Membership Applications</string>
     <string name="view_membership_applications">View Membership Applications</string>
     <string name="active_members">Active Members</string>
     <string name="view_active_members">View Active Members List</string>
     <string name="inactive_applications">In active Members</string>
+    <string name="inactive_members">Inactive Members</string>
     <string name="rejected_applications">Rejected Applications</string>
     <string name="view_rejected_applications">View Rejected Membership Applications</string>
     <string name="approve">Approve</string>
@@ -385,6 +389,7 @@
     <!--Report-->
     <string name="reports">Reports</string>
     <string name="sankhya">Sankhya</string>
+    <string name="sankhya_count">Sankhya : </string>
 
     <!--Shakha-->
     <string name="my_space">My Space</string>
@@ -404,5 +409,37 @@
     <string name="membership_agreement">HSS (UK) Membership Agreement</string>
     <string name="terms_condition">MyHSS Terms &amp; Conditions</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="log_in">Log In</string>
+    <string name="first_aid_qualification_type">First Aid Qualification Type</string>
+    <string name="professional_body_registration_number">Professional Body Registration Number</string>
+    <string name="first_aider_your_shakha">Are you a first aider for your shakha/HSS (UK)?</string>
+    <string name="medical_information_details_new">Medical Information Details</string>
+    <string name="first_aid_qualification_type_new">First Aid Qualification Type</string>
+    <string name="download_certificate">Download Certificate</string>
+    <string name="pro_body_reg_number">Professional body registartion number</string>
+    <string name="view_certificate">View Certificate</string>
+    <string name="guest">Guest</string>
+    <string name="total">Total</string>
+    <string name="add_more">Add More</string>
+    <string name="add_date">Add Date</string>
+    <string name="first_name">Please Enter the First name</string>
+    <string name="valid_first_name">First name should contain alphabetical characters only without any space. e.g. xyz</string>
+    <string name="valid_middle_name">Middle name should contain alphabetical characters only without any space. e.g. xyz</string>
+    <string name="sur_name">Please Enter the Surname</string>
+    <string name="valid_surname">Surname should contain alphabetical characters only without any space. e.g. xyz</string>
+    <string name="user_name">Please Enter User name</string>
+    <string name="valid_user_name">Username should contain alphabetical and numerical characters only without any space/special character. e.g. FirstnameSurname</string>
+    <string name="email_id">Please Enter Email</string>
+    <string name="valid_email">Please Enter Valid Email</string>
+    <string name="enter_password">Please Enter Password</string>
+    <string name="valid_password"><![CDATA[Password must have 8 or more characters with a mix of letters with upper and lower combination, numbers &amp; symbols.]]></string>
+    <string name="enter_confirm_password">Please Enter Confirm Password</string>
+    <string name="valid_confirm_password"><![CDATA[Confirm password must have 8 or more characters with a mix of letters with upper and lower combination, numbers &amp; symbols.]]></string>
+    <string name="confirm_both_pass">Password and confirm password must be same</string>
+    <string name="tnc"><![CDATA[Please check terms & conditions]]></string>
+    <string name="can_not_add_sankhya">Can\'t add Sankhya, no members are currently listed as a part of this Shakha</string>
+    <string name="username_required">Username required</string>
+    <string name="password_required">Password required</string>
+    <string name="enter_dob">Please Enter the Date of Birth</string>
 
 </resources>

@@ -3,54 +3,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLayout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include layout="@layout/action_bar" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none" >
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/padding35"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/padding15"
+                android:background="@drawable/payment_round_layout"
                 android:paddingStart="@dimen/padding15"
                 android:paddingEnd="@dimen/padding15"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/payment_round_layout"
                 tools:ignore="RtlSymmetry">
 
                 <TextView
                     android:id="@+id/donate_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/donate_amount"
                     android:layout_gravity="center_vertical"
-                    android:theme="@style/StyleTextView"
                     android:fontFamily="@font/sourcesanspro_regular"
+                    android:text="@string/donate_amount"
+                    android:textColor="@color/blackColor"
                     android:textSize="@dimen/font_size15"
-                    android:textColor="@color/blackColor" />
+                    android:theme="@style/StyleTextView" />
 
                 <TextView
                     android:id="@+id/donate_amount_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/pound_icon"
-                    android:layout_marginStart="@dimen/padding5"
                     android:layout_gravity="center_vertical"
-                    android:theme="@style/StyleTextView"
+                    android:layout_marginStart="@dimen/padding5"
                     android:fontFamily="@font/sourcesanspro_semibold"
+                    android:text="@string/pound_icon"
+                    android:textColor="@color/blackColor"
                     android:textSize="@dimen/font_size18"
-                    android:textColor="@color/blackColor" />
+                    android:theme="@style/StyleTextView" />
 
             </LinearLayout>
 
@@ -63,70 +63,71 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginEnd="@dimen/padding15"
                 android:layout_marginStart="@dimen/padding15"
-                android:layout_marginTop="@dimen/padding10" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/grayColorColor"
-                android:textSize="@dimen/font_size15"
-                android:text="@string/payment_start_date" />
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding15"
+                android:orientation="horizontal">
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor"
-                tools:ignore="RtlCompat" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payment_start_date"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:gravity="center_vertical"
+                    android:text="*"
+                    android:textAlignment="center"
+                    android:textColor="@color/redColor"
+                    android:theme="@style/StyleTextView"
+                    tools:ignore="RtlCompat" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginEnd="@dimen/font_size15"
                 android:background="@drawable/edittext_round"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/padding10"
                         app:boxStrokeColor="@color/primaryColor"
-                        android:paddingStart="@dimen/font_size15"
-                        style="@style/EditText.OutlinedBox"
                         tools:ignore="RtlSymmetry">
 
                         <TextView
-                            android:theme="@style/StyleEditTextView"
                             android:id="@+id/edit_dateofbirth"
-                            android:layout_marginTop="-5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:hint="Date"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent" />
+                            android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <ImageView
                         android:layout_width="@dimen/padding20"
                         android:layout_height="@dimen/padding20"
-                        android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginEnd="@dimen/padding10"
                         android:src="@drawable/calender"
                         app:tint="@color/primaryColor" />
@@ -138,61 +139,61 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginStart="@dimen/padding15"
-                android:layout_marginEnd="@dimen/padding15" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/grayColorColor"
-                android:textSize="@dimen/font_size15"
-                android:text="@string/how_often_like_to_donate" />
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding15"
+                android:orientation="horizontal">
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor"
-                tools:ignore="RtlCompat" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/how_often_like_to_donate"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:gravity="center_vertical"
+                    android:text="*"
+                    android:textAlignment="center"
+                    android:textColor="@color/redColor"
+                    android:theme="@style/StyleTextView"
+                    tools:ignore="RtlCompat" />
+
+            </LinearLayout>
 
             <RelativeLayout
                 android:id="@+id/how_often_like_to_donate_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding5"
-                android:background="@drawable/edit_primery_color_round"
                 android:layout_marginStart="@dimen/font_size15"
-                android:layout_marginEnd="@dimen/font_size15">
+                android:layout_marginTop="@dimen/padding5"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:background="@drawable/edit_primery_color_round">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EditText.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/padding10"
+                    android:gravity="center_vertical"
                     app:boxStrokeColor="@color/primaryColor"
-                    android:layout_marginEnd="@dimen/padding25"
-                    style="@style/EditText.OutlinedBox"
                     tools:ignore="RtlSymmetry">
 
                     <Spinner
-                        android:theme="@style/StyleEditTextView"
                         android:id="@+id/how_often_like_to_donate_txt"
-                        android:hint="@string/relationship_primery"
-                        android:background="@android:color/transparent"
-                        android:textColor="@color/blackColor"
-                        android:layout_marginTop="-15dp"
-                        android:layout_gravity="center_vertical"
-                        android:tag="@string/occupation_select_other"
-                        android:textColorHint="@color/grayColorColor"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_width="match_parent" />
+                        android:layout_gravity="center_vertical"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/relationship_primery"
+                        android:tag="@string/occupation_select_other"
+                        android:textColor="@color/blackColor"
+                        android:textColorHint="@color/grayColorColor"
+                        android:theme="@style/StyleEditTextView" />
 
                     <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinner
                         style="@android:style/Widget.Spinner.DropDown"
@@ -212,59 +213,59 @@
                 <ImageView
                     android:layout_width="@dimen/padding10"
                     android:layout_height="@dimen/padding10"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginTop="@dimen/padding5"
                     android:layout_marginEnd="@dimen/padding20"
-                    android:src="@drawable/arrow_drop_down"  />
+                    android:src="@drawable/arrow_drop_down" />
 
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginEnd="@dimen/padding15"
                 android:layout_marginStart="@dimen/padding15"
-                android:layout_marginTop="@dimen/padding10" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/grayColorColor"
-                android:textSize="@dimen/font_size15"
-                android:text="@string/donating_individual_family" />
+                android:layout_marginTop="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding15"
+                android:orientation="horizontal">
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor"
-                tools:ignore="RtlCompat" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/donating_individual_family"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:gravity="center_vertical"
+                    android:text="*"
+                    android:textAlignment="center"
+                    android:textColor="@color/redColor"
+                    android:theme="@style/StyleTextView"
+                    tools:ignore="RtlCompat" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginTop="@dimen/padding10"
                 android:layout_marginEnd="@dimen/font_size15"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/donating_individual_family_yes_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginEnd="@dimen/padding10"
+                    android:layout_weight="1"
                     android:background="@drawable/edittext_round"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -275,10 +276,10 @@
                             android:id="@+id/donating_individual_family_yes_txt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/grayColorColor"
-                            android:text="@string/donating_individual"
-                            android:layout_centerVertical="true"
                             android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:text="@string/donating_individual"
+                            android:textColor="@color/grayColorColor"
                             android:textSize="@dimen/font_size15"
                             android:theme="@style/StyleTextView" />
 
@@ -286,8 +287,8 @@
                             android:id="@+id/donating_individual_family_yes_icon"
                             android:layout_width="@dimen/padding25"
                             android:layout_height="@dimen/padding25"
-                            android:layout_centerVertical="true"
                             android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
                             android:layout_marginEnd="@dimen/padding10"
                             android:src="@drawable/righttikmark_gray_icon" />
 
@@ -299,10 +300,10 @@
                     android:id="@+id/donating_individual_family_no_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginStart="@dimen/padding10"
+                    android:layout_weight="1"
                     android:background="@drawable/edittext_round"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -313,10 +314,10 @@
                             android:id="@+id/donating_individual_family_no_txt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/grayColorColor"
-                            android:text="@string/donating_family"
-                            android:layout_centerVertical="true"
                             android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="@string/donating_family"
+                            android:textColor="@color/grayColorColor"
                             android:textSize="@dimen/font_size15"
                             android:theme="@style/StyleTextView" />
 
@@ -324,8 +325,8 @@
                             android:id="@+id/donating_individual_family_no_img"
                             android:layout_width="@dimen/padding25"
                             android:layout_height="@dimen/padding25"
-                            android:layout_centerVertical="true"
                             android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
                             android:layout_marginEnd="@dimen/padding10"
                             android:src="@drawable/righttikmark_gray_icon" />
 
@@ -339,35 +340,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding10"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_marginStart="@dimen/padding15"
-                    android:layout_marginEnd="@dimen/padding15" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/grayColorColor"
-                    android:textSize="@dimen/font_size15"
-                    android:text="@string/gift_aid_declaration" />
+                    android:layout_marginEnd="@dimen/padding15"
+                    android:orientation="horizontal">
 
                     <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:theme="@style/StyleTextView"
-                android:text="*"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/padding10"
-                android:textColor="@color/redColor"
-                tools:ignore="RtlCompat" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gift_aid_declaration"
+                        android:textColor="@color/grayColorColor"
+                        android:textSize="@dimen/font_size15" />
 
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/padding10"
+                        android:gravity="center_vertical"
+                        android:text="*"
+                        android:textAlignment="center"
+                        android:textColor="@color/redColor"
+                        android:theme="@style/StyleTextView"
+                        tools:ignore="RtlCompat" />
+
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/tooltip_view"
@@ -382,31 +383,31 @@
                 android:id="@+id/gift_aid_select_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding5"
-                android:background="@drawable/edit_primery_color_round"
                 android:layout_marginStart="@dimen/font_size15"
-                android:layout_marginEnd="@dimen/font_size15">
+                android:layout_marginTop="@dimen/padding5"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:background="@drawable/edit_primery_color_round">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    style="@style/EditText.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/padding10"
+                    android:gravity="center_vertical"
                     app:boxStrokeColor="@color/primaryColor"
-                    android:layout_marginEnd="@dimen/padding25"
-                    style="@style/EditText.OutlinedBox"
                     tools:ignore="RtlSymmetry">
 
                     <Spinner
-                        android:theme="@style/StyleEditTextView"
                         android:id="@+id/gift_aid_select_txt"
-                        android:hint="@string/relationship_primery"
-                        android:background="@android:color/transparent"
-                        android:textColor="@color/blackColor"
-                        android:layout_marginTop="-15dp"
-                        android:layout_gravity="center_vertical"
-                        android:tag="@string/occupation_select_other"
-                        android:textColorHint="@color/grayColorColor"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_width="match_parent" />
+                        android:layout_gravity="center_vertical"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/relationship_primery"
+                        android:tag="@string/occupation_select_other"
+                        android:textColor="@color/blackColor"
+                        android:textColorHint="@color/grayColorColor"
+                        android:theme="@style/StyleEditTextView" />
 
                     <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinner
                         style="@android:style/Widget.Spinner.DropDown"
@@ -426,39 +427,39 @@
                 <ImageView
                     android:layout_width="@dimen/padding10"
                     android:layout_height="@dimen/padding10"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginTop="@dimen/padding5"
                     android:layout_marginEnd="@dimen/padding20"
-                    android:src="@drawable/arrow_drop_down"  />
+                    android:src="@drawable/arrow_drop_down" />
 
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="2"
                 android:layout_marginTop="20dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="@dimen/padding5"
                     android:layout_marginEnd="@dimen/padding10"
-                    android:layout_weight="1"
-                    android:layout_gravity="center" >
+                    android:layout_weight="1">
 
                     <LinearLayout
                         android:id="@+id/back_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:layout_gravity="center"
-                        android:orientation="horizontal"
                         android:background="@drawable/button_orange_round"
+                        android:gravity="center"
+                        android:orientation="horizontal"
                         android:paddingStart="@dimen/padding35"
-                        android:paddingEnd="@dimen/padding35" >
+                        android:paddingEnd="@dimen/padding35">
 
                         <ImageView
                             android:layout_width="@dimen/padding15"
@@ -468,10 +469,10 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/sourcesanspro_regular"
                             android:gravity="center"
                             android:padding="12dp"
                             android:text="@string/prev"
-                            android:fontFamily="@font/sourcesanspro_regular"
                             android:textColor="@color/primaryColor"
                             android:textSize="18sp" />
 
@@ -482,29 +483,29 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="@dimen/padding10"
                     android:layout_marginEnd="@dimen/padding10"
-                    android:layout_weight="1"
-                    android:layout_gravity="center" >
+                    android:layout_weight="1">
 
                     <LinearLayout
                         android:id="@+id/next_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:layout_gravity="center"
-                        android:orientation="horizontal"
                         android:background="@drawable/button_round"
+                        android:gravity="center"
+                        android:orientation="horizontal"
                         android:paddingStart="@dimen/padding35"
-                        android:paddingEnd="@dimen/padding35" >
+                        android:paddingEnd="@dimen/padding35">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/sourcesanspro_regular"
                             android:gravity="center"
                             android:padding="12dp"
                             android:text="@string/next"
-                            android:fontFamily="@font/sourcesanspro_regular"
                             android:textColor="@color/white"
                             android:textSize="18sp" />
 
@@ -521,8 +522,8 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_below="@+id/submit_layout"
-                android:layout_height="@dimen/padding20" />
+                android:layout_height="@dimen/padding20"
+                android:layout_below="@+id/submit_layout" />
 
         </LinearLayout>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_500">#C16200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
@@ -37,6 +37,7 @@
     <color name="lightOrangeColor">#F8B03C</color>
     <color name="darkfiroziColor">#26A69A</color>
     <color name="transparentColor">#66000000</color>
+    <color name="transparentColor_dialog">#0F0F0F0F</color>
     <color name="transparent_Color">#00000000</color>
     <color name="darkYellowColor">#FFCA28</color>
     <color name="lightYallowColor">#FFF7EA</color>
@@ -59,5 +60,36 @@
     <color name="yuvati_color">#da2a2c</color>
     <color name="proudh_color">#bc7b00</color>
     <color name="proudha_color">#b91b22</color>
+
+    <!--Piechart_color-->
+    <array name="pieChart">
+        <item>#FF3224</item>
+        <item>#512119</item>
+        <item>#F87700</item>
+        <item>#F8B03C</item>
+        <item>#9EAC3D</item>
+        <item>#4E9B5B</item>
+        <item>#B22469</item>
+        <item>#5E3B03</item>
+        <item>#D37B13</item>
+        <item>#C25450</item>
+    </array>
+
+    <!--Piechart_gurudakshina_color-->
+    <array name="pieChart_guru">
+        <item>#264D99</item>
+        <item>#2F4858</item>
+        <item>#00A26A</item>
+        <item>#142F4D</item>
+        <item>#005979</item>
+        <item>#008692</item>
+        <item>#00B290</item>
+        <item>#2B5824</item>
+        <item>#144D3F</item>
+        <item>#00B4BA</item>
+    </array>
+
+    <color name="guru_dakshina_bk">#0F142F4D</color>
+    <color name="surya_namaskar_bk">#1CF8B03C</color>
 
 </resources>

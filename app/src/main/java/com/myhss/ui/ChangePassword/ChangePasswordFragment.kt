@@ -161,6 +161,12 @@ class ChangePasswordFragment : Fragment() {
                         sessionManager.saveGENDER("")
                         sessionManager.saveAGE("")
                         sessionManager.saveQUALIFICATIONAID("")
+                        sessionManager.saveQUALIFICATION_VALUE("")
+                        sessionManager.saveQUALIFICATION_VALUE_NAME("")
+                        sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
+                        sessionManager.saveQUALIFICATION_DATE("")
+                        sessionManager.saveQUALIFICATION_FILE("")
+                        sessionManager.saveQUALIFICATION_IS_DOC("")
                         sessionManager.saveDOB("")
                         sessionManager.saveVIBHAGNAME("")
                         sessionManager.saveSPOKKENLANGUAGE("")
@@ -181,8 +187,6 @@ class ChangePasswordFragment : Fragment() {
                         sessionManager.saveDIETARYID("")
                         sessionManager.saveVIBHAGID("")
                         sessionManager.saveSTATE_IN_INDIA("")
-                        sessionManager.saveQUALIFICATION_FILE("")
-                        sessionManager.saveQUALIFICATION_DATE("")
                         sessionManager.saveSHAKHAID("")
 
                         sharedPreferences.edit().apply {

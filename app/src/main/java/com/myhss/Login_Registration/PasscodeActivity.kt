@@ -1,6 +1,6 @@
 package com.myhss.Login_Registration
 
-import `in`.arjsna.passcodeview.PassCodeView
+
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -56,7 +56,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
 
     lateinit var sharedPreferences: SharedPreferences
     val TAG = PasscodeActivity::class.java.name
-    val passCodeView: PassCodeView? = null
+
     var isRePass = false
     private var isNew: Boolean = false
     val onetxt: TextView? = null
@@ -875,6 +875,12 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     sessionManager.saveGENDER("")
                     sessionManager.saveAGE("")
                     sessionManager.saveQUALIFICATIONAID("")
+                    sessionManager.saveQUALIFICATION_VALUE("")
+                    sessionManager.saveQUALIFICATION_VALUE_NAME("")
+                    sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
+                    sessionManager.saveQUALIFICATION_DATE("")
+                    sessionManager.saveQUALIFICATION_FILE("")
+                    sessionManager.saveQUALIFICATION_IS_DOC("")
                     sessionManager.saveDOB("")
                     sessionManager.saveVIBHAGNAME("")
                     sessionManager.saveSPOKKENLANGUAGE("")
@@ -895,8 +901,6 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     sessionManager.saveDIETARYID("")
                     sessionManager.saveVIBHAGID("")
                     sessionManager.saveSTATE_IN_INDIA("")
-                    sessionManager.saveQUALIFICATION_FILE("")
-                    sessionManager.saveQUALIFICATION_DATE("")
                     sessionManager.saveSHAKHAID("")
 
                     sharedPreferences.edit().apply {

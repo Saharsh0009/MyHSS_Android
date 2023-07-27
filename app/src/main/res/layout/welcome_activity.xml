@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/rootLayout">
+    android:layout_height="match_parent">
 
     <include layout="@layout/action_bar" />
 
@@ -11,101 +11,101 @@
         android:id="@+id/welcome_img_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding50"
         android:src="@drawable/welcome_img"
         android:visibility="gone"
-        android:layout_marginTop="@dimen/padding50"
         tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/padding10"
         android:layout_marginEnd="@dimen/padding10"
         android:gravity="center_horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true" >
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="12dp"
-        android:text="@string/welcome_to_myhss"
-        android:theme="@style/StyleTextView"
-        android:textStyle="bold"
-        android:visibility="visible"
-        android:fontFamily="@font/sourcesanspro_regular"
-        android:textColor="@color/black"
-        android:textSize="@dimen/font_size20" />
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/sourcesanspro_regular"
             android:gravity="center"
-            android:paddingTop="12dp"
+            android:padding="12dp"
+            android:text="@string/welcome_to_myhss"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_size20"
+            android:textStyle="bold"
+            android:theme="@style/StyleTextView"
+            android:visibility="visible" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/sourcesanspro_regular"
+            android:gravity="center"
             android:paddingStart="12dp"
+            android:paddingTop="12dp"
             android:paddingEnd="12dp"
             android:paddingBottom="5dp"
-            android:textAlignment="center"
-            android:layout_gravity="center_horizontal"
             android:text="@string/welcome_data"
-            android:theme="@style/StyleTextView"
-            android:textStyle="bold"
-            android:visibility="visible"
-            android:fontFamily="@font/sourcesanspro_regular"
+            android:textAlignment="center"
             android:textColor="@color/orangeColor"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:theme="@style/StyleTextView"
+            android:visibility="visible" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/sourcesanspro_regular"
             android:gravity="center"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:paddingBottom="12dp"
-            android:textAlignment="center"
-            android:layout_gravity="center_horizontal"
             android:text="@string/welcome_data_new"
-            android:theme="@style/StyleTextView"
-            android:textStyle="bold"
-            android:visibility="visible"
-            android:fontFamily="@font/sourcesanspro_regular"
+            android:textAlignment="center"
             android:textColor="@color/off_black"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:theme="@style/StyleTextView"
+            android:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/add_self_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
             android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
             android:layout_marginTop="@dimen/padding5"
+            android:background="@drawable/edittext_round"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
             android:padding="@dimen/padding10"
-            android:background="@drawable/edittext_round">
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="@dimen/padding80"
                 android:layout_height="@dimen/padding60"
-                android:src="@drawable/add_self_icon"
                 android:layout_gravity="center_horizontal"
+                android:src="@drawable/add_self_icon"
                 tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/add_self"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/sourcesanspro_regular"
                 android:gravity="center"
                 android:padding="12dp"
                 android:text="@string/Add_self"
-                android:theme="@style/StyleTextView"
-                android:textStyle="bold"
-                android:visibility="visible"
-                android:fontFamily="@font/sourcesanspro_regular"
                 android:textColor="@color/primaryColor"
-                android:textSize="@dimen/font_size15" />
+                android:textSize="@dimen/font_size15"
+                android:textStyle="bold"
+                android:theme="@style/StyleTextView"
+                android:visibility="visible" />
 
         </LinearLayout>
 
@@ -122,61 +122,61 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/blank_txt">
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp">
-
-        <LinearLayout
-            android:id="@+id/welcome_layout"
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:visibility="gone"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:background="@drawable/button_orange_round"
-            android:paddingStart="@dimen/padding40"
-            android:paddingEnd="@dimen/padding40" >
+            android:layout_marginTop="20dp">
 
-            <ImageView
-                android:layout_width="@dimen/padding15"
-                android:layout_height="@dimen/padding20"
-                android:src="@drawable/plus_icon" />
-
-            <TextView
-                android:id="@+id/add_selfnew"
+            <LinearLayout
+                android:id="@+id/welcome_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/button_orange_round"
                 android:gravity="center"
-                android:padding="12dp"
-                android:text="@string/Add_self"
-                android:theme="@style/StyleTextView"
-                android:textStyle="bold"
-                android:visibility="visible"
-                android:fontFamily="@font/sourcesanspro_regular"
-                android:textColor="@color/primaryColor"
-                android:textSize="18sp" />
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/padding40"
+                android:paddingEnd="@dimen/padding40"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/add_self_family"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="12dp"
-                android:text="@string/Add_family_member"
-                android:theme="@style/StyleTextView"
-                android:textStyle="bold"
-                android:visibility="gone"
-                android:fontFamily="@font/sourcesanspro_regular"
-                android:textColor="@color/primaryColor"
-                android:textSize="18sp" />
+                <ImageView
+                    android:layout_width="@dimen/padding15"
+                    android:layout_height="@dimen/padding20"
+                    android:src="@drawable/plus_icon" />
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/add_selfnew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="@string/Add_self"
+                    android:textColor="@color/primaryColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:theme="@style/StyleTextView"
+                    android:visibility="visible" />
 
-    </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/add_self_family"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="@string/Add_family_member"
+                    android:textColor="@color/primaryColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:theme="@style/StyleTextView"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </RelativeLayout>
 
@@ -184,17 +184,17 @@
         android:id="@+id/welcome_txt_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/font_size18"
-        android:visibility="gone"
-        android:layout_margin="@dimen/padding5"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/brownColor"
-        android:theme="@style/StyleTextView"
-        android:textAlignment="center"
+        android:layout_margin="@dimen/padding5"
+        android:background="@drawable/text_background_round"
         android:padding="@dimen/padding20"
         android:paddingStart="@dimen/padding20"
         android:paddingEnd="@dimen/padding20"
-        android:background="@drawable/text_background_round" />
+        android:textAlignment="center"
+        android:textColor="@color/brownColor"
+        android:textSize="@dimen/font_size18"
+        android:theme="@style/StyleTextView"
+        android:visibility="gone" />
 
 </RelativeLayout>

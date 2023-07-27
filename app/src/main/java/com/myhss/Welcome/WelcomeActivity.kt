@@ -8,6 +8,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.*
 import com.google.firebase.FirebaseApp
@@ -21,6 +22,7 @@ import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.Functions
 import com.uk.myhss.AddMember.AddMemberFirstActivity
+import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -42,7 +44,9 @@ class WelcomeActivity : AppCompatActivity() {
     lateinit var welcome_txt_msg: TextView
     lateinit var add_self: TextView
     lateinit var add_self_family: TextView
-//    lateinit var welcome_layout: LinearLayout
+    lateinit var btn_logOut: ImageView
+
+    //    lateinit var welcome_layout: LinearLayout
     lateinit var add_self_layout: LinearLayout
     lateinit var rootLayout: RelativeLayout
 
@@ -68,7 +72,8 @@ class WelcomeActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(/*context=*/ this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(
-            DebugAppCheckProviderFactory.getInstance())
+            DebugAppCheckProviderFactory.getInstance()
+        )
 
         val back_arrow = findViewById<ImageView>(R.id.back_arrow)
         val header_title = findViewById<TextView>(R.id.header_title)
@@ -79,10 +84,12 @@ class WelcomeActivity : AppCompatActivity() {
 //        welcome_layout = findViewById(R.id.welcome_layout)
         add_self_layout = findViewById(R.id.add_self_layout)
         rootLayout = findViewById(R.id.rootLayout)
+        btn_logOut = findViewById(R.id.info_tooltip)
 
         back_arrow.visibility = View.INVISIBLE
 
         header_title.text = getString(R.string.welocome)
+        btn_logOut.setImageResource(R.drawable.ic_logout)
 
         user_id = sessionManager.fetchUserID()!!
         Log.d("user_id", user_id)
@@ -143,7 +150,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         if (add_self.text.toString() == getString(R.string.Add_self)) {
 //            welcome_layout.setOnClickListener {
-                add_self_layout.setOnClickListener {
+            add_self_layout.setOnClickListener {
 //                Snackbar.make(rootLayout, "Add self", Snackbar.LENGTH_SHORT).show()
                 val i = Intent(this@WelcomeActivity, AddMemberFirstActivity::class.java)
                 i.putExtra("TYPE_SELF", TYPE_SELF)
@@ -164,6 +171,97 @@ class WelcomeActivity : AppCompatActivity() {
 //            }
 //            }, 500)
 //        }
+
+        btn_logOut.setOnClickListener {
+            callLogOutMethod()
+        }
+    }
+
+    private fun callLogOutMethod() {
+        val alertDialog: AlertDialog.Builder =
+            AlertDialog.Builder(this@WelcomeActivity)
+        alertDialog.setTitle("Logout")
+        alertDialog.setMessage("Are you sure you would like to logout?")
+        alertDialog.setPositiveButton(
+            "yes"
+        ) { _, _ ->
+
+            val sharedPreferences = this@WelcomeActivity.getSharedPreferences(
+                "production", Context.MODE_PRIVATE
+            )
+            sessionManager.saveFIRSTNAME("")
+            sessionManager.saveSURNAME("")
+            sessionManager.saveUSERNAME("")
+            sessionManager.saveUserID("")
+            sessionManager.saveUSEREMAIL("")
+            sessionManager.saveUSERROLE("")
+            sessionManager.saveMEMBERID("")
+            sessionManager.saveSECURITYKEY("")
+            sessionManager.saveAuthToken("")
+            sessionManager.saveMIDDLENAME("")
+            sessionManager.saveSHAKHA_SANKHYA_AVG("")
+            sessionManager.saveSHAKHA_TAB("")
+            sessionManager.saveSHAKHANAME("")
+            sessionManager.savePOSTCODE("")
+            sessionManager.saveCOUNTRY("")
+            sessionManager.saveCITY("")
+            sessionManager.saveLineOne("")
+            sessionManager.saveGENDER("")
+            sessionManager.saveAGE("")
+            sessionManager.saveQUALIFICATIONAID("")
+            sessionManager.saveQUALIFICATION_VALUE("")
+            sessionManager.saveQUALIFICATION_VALUE_NAME("")
+            sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
+            sessionManager.saveQUALIFICATION_DATE("")
+            sessionManager.saveQUALIFICATION_FILE("")
+            sessionManager.saveQUALIFICATION_IS_DOC("")
+            sessionManager.saveDOB("")
+            sessionManager.saveVIBHAGNAME("")
+            sessionManager.saveSPOKKENLANGUAGE("")
+            sessionManager.saveMOBILENO("")
+            sessionManager.saveSECMOBILENO("")
+            sessionManager.saveOCCUPATIONNAME("")
+            sessionManager.saveADDRESS("")
+            sessionManager.saveGUAEMREMAIL("")
+            sessionManager.saveGUAEMRNAME("")
+            sessionManager.saveGUAEMRPHONE("")
+            sessionManager.saveGUAEMRRELATIONSHIP("")
+            sessionManager.saveSPOKKENLANGUAGEID("")
+            sessionManager.saveSPOKKENLANGUAGE("")
+            sessionManager.saveRELATIONSHIPNAME("")
+            sessionManager.saveRELATIONSHIPNAME_OTHER("")
+            sessionManager.saveNAGARID("")
+            sessionManager.saveDIETARY("")
+            sessionManager.saveDIETARYID("")
+            sessionManager.saveVIBHAGID("")
+            sessionManager.saveSTATE_IN_INDIA("")
+            sessionManager.saveSHAKHAID("")
+
+            sharedPreferences.edit().apply {
+                putString("FIRSTNAME", "")
+                putString("SURNAME", "")
+                putString("USERNAME", "")
+                putString("USERID", "")
+                putString("USEREMAIL", "")
+                putString("USERROLE", "")
+                putString("MEMBERID", "")
+                putString("SECURITYKEY", "")
+                putString("USERTOKEN", "")
+                putString("Allow_biometric", "")
+            }.apply()
+
+            val i = Intent(this@WelcomeActivity, LoginActivity::class.java)
+            startActivity(i)
+            finishAffinity()
+        }
+        alertDialog.setNegativeButton(
+            "No"
+        ) { _, _ ->
+
+        }
+        val alert: AlertDialog = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
     }
 
     private fun welcome(user_id: String) {
@@ -177,8 +275,7 @@ class WelcomeActivity : AppCompatActivity() {
         val call: Call<WelcomeResponse> = MyHssApplication.instance!!.api.welcome_api(user_id)
         call.enqueue(object : Callback<WelcomeResponse> {
             override fun onResponse(
-                call: Call<WelcomeResponse>,
-                response: Response<WelcomeResponse>
+                call: Call<WelcomeResponse>, response: Response<WelcomeResponse>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
@@ -189,23 +286,24 @@ class WelcomeActivity : AppCompatActivity() {
                         val type = response.body()!!.type
                         try {
                             val member_id = response.body()!!.member_id
-
                             sessionManager.saveMEMBERID(member_id!!)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
 
                         val sharedPreferences = getSharedPreferences(
-                            "production",
-                            Context.MODE_PRIVATE
+                            "production", Context.MODE_PRIVATE
                         )
 
                         sharedPreferences.edit().apply {
                             putString("TYPE_SELF", TYPE_SELF)
+                            putString("MEMBERID", response.body()!!.member_id)
+
                         }.apply()
 
                         val editor: SharedPreferences.Editor = sharedPreferences.edit()
                         editor.putString("TYPE_SELF", TYPE_SELF)
+                        editor.putString("MEMBERID", response.body()!!.member_id)
                         editor.apply()
                         editor.commit()
 
@@ -222,6 +320,7 @@ class WelcomeActivity : AppCompatActivity() {
                             add_self_family.visibility = View.GONE
                             welcome_txt_msg.text = response.body()!!.tooltip
 //                        add_self.text = getString(R.string.Add_self)
+                            btn_logOut.visibility = View.VISIBLE
                         } else {
                             add_self_layout.visibility = View.GONE
 //                        add_self.visibility = View.GONE
@@ -232,13 +331,16 @@ class WelcomeActivity : AppCompatActivity() {
 
                             welcome_txt_msg.setBackgroundResource(R.drawable.greetext_background_round)
                             welcome_txt_msg.setTextColor(getResources().getColor(R.color.greenColor))
+                            btn_logOut.visibility = View.VISIBLE
                         }
 
                         if (TYPE_SELF == "family") {
                             welcome_txt_msg.visibility = View.GONE
+                            btn_logOut.visibility = View.GONE
                             Handler().postDelayed({
-                                val i = Intent(this@WelcomeActivity,
-                                    Passcode_Activity::class.java)
+                                val i = Intent(
+                                    this@WelcomeActivity, Passcode_Activity::class.java
+                                )
 //                                    HomeActivity::class.java)
 //                                MainActivity::class.java)
                                 i.putExtra("CHANGE_BIOMETRIC", "")
@@ -253,7 +355,7 @@ class WelcomeActivity : AppCompatActivity() {
                             response.body()?.message
                         )
                     }
-                } else{
+                } else {
                     Functions.showAlertMessageWithOK(
                         this@WelcomeActivity, "Message",
                         getString(R.string.some_thing_wrong),
