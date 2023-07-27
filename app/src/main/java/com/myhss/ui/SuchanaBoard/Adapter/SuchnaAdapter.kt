@@ -2,12 +2,10 @@ package com.myhss.ui.SuchanaBoard.Adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -23,15 +21,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.DateFormat
-import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.*
 
 
-class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val userList: List<String>, val tab_type: String) : RecyclerView.Adapter<SuchnaAdapter.ViewHolder>() {
+class SuchnaAdapter(
+    val suchana_data: List<Get_Suchana_Datum>,
+    val userList: List<String>,
+    val tab_type: String
+) : RecyclerView.Adapter<SuchnaAdapter.ViewHolder>() {
 
     val suchna_discriptio = ArrayList<String>()
 
@@ -47,9 +45,11 @@ class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val userList: Lis
         suchna_discriptio.add("Guru Purnima is celebrated with a lot of enthusiasm every year across the country. This year, the occasion of Guru Purnima is being observed on July 5 coinciding with ‘Upachaya Chandra Grahan’ or the Penumbral lunar eclipse. In Hinduism, Jainism, Buddhism, guru is considered of utmost respect. Guru inculcates values, shows the path and gives experiential knowledge, one who helps guide a student's spiritual development.")
         suchna_discriptio.add("May God bless you with a long and prosperous life! Thank you so much, (sister's name), for making my life beautiful, tolerating me and keeping all my secrets. Happy Raksha Bandhan! I love you sister till death and will always be one call away in all your needs.")
         suchna_discriptio.add("May this Makar Sankranti fill your life with joy, happiness, and love. Wishing you and your family a very Happy Makar Sankranti. On this occasion of Makar Sankranti, may God bless you with good health and wealth. On this auspicious day of Makar Sankranti, I wish you are blessed with happiness, peace, and prosperity.")
-        suchna_discriptio.add("Happy Dussehra 2020 Wishes Images, Quotes, Status, Messages, Photos: Dussehra, known as Vijayadashmi, brings the five-day festivities of Durga Puja to a close. The day also marks Lord Ram’s triumph over the evil King Ravana. As per custom effigies of the latter are burnt to signify the same.\n" +
-                "\n" +
-                "In different parts of the country devotees prepare to bid farewell to the goddess. This year it falls on October 25. Even though things are slightly different this year, celebrate the day by exchanging these wishes.")
+        suchna_discriptio.add(
+            "Happy Dussehra 2020 Wishes Images, Quotes, Status, Messages, Photos: Dussehra, known as Vijayadashmi, brings the five-day festivities of Durga Puja to a close. The day also marks Lord Ram’s triumph over the evil King Ravana. As per custom effigies of the latter are burnt to signify the same.\n" +
+                    "\n" +
+                    "In different parts of the country devotees prepare to bid farewell to the goddess. This year it falls on October 25. Even though things are slightly different this year, celebrate the day by exchanging these wishes."
+        )
 
         holder.bindItems(suchana_data[position]) // listener
 //        holder.bindItems(suchana_data[position], userList[position], suchna_discriptio[position], tab_type) // listener
@@ -73,12 +73,14 @@ class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val userList: Lis
 
             val suchna_title = itemView.findViewById(R.id.suchna_title) as TextView
             val suchna_time = itemView.findViewById(R.id.suchna_time) as TextView
-            val suchna_discription  = itemView.findViewById(R.id.suchna_discription) as TextView
+            val suchna_discription = itemView.findViewById(R.id.suchna_discription) as TextView
 
-            val suchna_discriptionnew  = itemView.findViewById(R.id.suchna_discriptionnew) as TextView
+            val suchna_discriptionnew =
+                itemView.findViewById(R.id.suchna_discriptionnew) as TextView
 
-            val suchna_adapter_view  = itemView.findViewById(R.id.suchna_adapter_view) as LinearLayout
-            val redLayout  = itemView.findViewById(R.id.redLayout) as LinearLayout
+            val suchna_adapter_view =
+                itemView.findViewById(R.id.suchna_adapter_view) as LinearLayout
+            val redLayout = itemView.findViewById(R.id.redLayout) as LinearLayout
 
             val str = suchana.created_date
 
@@ -137,7 +139,13 @@ class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val userList: Lis
                                 val MEMBERID: String = sessionManager.fetchMEMBERID()!!
                                 val SUCHANAID: String = suchana.id!!
 
-                                mySuchanaSeen(MEMBERID, SUCHANAID)
+                                mySuchanaSeen(
+                                    MEMBERID,
+                                    SUCHANAID,
+                                    suchna_discription,
+                                    suchna_discriptionnew
+                                )
+                                suchana.is_read = "1"
                             } else {
                                 Toast.makeText(
                                     itemView.context,
@@ -157,37 +165,11 @@ class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val userList: Lis
             }
         }
 
-        // slide the view from below itself to the current position
-        fun slideUp(view: View) {
-            view.visibility = View.VISIBLE
-            val animate = TranslateAnimation(
-                0F,  // fromXDelta
-                0F,  // toXDelta
-                view.height.toFloat(),  // fromYDelta
-                0F
-            ) // toYDelta
-            animate.duration = 500
-            animate.fillAfter = true
-            view.startAnimation(animate)
-        }
-
-        // slide the view from its current position to below itself
-        fun slideDown(view: View) {
-            view.visibility = View.GONE
-            val animate = TranslateAnimation(
-                0F,  // fromXDelta
-                0F,  // toXDelta
-                0F,  // fromYDelta
-                view.height.toFloat()
-            ) // toYDelta
-            animate.duration = 500
-            animate.fillAfter = true
-            view.startAnimation(animate)
-        }
-
         private fun mySuchanaSeen(
             member_id: String,
-            suchana_id: String
+            suchana_id: String,
+            suchna_discription: TextView,
+            suchna_discriptionnew: TextView,
         ) {
             val pd = CustomProgressBar(itemView.context)
             pd.show()
@@ -201,30 +183,10 @@ class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val userList: Lis
                     if (response.code() == 200 && response.body() != null) {
                         Log.d("status", response.body()?.status.toString())
                         if (response.body()?.status!!) {
-
-                            var suchana_seen: List<Get_Suchana_Seen_Response> =
-                                ArrayList<Get_Suchana_Seen_Response>()
-
-                            try {
-//                                Functions.showAlertMessageWithOK(
-//                                    itemView.context, "",
-//                                    response.body()?.message
-//                                )
-//                                suchana_seen = response.body()!!.message.toString()
-                                Log.d("suchana_seen", response.body()!!.message.toString())
-
-                            } catch (e: ArithmeticException) {
-                                println(e)
-                            } finally {
-                                println("Family")
-                            }
+                            suchna_discription.setTextColor(Color.GRAY)
+                            suchna_discriptionnew.setTextColor(Color.GRAY)
                         } else {
-                            Functions.displayMessage(itemView.context,response.body()?.message)
-//                            Functions.showAlertMessageWithOK(
-//                                itemView.context, "",
-////                        "Message",
-//                                response.body()?.message
-//                            )
+                            Functions.displayMessage(itemView.context, response.body()?.message)
                         }
                     } else {
                         Functions.showAlertMessageWithOK(
