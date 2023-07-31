@@ -1,5 +1,6 @@
 package com.uk.myhss.Main
 
+import android.Manifest
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.R.attr
 import android.annotation.SuppressLint
@@ -81,6 +82,7 @@ import com.myhss.QRCode.QRCodeFragment
 import android.content.DialogInterface
 
 import android.R.attr.data
+import android.provider.Settings
 import com.blikoon.qrcodescanner.QrCodeActivity
 import com.myhss.QRCode.CaptureActivityPortrait
 import com.myhss.Utils.DebugLog
@@ -90,10 +92,8 @@ import com.myhss.Utils.DebugLog
 
 
 class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSelectedListener {
-
     private lateinit var sessionManager: SessionManager
-
-    private val PERMISSION_REQUEST_CODE = 200
+    private val NOTIFICATION_REQUEST_CODE = 1234
 
     //    private val sharedPrefFile = "MyHss"
     lateinit var First_name: String
@@ -128,11 +128,11 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         val activityTitle: String? = null, val mimeTypes: List<String>? = null
     )
 
-    class GoogleDriveService(
-        private val activity: Activity, private val config: GoogleDriveConfig
-    ) {
-
-    }
+//    class GoogleDriveService(
+//        private val activity: Activity, private val config: GoogleDriveConfig
+//    ) {
+//
+//    }
 
     private var items = arrayListOf(
         NavigationItemModel(R.drawable.home_icon, "Dashboard"),
@@ -188,12 +188,9 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         activity_main_toolbar_title.visibility = View.INVISIBLE
 
         toolbar.title = ""
-//        activity_main_toolbar_title.text = ""
-//        toolbar.setLogo(R.drawable.dashboard_logo)
-
         sessionManager = SessionManager(this)
 
-        displayLocationSettingsRequest(this)
+//        displayLocationSettingsRequest(this)
 
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
@@ -225,10 +222,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
         notification_img.visibility = View.GONE
         notification_img.setOnClickListener {
-            /*toolbar.title = "Notification"
-            toolbar_logo.visibility = View.GONE
-            notification_img.visibility = View.GONE*/
-
             val i = Intent(this@HomeActivity, NotificationList::class.java)
             startActivity(i)
 
@@ -753,18 +746,21 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
         val sharedNameValue = sessionManager.fetchUSERNAME()
         Log.d("NAME-->", "default name: ${sharedNameValue}")
+
+        checkNotificationPermission()
+
     }
 
-    fun startOpenGoogleDriveApp() {
-        try {
-            val intent =
-                this.packageManager.getLaunchIntentForPackage("com.google.android.apps.docs")
-            intent!!.putExtra(Intent.EXTRA_USER, "bhanu.iguru@gmail.com")
-            startActivity(intent)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+//    fun startOpenGoogleDriveApp() {
+//        try {
+//            val intent =
+//                this.packageManager.getLaunchIntentForPackage("com.google.android.apps.docs")
+//            intent!!.putExtra(Intent.EXTRA_USER, "bhanu.iguru@gmail.com")
+//            startActivity(intent)
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+//    }
 
     private val googleSignInClient: GoogleSignInClient by lazy {
         val builder = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -871,21 +867,21 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         }
     }
 
-    fun checkLoginStatus() {
-        val requiredScopes = HashSet<Scope>(2)
-        requiredScopes.add(Drive.SCOPE_FILE)
-        requiredScopes.add(Drive.SCOPE_APPFOLDER)
-        signInAccount = GoogleSignIn.getLastSignedInAccount(this)
-        val containsScope = signInAccount?.grantedScopes?.containsAll(requiredScopes)
-        val account = signInAccount
-        if (account != null && containsScope == true) {
-            initializeDriveClient(account)
-        }
-    }
-
-    fun auth() {
-        this.startActivityForResult(googleSignInClient.signInIntent, REQUEST_CODE_SIGN_IN)
-    }
+//    fun checkLoginStatus() {
+//        val requiredScopes = HashSet<Scope>(2)
+//        requiredScopes.add(Drive.SCOPE_FILE)
+//        requiredScopes.add(Drive.SCOPE_APPFOLDER)
+//        signInAccount = GoogleSignIn.getLastSignedInAccount(this)
+//        val containsScope = signInAccount?.grantedScopes?.containsAll(requiredScopes)
+//        val account = signInAccount
+//        if (account != null && containsScope == true) {
+//            initializeDriveClient(account)
+//        }
+//    }
+//
+//    fun auth() {
+//        this.startActivityForResult(googleSignInClient.signInIntent, REQUEST_CODE_SIGN_IN)
+//    }
 
     fun logout() {
         googleSignInClient.signOut()
@@ -965,42 +961,42 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     }
 
     /*myPrivileges API*/
-    private fun myPrivileges(menu_id: String, approve: String) {
-        val pd = CustomProgressBar(this@HomeActivity)
-        pd.show()
-        val call: Call<Get_Privileges_Response> = MyHssApplication.instance!!.api.get_privileges(
-            sessionManager.fetchUserID()!!, menu_id, approve
-        )
-        call.enqueue(object : Callback<Get_Privileges_Response> {
-            override fun onResponse(
-                call: Call<Get_Privileges_Response>, response: Response<Get_Privileges_Response>
-            ) {
-
-                Log.d("status", response.body()?.status.toString())
-                if (response.body()?.status!!) {
-                    Functions.displayMessage(this@HomeActivity, response.body()?.message)
-//                    Functions.showAlertMessageWithOK(
-//                        this@HomeActivity, "",
-////                        "Message",
-//                        response.body()?.message
-//                    )
-                } else {
-                    Functions.displayMessage(this@HomeActivity, response.body()?.message)
-//                    Functions.showAlertMessageWithOK(
-//                        this@HomeActivity, "",
-////                        "Message",
-//                        response.body()?.message
-//                    )
-                }
-                pd.dismiss()
-            }
-
-            override fun onFailure(call: Call<Get_Privileges_Response>, t: Throwable) {
-                Toast.makeText(this@HomeActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
-    }
+//    private fun myPrivileges(menu_id: String, approve: String) {
+//        val pd = CustomProgressBar(this@HomeActivity)
+//        pd.show()
+//        val call: Call<Get_Privileges_Response> = MyHssApplication.instance!!.api.get_privileges(
+//            sessionManager.fetchUserID()!!, menu_id, approve
+//        )
+//        call.enqueue(object : Callback<Get_Privileges_Response> {
+//            override fun onResponse(
+//                call: Call<Get_Privileges_Response>, response: Response<Get_Privileges_Response>
+//            ) {
+//
+//                Log.d("status", response.body()?.status.toString())
+//                if (response.body()?.status!!) {
+//                    Functions.displayMessage(this@HomeActivity, response.body()?.message)
+////                    Functions.showAlertMessageWithOK(
+////                        this@HomeActivity, "",
+//////                        "Message",
+////                        response.body()?.message
+////                    )
+//                } else {
+//                    Functions.displayMessage(this@HomeActivity, response.body()?.message)
+////                    Functions.showAlertMessageWithOK(
+////                        this@HomeActivity, "",
+//////                        "Message",
+////                        response.body()?.message
+////                    )
+//                }
+//                pd.dismiss()
+//            }
+//
+//            override fun onFailure(call: Call<Get_Privileges_Response>, t: Throwable) {
+//                Toast.makeText(this@HomeActivity, t.message, Toast.LENGTH_LONG).show()
+//                pd.dismiss()
+//            }
+//        })
+//    }
 
     /*myPrivileges API*/
     private fun myProfile(
@@ -1147,11 +1143,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
                     } else {
                         Functions.displayMessage(this@HomeActivity, response.body()?.message)
-//                Functions.showAlertMessageWithOK(
-//                    this@HomeActivity, "",
-////                        "Message",
-//                    response.body()?.message
-//                )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -1169,64 +1160,64 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         })
     }
 
-    private fun displayLocationSettingsRequest(context: Context) {
-        val googleApiClient = GoogleApiClient.Builder(context).addApi(LocationServices.API).build()
-        googleApiClient.connect()
-        val locationRequest = LocationRequest.create()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 10000
-        locationRequest.fastestInterval = (10000 / 2).toLong()
-        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-        builder.setAlwaysShow(true)
-        val result: PendingResult<LocationSettingsResult> =
-            LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build())
-        result.setResultCallback { result ->
-            val status: Status = result.status
-            when (status.statusCode) {
-                LocationSettingsStatusCodes.SUCCESS -> Log.i(
-                    TAG, "All location settings are satisfied."
-                )
+//    private fun displayLocationSettingsRequest(context: Context) {
+//        val googleApiClient = GoogleApiClient.Builder(context).addApi(LocationServices.API).build()
+//        googleApiClient.connect()
+//        val locationRequest = LocationRequest.create()
+//        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//        locationRequest.interval = 10000
+//        locationRequest.fastestInterval = (10000 / 2).toLong()
+//        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+//        builder.setAlwaysShow(true)
+//        val result: PendingResult<LocationSettingsResult> =
+//            LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build())
+//        result.setResultCallback { result ->
+//            val status: Status = result.status
+//            when (status.statusCode) {
+//                LocationSettingsStatusCodes.SUCCESS -> Log.i(
+//                    TAG, "All location settings are satisfied."
+//                )
+//
+//                LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+//                    Log.i(
+//                        TAG,
+//                        "Location settings are not satisfied. Show the user a dialog to upgrade location settings "
+//                    )
+//                    try {
+//                        // Show the dialog by calling startResolutionForResult(), and check the result
+//                        // in onActivityResult().
+//                        status.startResolutionForResult(
+//                            this@HomeActivity, 1
+//                        )
+//                    } catch (e: IntentSender.SendIntentException) {
+//                        Log.i(TAG, "PendingIntent unable to execute request.")
+//                    }
+//                }
+//
+//                LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> Log.i(
+//                    TAG,
+//                    "Location settings are inadequate, and cannot be fixed here. Dialog not created."
+//                )
+//            }
+//        }
+//    }
 
-                LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                    Log.i(
-                        TAG,
-                        "Location settings are not satisfied. Show the user a dialog to upgrade location settings "
-                    )
-                    try {
-                        // Show the dialog by calling startResolutionForResult(), and check the result
-                        // in onActivityResult().
-                        status.startResolutionForResult(
-                            this@HomeActivity, 1
-                        )
-                    } catch (e: IntentSender.SendIntentException) {
-                        Log.i(TAG, "PendingIntent unable to execute request.")
-                    }
-                }
+//    @RequiresApi(Build.VERSION_CODES.Q)
+//    private fun checkPermission(): Boolean {
+//        val result = ContextCompat.checkSelfPermission(
+//            applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION
+//        )
+//        return result == PackageManager.PERMISSION_GRANTED
+//    }
 
-                LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> Log.i(
-                    TAG,
-                    "Location settings are inadequate, and cannot be fixed here. Dialog not created."
-                )
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun checkPermission(): Boolean {
-        val result = ContextCompat.checkSelfPermission(
-            applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        return result == PackageManager.PERMISSION_GRANTED
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun requestPermission() {
-        ActivityCompat.requestPermissions(
-            this, arrayOf(
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ), PERMISSION_REQUEST_CODE
-        )
-    }
+//    @RequiresApi(Build.VERSION_CODES.Q)
+//    private fun requestPermission() {
+//        ActivityCompat.requestPermissions(
+//            this, arrayOf(
+//                android.Manifest.permission.ACCESS_FINE_LOCATION
+//            ), PERMISSION_REQUEST_CODE
+//        )
+//    }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
@@ -1267,9 +1258,123 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         return false
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+
     override fun onRestart() {
         super.onRestart()
-        displayLocationSettingsRequest(this)
+//        displayLocationSettingsRequest(this)
+    }
+
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!checkPermissionNew()) {
+                requestPermissionNew()
+            }
+        }
+    }
+
+    private fun checkPermissionNew(): Boolean {
+        val result1 =
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        return result1 == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermissionNew() {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(
+                Manifest.permission.POST_NOTIFICATIONS
+            ), NOTIFICATION_REQUEST_CODE
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            NOTIFICATION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+
+                val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+
+                if (readAccepted) {
+                } else {
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        showMessageOKCancel("You need to allow permission, in order to receive notification from MYHSS",
+                            DialogInterface.OnClickListener { dialog, which ->
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                    requestPermissions(
+                                        arrayOf(
+                                            Manifest.permission.POST_NOTIFICATIONS
+                                        ), NOTIFICATION_REQUEST_CODE
+                                    )
+                                }
+                            })
+                        return
+                    }
+                }
+
+            } else {
+
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+                ) {
+                    showPermissionDeniedDialogSetting()
+                } else {
+                    reRequestPermissionAccessDialog()
+                }
+
+            }
+        }
+    }
+
+    private fun showPermissionDeniedDialogSetting() {
+        val dialogBuilder = android.app.AlertDialog.Builder(this)
+        dialogBuilder.setMessage("Please allow notification permission. Thank you for your cooperation.")
+            .setCancelable(false).setPositiveButton("Settings") { _, _ ->
+                openAppSettings()
+            }.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }
+        val dialog = dialogBuilder.create()
+        dialog.show()
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun reRequestPermissionAccessDialog() {
+        val alertDialog: android.app.AlertDialog.Builder =
+            android.app.AlertDialog.Builder(this@HomeActivity)
+        alertDialog.setMessage("Give Notification permission. Thank you for your understanding.")
+        alertDialog.setPositiveButton(
+            "yes"
+        ) { _, _ ->
+            requestPermissionNew()
+        }
+        alertDialog.setNegativeButton(
+            "No"
+        ) { _, _ ->
+
+        }
+        val alert: android.app.AlertDialog = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
+    }
+
+    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+        android.app.AlertDialog.Builder(this@HomeActivity).setMessage(message)
+            .setPositiveButton("OK", okListener).setNegativeButton(
+                "Cancel"
+            ) { dialogInterface, i -> finishAffinity() }.create().show()
     }
 }

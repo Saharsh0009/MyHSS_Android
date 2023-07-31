@@ -275,7 +275,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                 requestPermission()
             } else {
                 openFileUploadDialog()
-                Log.d("File_name", File_name)
             }
         }
 

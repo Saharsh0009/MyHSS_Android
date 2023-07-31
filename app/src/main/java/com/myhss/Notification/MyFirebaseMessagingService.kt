@@ -10,7 +10,6 @@ import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -19,6 +18,7 @@ import com.uk.myhss.Splash.SplashActivity
 import com.uk.myhss.Utils.SessionManager
 import java.util.*
 import android.graphics.Bitmap
+import com.myhss.Utils.DebugLog
 import java.io.InputStream
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -36,11 +36,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // [START_EXCLUDE]
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: ${remoteMessage.from}")
+        DebugLog.d("From : ${remoteMessage.from}")
 
         // Check if message contains a data payload.
         if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Message data payload: ${remoteMessage.data}")
+            DebugLog.d("Message data payload : ${remoteMessage.data}")
 
             // Compose and show notification
             if (!remoteMessage.data.isNullOrEmpty()) {
@@ -49,19 +49,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 sendNotification(title, msg)
             }
 
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use WorkManager.
-//                scheduleJob()
-            } else {
-                // Handle message within 10 seconds
-//                handleNow()
-            }
+//            if (/* Check if data needs to be processed by long running job */ true) {
+//                // For long-running tasks (10 seconds or more) use WorkManager.
+////                scheduleJob()
+//            } else {
+//                // Handle message within 10 seconds
+////                handleNow()
+//            }
         }
 
         // Check if message contains a notification payload.
         remoteMessage.notification?.let {
-            Log.d(TAG, "Message Notification Body: ${it.body}")
-            sendNotification(remoteMessage.notification?.title!!, remoteMessage.notification?.body!!)
+            DebugLog.d("Message Notification Body : ${it.body}")
+            sendNotification(
+                remoteMessage.notification?.title!!,
+                remoteMessage.notification?.body!!
+            )
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -74,7 +77,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         sessionManager = SessionManager(this)
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
 
-        Log.d(TAG, "Refreshed token: $token")
+        DebugLog.d("Refreshed token : $token")
         sessionManager.saveFCMDEVICE_TOKEN(token)
 
         // If you want to send messages to this application instance or
@@ -87,23 +90,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     /**
      * Schedule async work using WorkManager.
      */
-    private fun scheduleJob() {
-        // [START dispatch_job]
-//        val work = OneTimeWorkRequest.Builder(MyWorker::class.java).build()
-//        WorkManager.getInstance().beginWith(work).enqueue()
-        // [END dispatch_job]
-    }
+//    private fun scheduleJob() {
+//        // [START dispatch_job]
+////        val work = OneTimeWorkRequest.Builder(MyWorker::class.java).build()
+////        WorkManager.getInstance().beginWith(work).enqueue()
+//        // [END dispatch_job]
+//    }
 
     /**
      * Handle time allotted to BroadcastReceivers.
      */
-    private fun handleNow() {
-        Log.d(TAG, "Short lived task is done.")
-    }
+//    private fun handleNow() {
+//        DebugLog.d("Short lived task is done.")
+//    }
 
     private fun sendRegistrationToServer(token: String?) {
         // TODO: Implement this method to send token to your app server.
-        Log.d(TAG, "sendRegistrationTokenToServer($token)")
+        DebugLog.d("sendRegistrationTokenToServer($token)")
     }
 
     /**
@@ -114,62 +117,65 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun sendNotification(title: String, messageBody: String) {
         val intent = Intent(this, SplashActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, getNotificationId() /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT)
-
+        val pendingIntent = PendingIntent.getActivity(
+            this, getNotificationId() /* Request code */, intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
+        // code change test
         val channelId = getString(R.string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.app_logo)
-                .setContentTitle(title)  // getString(R.string.app_name)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.splash))
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent)
-                .setDefaults(DEFAULT_VIBRATE)
+//            .setSmallIcon(R.drawable.app_logo)
+            .setSmallIcon(R.drawable.ic_notif_test)
+            .setContentTitle(title)  // getString(R.string.app_name)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.splash))
+            .setContentText(messageBody)
+            .setAutoCancel(true)
+            .setSound(defaultSoundUri)
+            .setContentIntent(pendingIntent)
+            .setDefaults(DEFAULT_VIBRATE)
 //                .setStyle(NotificationCompat.BigPictureStyle().
 //                 bigPicture(BitmapFactory.decodeResource(resources, R.drawable.splash)))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId,
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(
+                channelId,
+                "Channel human readable title",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(getNotificationId() /* ID of notification */, notificationBuilder.build())
+        notificationManager.notify(
+            getNotificationId() /* ID of notification */,
+            notificationBuilder.build()
+        )
     }
 
     /*
     *To get a Bitmap image from the URL received
     * */
-    fun getBitmapfromUrl(imageUrl: String?): Bitmap? {
-        return try {
-            val url = URL(imageUrl)
-            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-            connection.setDoInput(true)
-            connection.connect()
-            val input: InputStream = connection.getInputStream()
-            BitmapFactory.decodeStream(input)
-        } catch (e: Exception) {
-            // TODO Auto-generated catch block
-            e.printStackTrace()
-            null
-        }
-    }
+//    fun getBitmapfromUrl(imageUrl: String?): Bitmap? {
+//        return try {
+//            val url = URL(imageUrl)
+//            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+//            connection.setDoInput(true)
+//            connection.connect()
+//            val input: InputStream = connection.getInputStream()
+//            BitmapFactory.decodeStream(input)
+//        } catch (e: Exception) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace()
+//            null
+//        }
+//    }
 
     private fun getNotificationId(): Int {
         val rnd = Random()
         return 100 + rnd.nextInt(9000)
     }
-    /*companion object {
-
-        private const val TAG = "MyFirebaseMsgService"
-    }*/
 }
