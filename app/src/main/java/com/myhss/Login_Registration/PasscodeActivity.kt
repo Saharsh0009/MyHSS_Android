@@ -922,9 +922,9 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                 alertDialog.setNegativeButton(
                     "No"
                 ) { _, _ ->
-                    val i = Intent(this@PasscodeActivity, PasscodeActivity::class.java)
-                    startActivity(i)
-                    finishAffinity()
+//                    val i = Intent(this@PasscodeActivity, PasscodeActivity::class.java)
+//                    startActivity(i)
+//                    finishAffinity()
                 }
                 val alert: AlertDialog = alertDialog.create()
                 alert.setCanceledOnTouchOutside(false)

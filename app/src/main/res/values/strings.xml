@@ -192,7 +192,7 @@
     <string name="description_title">Touch finger to access application</string>
     <string name="cancel">Cancel</string>
     <string name="go_back">Go Back</string>
-    <string name="dont_have_account">Do not have any account ? </string>
+    <string name="dont_have_account">Do not have an account?</string>
     <string name="login">Login</string>
     <string name="login_in">Log In</string>
     <string name="welocome">Welcome</string>
@@ -441,5 +441,7 @@
     <string name="username_required">Username required</string>
     <string name="password_required">Password required</string>
     <string name="enter_dob">Please Enter the Date of Birth</string>
-
+    <string name="payment_error_title">Family Members record not found.</string>
+    <string name="payment_error_message">\nYou do not have an active family members listed on MyHSS.\n\nPlease contact your Shakha Karyawaha if you need further assistance.</string>
+    <string name="quit_myhss">Are you sure you want to quit MyHSS?</string>
 </resources>

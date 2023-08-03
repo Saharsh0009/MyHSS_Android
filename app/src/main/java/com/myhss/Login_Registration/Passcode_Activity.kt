@@ -38,6 +38,7 @@ import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.appConstants.AppParam
 import com.samsung.android.sdk.SsdkUnsupportedException
 import com.samsung.android.sdk.SsdkVendorCheck
 import com.samsung.android.sdk.pass.Spass
@@ -108,6 +109,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
     private lateinit var sessionManager: SessionManager
     private lateinit var passcode_layout: RelativeLayout
     private lateinit var line_view: View
+    private var receivedNotiData  = "no"
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -229,6 +231,13 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
 //        }
         }
+
+        val receivedIntent = intent
+        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
+            receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
+            DebugLog.e("NOTIFIC_KEY : $receivedNotiData")
+        }
+
     }
 
     fun init() {
@@ -270,11 +279,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         btnZero!!.setBackgroundResource(R.drawable.empty_dot)
 
         passcode_layout.setOnClickListener {
-            startActivity(
-                Intent(
-                    this@Passcode_Activity, HomeActivity::class.java
-                )
-            )
+            val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
+            if (receivedNotiData == AppParam.NOTIFIC_VALUE) { i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE) }
+            startActivity(i)
             finishAffinity()
         }
 
@@ -494,7 +501,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 //                    startActivity(i)
                     DebugLog.e("" + sharedPreferences.getString("MEMBERID", "").toString())
                     if (sharedPreferences.getString("MEMBERID", "") != "") {
-                        startActivity(Intent(this@Passcode_Activity, HomeActivity::class.java))
+                        val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
+                        if (receivedNotiData == AppParam.NOTIFIC_VALUE) { i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE) }
+                        startActivity(i)
                         finish()
                     } else {
                         startActivity(Intent(this@Passcode_Activity, WelcomeActivity::class.java))
@@ -542,12 +551,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                         if (strPasslock == response.body()!!.data!!.biometricKey) {
 
                             if (sharedPreferences.getString("MEMBERID", "") != "") {
-                                startActivity(
-                                    Intent(
-                                        this@Passcode_Activity, HomeActivity::class.java
-                                    )
-                                )
-//                                MainActivity::class.java))
+                                val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
+                                if (receivedNotiData == AppParam.NOTIFIC_VALUE) { i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE) }
+                                startActivity(i)
                                 finish()
                             } else {
                                 startActivity(
@@ -771,7 +777,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
     override fun onAuthenticationSuccessful() {
 
         if (sharedPreferences.getString("MEMBERID", "") != "") {
-            startActivity(Intent(this@Passcode_Activity, HomeActivity::class.java))
+            val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
+            if (receivedNotiData == AppParam.NOTIFIC_VALUE) { i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE) }
+            startActivity(i)
             finish()
         } else {
             startActivity(Intent(this@Passcode_Activity, WelcomeActivity::class.java))
@@ -1082,9 +1090,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                 alertDialog.setNegativeButton(
                     "No"
                 ) { _, _ ->
-                    val i = Intent(this@Passcode_Activity, Passcode_Activity::class.java)
-                    startActivity(i)
-                    finishAffinity()
+//                    val i = Intent(this@Passcode_Activity, Passcode_Activity::class.java)
+//                    startActivity(i)
+//                    finishAffinity()
                 }
                 val alert: AlertDialog = alertDialog.create()
                 alert.setCanceledOnTouchOutside(false)

@@ -33,7 +33,9 @@ import com.myhss.MyApplication
 import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Splash.Model.Biometric.Latest_Update.latest_update_response
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.appConstants.AppParam
 import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -55,6 +57,7 @@ class SplashActivity : AppCompatActivity() {
     val STATUS_INSTALLED = "installed"
     val STATUS_INSTANT = "instant"
     val ANALYTICS_USER_PROP = "app_type"
+    private var receivedNotiData = "no"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +112,14 @@ class SplashActivity : AppCompatActivity() {
                 "Allow_biometric", ""
             ).toString()
         )
+
+        val receivedIntent = intent
+        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
+            receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
+            DebugLog.e("NOTIFIC_KEY : $receivedNotiData")
+        }
+
+
         Handler().postDelayed({
             Log.e("TAG-SharedPref", "" + sharedPreferences.getString("USERID", ""))
             if (Functions.isConnectingToInternet(this@SplashActivity)) {
@@ -150,6 +161,13 @@ class SplashActivity : AppCompatActivity() {
                                                     Passcode_Activity::class.java
                                                 )
                                                 i.putExtra("CHANGE_BIOMETRIC", "")
+                                                if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
+                                                    i.putExtra(
+                                                        AppParam.NOTIFIC_KEY,
+                                                        AppParam.NOTIFIC_VALUE
+                                                    )
+                                                }
+
                                                 startActivity(i)
                                                 finish()
                                             } else {
@@ -199,6 +217,12 @@ class SplashActivity : AppCompatActivity() {
                                                         Passcode_Activity::class.java
                                                     )
                                                     i.putExtra("CHANGE_BIOMETRIC", "")
+                                                    if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
+                                                        i.putExtra(
+                                                            AppParam.NOTIFIC_KEY,
+                                                            AppParam.NOTIFIC_VALUE
+                                                        )
+                                                    }
                                                     startActivity(i)
                                                     finish()
                                                 } else {
