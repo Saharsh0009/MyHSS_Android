@@ -11,7 +11,6 @@ import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -39,10 +38,9 @@ import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.Utils.SwipeleftToRightBack
 import com.myhss.Utils.UtilCommon
-import com.myhss.ui.Barchat.Model.BarchartDataModel
-import com.myhss.ui.Barchat.ViewBarchartActivity
+import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
+import com.myhss.ui.suryanamaskar.ViewBarchartActivity
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.Guru_Dakshina_OneTime.GuruDakshinaOneTimeFirstActivity
 import com.uk.myhss.Guru_Dakshina_Regular.GuruDakshinaRegularFirstActivity
@@ -55,11 +53,9 @@ import com.uk.myhss.ui.linked_family.MemberShipActivity
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
 import com.uk.myhss.ui.my_family.Adapter.CustomAdapter
-import com.uk.myhss.ui.my_family.Adapter.GuruCustomAdapter
 import com.uk.myhss.ui.my_family.Model.Datum_guru_dakshina
 import com.uk.myhss.ui.my_family.Model.guru_dakshina_response
 import com.uk.myhss.ui.policies.SankhyaActivity
-import okhttp3.internal.notify
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

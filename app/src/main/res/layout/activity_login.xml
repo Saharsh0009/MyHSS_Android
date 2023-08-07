@@ -261,6 +261,7 @@
             android:paddingTop="@dimen/padding10"
             android:paddingBottom="@dimen/padding5"
             android:text="@string/dont_have_account"
+            android:layout_centerVertical="true"
             android:textColor="@color/blackColor"
             android:textSize="@dimen/font_size15"
             android:textStyle="bold" />
@@ -274,6 +275,7 @@
             android:paddingTop="@dimen/padding10"
             android:paddingBottom="@dimen/padding5"
             android:text="@string/register"
+            android:layout_centerVertical="true"
             android:textColor="@color/blueColor"
             android:textSize="@dimen/font_size15"
             android:textStyle="bold" />

@@ -559,38 +559,40 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     } else {
                         CallNextMethod()
                     }
-                }
+                } else {
 
-                // Edit profile
-                if (edit_firstname.text.toString().isEmpty()) {
-                    til_firstName.error = getString(R.string.first_name)
-                    til_firstName.isErrorEnabled = true
-                    edit_firstname.requestFocus()
-                    return@setOnClickListener
-                } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
-                    til_firstName.error = getString(R.string.valid_first_name)
-                    til_firstName.isErrorEnabled = true
-                    edit_firstname.requestFocus()
-                    return@setOnClickListener
-                } else if (!edit_middlename.text.toString().isEmpty() && !UtilCommon.isOnlyLetters(
-                        edit_middlename.text.toString()
-                    )
-                ) {
-                    til_middleName.error = getString(R.string.valid_middle_name)
-                    til_middleName.isErrorEnabled = true
-                    edit_middlename.requestFocus()
-                    return@setOnClickListener
-                } else if (edit_surname.text.toString().isEmpty()) {
-                    til_surname.error = getString(R.string.sur_name)
-                    til_surname.isErrorEnabled = true
-                    edit_surname.requestFocus()
-                    return@setOnClickListener
-                } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
-                    til_surname.error = getString(R.string.valid_surname)
-                    til_surname.isErrorEnabled = true
-                    edit_surname.requestFocus()
-                    return@setOnClickListener
-                }/* else if (edit_username.text.toString().isEmpty()) {
+
+                    // Edit profile
+                    if (edit_firstname.text.toString().isEmpty()) {
+                        til_firstName.error = getString(R.string.first_name)
+                        til_firstName.isErrorEnabled = true
+                        edit_firstname.requestFocus()
+                        return@setOnClickListener
+                    } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
+                        til_firstName.error = getString(R.string.valid_first_name)
+                        til_firstName.isErrorEnabled = true
+                        edit_firstname.requestFocus()
+                        return@setOnClickListener
+                    } else if (!edit_middlename.text.toString()
+                            .isEmpty() && !UtilCommon.isOnlyLetters(
+                            edit_middlename.text.toString()
+                        )
+                    ) {
+                        til_middleName.error = getString(R.string.valid_middle_name)
+                        til_middleName.isErrorEnabled = true
+                        edit_middlename.requestFocus()
+                        return@setOnClickListener
+                    } else if (edit_surname.text.toString().isEmpty()) {
+                        til_surname.error = getString(R.string.sur_name)
+                        til_surname.isErrorEnabled = true
+                        edit_surname.requestFocus()
+                        return@setOnClickListener
+                    } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
+                        til_surname.error = getString(R.string.valid_surname)
+                        til_surname.isErrorEnabled = true
+                        edit_surname.requestFocus()
+                        return@setOnClickListener
+                    }/* else if (edit_username.text.toString().isEmpty()) {
                     til_username.error = getString(R.string.user_name)
                     til_username.isErrorEnabled = true
                     return@setOnClickListener
@@ -607,11 +609,13 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     til_email.isErrorEnabled = true
                     return@setOnClickListener
                 }*/ else if (GENDER == "") {
-                    Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
-                } else if (edit_dateofbirth.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
-                } else {
-                    CallNextMethod()
+                        Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } else if (edit_dateofbirth.text.toString().isEmpty()) {
+                        Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
+                    } else {
+                        CallNextMethod()
+                    }
                 }
             } else {
                 // Add Self

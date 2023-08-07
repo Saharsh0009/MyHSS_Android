@@ -1,4 +1,4 @@
-package com.myhss.ui.Barchat
+package com.myhss.ui.suryanamaskar
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -8,7 +8,6 @@ import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -32,17 +31,15 @@ import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.Utils.SwipeleftToRightBack
-import com.myhss.ui.Barchat.Model.BarchartDataModel
-import com.myhss.ui.Barchat.Model.Datum_Get_SuryaNamaskar
-import com.myhss.ui.Barchat.Model.Get_SuryaNamaskar_ModelResponse
+import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
+import com.myhss.ui.suryanamaskar.Model.Datum_Get_SuryaNamaskar
+import com.myhss.ui.suryanamaskar.Model.Get_SuryaNamaskar_ModelResponse
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
-import okhttp3.internal.notify
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

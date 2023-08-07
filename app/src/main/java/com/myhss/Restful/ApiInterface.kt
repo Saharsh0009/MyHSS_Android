@@ -1,14 +1,13 @@
 package com.uk.myhss.Restful
 
 import com.google.gson.JsonObject
-import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
 import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.AllShakha.Model.Get_Shakha_Details_Response
 import com.myhss.Guru_Dakshina_OneTime.Model.StripeDataModel
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Splash.Model.Biometric.Latest_Update.latest_update_response
-import com.myhss.ui.Barchat.Model.Get_SuryaNamaskar_ModelResponse
-import com.myhss.ui.Barchat.Model.save_suryanamaskarResponse
+import com.myhss.ui.suryanamaskar.Model.Get_SuryaNamaskar_ModelResponse
+import com.myhss.ui.suryanamaskar.Model.save_suryanamaskarResponse
 import com.myhss.ui.ChangePassword.Model.ChangePasswordResponse
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Response
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Seen_Response
@@ -42,10 +41,8 @@ import com.uk.myhss.ui.sankhya_report.Model.Get_Sankhya_Utsav_Response
 import com.uk.myhss.ui.sankhya_report.Model.Sankhya_List_Response
 import com.uk.myhss.ui.sankhya_report.Model.Sankhya_details_Response
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
-import java.util.HashMap
 
 
 interface ApiInterface {

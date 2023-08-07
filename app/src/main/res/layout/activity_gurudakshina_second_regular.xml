@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/font_size30"
                 android:layout_margin="@dimen/font_size15"
-                android:src="@drawable/payment_second_top" />
+                android:src="@drawable/ic_regular_gd_two" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

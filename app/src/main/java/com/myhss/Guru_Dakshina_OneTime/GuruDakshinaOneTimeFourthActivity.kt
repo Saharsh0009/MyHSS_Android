@@ -37,6 +37,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.gson.JsonObject
 import com.stripe.android.PaymentAuthConfig
 import com.uk.myhss.Main.HomeActivity
@@ -92,6 +93,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         edit_payment = findViewById(R.id.edit_payment)
         donate_amount_txt = findViewById(R.id.donate_amount_txt)
         cardInputWidget = findViewById(R.id.cardInputWidget)
+        
         back_arrow.setOnClickListener {
             finish()
         }

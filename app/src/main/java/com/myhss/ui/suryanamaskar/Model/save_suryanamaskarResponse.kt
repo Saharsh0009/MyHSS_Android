@@ -1,4 +1,4 @@
-package com.myhss.ui.Barchat.Model
+package com.myhss.ui.suryanamaskar.Model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

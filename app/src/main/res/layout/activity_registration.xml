@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background"
-    tools:context="com.uk.myhss.Login_Registration.RegistrationActivity">
+    tools:context="com.myhss.Login_Registration.RegistrationActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -387,6 +387,7 @@
             android:id="@+id/already_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_toStartOf="@+id/registration_btn"
             android:layout_toLeftOf="@+id/registration_btn"
             android:fontFamily="@font/sourcesanspro_regular"
@@ -402,6 +403,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/padding5"
             android:paddingTop="@dimen/padding10"
             android:paddingBottom="@dimen/padding5"

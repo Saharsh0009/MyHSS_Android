@@ -1,4 +1,4 @@
-package com.myhss.ui.Barchat.Model
+package com.myhss.ui.suryanamaskar.Model
 
 /**
  * Created by Nikunj Dhokia on 08-06-2023.

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,20 +20,17 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.AllShakha.AllShakhaListActivity
-import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.ScrollableGridView
 import com.myhss.appConstants.AppParam
-import com.myhss.ui.Barchat.SuryaNamaskar
+import com.myhss.ui.suryanamaskar.SuryaNamaskar
 import com.myhss.ui.SanghSandesh.SanghSandeshActivity
-import com.myhss.ui.ShakhaMap.MapsActivity
 import com.myhss.ui.SuchanaBoard.SuchanaBoardActivity
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.Guru_Dakshina_OneTime.GuruDakshinaOneTimeFirstActivity
 import com.uk.myhss.Guru_Dakshina_Regular.GuruDakshinaRegularFirstActivity
-import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.Main.Get_Privileges.Get_Privileges_Response
 import com.uk.myhss.Main.Get_Prpfile.Datum_Get_Profile
 import com.uk.myhss.Main.Get_Prpfile.Get_Profile_Response
@@ -42,9 +38,7 @@ import com.uk.myhss.Main.Get_Prpfile.Member_Get_Profile
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
-import com.uk.myhss.Welcome.WelcomeActivity
 import com.uk.myhss.ui.policies.ProfileFragment
-import com.uk.myhss.ui.policies.SankhyaActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -113,7 +107,7 @@ class DashboardFragment : Fragment() {
 
     /*Guru Puja ship Grid View*/
     lateinit var guru_puja_gridview: ScrollableGridView
-    var guru_pujaNames = arrayOf("One-Off Dakshina", "Regular Dakshina") //, "Shakha Guru Dakshina")
+    var guru_pujaNames = arrayOf("One-Time Dakshina", "Regular Dakshina") //, "Shakha Guru Dakshina")
     var guru_pujaImages = intArrayOf(
         R.drawable.one_off,
         R.drawable.regular_dakshina,

@@ -1,4 +1,4 @@
-package com.myhss.ui.Barchat
+package com.myhss.ui.suryanamaskar
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -21,9 +21,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonParser
 import com.myhss.Utils.CustomProgressBar
-import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.ui.Barchat.Model.save_suryanamaskarResponse
+import com.myhss.ui.suryanamaskar.Model.save_suryanamaskarResponse
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -48,7 +47,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
 
-    lateinit var submit_layout: LinearLayout
+    //    lateinit var submit_layout: LinearLayout
     lateinit var layout_dynamic_view: LinearLayout
     lateinit var layout_spiner: LinearLayout
     lateinit var username: TextView
@@ -90,7 +89,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
     //    private var mAdapter: ProductListAdapter? = null
     //    private var modelToBeUpdated: Stack<ProductModel> = Stack()
 
-    lateinit var add_listview: RecyclerView
+//    lateinit var add_listview: RecyclerView
 
     //    private val mOnProductClickListener = object : OnProductClickListener {
     //        fun onUpdate(position: Int, model: ProductModel) {
@@ -130,7 +129,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
 
         back_arrow = findViewById(R.id.back_arrow)
         header_title = findViewById(R.id.header_title)
-        submit_layout = findViewById(R.id.submit_layout)
+//        submit_layout = findViewById(R.id.submit_layout)
         layout_dynamic_view = findViewById(R.id.layout_dynamic_view)
         layout_spiner = findViewById(R.id.layout_spiner)
         username = findViewById(R.id.username)
@@ -138,9 +137,10 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         header_title.text = getString(R.string.record_surya_namaskar)
 
         family_txt = findViewById(R.id.family_txt)
-        add_listview = findViewById(R.id.add_listview)
-        add_listview.layoutManager = LinearLayoutManager(this)
-        add_listview.setHasFixedSize(true)
+
+//        add_listview = findViewById(R.id.add_listview)
+//        add_listview.layoutManager = LinearLayoutManager(this)
+//        add_listview.setHasFixedSize(true)
 
         back_arrow.setOnClickListener {
             finish()
@@ -186,6 +186,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         val JSONestimate = JSONObject()
         val JSONestimate1 = JSONObject()
         val JSONestimate2 = JSONObject()
+
         val myarray = JSONArray()
 
         //        for (i in 0 until items.size()) {
@@ -211,7 +212,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         family_txt.setTitle("Select Family Member")
 
         val btnOk = findViewById(R.id.btnOk) as TextView
-        val add_more_btn = findViewById(R.id.add_more_btn) as TextView
+//        val add_more_btn = findViewById(R.id.add_more_btn) as TextView
         val btn_add_more = findViewById(R.id.btn_add_more) as TextView
         val btnCancel = findViewById(R.id.btnCancel) as TextView
 
@@ -220,17 +221,17 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         cal.add(Calendar.DATE, -1)
         dateFormat.format(cal.time)
 
-        submit_layout.setOnClickListener {
-            if (Functions.isConnectingToInternet(this)) {
-                //                AddSuryanamaskar(sessionManager.fetchMEMBERID()!!, myarray)
-            } else {
-                Toast.makeText(
-                    this, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
+//        submit_layout.setOnClickListener {
+//            if (Functions.isConnectingToInternet(this)) {
+//                //                AddSuryanamaskar(sessionManager.fetchMEMBERID()!!, myarray)
+//            } else {
+//                Toast.makeText(
+//                    this, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        }
 
-        add_more_btn.visibility = View.GONE
+//        add_more_btn.visibility = View.GONE
         btn_add_more.setOnClickListener {
             val inflater =
                 LayoutInflater.from(this).inflate(R.layout.include_suryanamaskar_dynamic_view, null)
@@ -278,7 +279,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                         DATE = ""
                         COUNT = ""
                         break
-                    } else if (edit_count.text.toString().toInt() < 0 || edit_count.text.toString()
+                    } else if (edit_count.text.toString().toInt() < 1 || edit_count.text.toString()
                             .toInt() > 100
                     ) {
                         Toast.makeText(
@@ -619,6 +620,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
             calendar[Calendar.DAY_OF_MONTH] = day_of_month
             dateTextView.text = sdf.format(calendar.time)
         }, year, month, day)
+        dialog.datePicker.maxDate = System.currentTimeMillis()
         dialog.show()
     }
 }

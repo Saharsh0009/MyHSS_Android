@@ -178,7 +178,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
 
         edit_dateofbirth.setOnClickListener {
             calendar = Calendar.getInstance()
-            calendar.add(Calendar.YEAR, +1)
+//            calendar.add(Calendar.YEAR, +1)
             year = calendar.get(Calendar.YEAR)
             month = calendar.get(Calendar.MONTH)
             day = calendar.get(Calendar.DAY_OF_MONTH)

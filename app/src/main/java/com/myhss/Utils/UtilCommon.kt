@@ -31,7 +31,7 @@ class UtilCommon {
         }
 
         fun isValidUserName(stringName: String): Boolean {
-            val regex = Regex("^[a-zA-Z0-9]+\$")
+            val regex = Regex("^[a-zA-Z0-9]{5,}\$")
             return regex.matches(stringName)
         }
 

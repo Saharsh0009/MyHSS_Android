@@ -88,9 +88,7 @@ class LoginActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
 
-        m_deviceId = Settings.Secure.getString(
-            contentResolver, Settings.Secure.ANDROID_ID
-        )
+        m_deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
         Log.d("m_deviceId", m_deviceId)
 
@@ -210,25 +208,35 @@ class LoginActivity : AppCompatActivity() {
         }
 
         forgot_btn.setOnClickListener {
+            til_userName.isErrorEnabled = false
+            til_password.isErrorEnabled = false
+
+
             val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
             val view_d = layoutInflater.inflate(R.layout.dialog_forgotpassword, null)
             val btnClose = view_d.findViewById<ImageView>(R.id.close_layout)
             val edit_forgotusername =
                 view_d.findViewById<TextInputEditText>(R.id.edit_forgotusername)
             val forgot_passwordbtn = view_d.findViewById<TextView>(R.id.forgot_passwordbtn)
+            val til_forgotPasswor = view_d.findViewById<TextInputLayout>(R.id.til_forgotPassword)
+
             btnClose.setOnClickListener {
                 dialog.dismiss()
+            }
+
+
+            edit_forgotusername.doOnTextChanged { text, start, before, count ->
+                til_forgotPasswor.isErrorEnabled = false
             }
 
             forgot_passwordbtn.setOnClickListener {
                 val forgotuser = edit_forgotusername.text.toString()
                 if (forgotuser.isEmpty()) {
-                    dialog?.window?.decorView?.let { it1 ->
-                        Snackbar.make(
-                            it1, "Please Enter Username", Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
-                    edit_forgotusername.error = "   Username required"
+//                    edit_forgotusername.error = "   Username required"
+//                    edit_forgotusername.requestFocus()
+
+                    til_forgotPasswor.error = getString(R.string.username_required)
+                    til_forgotPasswor.isErrorEnabled = true
                     edit_forgotusername.requestFocus()
                     return@setOnClickListener
                 } else {
@@ -244,7 +252,6 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
-
             dialog.setCancelable(true)
             dialog.setContentView(view_d)
             dialog.show()

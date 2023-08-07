@@ -1,15 +1,13 @@
-package com.myhss.ui.Barchat
+package com.myhss.ui.suryanamaskar
 
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -22,9 +20,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
-import com.myhss.Utils.DebugLog
-import com.myhss.Utils.SwipeleftToRightBack
-import com.myhss.ui.Barchat.Model.BarchartDataModel
+import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.guru_dakshina.GuruDakshinaRegularDetail

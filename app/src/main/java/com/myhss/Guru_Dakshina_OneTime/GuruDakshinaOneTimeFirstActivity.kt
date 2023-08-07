@@ -28,6 +28,7 @@ class GuruDakshinaOneTimeFirstActivity() : AppCompatActivity() {
 
     private lateinit var user_name: TextView
     private lateinit var shakha_name: TextView
+    private lateinit var img_payment_step_one: ImageView
 
     private lateinit var next_layout: LinearLayout
     private lateinit var rootLayout: LinearLayout
@@ -61,9 +62,13 @@ class GuruDakshinaOneTimeFirstActivity() : AppCompatActivity() {
         next_layout = findViewById(R.id.next_layout)
         edit_amount = findViewById(R.id.edit_amount)
         rootLayout = findViewById(R.id.rootLayout)
+        img_payment_step_one = findViewById(R.id.img_payment_step_one)
 
         user_name.text = sessionManager.fetchUSERNAME()!!.capitalize(Locale.ROOT)
         shakha_name.text = sessionManager.fetchSHAKHANAME()!!.capitalize(Locale.ROOT)
+
+        img_payment_step_one.setImageResource(R.drawable.addmember_step1)
+
 
         back_arrow.setOnClickListener {
             finish()
