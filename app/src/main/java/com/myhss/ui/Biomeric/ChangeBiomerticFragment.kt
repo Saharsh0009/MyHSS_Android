@@ -189,8 +189,10 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
         imgPass3 = root.findViewById(R.id.img3) as ImageView
         imgPass4 = root.findViewById(R.id.img4) as ImageView
         imgBackDelete = root.findViewById(R.id.imgBackDelete) as ImageView
-        setListener()
 
+        passcode_logout!!.visibility = View.GONE
+
+        setListener()
         adjustPassCodeScreen()
 
         Log.d("FIRSTNAME", sharedPreferences.getString("FIRSTNAME", "").toString())
@@ -255,7 +257,6 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 txtusername!!.text = Html.fromHtml("$othertext <b>$FUsername $LUsername</b>")
             }
         }
-
         return root
     }
 
@@ -875,9 +876,9 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 alertDialog.setNegativeButton(
                     "No"
                 ) { _, _ ->
-                    val i = Intent(requireContext(), HomeActivity::class.java)
-                    startActivity(i)
-                    (context as Activity).finishAffinity()
+//                    val i = Intent(requireContext(), HomeActivity::class.java)
+//                    startActivity(i)
+//                    (context as Activity).finishAffinity()
                 }
                 val alert: AlertDialog = alertDialog.create()
                 alert.setCanceledOnTouchOutside(false)

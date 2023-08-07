@@ -6,6 +6,9 @@ package com.myhss.appConstants
 interface AppParam {
 
     companion object {
+
+        val NOTIFIC_KEY = "notification"
+        val NOTIFIC_VALUE = "yes"
     }
 
 }

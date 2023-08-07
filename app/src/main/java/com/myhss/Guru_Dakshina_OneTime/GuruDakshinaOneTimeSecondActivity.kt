@@ -382,8 +382,9 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                         if (response.body()!!.data!!.isEmpty()) {
 
                             Functions.showAlertMessageWithOK(
-                                this@GuruDakshinaOneTimeSecondActivity, "Message",
-                                "You have not Active Family Members please contact your Shakha",
+                                this@GuruDakshinaOneTimeSecondActivity,
+                                getString(R.string.payment_error_title),
+                                getString(R.string.payment_error_message)
                             )
 
                             donating_individual_family_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)
@@ -478,8 +479,8 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                     } else {
                         Functions.showAlertMessageWithOK(
                             this@GuruDakshinaOneTimeSecondActivity,
-                            "Message",
-                            response.body()?.message + "\n\nYou have not Active Family Members please contact your Shakha"
+                            getString(R.string.payment_error_title),
+                            getString(R.string.payment_error_message)
                         )
 
                         donating_individual_family_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)

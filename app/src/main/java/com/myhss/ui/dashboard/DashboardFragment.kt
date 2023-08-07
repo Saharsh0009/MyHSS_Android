@@ -23,8 +23,10 @@ import com.google.firebase.ktx.Firebase
 import com.myhss.AllShakha.AllShakhaListActivity
 import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.ScrollableGridView
+import com.myhss.appConstants.AppParam
 import com.myhss.ui.Barchat.SuryaNamaskar
 import com.myhss.ui.SanghSandesh.SanghSandeshActivity
 import com.myhss.ui.ShakhaMap.MapsActivity
@@ -519,6 +521,14 @@ class DashboardFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
+
+
+        val receivedData = arguments?.getString(AppParam.NOTIFIC_KEY)
+        if (receivedData != null) {
+            DebugLog.e("receivedData $receivedData")
+            val i = Intent(requireContext(), SuchanaBoardActivity::class.java)
+            startActivity(i)
+        }
         return root
     }
 
@@ -672,8 +682,8 @@ class DashboardFragment : Fragment() {
                             sessionManager.saveCOUNTRY(data_getmember[0].country.toString())
                             sessionManager.savePOSTCODE(data_getmember[0].postalCode.toString())
                             sessionManager.saveSHAKHA_TAB(data_getmember[0].shakha_tab.toString())
-                            var s_count  = data_getmember[0].shakha_sankhya_avg.toString()
-                            if(s_count.length ==0){
+                            var s_count = data_getmember[0].shakha_sankhya_avg.toString()
+                            if (s_count.length == 0) {
                                 s_count = "0"
                             }
                             sessionManager.saveSHAKHA_SANKHYA_AVG(s_count)

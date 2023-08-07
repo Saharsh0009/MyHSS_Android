@@ -19,6 +19,7 @@ import com.uk.myhss.Utils.SessionManager
 import java.util.*
 import android.graphics.Bitmap
 import com.myhss.Utils.DebugLog
+import com.myhss.appConstants.AppParam
 import java.io.InputStream
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -117,15 +118,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun sendNotification(title: String, messageBody: String) {
         val intent = Intent(this, SplashActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.putExtra(AppParam.NOTIFIC_KEY,AppParam.NOTIFIC_VALUE)
         val pendingIntent = PendingIntent.getActivity(
             this, getNotificationId() /* Request code */, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         // code change test
         val channelId = getString(R.string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-//            .setSmallIcon(R.drawable.app_logo)
             .setSmallIcon(R.drawable.ic_notif_test)
             .setContentTitle(title)  // getString(R.string.app_name)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.splash))
@@ -139,7 +140,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(

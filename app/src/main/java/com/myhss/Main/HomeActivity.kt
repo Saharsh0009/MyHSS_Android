@@ -86,6 +86,8 @@ import android.provider.Settings
 import com.blikoon.qrcodescanner.QrCodeActivity
 import com.myhss.QRCode.CaptureActivityPortrait
 import com.myhss.Utils.DebugLog
+import com.myhss.appConstants.AppParam
+import com.myhss.ui.SuchanaBoard.SuchanaBoardActivity
 
 
 //import com.blikoon.qrcodescanner.QrCodeActivity
@@ -110,6 +112,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
     private val REQUEST_CODE_QR_SCAN = 101
     private val LOGTAG = "QRCScanner-MainActivity"
+    private var receivedNotiData = "no"
 
     companion object {
         private val SCOPES = setOf<Scope>(Drive.SCOPE_FILE, Drive.SCOPE_APPFOLDER)
@@ -271,6 +274,12 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 notification_img.visibility = View.GONE
                                 // # Dashboard Fragment
                                 val dashboardFragment = DashboardFragment()
+                                if (receivedNotiData == "yes") {
+                                    val args = Bundle()
+                                    args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    dashboardFragment.arguments = args
+                                    receivedNotiData = "no"
+                                }
                                 supportFragmentManager.beginTransaction()
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
                                     .commit()
@@ -475,6 +484,12 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 notification_img.visibility = View.GONE
                                 // # Dashboard Fragment
                                 val dashboardFragment = DashboardFragment()
+                                if (receivedNotiData == "yes") {
+                                    val args = Bundle()
+                                    args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    dashboardFragment.arguments = args
+                                    receivedNotiData = "no"
+                                }
                                 supportFragmentManager.beginTransaction()
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
                                     .commit()
@@ -630,9 +645,9 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 alertDialog.setNegativeButton(
                                     "No"
                                 ) { _, _ ->
-                                    val i = Intent(this@HomeActivity, HomeActivity::class.java)
-                                    startActivity(i)
-                                    finishAffinity()
+//                                    val i = Intent(this@HomeActivity, HomeActivity::class.java)
+//                                    startActivity(i)
+//                                    finishAffinity()
                                 }
                                 val alert: AlertDialog = alertDialog.create()
                                 alert.setCanceledOnTouchOutside(false)
@@ -749,18 +764,12 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
         checkNotificationPermission()
 
+        val receivedIntent = intent
+        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
+            receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
+            DebugLog.e("NOTIFIC_KEY : $receivedNotiData")
+        }
     }
-
-//    fun startOpenGoogleDriveApp() {
-//        try {
-//            val intent =
-//                this.packageManager.getLaunchIntentForPackage("com.google.android.apps.docs")
-//            intent!!.putExtra(Intent.EXTRA_USER, "bhanu.iguru@gmail.com")
-//            startActivity(intent)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
-//    }
 
     private val googleSignInClient: GoogleSignInClient by lazy {
         val builder = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -806,38 +815,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             }
         }
 
-        /*if (resultCode !== RESULT_OK) {
-            Log.d(LOGTAG, "COULD NOT GET A GOOD RESULT.")
-            if (attr.data == null) return
-            //Getting the passed result
-            val result: String = "Error, Read in QR Code"
-//                attr.data.getStringExtra("com.blikoon.qrcodescanner.error_decoding_image")
-            if (result != null) {
-                val alertDialog = AlertDialog.Builder(this@HomeActivity).create()
-                alertDialog.setTitle("Scan Error")
-                alertDialog.setMessage("QR Code could not be scanned")
-                alertDialog.setButton(
-                    AlertDialog.BUTTON_NEUTRAL, "OK"
-                ) { dialog, which -> dialog.dismiss() }
-                alertDialog.show()
-            }
-            return
-        }
-        if (requestCode === REQUEST_CODE_QR_SCAN) {
-            if (attr.data == null) return
-            //Getting the passed result
-            val result: String = "Got QR Code Result"
-//                attr.data.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult")
-            Log.d(LOGTAG, "Have scan result in your app activity :$result")
-            val alertDialog = AlertDialog.Builder(this@HomeActivity).create()
-            alertDialog.setTitle("Scan result")
-            alertDialog.setMessage(result)
-            alertDialog.setButton(
-                AlertDialog.BUTTON_NEUTRAL, "OK"
-            ) { dialog, which -> dialog.dismiss() }
-            alertDialog.show()
-        }*/
-
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             if (result.contents == null) {
@@ -867,69 +844,10 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         }
     }
 
-//    fun checkLoginStatus() {
-//        val requiredScopes = HashSet<Scope>(2)
-//        requiredScopes.add(Drive.SCOPE_FILE)
-//        requiredScopes.add(Drive.SCOPE_APPFOLDER)
-//        signInAccount = GoogleSignIn.getLastSignedInAccount(this)
-//        val containsScope = signInAccount?.grantedScopes?.containsAll(requiredScopes)
-//        val account = signInAccount
-//        if (account != null && containsScope == true) {
-//            initializeDriveClient(account)
-//        }
-//    }
-//
-//    fun auth() {
-//        this.startActivityForResult(googleSignInClient.signInIntent, REQUEST_CODE_SIGN_IN)
-//    }
-
     fun logout() {
         googleSignInClient.signOut()
         signInAccount = null
     }
-
-//    private fun openItem(data: Intent) {
-//        val driveId = data.getParcelableExtra<DriveId>(OpenFileActivityOptions.EXTRA_RESPONSE_DRIVE_ID)
-//        downloadFile(driveId)
-//    }
-
-    /*private fun downloadFile(data: DriveId?) {
-        if (data == null) {
-            Log.e(TAG, "downloadFile data is null")
-            return
-        }
-        val drive = data.asDriveFile()
-        var fileName = "test"
-        driveResourceClient?.getMetadata(drive)?.addOnSuccessListener {
-            fileName = it.originalFilename
-        }
-        val openFileTask = driveResourceClient?.openFile(drive, DriveFile.MODE_READ_ONLY)
-        openFileTask?.continueWithTask { task ->
-            val contents = task.result
-            contents.inputStream.use {
-                try {
-                    //This is the app's download directory, not the phones
-                    val storageDir = this.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-                    val tempFile = File(storageDir, fileName)
-                    tempFile.createNewFile()
-                    val sink = Okio.buffer(Okio.sink(tempFile))
-                    sink.writeAll(Okio.source(it))
-                    sink.close()
-
-                    serviceListener?.fileDownloaded(tempFile)
-                } catch (e: IOException) {
-                    Log.e(TAG, "Problems saving file", e)
-                    serviceListener?.handleError(e)
-                }
-            }
-            driveResourceClient?.discardContents(contents)
-        }?.addOnFailureListener { e ->
-            // Handle failure
-            Log.e(TAG, "Unable to read contents", e)
-            serviceListener?.handleError(e)
-        }
-    }*/
-
 
     interface ServiceListener {
         fun loggedIn() //1
@@ -960,45 +878,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         }
     }
 
-    /*myPrivileges API*/
-//    private fun myPrivileges(menu_id: String, approve: String) {
-//        val pd = CustomProgressBar(this@HomeActivity)
-//        pd.show()
-//        val call: Call<Get_Privileges_Response> = MyHssApplication.instance!!.api.get_privileges(
-//            sessionManager.fetchUserID()!!, menu_id, approve
-//        )
-//        call.enqueue(object : Callback<Get_Privileges_Response> {
-//            override fun onResponse(
-//                call: Call<Get_Privileges_Response>, response: Response<Get_Privileges_Response>
-//            ) {
-//
-//                Log.d("status", response.body()?.status.toString())
-//                if (response.body()?.status!!) {
-//                    Functions.displayMessage(this@HomeActivity, response.body()?.message)
-////                    Functions.showAlertMessageWithOK(
-////                        this@HomeActivity, "",
-//////                        "Message",
-////                        response.body()?.message
-////                    )
-//                } else {
-//                    Functions.displayMessage(this@HomeActivity, response.body()?.message)
-////                    Functions.showAlertMessageWithOK(
-////                        this@HomeActivity, "",
-//////                        "Message",
-////                        response.body()?.message
-////                    )
-//                }
-//                pd.dismiss()
-//            }
-//
-//            override fun onFailure(call: Call<Get_Privileges_Response>, t: Throwable) {
-//                Toast.makeText(this@HomeActivity, t.message, Toast.LENGTH_LONG).show()
-//                pd.dismiss()
-//            }
-//        })
-//    }
-
-    /*myPrivileges API*/
     private fun myProfile(
         user_id: String,
         member_id: String,
@@ -1124,12 +1003,24 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 updateAdapter(0)
                                 // Set 'Home' as the default fragment when the app starts
                                 val dashboardFragment = DashboardFragment()
+                                if (receivedNotiData == "yes") {
+                                    val args = Bundle()
+                                    args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    dashboardFragment.arguments = args
+                                    receivedNotiData = "no"
+                                }
                                 supportFragmentManager.beginTransaction()
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
                                     .commit()
                             } else {
                                 updateAdapter(0)
                                 val dashboardFragment = DashboardFragment()
+                                if (receivedNotiData == "yes") {
+                                    val args = Bundle()
+                                    args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    dashboardFragment.arguments = args
+                                    receivedNotiData = "no"
+                                }
                                 supportFragmentManager.beginTransaction()
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
                                     .commit()
@@ -1160,64 +1051,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         })
     }
 
-//    private fun displayLocationSettingsRequest(context: Context) {
-//        val googleApiClient = GoogleApiClient.Builder(context).addApi(LocationServices.API).build()
-//        googleApiClient.connect()
-//        val locationRequest = LocationRequest.create()
-//        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//        locationRequest.interval = 10000
-//        locationRequest.fastestInterval = (10000 / 2).toLong()
-//        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-//        builder.setAlwaysShow(true)
-//        val result: PendingResult<LocationSettingsResult> =
-//            LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build())
-//        result.setResultCallback { result ->
-//            val status: Status = result.status
-//            when (status.statusCode) {
-//                LocationSettingsStatusCodes.SUCCESS -> Log.i(
-//                    TAG, "All location settings are satisfied."
-//                )
-//
-//                LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-//                    Log.i(
-//                        TAG,
-//                        "Location settings are not satisfied. Show the user a dialog to upgrade location settings "
-//                    )
-//                    try {
-//                        // Show the dialog by calling startResolutionForResult(), and check the result
-//                        // in onActivityResult().
-//                        status.startResolutionForResult(
-//                            this@HomeActivity, 1
-//                        )
-//                    } catch (e: IntentSender.SendIntentException) {
-//                        Log.i(TAG, "PendingIntent unable to execute request.")
-//                    }
-//                }
-//
-//                LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> Log.i(
-//                    TAG,
-//                    "Location settings are inadequate, and cannot be fixed here. Dialog not created."
-//                )
-//            }
-//        }
-//    }
-
-//    @RequiresApi(Build.VERSION_CODES.Q)
-//    private fun checkPermission(): Boolean {
-//        val result = ContextCompat.checkSelfPermission(
-//            applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION
-//        )
-//        return result == PackageManager.PERMISSION_GRANTED
-//    }
-
-//    @RequiresApi(Build.VERSION_CODES.Q)
-//    private fun requestPermission() {
-//        ActivityCompat.requestPermissions(
-//            this, arrayOf(
-//                android.Manifest.permission.ACCESS_FINE_LOCATION
-//            ), PERMISSION_REQUEST_CODE
-//        )
-//    }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
@@ -1233,7 +1066,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 //            super.onBackPressed()
                 val alertBuilder = AlertDialog.Builder(this@HomeActivity)
                 alertBuilder.setTitle(getString(R.string.app_name))
-                alertBuilder.setMessage("Are you sure you want to quit " + this.getString(R.string.app_name) + " application?")
+                alertBuilder.setMessage(getString(R.string.quit_myhss))
                 alertBuilder.setPositiveButton(
                     "Yes"
                 ) { dialog, which -> finishAffinity() }
@@ -1296,13 +1129,11 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             NOTIFICATION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-
                 val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
-
                 if (readAccepted) {
                 } else {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                        showMessageOKCancel("You need to allow permission, in order to receive notification from MYHSS",
+                        showMessageOKCancel("To start receiving notifications from MYHSS, please grant the necessary permission. This will enable the app to deliver notifications to your device effectively.",
                             DialogInterface.OnClickListener { dialog, which ->
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                                     requestPermissions(
@@ -1334,7 +1165,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
     private fun showPermissionDeniedDialogSetting() {
         val dialogBuilder = android.app.AlertDialog.Builder(this)
-        dialogBuilder.setMessage("Please allow notification permission. Thank you for your cooperation.")
+        dialogBuilder.setMessage("Kindly grant permission to receive notifications. Your cooperation is greatly appreciated. Thank you.")
             .setCancelable(false).setPositiveButton("Settings") { _, _ ->
                 openAppSettings()
             }.setNegativeButton("Cancel") { dialog, _ ->
@@ -1355,7 +1186,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     private fun reRequestPermissionAccessDialog() {
         val alertDialog: android.app.AlertDialog.Builder =
             android.app.AlertDialog.Builder(this@HomeActivity)
-        alertDialog.setMessage("Give Notification permission. Thank you for your understanding.")
+        alertDialog.setMessage("Please grant permission for notifications. Thank you for your understanding.")
         alertDialog.setPositiveButton(
             "yes"
         ) { _, _ ->
