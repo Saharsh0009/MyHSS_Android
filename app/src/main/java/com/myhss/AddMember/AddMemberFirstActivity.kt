@@ -893,8 +893,56 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         }
     }
 
+//    private fun openDatePickerForDOB() {
+//        calendar = Calendar.getInstance()
+//        if (edit_dateofbirth.text?.isNotEmpty() == true) {
+//            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+//            val initialDate = dateFormat.parse(edit_dateofbirth.text.toString())
+//            calendar.time = initialDate
+//        } else {
+//            calendar.add(Calendar.YEAR, -3)
+//        }
+//
+//        year = calendar.get(Calendar.YEAR)
+//        month = calendar.get(Calendar.MONTH)
+//        day = calendar.get(Calendar.DAY_OF_MONTH)
+//
+//        age_layout.visibility = View.GONE
+//
+//        val dialog = DatePickerDialog(this, { _, year, month, day_of_month ->
+//            calendar[Calendar.YEAR] = year
+//            calendar[Calendar.MONTH] = month //+ 1
+//            calendar[Calendar.DAY_OF_MONTH] = day_of_month
+//            val myFormat = "dd/MM/yyyy"
+//            val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+//            edit_dateofbirth.setText(sdf.format(calendar.time))
+//
+//            val today = Calendar.getInstance()
+//            val age: Int = today.get(Calendar.YEAR) - calendar.get(Calendar.YEAR)
+//
+//            if (age < 18) {
+//                //do something
+//                age_layout.visibility = View.VISIBLE
+//                age_text.text =
+//                    "As your age is below 18 We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
+//                AGE = "1"
+//            } else {
+//                age_layout.visibility = View.GONE
+//                Log.d("", "Age in year= " + age);
+//                AGE = "0"
+//            }
+//
+//        }, (year), month, day)
+////            dialog.datePicker.minDate = calendar.timeInMillis
+////            calendar.add(Calendar.YEAR, 0)
+//        dialog.datePicker.maxDate = System.currentTimeMillis()
+//        dialog.show()
+//    }
+
     private fun openDatePickerForDOB() {
+        val today = Calendar.getInstance()
         calendar = Calendar.getInstance()
+
         if (edit_dateofbirth.text?.isNotEmpty() == true) {
             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             val initialDate = dateFormat.parse(edit_dateofbirth.text.toString())
@@ -911,13 +959,12 @@ class AddMemberFirstActivity() : AppCompatActivity() {
 
         val dialog = DatePickerDialog(this, { _, year, month, day_of_month ->
             calendar[Calendar.YEAR] = year
-            calendar[Calendar.MONTH] = month //+ 1
+            calendar[Calendar.MONTH] = month
             calendar[Calendar.DAY_OF_MONTH] = day_of_month
             val myFormat = "dd/MM/yyyy"
             val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
             edit_dateofbirth.setText(sdf.format(calendar.time))
 
-            val today = Calendar.getInstance()
             val age: Int = today.get(Calendar.YEAR) - calendar.get(Calendar.YEAR)
 
             if (age < 18) {
@@ -925,22 +972,23 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 age_layout.visibility = View.VISIBLE
                 age_text.text =
                     "As your age is below 18 We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//                    Functions.showAlertMessageWithOK(
-//                        this@AddMemberFirstActivity,
-//                        "As your age is below 18",
-//                        "We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//                    )
                 AGE = "1"
             } else {
                 age_layout.visibility = View.GONE
-                Log.d("", "Age in year= " + age);
+                Log.d("", "Age in year= $age")
                 AGE = "0"
             }
 
         }, year, month, day)
-//            dialog.datePicker.minDate = calendar.timeInMillis
-//            calendar.add(Calendar.YEAR, 0)
-        dialog.datePicker.maxDate = calendar.timeInMillis
+
+
+        // Calculate the date exactly 3 years ago from today's date
+        val maxDate = Calendar.getInstance()
+        maxDate.add(Calendar.YEAR, -3)
+
+        // Set the maximum date
+        dialog.datePicker.maxDate = maxDate.timeInMillis
+
         dialog.show()
     }
 

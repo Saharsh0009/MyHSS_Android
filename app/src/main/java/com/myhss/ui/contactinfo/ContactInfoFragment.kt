@@ -31,9 +31,9 @@ class ContactInfoFragment : Fragment() {
 
     @SuppressLint("Range", "MissingPermission")
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_contact_info, container, false)
         sessionManager = SessionManager(requireContext())
@@ -41,7 +41,10 @@ class ContactInfoFragment : Fragment() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         sessionManager.firebaseAnalytics.setUserId("ProfileVC_ContactInfoView")
-        sessionManager.firebaseAnalytics.setUserProperty("ProfileVC_ContactInfoView", "ContactInfoFragment")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "ProfileVC_ContactInfoView",
+            "ContactInfoFragment"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -61,15 +64,18 @@ class ContactInfoFragment : Fragment() {
         name_txt.text = sessionManager.fetchGUAEMRNAME()
         phone_no_txt.text = sessionManager.fetchGUAEMRPHONE()
         email_txt.text = sessionManager.fetchGUAEMREMAIL()
-        relation_ship_txt.text = sessionManager.fetchGUAEMRRELATIONSHIP()
 
+        relation_ship_txt.text = sessionManager.fetchGUAEMRRELATIONSHIP()
+        if (!sessionManager.fetchGUAEMRRELATIONSHIP_OTHER().isNullOrBlank()) {
+            relation_ship_txt.text =
+                sessionManager.fetchGUAEMRRELATIONSHIP() + " | " + sessionManager.fetchGUAEMRRELATIONSHIP_OTHER()
+        }
         mainedit_layout.setOnClickListener {
             val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family")
             i.putExtra("FAMILY", "PROFILE")
             startActivity(i)
         }
-
         return root
     }
 }

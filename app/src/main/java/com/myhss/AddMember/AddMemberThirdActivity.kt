@@ -231,6 +231,11 @@ class AddMemberThirdActivity : AppCompatActivity() {
         })
 
         next_layout.setOnClickListener {
+
+            if (REALTIONSHIP_ID == "5") {
+                OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
+            }
+
             if (intent.getStringExtra("AGE") == "1") {// age under 18
 
                 if (edit_guardian_full_name.text.toString().isEmpty()) {
@@ -270,7 +275,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     return@setOnClickListener
                 } else {
                     if (intent.getStringExtra("IS_SELF") != "self") { // Profile or Add Family(under age 18)
-                        val i = Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
+                        val i =
+                            Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
                         i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                         i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
@@ -319,6 +325,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
 //                        i.putExtra("OTHER_EMERGENCY_RELATIONSHIP", REALTIONSHIP_ID)
 
                         if (REALTIONSHIP_ID == "5") {
+
                             i.putExtra("EMERGENCY_RELATIONSHIP", REALTIONSHIP_ID)
                             i.putExtra(
                                 "OTHER_EMERGENCY_RELATIONSHIP", OTHER_EMERGENCY_RELATIONSHIP
@@ -330,7 +337,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
                         i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
                         startActivity(i)
                     } else { // Add self(under age 18)
-                        val i = Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
+                        val i =
+                            Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
                         i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                         i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
@@ -423,7 +431,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     return@setOnClickListener
                 } else {
                     if (intent.getStringExtra("IS_SELF") != "self") { // profile or Add family(age above 18)
-                        val i = Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
+                        val i =
+                            Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
                         i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                         i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
@@ -442,7 +451,10 @@ class AddMemberThirdActivity : AppCompatActivity() {
                             i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
                         } else {
                             i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
-                            i.putExtra("OTHER_RELATIONSHIP", intent.getStringExtra("OTHER_RELATIONSHIP"))
+                            i.putExtra(
+                                "OTHER_RELATIONSHIP",
+                                intent.getStringExtra("OTHER_RELATIONSHIP")
+                            )
                         }
 
                         if (intent.getStringExtra("OCCUPATION_NAME") == "") {

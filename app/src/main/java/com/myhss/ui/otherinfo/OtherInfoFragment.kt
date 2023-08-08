@@ -45,6 +45,8 @@ class OtherInfoFragment : Fragment() {
     lateinit var qualification_first_file_download: TextView
     lateinit var txt_first_aid_qua_type: TextView
     lateinit var txt_pro_body_reg_no: TextView
+    lateinit var txt_dietary_req: TextView
+    lateinit var txt_originating: TextView
     lateinit var image_file_view: ImageView
     lateinit var mainedit_layout: LinearLayout
     lateinit var medical_information_yesview: LinearLayout
@@ -96,6 +98,8 @@ class OtherInfoFragment : Fragment() {
             root.findViewById(R.id.layout_first_aid_qualification_file)
         layout_first_aid_pro_body = root.findViewById(R.id.layout_first_aid_pro_body)
         txt_pro_body_reg_no = root.findViewById(R.id.txt_pro_body_reg_no)
+        txt_dietary_req = root.findViewById(R.id.txt_dietary_req)
+        txt_originating = root.findViewById(R.id.txt_originating)
 
         if (sessionManager.fetchDOHAVEMEDICAL() == "1") {
             medical_info_yes_no_txt.text = getString(R.string.yes)
@@ -123,7 +127,10 @@ class OtherInfoFragment : Fragment() {
 
                 Glide.with(requireContext())
                     .load(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
-                    .apply(RequestOptions.placeholderOf(R.drawable.ic_loading_img).error(R.drawable.ic_error))
+                    .apply(
+                        RequestOptions.placeholderOf(R.drawable.ic_loading_img)
+                            .error(R.drawable.ic_error)
+                    )
                     .into(image_file_view)
 
             } else {
@@ -150,6 +157,17 @@ class OtherInfoFragment : Fragment() {
                 image_file_view.visibility = View.VISIBLE
                 qualification_first_file_view.visibility = View.VISIBLE
             }
+        }
+
+        if (sessionManager.fetchDIETARY() != "") {
+            txt_dietary_req.text = sessionManager.fetchDIETARY().toString()
+        } else {
+            txt_dietary_req.text = "-"
+        }
+        if (sessionManager.fetchSTATE_IN_INDIA() != "") {
+            txt_originating.text = sessionManager.fetchSTATE_IN_INDIA().toString()
+        } else {
+            txt_originating.text = "-"
         }
 
         qualification_first_file_view.setOnClickListener {
