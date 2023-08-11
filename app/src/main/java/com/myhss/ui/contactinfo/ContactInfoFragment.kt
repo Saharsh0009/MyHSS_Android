@@ -67,8 +67,10 @@ class ContactInfoFragment : Fragment() {
 
         relation_ship_txt.text = sessionManager.fetchGUAEMRRELATIONSHIP()
         if (!sessionManager.fetchGUAEMRRELATIONSHIP_OTHER().isNullOrBlank()) {
-            relation_ship_txt.text =
-                sessionManager.fetchGUAEMRRELATIONSHIP() + " | " + sessionManager.fetchGUAEMRRELATIONSHIP_OTHER()
+            if (!sessionManager.fetchGUAEMRRELATIONSHIP_OTHER().toString().equals("null")) {
+                relation_ship_txt.text =
+                    sessionManager.fetchGUAEMRRELATIONSHIP() + " | " + sessionManager.fetchGUAEMRRELATIONSHIP_OTHER()
+            }
         }
         mainedit_layout.setOnClickListener {
             val i = Intent(requireContext(), AddMemberFirstActivity::class.java)

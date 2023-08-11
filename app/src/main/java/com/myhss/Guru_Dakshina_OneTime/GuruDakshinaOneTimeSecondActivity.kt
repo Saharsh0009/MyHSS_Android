@@ -89,7 +89,10 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("OneTimeDakshinaStep2VC")
-        sessionManager.firebaseAnalytics.setUserProperty("OneTimeDakshinaStep2VC", "GuruDakshinaOneTimeSecondActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "OneTimeDakshinaStep2VC",
+            "GuruDakshinaOneTimeSecondActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -302,7 +305,7 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                         this@GuruDakshinaOneTimeSecondActivity,
                         GuruDakshinaOneTimeThirdActivity::class.java
                     )
-                i.putExtra("Amount",donate_amount_txt.text.toString())
+                i.putExtra("Amount", donate_amount_txt.text.toString())
                 i.putExtra("GIFTAID_ID", GIFTAID_ID)
                 i.putExtra("giving_dakshina", giving_dakshina)
                 i.putExtra("donating_dakshina", donating_dakshina)
@@ -423,7 +426,8 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                             val mStringList = ArrayList<String>()
                             for (i in 0 until data_relationship.size) {
                                 mStringList.add(
-                                    data_relationship[i].firstName.toString().capitalize(Locale.ROOT)
+                                    data_relationship[i].firstName.toString()
+                                        .capitalize(Locale.ROOT)
                                             + " " + data_relationship[i].lastName.toString()
                                         .capitalize(Locale.ROOT)
 //                                    + " " + data_relationship[i].firstName.toString().capitalize(Locale.ROOT)
@@ -551,12 +555,12 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                     donate_amount_txt.text = edit_amount.text.toString()
                     dialog_p?.dismiss()
                 } else {
-                    Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(edit_amount, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
                         .show()
                 }
 
             } else {
-                Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(edit_amount, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

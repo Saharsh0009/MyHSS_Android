@@ -138,9 +138,9 @@ class DashboardFragment : Fragment() {
 
     /*Shakha Grid View*/
     lateinit var shakha_gridview: ScrollableGridView
-    var shakhaNames = arrayOf("Suchana Board", "Surya Namasakar") /*"Find a Shakha"*/
+    var shakhaNames = arrayOf("Suchana Board", "Surya Namaskar") /*"Find a Shakha"*/
     var shakhaNamesNew =
-        arrayOf("Suchana Board", "My Shakha", "Surya Namasakar") /*"Find a Shakha"*/
+        arrayOf("Suchana Board", "My Shakha", "Surya Namaskar") /*"Find a Shakha"*/
 //    var shakhaNames = arrayOf("My Shakha")
 
     //        "Sankhiya Form", "My Shakha")

@@ -595,7 +595,9 @@ class AddMemberSecondActivity : AppCompatActivity() {
                         SearchSpinner(Pincode.toTypedArray(), edit_select_address)
 
                     } else {
-                        full_address_view.visibility = View.GONE
+                        full_address_view.visibility = View.VISIBLE
+                        edit_address_line1.setText("test") // temp
+                        edit_town_city.setText("test")// temp
                         Functions.showAlertMessageWithOK(
                             this@AddMemberSecondActivity, "",
 //                        "Message",

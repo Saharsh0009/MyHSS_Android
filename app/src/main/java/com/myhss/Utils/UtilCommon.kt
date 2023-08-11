@@ -27,7 +27,6 @@ class UtilCommon {
             pattern = Pattern.compile(PASSWORD_PATTERN)
             matcher = pattern.matcher(stringName)
             return matcher.matches()
-
         }
 
         fun isValidUserName(stringName: String): Boolean {

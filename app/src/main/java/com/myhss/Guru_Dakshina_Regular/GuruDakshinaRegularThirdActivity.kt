@@ -185,7 +185,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
             dialog = Dialog(this, R.style.StyleCommonDialog)
         }
         dialog?.setContentView(R.layout.edit_dialog_diposit_money)
-        dialog?.setCanceledOnTouchOutside(false)
+        dialog?.setCanceledOnTouchOutside(true)
         dialog?.show()
 
         val edit_amount = dialog!!.findViewById(R.id.edit_amount) as TextView
@@ -209,12 +209,12 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                     AMOUNT_PAID = edit_amount.text.toString()
                     dialog?.dismiss()
                 } else {
-                    Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(edit_amount, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
                         .show()
                 }
 
             } else {
-                Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(edit_amount, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

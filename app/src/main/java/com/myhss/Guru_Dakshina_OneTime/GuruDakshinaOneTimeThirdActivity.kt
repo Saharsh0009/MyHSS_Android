@@ -148,12 +148,12 @@ class GuruDakshinaOneTimeThirdActivity() : AppCompatActivity() {
                         edit_amount.text.toString()
                     dialog?.dismiss()
                 } else {
-                    Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(edit_amount, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
                         .show()
                 }
 
             } else {
-                Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(edit_amount, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

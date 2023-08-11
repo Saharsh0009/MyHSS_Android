@@ -457,4 +457,11 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         intent.putExtra("list_data", listData_surya)
         startActivity(intent)
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val i = Intent(this@SuryaNamaskar, HomeActivity::class.java)
+        startActivity(i)
+        finishAffinity()
+    }
 }

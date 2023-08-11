@@ -3,6 +3,7 @@ package com.uk.myhss.Restful
 import com.google.gson.JsonObject
 import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.AllShakha.Model.Get_Shakha_Details_Response
+import com.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime.OneTimeSuccess
 import com.myhss.Guru_Dakshina_OneTime.Model.StripeDataModel
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Splash.Model.Biometric.Latest_Update.latest_update_response
@@ -24,7 +25,6 @@ import com.uk.myhss.AddMember.Get_Shakha.Get_Shakha_Response
 import com.uk.myhss.AddMember.Get_Vibhag.Get_Vibhag_Response
 import com.uk.myhss.AddMember.Pincode.Get_Pincode_Response
 import com.uk.myhss.AddMember.PincodeAddress.Get_PincodeAddress_Response
-import com.uk.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime.Get_Create_Onetime
 import com.uk.myhss.Guru_Dakshina_OneTime.Model.Get_Regular.Get_Create_Regular
 import com.uk.myhss.Login_Registration.Model.ForgotPasswordResponse
 import com.uk.myhss.Login_Registration.Model.LoginResponse
@@ -322,26 +322,26 @@ interface ApiInterface {
         @Field("action") action: String
     ): Call<Get_Privileges_Response>
 
-    /*Post create_onetime*/
-    @FormUrlEncoded
-    @POST("api/v1/guru_dakshina/create_onetime")
-    fun get_create_onetime(
-        @Field("user_id") user_id: String,
-        @Field("member_id") member_id: String,
-        @Field("amount") amount: String,
-        @Field("is_linked_member") is_linked_member: String,
-        @Field("gift_aid") gift_aid: String,
-        @Field("is_purnima_dakshina") is_purnima_dakshina: String,
-        @Field("line1") line1: String,
-        @Field("city") city: String,
-        @Field("country") country: String,
-        @Field("postal_code") postal_code: String,
-        @Field("dakshina") dakshina: String,
-        @Field("card_number") card_number: String,
-        @Field("name") name: String,
-        @Field("card_expiry") card_expiry: String,
-        @Field("card_cvv") card_cvv: String
-    ): Call<Get_Create_Onetime>
+//    /*Post create_onetime*/
+//    @FormUrlEncoded
+//    @POST("api/v1/guru_dakshina/create_onetime")
+//    fun get_create_onetime(
+//        @Field("user_id") user_id: String,
+//        @Field("member_id") member_id: String,
+//        @Field("amount") amount: String,
+//        @Field("is_linked_member") is_linked_member: String,
+//        @Field("gift_aid") gift_aid: String,
+//        @Field("is_purnima_dakshina") is_purnima_dakshina: String,
+//        @Field("line1") line1: String,
+//        @Field("city") city: String,
+//        @Field("country") country: String,
+//        @Field("postal_code") postal_code: String,
+//        @Field("dakshina") dakshina: String,
+//        @Field("card_number") card_number: String,
+//        @Field("name") name: String,
+//        @Field("card_expiry") card_expiry: String,
+//        @Field("card_cvv") card_cvv: String
+//    ): Call<Get_Create_Onetime>
 
     /*Post create_regular*/
     @FormUrlEncoded
@@ -573,7 +573,7 @@ interface ApiInterface {
         @Field("suchana_id") suchana_id: String, @Field("member_id") member_id: String
     ): Call<Get_Suchana_Seen_Response>
 
-    /*Post SuryaNamasakar Add*/
+    /*Post SuryaNamaskar Add*/
     @FormUrlEncoded
 //    @Headers("Content-Type: application/x-www-form-urlencoded; charset=UTF-8")
 //    @Headers("Content-Type: application/json; charset=UTF-8")
@@ -620,6 +620,6 @@ interface ApiInterface {
     fun postOneTimeDakshinaStripe(@Body body: MultipartBody): Call<StripeDataModel>
 
     @POST("api/v1/guru_dakshina/payment_response")
-    fun postSaveStripePaymentData(@Body body: MultipartBody): Call<JsonObject>
+    fun postSaveStripePaymentData(@Body body: MultipartBody): Call<OneTimeSuccess>
 
 }

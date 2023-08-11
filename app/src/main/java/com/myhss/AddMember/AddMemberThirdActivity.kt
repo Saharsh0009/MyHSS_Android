@@ -234,6 +234,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
 
             if (REALTIONSHIP_ID == "5") {
                 OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
+            } else {
+                OTHER_EMERGENCY_RELATIONSHIP = ""
             }
 
             if (intent.getStringExtra("AGE") == "1") {// age under 18

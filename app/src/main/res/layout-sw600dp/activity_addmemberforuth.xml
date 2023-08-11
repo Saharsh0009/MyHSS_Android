@@ -779,64 +779,15 @@
 
                                 </RelativeLayout>
 
-                                <mabbas007.tagsedittext.TagsEditText
-                                    android:id="@+id/tagsEditText"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    app:allowSpaceInTag="true"
-                                    app:tagsBackground="@drawable/tag_text_round"
-                                    app:tagsCloseImageRight="@drawable/tag_cross" />
-
-                                <RelativeLayout
-                                    android:id="@+id/dietary_txt_layout"
+                                <com.google.android.material.chip.ChipGroup
+                                    android:id="@+id/chipGroup_dietary"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/edit_primery_color_round"
-                                    android:padding="@dimen/padding5"
-                                    android:visibility="gone">
+                                    android:paddingStart="@dimen/padding5"
+                                    android:paddingEnd="@dimen/padding5"
+                                    app:chipSpacing="8dp" />
 
-                                    <LinearLayout
-                                        android:id="@+id/dietary_txt_view"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:background="@drawable/tag_text_round"
-                                        android:gravity="center_vertical"
-                                        android:orientation="horizontal"
-                                        android:paddingStart="@dimen/padding5"
-                                        android:paddingEnd="@dimen/padding5">
-
-                                        <!--<LinearLayout
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:orientation="horizontal"
-                                            android:gravity="center_vertical"
-                                            android:paddingStart="@dimen/padding5"
-                                            android:paddingEnd="@dimen/padding5"
-                                            android:background="@drawable/tag_text_round" >-->
-
-                                        <TextView
-                                            android:id="@+id/dietary_txt"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:padding="@dimen/padding5"
-                                            android:text="bhanu"
-                                            android:textColor="@color/primaryColor"
-                                            android:textSize="@dimen/font_size25"
-                                            android:theme="@style/StyleTextView" />
-
-                                        <ImageView
-                                            android:id="@+id/cross_item"
-                                            android:layout_width="@dimen/padding30"
-                                            android:layout_height="@dimen/padding30"
-                                            android:layout_margin="@dimen/padding5"
-                                            android:padding="4dp"
-                                            android:src="@drawable/tag_cross" />
-
-                                        <!--</LinearLayout>-->
-
-                                    </LinearLayout>
-
-                                </RelativeLayout>
 
                             </LinearLayout>
 
@@ -904,56 +855,14 @@
 
                                 </RelativeLayout>
 
-                                <RelativeLayout
-                                    android:id="@+id/spoken_language_txt_layout"
+                                <com.google.android.material.chip.ChipGroup
+                                    android:id="@+id/chipGroup_language"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/edit_primery_color_round"
-                                    android:padding="@dimen/padding5"
-                                    android:visibility="gone">
-
-                                    <LinearLayout
-                                        android:id="@+id/spoken_language_txt_view"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:background="@drawable/tag_text_round"
-                                        android:gravity="center_vertical"
-                                        android:orientation="horizontal"
-                                        android:paddingStart="@dimen/padding5"
-                                        android:paddingEnd="@dimen/padding5">
-
-                                        <!--<LinearLayout
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:orientation="horizontal"
-                                            android:gravity="center_vertical"
-                                            android:paddingStart="@dimen/padding5"
-                                            android:paddingEnd="@dimen/padding5"
-                                            android:background="@drawable/tag_text_round" >-->
-
-                                        <TextView
-                                            android:id="@+id/spoken_language_txt"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:padding="@dimen/padding5"
-                                            android:text="bhanu"
-                                            android:textColor="@color/primaryColor"
-                                            android:textSize="@dimen/font_size25"
-                                            android:theme="@style/StyleTextView" />
-
-                                        <ImageView
-                                            android:id="@+id/spoken_languagecross_item"
-                                            android:layout_width="@dimen/padding30"
-                                            android:layout_height="@dimen/padding30"
-                                            android:layout_margin="@dimen/padding5"
-                                            android:padding="4dp"
-                                            android:src="@drawable/tag_cross" />
-
-                                        <!--</LinearLayout>-->
-
-                                    </LinearLayout>
-
-                                </RelativeLayout>
+                                    android:paddingStart="@dimen/padding5"
+                                    android:paddingEnd="@dimen/padding5"
+                                    app:chipSpacing="8dp" />
 
                             </LinearLayout>
 
@@ -1058,7 +967,7 @@
                                 android:layout_marginTop="@dimen/padding10"
                                 android:layout_marginEnd="@dimen/font_size15"
                                 android:background="@drawable/edittext_round"
-                                android:orientation="horizontal">
+                                android:orientation="vertical">
 
                                 <RelativeLayout
                                     android:id="@+id/originating_state_in_india_view"
@@ -1096,6 +1005,15 @@
                                         android:src="@drawable/arrow_drop_down" />
 
                                 </RelativeLayout>
+
+                                <com.google.android.material.chip.ChipGroup
+                                    android:id="@+id/chipGroup_state"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/edit_primery_color_round"
+                                    android:paddingStart="@dimen/padding5"
+                                    android:paddingEnd="@dimen/padding5"
+                                    app:chipSpacing="8dp" />
 
                             </LinearLayout>
 
