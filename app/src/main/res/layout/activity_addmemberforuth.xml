@@ -199,23 +199,27 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_medical_information_details"
                         style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/padding10"
                         android:background="@drawable/edittext_round"
-                        app:boxStrokeColor="@color/primaryColor">
+                        app:boxStrokeColor="@color/primaryColor"
+                        app:errorIconDrawable="@null">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_medical_information_details"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/padding90"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:gravity="left"
                             android:inputType="text"
                             android:scrollbars="none"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -472,24 +476,28 @@
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_profe_body_regis_num"
                         style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginTop="@dimen/padding10"
                         android:background="@drawable/edittext_round"
-                        app:boxStrokeColor="@color/primaryColor">
+                        app:boxStrokeColor="@color/primaryColor"
+                        app:errorIconDrawable="@null">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_profe_body_regis_num"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/padding50"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:gravity="left"
                             android:inputType="text"
                             android:scrollbars="none"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -627,12 +635,10 @@
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/padding10"
                             android:background="@drawable/edittext_round"
                             android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor">
 
-                            <!--                    <com.google.android.material.textfield.TextInputEditText-->
                             <TextView
                                 android:id="@+id/edit_qualification_file"
                                 android:layout_width="match_parent"

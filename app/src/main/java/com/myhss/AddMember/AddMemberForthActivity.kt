@@ -29,11 +29,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.indices
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -84,6 +86,9 @@ class AddMemberForthActivity : AppCompatActivity() {
 
 
     private var FIRSTAID_ID: String = ""
+
+    private lateinit var til_medical_information_details: TextInputLayout
+    private lateinit var til_profe_body_regis_num: TextInputLayout
 
     private lateinit var edit_medical_information_details: TextInputEditText
     private lateinit var edit_date_of_first_aid_qualification: TextView
@@ -158,6 +163,7 @@ class AddMemberForthActivity : AppCompatActivity() {
     var originID: List<String> = ArrayList<String>()
     private var ORIGIN_ID: String = ""
     var uiState = false
+    var isDocApload = false
 
     @SuppressLint("NewApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -201,6 +207,8 @@ class AddMemberForthActivity : AppCompatActivity() {
         edit_date_of_first_aid_qualification =
             findViewById(R.id.edit_date_of_first_aid_qualification)
         edit_qualification_file = findViewById(R.id.edit_qualification_file)
+        til_medical_information_details = findViewById(R.id.til_medical_information_details)
+        til_profe_body_regis_num = findViewById(R.id.til_profe_body_regis_num)
         // first aid
         first_aid_type_view = findViewById(R.id.first_air_type_view)
         edit_aid_type = findViewById(R.id.edit_aid_type)
@@ -268,10 +276,12 @@ class AddMemberForthActivity : AppCompatActivity() {
             }
         }
 
+
         if (intent.getStringExtra("IS_SELF") != "self") { //  profile or add family
+            check_box_layout.visibility = View.GONE
             if (intent.getStringExtra("TITLENAME") == "Profile") { //  only profile
 
-                check_box_layout.visibility = View.GONE
+//                check_box_layout.visibility = View.GONE
                 edit_medical_information_details.setText(sessionManager.fetchMEDICAL_OTHER_INFO())
                 edit_date_of_first_aid_qualification.text = sessionManager.fetchQUALIFICATION_DATE()
                 edit_qualification_file.text = sessionManager.fetchQUALIFICATION_FILE()
@@ -408,15 +418,8 @@ class AddMemberForthActivity : AppCompatActivity() {
             }
             DebugLog.e("visibile value 1   " + visible_value)
             setFirstAidInfo(visible_value)
-
-
             edit_aid_type.setTitle("Select First Aid Qualification Type")
             edit_aid_type.setSelection(0)
-
-//            }
-//            date_of_first_aid_qualification_view.visibility = View.VISIBLE
-//            qualification_file_view.visibility = View.VISIBLE
-//            professionl_body_regi_view.visibility = View.VISIBLE
             qualified_info = "1"
         }
 
@@ -441,33 +444,65 @@ class AddMemberForthActivity : AppCompatActivity() {
 
         next_layout.setOnClickListener {
             /*Add Member First*/
-            //submit button
             checkDeitaryIds()
-//            DebugLog.d("DIETARY_ID : " + DIETARY_ID)
             checkLanguageIds()
-//            DebugLog.d("SPOKEN_ID : " + SPOKEN_ID)
             checkStateIds()
-//            DebugLog.d("ORIGIN_ID : " + ORIGIN_ID)
-//            return@setOnClickListener
 
             if (medical_info == "") {
                 Snackbar.make(
-                    rootLayout, "Please select medical information", Snackbar.LENGTH_SHORT
+                    rootLayout,
+                    "Please select the medical information",
+                    Snackbar.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
+            } else if (medical_info == "1" && edit_medical_information_details.text.toString()
+                    .isEmpty()
+            ) {
+                Snackbar.make(
+                    rootLayout,
+                    "Please add medical information data.",
+                    Snackbar.LENGTH_SHORT
+                ).show()
             } else if (qualified_info == "") {
                 Snackbar.make(
-                    rootLayout, "Please select qualification information", Snackbar.LENGTH_SHORT
+                    rootLayout,
+                    "Please select the qualification information",
+                    Snackbar.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
-//            } else if (Check_value != "true") {
-//                Snackbar.make(
-//                    rootLayout,
-//                    "Please check Membership AgreementHSS",
-//                    Snackbar.LENGTH_SHORT
-//                )
-//                    .show()
-//                return@setOnClickListener
+            } else if (qualified_info == "1" && isDocApload && edit_date_of_first_aid_qualification.text.toString()
+                    .isNullOrEmpty()
+            ) {
+                Snackbar.make(
+                    rootLayout,
+                    "Please select the date of First Aid qualification",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                edit_date_of_first_aid_qualification.requestFocus()
+                return@setOnClickListener
+
+            } else if (qualified_info == "1" && isDocApload && edit_qualification_file.text.toString()
+                    .isNullOrEmpty()
+            ) {
+                Snackbar.make(
+                    rootLayout,
+                    "Please select the file for First Aid qualification",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                edit_qualification_file.requestFocus()
+                return@setOnClickListener
+
+            } else if (qualified_info == "1" && !isDocApload && edit_profe_body_regis_num.text.toString()
+                    .isNullOrEmpty()
+            ) {
+                Snackbar.make(
+                    rootLayout,
+                    "Please enter the professional body registration number",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                edit_profe_body_regis_num.requestFocus()
+                return@setOnClickListener
+
             } else {
                 DebugLog.e("qualified_info : " + qualified_info)
                 if (qualified_info == "0") {// docs upload = no
@@ -687,7 +722,6 @@ class AddMemberForthActivity : AppCompatActivity() {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-//            TODO("Not yet implemented")
                 DebugLog.e("Name : " + firstAidInfoName[position])
                 DebugLog.e("Postion : " + firstAidInfoID[position])
                 FIRSTAID_ID = firstAidInfoID[position]
@@ -703,25 +737,34 @@ class AddMemberForthActivity : AppCompatActivity() {
 
         for (n in data_firstaidInfo.indices) {
             if (data_firstaidInfo.get(n).id == firstaidId) {
+
                 when (data_firstaidInfo.get(n).is_doc) {
                     "1" -> {
                         date_of_first_aid_qualification_view.visibility = View.VISIBLE
                         qualification_file_view.visibility = View.VISIBLE
                         professionl_body_regi_view.visibility = View.GONE
                         edit_profe_body_regis_num.setText("")
-
+                        isDocApload = true
                     }
 
                     "0" -> {
                         date_of_first_aid_qualification_view.visibility = View.GONE
                         qualification_file_view.visibility = View.GONE
                         professionl_body_regi_view.visibility = View.VISIBLE
-                        edit_profe_body_regis_num.setText(
-                            sessionManager.fetchQUALIFICATION_PRO_BODY_RED_NO().toString()
-                        )
+                        if (sessionManager.fetchQUALIFICATION_PRO_BODY_RED_NO()
+                                .toString() == "null" || sessionManager.fetchQUALIFICATION_PRO_BODY_RED_NO()
+                                .toString().isNullOrEmpty()
+                        ) {
+                            edit_profe_body_regis_num.setText("")
+                        } else {
+                            edit_profe_body_regis_num.setText(
+                                sessionManager.fetchQUALIFICATION_PRO_BODY_RED_NO().toString()
+                            )
+                        }
+                        isDocApload = false
                     }
                 }
-                edit_aid_type.setSelection(n) // nik
+                edit_aid_type.setSelection(n)
                 break
             }
         }

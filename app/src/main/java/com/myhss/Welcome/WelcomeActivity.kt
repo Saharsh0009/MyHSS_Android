@@ -20,6 +20,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.Login_Registration.LoginActivity
@@ -150,14 +151,14 @@ class WelcomeActivity : AppCompatActivity() {
 
         if (add_self.text.toString() == getString(R.string.Add_self)) {
 //            welcome_layout.setOnClickListener {
-            add_self_layout.setOnClickListener {
+            add_self_layout.setOnClickListener(DebouncedClickListener {
 //                Snackbar.make(rootLayout, "Add self", Snackbar.LENGTH_SHORT).show()
                 val i = Intent(this@WelcomeActivity, AddMemberFirstActivity::class.java)
                 i.putExtra("TYPE_SELF", TYPE_SELF)
 //                    i.putExtra("FAMILY", "MEMBER")
 //                val i = Intent(this@WelcomeActivity, MainActivity::class.java)
                 startActivity(i)
-            }
+            })
         }
 //        else /*if (add_self_family.text.toString() == getString(R.string.Add_family_member)) {
 //            Snackbar.make(rootLayout, "Add family member", Snackbar.LENGTH_SHORT).show()
@@ -172,9 +173,9 @@ class WelcomeActivity : AppCompatActivity() {
 //            }, 500)
 //        }
 
-        btn_logOut.setOnClickListener {
+        btn_logOut.setOnClickListener(DebouncedClickListener {
             callLogOutMethod()
-        }
+        })
     }
 
     private fun callLogOutMethod() {

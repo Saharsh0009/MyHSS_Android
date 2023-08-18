@@ -581,7 +581,7 @@ class MemberShipActivity : AppCompatActivity() {
                             println("Family")
                         }
                     } else {
-                        Functions.displayMessage(this@MemberShipActivity, response.body()?.message)
+//                        Functions.displayMessage(this@MemberShipActivity, response.body()?.message)
 //                        Functions.showAlertMessageWithOK(
 //                            this@MemberShipActivity, "",
 ////                        "Message",
@@ -685,12 +685,39 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
 
             active_inactive_txt.text = my_family_DatumGurudakshina.ageCategories
 
-            if (sessionManager.fetchUSERROLE()?.contains("Sankhya Pramukh", false) == true) {
-//            if (true) {
-                Log.e("Role : ", " Role : " + sessionManager.fetchUSERROLE())
+            if (sessionManager.fetchUSERROLE()?.contains("Sankhya Pramukh", false) == true ||
+                sessionManager.fetchUSERROLE()?.contains("Shakha Karyawaha", false) == true
+            ) {
                 righr_menu.visibility = View.GONE
             } else {
                 righr_menu.visibility = View.VISIBLE
+            }
+
+
+            if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.baal)) {
+                active_inactive_view.setBackgroundResource(R.drawable.baal_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.baalika)) {
+                active_inactive_view.setBackgroundResource(R.drawable.baalika_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.male_shishu)) {
+                active_inactive_view.setBackgroundResource(R.drawable.male_shishu_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.female_shishu)) {
+                active_inactive_view.setBackgroundResource(R.drawable.female_shishu_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.kishore)) {
+                active_inactive_view.setBackgroundResource(R.drawable.kishor_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.kishori)) {
+                active_inactive_view.setBackgroundResource(R.drawable.kishori_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.tarun)) {
+                active_inactive_view.setBackgroundResource(R.drawable.tarun_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.taruni)) {
+                active_inactive_view.setBackgroundResource(R.drawable.taruni_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.yuva)) {
+                active_inactive_view.setBackgroundResource(R.drawable.yuva_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.yuvati)) {
+                active_inactive_view.setBackgroundResource(R.drawable.yuvati_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.proudh)) {
+                active_inactive_view.setBackgroundResource(R.drawable.proudh_background)
+            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.proudha)) {
+                active_inactive_view.setBackgroundResource(R.drawable.proudha_background)
             }
 
             if (SHOW_HIDE == "ALLSHOW") {

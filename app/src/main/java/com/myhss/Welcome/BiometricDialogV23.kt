@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.Splash.SplashActivity
 import pro.devapp.biometric.BiometricCallback
@@ -32,10 +33,10 @@ class BiometricDialogV23(
         val bottomSheetView: View = layoutInflater.inflate(R.layout.dialog_biometric, null)
         setContentView(bottomSheetView)
         btnCancel = findViewById(R.id.btn_cancel)
-        btnCancel?.setOnClickListener {
+        btnCancel?.setOnClickListener(DebouncedClickListener {
             dismiss()
             biometricCallback?.onAuthenticationCancelled()
-        }
+        })
         imgLogo = findViewById(R.id.img_logo)
         itemTitle = findViewById(R.id.item_title)
         itemStatus = findViewById(R.id.item_status)

@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import cl.jesualex.stooltip.Position
@@ -131,6 +132,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
     private lateinit var til_password: TextInputLayout
     private lateinit var til_confirm_password: TextInputLayout
     private lateinit var til_dob: TextInputLayout
+    private lateinit var til_relatioship_other_name: TextInputLayout
 
 
     private lateinit var male_view: LinearLayout
@@ -223,6 +225,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         til_password = findViewById(R.id.til_password)
         til_confirm_password = findViewById(R.id.til_confirm_password)
         til_dob = findViewById(R.id.til_dob)
+        til_relatioship_other_name = findViewById(R.id.til_relatioship_other_name)
 
         Log.d("TYPE_SELF", intent.getStringExtra("TYPE_SELF")!!)
 
@@ -455,35 +458,24 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         edit_dateofbirth.doOnTextChanged { text, start, before, count ->
             til_dob.isErrorEnabled = false
         }
+        edit_realationship_name.doOnTextChanged { text, start, before, count ->
+            til_relatioship_other_name.isErrorEnabled = false
+        }
 
         //Validation Start here
         next_layout.setOnClickListener {
-
-            var TYPE_LINKED: String = ""
-            var TYPE_SELF: String = ""
-
-            if (TYPE_LINKED == "") {
-                TYPE_LINKED = ""
-            } else {
-                TYPE_LINKED = intent.getStringExtra("TYPE_LINKED").toString()
-            }
-
-            if (TYPE_SELF == "") {
-                TYPE_SELF = ""
-            } else {
-                TYPE_SELF = intent.getStringExtra("TYPE_SELF").toString()
-            }
-
             if (intent.getStringExtra("TYPE_SELF") != "self") { // profile or Family member
                 if (intent.getStringExtra("FAMILY") != "PROFILE") {// Add family
                     if (edit_firstname.text.toString().isEmpty()) {
                         til_firstName.error = getString(R.string.first_name)
                         til_firstName.isErrorEnabled = true
+                        til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
                         return@setOnClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
                         til_firstName.error = getString(R.string.valid_first_name)
                         til_firstName.isErrorEnabled = true
+                        til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
                         return@setOnClickListener
                     } else if (!edit_middlename.text.toString()
@@ -491,31 +483,37 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     ) {
                         til_middleName.error = getString(R.string.valid_middle_name)
                         til_middleName.isErrorEnabled = true
+                        til_middleName.setErrorIconDrawable(null)
                         edit_middlename.requestFocus()
                         return@setOnClickListener
                     } else if (edit_surname.text.toString().isEmpty()) {
                         til_surname.error = getString(R.string.sur_name)
                         til_surname.isErrorEnabled = true
+                        til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
                         return@setOnClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
                         til_surname.error = getString(R.string.valid_surname)
                         til_surname.isErrorEnabled = true
+                        til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
                         return@setOnClickListener
                     } else if (edit_username.text.toString().isEmpty()) {
                         til_username.error = getString(R.string.user_name)
                         til_username.isErrorEnabled = true
+                        til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
                         return@setOnClickListener
                     } else if (!UtilCommon.isValidUserName(edit_username.text.toString())) {
                         til_username.error = getString(R.string.valid_user_name)
                         til_username.isErrorEnabled = true
+                        til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
                         return@setOnClickListener
                     } else if (edit_email.text.toString().isEmpty()) {
                         til_email.error = getString(R.string.email_id)
                         til_email.isErrorEnabled = true
+                        til_email.setErrorIconDrawable(null)
                         edit_email.requestFocus()
                         return@setOnClickListener
                     } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString())
@@ -523,54 +521,69 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     ) {
                         til_email.error = getString(R.string.valid_email)
                         til_email.isErrorEnabled = true
+                        til_email.setErrorIconDrawable(null)
                         edit_email.requestFocus()
                         return@setOnClickListener
                     } else if (edit_password.text.toString().isEmpty()) {
                         til_password.error = getString(R.string.enter_password)
                         til_password.isErrorEnabled = true
+                        til_password.setErrorIconDrawable(null)
                         edit_password.requestFocus()
                         return@setOnClickListener
                     } else if (!UtilCommon.isValidPassword(edit_password.text.toString())) {
                         til_password.error = getString(R.string.valid_password)
                         til_password.isErrorEnabled = true
+                        til_password.setErrorIconDrawable(null)
                         edit_password.requestFocus()
                         return@setOnClickListener
                     } else if (edit_confirm_password.text.toString().isEmpty()) {
                         til_confirm_password.error = getString(R.string.enter_confirm_password)
                         til_confirm_password.isErrorEnabled = true
+                        til_confirm_password.setErrorIconDrawable(null)
                         edit_confirm_password.requestFocus()
                         return@setOnClickListener
                     } else if (!UtilCommon.isValidPassword(edit_confirm_password.text.toString())) {
                         til_confirm_password.error = getString(R.string.valid_confirm_password)
                         til_confirm_password.isErrorEnabled = true
+                        til_confirm_password.setErrorIconDrawable(null)
                         edit_confirm_password.requestFocus()
                         return@setOnClickListener
                     } else if (edit_password.text.toString() != edit_confirm_password.text.toString()) {
                         til_confirm_password.error = getString(R.string.confirm_both_pass)
                         til_confirm_password.isErrorEnabled = true
+                        til_confirm_password.setErrorIconDrawable(null)
                         edit_confirm_password.requestFocus()
                     } else if (edit_dateofbirth.text.toString().isEmpty()) {
                         til_dob.error = getString(R.string.enter_dob)
                         til_dob.isErrorEnabled = true
+                        til_dob.setErrorIconDrawable(null)
                         edit_dateofbirth.requestFocus()
                     } else if (GENDER == "") {
                         Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT)
                             .show()
+                    } else if (RELATIONSHIP_ID == "5" && edit_realationship_name.text.toString()
+                            .isEmpty()
+                    ) {
+                        til_relatioship_other_name.error =
+                            "Please enter the other relationship name"
+                        til_relatioship_other_name.isErrorEnabled = true
+                        til_relatioship_other_name.setErrorIconDrawable(null)
+                        edit_realationship_name.requestFocus()
                     } else {
                         CallNextMethod()
                     }
                 } else {
-
-
                     // Edit profile
                     if (edit_firstname.text.toString().isEmpty()) {
                         til_firstName.error = getString(R.string.first_name)
                         til_firstName.isErrorEnabled = true
+                        til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
                         return@setOnClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
                         til_firstName.error = getString(R.string.valid_first_name)
                         til_firstName.isErrorEnabled = true
+                        til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
                         return@setOnClickListener
                     } else if (!edit_middlename.text.toString()
@@ -580,16 +593,19 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     ) {
                         til_middleName.error = getString(R.string.valid_middle_name)
                         til_middleName.isErrorEnabled = true
+                        til_middleName.setErrorIconDrawable(null)
                         edit_middlename.requestFocus()
                         return@setOnClickListener
                     } else if (edit_surname.text.toString().isEmpty()) {
                         til_surname.error = getString(R.string.sur_name)
                         til_surname.isErrorEnabled = true
+                        til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
                         return@setOnClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
                         til_surname.error = getString(R.string.valid_surname)
                         til_surname.isErrorEnabled = true
+                        til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
                         return@setOnClickListener
                     }/* else if (edit_username.text.toString().isEmpty()) {
@@ -622,11 +638,13 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 if (edit_firstname.text.toString().isEmpty()) {
                     til_firstName.error = getString(R.string.first_name)
                     til_firstName.isErrorEnabled = true
+                    til_firstName.setErrorIconDrawable(null)
                     edit_firstname.requestFocus()
                     return@setOnClickListener
                 } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
                     til_firstName.error = getString(R.string.valid_first_name)
                     til_firstName.isErrorEnabled = true
+                    til_firstName.setErrorIconDrawable(null)
                     edit_firstname.requestFocus()
                     return@setOnClickListener
                 } else if (!edit_middlename.text.toString().isEmpty() && !UtilCommon.isOnlyLetters(
@@ -635,26 +653,31 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 ) {
                     til_middleName.error = getString(R.string.valid_middle_name)
                     til_middleName.isErrorEnabled = true
+                    til_middleName.setErrorIconDrawable(null)
                     edit_middlename.requestFocus()
                     return@setOnClickListener
                 } else if (edit_surname.text.toString().isEmpty()) {
                     til_surname.error = getString(R.string.sur_name)
                     til_surname.isErrorEnabled = true
+                    til_surname.setErrorIconDrawable(null)
                     edit_surname.requestFocus()
                     return@setOnClickListener
                 } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
                     til_surname.error = getString(R.string.valid_surname)
                     til_surname.isErrorEnabled = true
+                    til_surname.setErrorIconDrawable(null)
                     edit_surname.requestFocus()
                     return@setOnClickListener
                 } else if (edit_email.text.toString().isEmpty()) {
                     til_email.error = getString(R.string.email_id)
                     til_email.isErrorEnabled = true
+                    til_email.setErrorIconDrawable(null)
                     edit_email.requestFocus()
                     return@setOnClickListener
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString()).matches()) {
                     til_email.error = getString(R.string.valid_email)
                     til_email.isErrorEnabled = true
+                    til_email.setErrorIconDrawable(null)
                     edit_email.requestFocus()
                     return@setOnClickListener
                 } else if (GENDER == "") {
@@ -670,11 +693,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
 
         edit_dateofbirth.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // TODO Auto-generated method stub
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // TODO Auto-generated method stub
             }
 
             override fun afterTextChanged(s: Editable) {
@@ -777,6 +798,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         edit_dateofbirth.setOnClickListener {
             openDatePickerForDOB()
         }
+
         occupation_other_view.visibility = View.GONE
 //        if (edit_occupation_select_other.equals("Other")) {
 //            occupation_other_view.visibility = View.VISIBLE
@@ -1001,111 +1023,111 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         edit_dateofbirth.setText(sessionManager.fetchDOB())
     }
 
-    private val mDateEntryWatcher: TextWatcher = object : TextWatcher {
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            var working = s.toString()
-            var isValid = true
-            if (working.length == 2 && before == 0) {
-                if (working.toInt() < 1 || working.toInt() > 31) {
-                    isValid = false
-                } else {
-                    working += "/"
-                    edit_dateofbirth.setText(working)
-                    edit_dateofbirth.setSelection(working.length)
-                }
-            } else if (working.length == 5 && before == 0) {
-                val enteredMonth = working.substring(6)
-                if (enteredMonth.toInt() < 1 || enteredMonth.toInt() > 12) {
-                    isValid = false
-                } else {
-                    working += "/"
-                    edit_dateofbirth.setText(working)
-                    edit_dateofbirth.setSelection(working.length)
-                }
-            } else if (working.length == 10 && before == 0) {
-                val enteredYear = working.substring(7)
-                val currentYear = Calendar.getInstance()[Calendar.YEAR]
-                if (enteredYear.toInt() < currentYear) {
-                    isValid = false
-                }
-            } else if (working.length != 10) {
-                isValid = false
-            }
-            if (!isValid) {
-                edit_dateofbirth.setError("Enter a valid date: DD/MM/YYYY")
-            } else {
-                edit_dateofbirth.setError(null)
-            }
-        }
+//    private val mDateEntryWatcher: TextWatcher = object : TextWatcher {
+//        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+//            var working = s.toString()
+//            var isValid = true
+//            if (working.length == 2 && before == 0) {
+//                if (working.toInt() < 1 || working.toInt() > 31) {
+//                    isValid = false
+//                } else {
+//                    working += "/"
+//                    edit_dateofbirth.setText(working)
+//                    edit_dateofbirth.setSelection(working.length)
+//                }
+//            } else if (working.length == 5 && before == 0) {
+//                val enteredMonth = working.substring(6)
+//                if (enteredMonth.toInt() < 1 || enteredMonth.toInt() > 12) {
+//                    isValid = false
+//                } else {
+//                    working += "/"
+//                    edit_dateofbirth.setText(working)
+//                    edit_dateofbirth.setSelection(working.length)
+//                }
+//            } else if (working.length == 10 && before == 0) {
+//                val enteredYear = working.substring(7)
+//                val currentYear = Calendar.getInstance()[Calendar.YEAR]
+//                if (enteredYear.toInt() < currentYear) {
+//                    isValid = false
+//                }
+//            } else if (working.length != 10) {
+//                isValid = false
+//            }
+//            if (!isValid) {
+//                edit_dateofbirth.setError("Enter a valid date: DD/MM/YYYY")
+//            } else {
+//                edit_dateofbirth.setError(null)
+//            }
+//        }
+//
+//        override fun afterTextChanged(s: Editable) {}
+//        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+//    }
 
-        override fun afterTextChanged(s: Editable) {}
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-    }
+//    private fun SearchSpinnerold(
+//        spinner_search: Array<String>, edit_txt: SearchableSpinner
+//    ) {
+//        val searchmethod = ArrayAdapter(
+//            this, android.R.layout.simple_spinner_item, spinner_search
+//        )
+//        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        edit_txt.adapter = searchmethod
+//        Log.d("SearchSpinner", edit_txt.toString())
+//
+////        if (intent.getStringExtra("TYPE_SELF") != "self") {
+////            if (intent.getStringExtra("FAMILY") == "PROFILE") {
+//////                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
+//////                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
+//////                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
+//////                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
+////            }
+////        }
+//    }
 
-    private fun SearchSpinnerold(
-        spinner_search: Array<String>, edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-        Log.d("SearchSpinner", edit_txt.toString())
 
-        if (intent.getStringExtra("TYPE_SELF") != "self") {
-            if (intent.getStringExtra("FAMILY") == "PROFILE") {
+//    private fun SearchSpinner(
+//        spinner_search: Array<String>, edit_txt: SearchableSpinner
+//    ) {
+//        val searchmethod = ArrayAdapter(
+//            this, android.R.layout.simple_spinner_item, spinner_search
+//        )
+//        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        edit_txt.adapter = searchmethod
+//        Log.d("SearchSpinner", edit_txt.toString())
+//
+//        if (intent.getStringExtra("TYPE_SELF") != "self") {
+//            if (intent.getStringExtra("FAMILY") == "PROFILE") {
 //                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
 //                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
 //                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
 //                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-            }
-        }
-    }
+//            }
+//        }
+//    }
 
-
-    private fun SearchSpinner(
-        spinner_search: Array<String>, edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-        Log.d("SearchSpinner", edit_txt.toString())
-
-        if (intent.getStringExtra("TYPE_SELF") != "self") {
-            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
-                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-            }
-        }
-    }
-
-    private val mOnItemSelectedListener_realationship: OnItemSelectedListener =
-        object : OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-//            TODO("Not yet implemented")
-                Log.d("Name", relationshipName[position])
-                Log.d("Postion", relationshipID[position])
-                RELATIONSHIP_ID = relationshipID[position]
-
-                if (RELATIONSHIP_ID == "5") {
-                    realationship_other_view.visibility = View.VISIBLE
-                    OTHER_RELATIONSHIP = edit_realationship_name.text.toString()
-                } else {
-                    realationship_other_view.visibility = View.GONE
-                    OTHER_RELATIONSHIP = ""
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-            }
-        }
+//    private val mOnItemSelectedListener_realationship: OnItemSelectedListener =
+//        object : OnItemSelectedListener {
+//            override fun onItemSelected(
+//                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+//            ) {
+////            TODO("Not yet implemented")
+//                Log.d("Name", relationshipName[position])
+//                Log.d("Postion", relationshipID[position])
+//                RELATIONSHIP_ID = relationshipID[position]
+//
+//                if (RELATIONSHIP_ID == "5") {
+//                    realationship_other_view.visibility = View.VISIBLE
+//                    OTHER_RELATIONSHIP = edit_realationship_name.text.toString()
+//                } else {
+//                    realationship_other_view.visibility = View.GONE
+//                    OTHER_RELATIONSHIP = ""
+//                }
+//            }
+//
+//            override fun onNothingSelected(parent: AdapterView<*>?) {
+////            TODO("Not yet implemented")
+//            }
+//        }
 
 //    private val mOnItemSelectedListener_occupation: OnItemSelectedListener =
 //        object : OnItemSelectedListener {
@@ -1704,16 +1726,12 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 call: Call<Get_Vibhag_Response>, response: Response<Get_Vibhag_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
+//                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
 
                         var data_relationship: List<Datum_Get_Vibhag> =
                             ArrayList<Datum_Get_Vibhag>()
                         data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d("relationshipName", data_relationship[i].chapterName.toString())
-                        }
                         VibhagName = listOf(arrayOf(data_relationship).toString())
                         VibhagID = listOf(arrayOf(data_relationship).toString())
 
@@ -1735,14 +1753,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         var mStringArray = mStringList.toArray()
                         var mStringArraynew = mStringListnew.toArray()
 
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
                         mStringArray = mStringList.toArray(mStringArray)
                         mStringArraynew = mStringListnew.toArray(mStringArraynew)
 
@@ -1750,10 +1760,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-//                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-//                            Log.d("list==>", list.toString())
-
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                                 VibhagName =
@@ -1762,19 +1769,13 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         }
 
                         for (element in mStringArraynew) {
-//                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-//                            Log.d("list==>", listnew.toString())
-
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                                 VibhagID =
                                     listnew//listOf(listn.toCollection(ArrayList()).toString())
                             }
                         }
-
-                        Log.d("VibhagName==>", VibhagName.toString())
-//                        SearchSpinner(VibhagName.toTypedArray(), edit_vibhag_region)
 
                         val Vibhagadapter: ArrayAdapter<String> = ArrayAdapter<String>(
                             this@AddMemberFirstActivity,
@@ -1784,21 +1785,15 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         edit_vibhag_region.adapter = Vibhagadapter
 
                         if (intent.getStringExtra("TYPE_SELF") != "self") {
-                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-//                                edit_vibhag_region.visibility = View.GONE
-                                vibhag_select_default.visibility = View.VISIBLE
-                                vibhag_select_default.text = sessionManager.fetchVIBHAGNAME()
+//                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
+                            vibhag_select_default.visibility = View.VISIBLE
+                            vibhag_select_default.text = sessionManager.fetchVIBHAGNAME()
 //                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
-                                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
+                            edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
 //                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
 //                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-                            }
+//                            }
                         }
-//                        Handler().postDelayed({
-//                        edit_vibhag_region.callOnClick()
-//                        }, 500)
-
-//                        edit_vibhag_region.setSelection(0, true)
 
                         edit_vibhag_region.onItemSelectedListener =
                             object : OnItemSelectedListener {
@@ -1808,8 +1803,8 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                                     // On selecting a spinner item
                                     (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
 
-                                    Log.d("Name", VibhagName[position])
-                                    Log.d("Postion", VibhagID[position])
+//                                    Log.d("Name", VibhagName[position])
+//                                    Log.d("Postion", VibhagID[position])
                                     VIBHAG_ID = VibhagID[position]
 
                                     if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
@@ -1868,15 +1863,11 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 call: Call<Get_Nagar_Response>, response: Response<Get_Nagar_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
 
                         var data_relationship: List<Datum_Get_Nagar> = ArrayList<Datum_Get_Nagar>()
                         data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d("relationshipName", data_relationship[i].chapterName.toString())
-                        }
+
                         NagarName = listOf(arrayOf(data_relationship).toString())
                         NagarID = listOf(arrayOf(data_relationship).toString())
 
@@ -1898,14 +1889,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         var mStringArray = mStringList.toArray()
                         var mStringArraynew = mStringListnew.toArray()
 
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
                         mStringArray = mStringList.toArray(mStringArray)
                         mStringArraynew = mStringListnew.toArray(mStringArraynew)
 
@@ -1913,9 +1896,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-//                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-//                            Log.d("list==>", list.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1924,9 +1905,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         }
 
                         for (element in mStringArraynew) {
-//                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-//                            Log.d("list==>", listnew.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1934,9 +1913,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                                     listnew//listOf(listn.toCollection(ArrayList()).toString())
                             }
                         }
-
-                        Log.d("NagarName==>", NagarName.toString())
-//                        SearchSpinner(NagarName.toTypedArray(), edit_nagar_town)
 
                         val Nagaradapter: ArrayAdapter<String> = ArrayAdapter<String>(
                             this@AddMemberFirstActivity,
@@ -1946,15 +1922,15 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         edit_nagar_town.adapter = Nagaradapter
 
                         if (intent.getStringExtra("TYPE_SELF") != "self") {
-                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
+//                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
 //                                edit_nagar_town.visibility = View.GONE
-                                nagar_select_default.visibility = View.VISIBLE
-                                nagar_select_default.text = sessionManager.fetchNAGARNAME()
+                            nagar_select_default.visibility = View.VISIBLE
+                            nagar_select_default.text = sessionManager.fetchNAGARNAME()
 //                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
 //                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-                                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
+                            edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
 //                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-                            }
+//                            }
                         }
 //                        edit_nagar_town.setSelection(0, true)
 
@@ -2025,18 +2001,12 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 call: Call<Get_Shakha_Response>, response: Response<Get_Shakha_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
 
                         var data_relationship: List<Datum_Get_Shakha> =
                             ArrayList<Datum_Get_Shakha>()
                         data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d(
-                                "relationshipName", data_relationship[i].getChapterName().toString()
-                            )
-                        }
+
                         ShakhaName = listOf(arrayOf(data_relationship).toString())
                         ShakhaID = listOf(arrayOf(data_relationship).toString())
 
@@ -2058,14 +2028,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         var mStringArray = mStringList.toArray()
                         var mStringArraynew = mStringListnew.toArray()
 
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
                         mStringArray = mStringList.toArray(mStringArray)
                         mStringArraynew = mStringListnew.toArray(mStringArraynew)
 
@@ -2073,9 +2035,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-//                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-//                            Log.d("list==>", list.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -2085,9 +2045,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         }
 
                         for (element in mStringArraynew) {
-//                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-//                            Log.d("list==>", listnew.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -2095,9 +2053,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                                     listnew//listOf(listn.toCollection(ArrayList()).toString())
                             }
                         }
-
-                        Log.d("ShakhaName==>", ShakhaName.toString())
-//                        SearchSpinner(ShakhaName.toTypedArray(), edit_shakha_branch)
 
                         val Shakhaadapter: ArrayAdapter<String> = ArrayAdapter<String>(
                             this@AddMemberFirstActivity,
@@ -2107,19 +2062,16 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         edit_shakha_branch.adapter = Shakhaadapter
 
                         if (intent.getStringExtra("TYPE_SELF") != "self") {
-                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-//                                edit_shakha_branch.visibility = View.GONE
-                                shakha_select_default.visibility = View.VISIBLE
-                                shakha_select_default.text = sessionManager.fetchSHAKHANAME()
-                                SHAKHA_ID = sessionManager.fetchSHAKHAID()!!
+//                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
+                            shakha_select_default.visibility = View.VISIBLE
+                            shakha_select_default.text = sessionManager.fetchSHAKHANAME()
+                            SHAKHA_ID = sessionManager.fetchSHAKHAID()!!
 //                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
 //                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
 //                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-                                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-                            }
+                            edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
+//                            }
                         }
-
-//                        edit_shakha_branch.setSelection(0, true)
 
                         edit_shakha_branch.onItemSelectedListener =
                             object : OnItemSelectedListener {
@@ -2128,28 +2080,16 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                                 ) {
                                     // On selecting a spinner item
                                     (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-
-                                    Log.d("Name", ShakhaName[position])
-                                    Log.d("Postion", ShakhaID[position])
                                     SHAKHA_ID = ShakhaID[position]
                                 }
 
                                 override fun onNothingSelected(arg0: AdapterView<*>?) {
-                                    // TODO Auto-generated method stub
                                 }
                             }
-
-//                        Shakhaadapter.notifyDataSetChanged()
-
                     } else {
                         Functions.displayMessage(
                             this@AddMemberFirstActivity, response.body()?.message
                         )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberFirstActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -2215,58 +2155,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 pd.dismiss()
             }
         })
-    }
-
-    fun CallDateValidation() {
-        calendar = Calendar.getInstance()
-        calendar.add(Calendar.YEAR, -3)
-        year = calendar.get(Calendar.YEAR)
-        month = calendar.get(Calendar.MONTH)
-        day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val simpledateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val strCurrentDatenew = simpledateFormat.format(calendar.time)
-        Functions.printLog("strCurrentDatenew", strCurrentDatenew)
-
-        if (edit_dateofbirth.text.toString() >= strCurrentDate) {
-            Functions.printLog("Date", "Current else Future Date")
-            Functions.showAlertMessageWithOK(
-                this@AddMemberFirstActivity, "As your age is not 18 years", "Please enter vaild DOB"
-            )
-        } else if (edit_dateofbirth.text.toString() > strCurrentDatenew) {
-            Functions.printLog("Date", "Current else Future Date")
-            Functions.showAlertMessageWithOK(
-                this@AddMemberFirstActivity, "As your age is under 3 year", "Please enter vaild DOB"
-            )
-        } else if (edit_dateofbirth.text.toString() == strCurrentDatenew) {
-            Functions.printLog("Date", "Under 18")
-            age_layout.visibility = View.VISIBLE
-            age_text.text =
-                "As your age is below 18 We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//            Functions.showAlertMessageWithOK(
-//                this@AddMemberFirstActivity,
-//                "As your age is below 18",
-//                "We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//            )
-            AGE = "1"
-//            if (intent.getStringExtra("TYPE_SELF") != "self") {
-//                CallUserNameMethod()
-//            } else {
-//                Handler().postDelayed({
-//                    CallNextMethod()
-//                }, 500)
-//            }
-        } else if (edit_dateofbirth.text.toString() <= strCurrentDatenew) {
-            Functions.printLog("Date", "Above 18")
-            AGE = "0"
-//            if (intent.getStringExtra("TYPE_SELF") != "self") {
-//                CallUserNameMethod()
-//            } else {
-//                Handler().postDelayed({
-//                    CallNextMethod()
-//                }, 500)
-//            }
-        }
     }
 
     fun CallUserNameMethod() {
@@ -2366,25 +2254,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
             startActivity(i)
         }
-    }
-
-    fun isValidPassword(password: String?): Boolean {
-        val pattern: Pattern
-        val matcher: Matcher
-        val PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
-        pattern = Pattern.compile(PASSWORD_PATTERN)
-        matcher = pattern.matcher(password)
-        DebugLog.e("password result : " + matcher.matches())
-        return matcher.matches()
-    }
-
-    fun isOnlyLetters(password: String?): Boolean {
-        val pattern: Pattern
-        val matcher: Matcher
-        val PASSWORD_PATTERN = "^[A-Za-z]*\$"
-        pattern = Pattern.compile(PASSWORD_PATTERN)
-        matcher = pattern.matcher(password)
-        return matcher.matches()
     }
 
     fun EditText.onDone(callback: () -> Unit) {

@@ -94,8 +94,8 @@ class MyFamilyFragment : Fragment() {
 
 //        my_family_list.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
 
-        val end:Int = 100
-        val start:Int = 0
+        val end: Int = 100
+        val start: Int = 0
 
         if (Functions.isConnectingToInternet(context)) {
             USERID = sessionManager.fetchUserID()!!
@@ -149,8 +149,8 @@ class MyFamilyFragment : Fragment() {
         search_fields.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
-                val end:Int = 100
-                val start:Int = 0
+                val end: Int = 100
+                val start: Int = 0
 
                 if (Functions.isConnectingToInternet(context)) {
                     USERID = sessionManager.fetchUserID()!!
@@ -311,11 +311,11 @@ class MyFamilyFragment : Fragment() {
                             println("Family")
                         }
                     } else {
-                        Functions.showAlertMessageWithOK(
-                            context, "",
-//                        "Message",
-                            response.body()?.message
-                        )
+//                        Functions.showAlertMessageWithOK(
+//                            context, "",
+////                        "Message",
+//                            response.body()?.message
+//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(

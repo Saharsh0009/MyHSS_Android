@@ -38,6 +38,8 @@ import com.google.firebase.ktx.Firebase
 import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Login_Registration.RegistrationActivity
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Welcome.BiometricDialogV23
 import com.uk.myhss.Login_Registration.Model.ForgotPasswordResponse
@@ -109,7 +111,7 @@ class LoginActivity : AppCompatActivity() {
         val til_password = findViewById<TextInputLayout>(R.id.til_password)
 
 
-        loginButton.setOnClickListener {
+        loginButton.setOnClickListener(DebouncedClickListener {
             loginButton.setReadPermissions(listOf(EMAIL))
             callbackManager = CallbackManager.Factory.create()
             // If you are using in a fragment, call loginButton.setFragment(this);
@@ -144,7 +146,7 @@ class LoginActivity : AppCompatActivity() {
                     override fun onError(exception: FacebookException) { // App code
                     }
                 })
-        }
+        })
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("780977723182-n1l2dbg5k9h8trm1nfeditcje078s9kj.apps.googleusercontent.com")
@@ -152,9 +154,9 @@ class LoginActivity : AppCompatActivity() {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        gmail_login.setOnClickListener {
+        gmail_login.setOnClickListener(DebouncedClickListener {
             signIn()
-        }
+        })
 
         edit_username.doOnTextChanged { text, start, before, count ->
             til_userName.isErrorEnabled = false
@@ -165,7 +167,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         // Button click listener
-        login_btn.setOnClickListener {
+        login_btn.setOnClickListener(DebouncedClickListener {
             val user = edit_username.text.toString()
             val password = edit_password.text.toString()
             if (user.isEmpty() && password.isEmpty()) {
@@ -174,17 +176,17 @@ class LoginActivity : AppCompatActivity() {
                 til_userName.isErrorEnabled = true
                 til_password.isErrorEnabled = true
                 edit_username.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (user.isEmpty()) {
                 til_userName.error = getString(R.string.username_required)
                 til_userName.isErrorEnabled = true
                 edit_username.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (password.isEmpty()) {
                 til_password.error = getString(R.string.password_required)
                 til_password.isErrorEnabled = true
                 edit_password.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else {
                 if (Functions.isConnectingToInternet(this@LoginActivity)) {
                     sessionManager.saveDEVICE_TOKEN(m_deviceId)
@@ -198,16 +200,16 @@ class LoginActivity : AppCompatActivity() {
                     ).show()
                 }
             }
-        }
+        })
 
-        registration_layout.setOnClickListener {
+        registration_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@LoginActivity, RegistrationActivity::class.java)
             i.putExtra("m_deviceId", m_deviceId)
             startActivity(i)
             finish()
-        }
+        })
 
-        forgot_btn.setOnClickListener {
+        forgot_btn.setOnClickListener(DebouncedClickListener {
             til_userName.isErrorEnabled = false
             til_password.isErrorEnabled = false
 
@@ -220,16 +222,16 @@ class LoginActivity : AppCompatActivity() {
             val forgot_passwordbtn = view_d.findViewById<TextView>(R.id.forgot_passwordbtn)
             val til_forgotPasswor = view_d.findViewById<TextInputLayout>(R.id.til_forgotPassword)
 
-            btnClose.setOnClickListener {
+            btnClose.setOnClickListener(DebouncedClickListener {
                 dialog.dismiss()
-            }
+            })
 
 
             edit_forgotusername.doOnTextChanged { text, start, before, count ->
                 til_forgotPasswor.isErrorEnabled = false
             }
 
-            forgot_passwordbtn.setOnClickListener {
+            forgot_passwordbtn.setOnClickListener(DebouncedClickListener {
                 val forgotuser = edit_forgotusername.text.toString()
                 if (forgotuser.isEmpty()) {
 //                    edit_forgotusername.error = "   Username required"
@@ -238,7 +240,7 @@ class LoginActivity : AppCompatActivity() {
                     til_forgotPasswor.error = getString(R.string.username_required)
                     til_forgotPasswor.isErrorEnabled = true
                     edit_forgotusername.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else {
                     dialog.dismiss()
                     if (Functions.isConnectingToInternet(this@LoginActivity)) {
@@ -251,11 +253,11 @@ class LoginActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
-            }
+            })
             dialog.setCancelable(true)
             dialog.setContentView(view_d)
             dialog.show()
-        }
+        })
     }
 
     private fun signIn() {
@@ -667,14 +669,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun CallDashboard() {
-//        TODO("Not yet implemented")
         if (sharedPreferences.getString("MEMBERID", "") != "") {
             startActivity(
                 Intent(
                     this@LoginActivity, HomeActivity::class.java
                 )
             )
-//                                MainActivity::class.java))
             finish()
         } else {
             startActivity(

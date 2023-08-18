@@ -85,18 +85,21 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
-                                android:layout_marginBottom="10dp">
+                                android:layout_marginBottom="10dp"
+                                app:errorIconDrawable="@null">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/edit_firstname"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:fontFamily="@font/sourcesanspro_regular"
                                     android:hint="@string/firstname"
                                     android:inputType="text"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:textSize="@dimen/font_size18"
                                     android:theme="@style/StyleEditTextView" />
 
@@ -120,18 +123,21 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
-                                android:layout_marginBottom="10dp">
+                                android:layout_marginBottom="10dp"
+                                app:errorIconDrawable="@null">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/edit_surname"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:fontFamily="@font/sourcesanspro_regular"
                                     android:hint="@string/surname"
                                     android:inputType="text"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:textSize="@dimen/font_size18"
                                     android:theme="@style/StyleEditTextView" />
 
@@ -179,18 +185,21 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:layout_marginBottom="10dp">
+                            android:layout_marginBottom="10dp"
+                            app:errorIconDrawable="@null">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_username"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:fontFamily="@font/sourcesanspro_regular"
                                 android:hint="@string/username"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:textSize="@dimen/font_size18"
                                 android:theme="@style/StyleEditTextView" />
 
@@ -229,18 +238,21 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:layout_marginBottom="10dp">
+                            android:layout_marginBottom="10dp"
+                            app:errorIconDrawable="@null">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/edit_email"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:fontFamily="@font/sourcesanspro_regular"
                                 android:hint="@string/email_address"
                                 android:inputType="textEmailAddress"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:textSize="@dimen/font_size18"
                                 android:theme="@style/StyleEditTextView" />
 
@@ -267,6 +279,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
+                            app:errorIconDrawable="@null"
                             app:passwordToggleEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -274,12 +287,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^_+\|"
                                 android:fontFamily="@font/sourcesanspro_regular"
                                 android:hint="@string/password"
                                 android:inputType="textPassword"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:textSize="@dimen/font_size18"
                                 android:theme="@style/StyleEditTextView" />
 
@@ -306,6 +321,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
+                            app:errorIconDrawable="@null"
                             app:passwordToggleEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -313,12 +329,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^_+\|"
                                 android:fontFamily="@font/sourcesanspro_regular"
                                 android:hint="@string/confirm_password"
                                 android:inputType="textPassword"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:textSize="@dimen/font_size18"
                                 android:theme="@style/StyleEditTextView" />
 

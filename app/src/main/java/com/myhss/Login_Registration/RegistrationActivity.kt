@@ -30,6 +30,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
 import com.uk.myhss.Login_Registration.LoginActivity
@@ -92,67 +93,31 @@ class RegistrationActivity : AppCompatActivity() {
             Check_value = isChecked.toString()
         }
 
-        //        edit_firstname.setOnFocusChangeListener { _, hasFocus ->
-//            if (hasFocus) {
-//                til_firstname.isErrorEnabled = false
-//            }
-//        }
-
         edit_firstname.doOnTextChanged { text, start, before, count ->
             til_firstname.isErrorEnabled = false
         }
-
-//        edit_surname.setOnFocusChangeListener { _, hasFocus ->
-//            if (hasFocus) {
-//                til_surname.isErrorEnabled = false
-//            }
-//        }
 
         edit_surname.doOnTextChanged { text, start, before, count ->
             til_surname.isErrorEnabled = false
         }
 
-//        edit_username.setOnFocusChangeListener { _, hasFocus ->
-//            if (hasFocus) {
-//                til_username.isErrorEnabled = false
-//            }
-//        }
-
         edit_username.doOnTextChanged { text, start, before, count ->
             til_username.isErrorEnabled = false
         }
-
-//        edit_email.setOnFocusChangeListener { _, hasFocus ->
-//            if (hasFocus) {
-//                til_email.isErrorEnabled = false
-//            }
-//        }
 
         edit_email.doOnTextChanged { text, start, before, count ->
             til_email.isErrorEnabled = false
         }
 
-//        edit_password.setOnFocusChangeListener { _, hasFocus ->
-//            if (hasFocus) {
-//                til_password.isErrorEnabled = false
-//            }
-//        }
-
         edit_password.doOnTextChanged { text, start, before, count ->
             til_password.isErrorEnabled = false
         }
-
-//        edit_confirmpassword.setOnFocusChangeListener { _, hasFocus ->
-//            if (hasFocus) {
-//                til_confirmpassword.isErrorEnabled = false
-//            }
-//        }
 
         edit_confirmpassword.doOnTextChanged { text, start, before, count ->
             til_confirmpassword.isErrorEnabled = false
         }
 
-        login_btn.setOnClickListener {
+        login_btn.setOnClickListener(DebouncedClickListener {
             val firstname = edit_firstname.text.toString()
             val surname = edit_surname.text.toString()
             val username = edit_username.text.toString()
@@ -164,77 +129,77 @@ class RegistrationActivity : AppCompatActivity() {
                 til_firstname.error = getString(R.string.first_name)
                 til_firstname.isErrorEnabled = true
                 edit_firstname.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (!UtilCommon.isOnlyLetters(firstname)) {
                 til_firstname.error = getString(R.string.valid_first_name)
                 til_firstname.isErrorEnabled = true
                 edit_firstname.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (surname.isEmpty()) {
                 til_surname.error = getString(R.string.sur_name)
                 til_surname.isErrorEnabled = true
                 edit_surname.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (!UtilCommon.isOnlyLetters(surname)) {
                 til_surname.error = getString(R.string.valid_surname)
                 til_surname.isErrorEnabled = true
                 edit_surname.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (username.isEmpty()) {
                 til_username.error = getString(R.string.user_name)
                 til_username.isErrorEnabled = true
                 edit_username.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (!UtilCommon.isValidUserName(username)) {
                 til_username.error = getString(R.string.valid_user_name)
                 til_username.isErrorEnabled = true
                 edit_username.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (email.isEmpty()) {
                 til_email.error = getString(R.string.email_id)
                 til_email.isErrorEnabled = true
                 edit_email.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 til_email.error = getString(R.string.valid_email)
                 til_email.isErrorEnabled = true
                 edit_email.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (password.isEmpty()) {
                 til_password.error = getString(R.string.enter_password)
                 til_password.isErrorEnabled = true
                 edit_password.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (!UtilCommon.isValidPassword(password)) {
                 til_password.error = getString(R.string.valid_password)
                 til_password.isErrorEnabled = true
                 edit_password.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (confirm_password.isEmpty()) {
                 til_confirmpassword.error = getString(R.string.enter_confirm_password)
                 til_confirmpassword.isErrorEnabled = true
                 edit_confirmpassword.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (!UtilCommon.isValidPassword(confirm_password)) {
                 til_confirmpassword.error = getString(R.string.valid_confirm_password)
                 til_confirmpassword.isErrorEnabled = true
                 edit_confirmpassword.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (password != confirm_password) {
                 til_confirmpassword.error = getString(R.string.confirm_both_pass)
                 til_confirmpassword.isErrorEnabled = true
                 edit_confirmpassword.requestFocus()
             } else if (Check_value != "true") {
                 Snackbar.make(rootLayout, getString(R.string.tnc), Snackbar.LENGTH_SHORT).show()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else {
                 registration(firstname, surname, username, email, password, m_deviceId)
             }
-        }
+        })
 
-        registration_layout.setOnClickListener {
+        registration_layout.setOnClickListener(DebouncedClickListener {
             moveToLoginScreen()
-        }
+        })
 
         val policy = " Privacy Policy "
         val Terms = " MyHss Terms & Conditions."
@@ -343,14 +308,14 @@ class RegistrationActivity : AppCompatActivity() {
         val emal_txt = view_d.findViewById<TextView>(R.id.emal_txt)
 
         emal_txt.text = toString
-        btnClose.setOnClickListener {
+        btnClose.setOnClickListener(DebouncedClickListener {
             dialog.dismiss()
             moveToLoginScreen()
-        }
-        registration_success_btn.setOnClickListener {
+        })
+        registration_success_btn.setOnClickListener(DebouncedClickListener {
             dialog.dismiss()
             moveToLoginScreen()
-        }
+        })
         dialog.setCancelable(false)
         dialog.setContentView(view_d)
         dialog.show()

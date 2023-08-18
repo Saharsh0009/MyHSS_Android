@@ -791,9 +791,9 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                         }
                     } else {
 //                        data_not_found_layout.visibility = View.VISIBLE
-                        Functions.displayMessage(
-                            this@LinkedFamilyFragment, response.body()?.message
-                        )
+//                        Functions.displayMessage(
+//                            this@LinkedFamilyFragment, response.body()?.message
+//                        )
 //                        Functions.showAlertMessageWithOK(
 //                            this@LinkedFamilyFragment, "",
 ////                        "Message",
