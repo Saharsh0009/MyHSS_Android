@@ -6,7 +6,7 @@ class DebouncedClickListener(private val onDebouncedClick: () -> Unit) : View.On
 
 
     private var lastClickTime = 0L
-    private val debounceInterval = 700L
+    private val debounceInterval = 1000L
     override fun onClick(view: View) {
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastClickTime >= debounceInterval) {

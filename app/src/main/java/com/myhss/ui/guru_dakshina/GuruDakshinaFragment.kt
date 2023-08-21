@@ -43,6 +43,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.utils.MPPointF
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 
 
@@ -151,18 +152,18 @@ class GuruDakshinaFragment : Fragment() {
 
         })
 
-        one_time_layout.setOnClickListener {
+        one_time_layout.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(rootview, "One-Time Dakshina", Snackbar.LENGTH_SHORT).show()
             startActivity(Intent(context, GuruDakshinaOneTimeFirstActivity::class.java))
 //            val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
 //            i.putExtra("TYPE_SELF", "family");
 //            startActivity(i)
-        }
+        })
 
-        regular_layout.setOnClickListener {
+        regular_layout.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(rootview, "Regular Dakshina", Snackbar.LENGTH_SHORT).show()
             startActivity(Intent(context, GuruDakshinaRegularFirstActivity::class.java))
-        }
+        })
 
         /*membership_view.setOnClickListener {
             showPopup()

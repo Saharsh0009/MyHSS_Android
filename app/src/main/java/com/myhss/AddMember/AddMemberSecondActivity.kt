@@ -29,6 +29,7 @@ import com.uk.myhss.AddMember.PincodeAddress.Get_PincodeAddress_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.uk.myhss.Utils.SessionManager
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -270,15 +271,13 @@ class AddMemberSecondActivity : AppCompatActivity() {
             }
         })
 
-        back_arrow.setOnClickListener {
-//            Snackbar.make(rootLayout, "Back", Snackbar.LENGTH_SHORT).show()
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
-//            Snackbar.make(rootLayout, "Next", Snackbar.LENGTH_SHORT).show()
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         if (intent.getStringExtra("IS_SELF") != "self") {
             if (sessionManager.fetchPOSTCODE() != "") {
@@ -314,12 +313,12 @@ class AddMemberSecondActivity : AppCompatActivity() {
             til_edit_town_city.isErrorEnabled = false
         }
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (edit_primary_contact_number.text.toString().isEmpty()) {
                 til_primary_number.error = "Please Enter Primary Contact"
                 til_primary_number.isErrorEnabled = true
                 edit_primary_contact_number.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (!edit_secondary_email.text.toString()
                     .isEmpty() && !Patterns.EMAIL_ADDRESS.matcher(edit_secondary_email.text.toString())
                     .matches()
@@ -327,22 +326,22 @@ class AddMemberSecondActivity : AppCompatActivity() {
                 til_second_email.error = "Please Enter Valid Email"
                 til_second_email.isErrorEnabled = true
                 edit_secondary_email.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (edit_find_address.text.toString().isEmpty()) {
                 til_postcode.error = "Please Enter Post Code"
                 til_postcode.isErrorEnabled = true
                 edit_find_address.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (edit_address_line1.text.toString().isEmpty()) {
                 til_edit_address_line1.error = "Please Enter Address Line 1"
                 til_edit_address_line1.isErrorEnabled = true
                 edit_address_line1.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (edit_town_city.text.toString().isEmpty()) {
                 til_edit_town_city.error = "Please Enter Town/City"
                 til_edit_town_city.isErrorEnabled = true
                 edit_town_city.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else {
                 if (intent.getStringExtra("IS_SELF") != "self") { // Profile or Add family
                     val i = Intent(this@AddMemberSecondActivity, AddMemberThirdActivity::class.java)
@@ -437,18 +436,17 @@ class AddMemberSecondActivity : AppCompatActivity() {
                     startActivity(i)
                 }
             }
-        }
+        })
 
         edit_select_address.onItemSelectedListener = mOnItemSelectedListener_address
 
         edit_select_address.setTitle("Select Address")
 
-        select_address.setOnClickListener {
-//            SearchSpinner(relationship, edit_select_address)
+        select_address.setOnClickListener(DebouncedClickListener {
             SearchSpinner(Pincode.toTypedArray(), edit_select_address)
-        }
+        })
 
-        find_address.setOnClickListener {
+        find_address.setOnClickListener(DebouncedClickListener {
             if (edit_find_address.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please enter pin code", Snackbar.LENGTH_SHORT).show()
             } else {
@@ -462,7 +460,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
                     ).show()
                 }
             }
-        }
+        })
 
         val pincode = edit_find_address.text.toString()
     }

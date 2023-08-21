@@ -21,6 +21,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.AllShakha.AllShakhaListActivity
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.ScrollableGridView
@@ -107,7 +108,8 @@ class DashboardFragment : Fragment() {
 
     /*Guru Puja ship Grid View*/
     lateinit var guru_puja_gridview: ScrollableGridView
-    var guru_pujaNames = arrayOf("One-Time Dakshina", "Regular Dakshina") //, "Shakha Guru Dakshina")
+    var guru_pujaNames =
+        arrayOf("One-Time Dakshina", "Regular Dakshina") //, "Shakha Guru Dakshina")
     var guru_pujaImages = intArrayOf(
         R.drawable.one_off,
         R.drawable.regular_dakshina,
@@ -417,7 +419,7 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        member_hide_show_layout.setOnClickListener {
+        member_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (membershipIsVisible) {
                 membership_gridview.visibility = View.GONE
                 membershipIsVisible = false
@@ -427,9 +429,9 @@ class DashboardFragment : Fragment() {
                 membershipIsVisible = true
                 member_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        events_hide_show_layout.setOnClickListener {
+        events_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (eventsIsVisible) {
                 events_gridview.visibility = View.GONE
                 eventsIsVisible = false
@@ -439,9 +441,9 @@ class DashboardFragment : Fragment() {
                 eventsIsVisible = true
                 event_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        gurupuja_hide_show_layout.setOnClickListener {
+        gurupuja_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (gurupujaIsVisible) {
                 guru_puja_gridview.visibility = View.GONE
                 gurupujaIsVisible = false
@@ -451,9 +453,9 @@ class DashboardFragment : Fragment() {
                 gurupujaIsVisible = true
                 gurupuja_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        news_hide_show_layout.setOnClickListener {
+        news_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (newsIsVisible) {
                 news_gridview.visibility = View.GONE
                 newsIsVisible = false
@@ -463,9 +465,9 @@ class DashboardFragment : Fragment() {
                 newsIsVisible = true
                 news_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        reports_hide_show_layout.setOnClickListener {
+        reports_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (reportsIsVisible) {
                 reports_gridview.visibility = View.GONE
                 reportsIsVisible = false
@@ -473,9 +475,9 @@ class DashboardFragment : Fragment() {
                 reports_gridview.visibility = View.VISIBLE
                 reportsIsVisible = true
             }
-        }
+        })
 
-        shakha_hide_show_layout.setOnClickListener {
+        shakha_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (shakhaIsVisible) {
                 shakha_gridview.visibility = View.GONE
                 shakhaIsVisible = false
@@ -485,9 +487,9 @@ class DashboardFragment : Fragment() {
                 shakhaIsVisible = true
                 shakha_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        other_hide_show_layout.setOnClickListener {
+        other_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (otherIsVisible) {
                 other_gridview.visibility = View.GONE
                 otherIsVisible = false
@@ -497,7 +499,7 @@ class DashboardFragment : Fragment() {
                 otherIsVisible = true
                 other_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
         if (Functions.isConnectingToInternet(requireContext())) {
             val user_id = sessionManager.fetchUserID()

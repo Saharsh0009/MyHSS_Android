@@ -14,6 +14,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
@@ -38,16 +39,16 @@ class ProfileFragment : AppCompatActivity() {
 
     lateinit var edit_layout: LinearLayout
 
-    @SuppressLint("SetTextI18n","MissingPermission")
+    @SuppressLint("SetTextI18n", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_profile)
-    /*override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-        val root = inflater.inflate(R.layout.fragment_profile, container, false)*/
+        /*override fun onCreateView(
+                inflater: LayoutInflater,
+                container: ViewGroup?,
+                savedInstanceState: Bundle?
+        ): View? {
+            val root = inflater.inflate(R.layout.fragment_profile, container, false)*/
         sessionManager = SessionManager(this)
 
         // Obtain the FirebaseAnalytics instance.
@@ -73,9 +74,9 @@ class ProfileFragment : AppCompatActivity() {
 
         header_title.text = getString(R.string.profile)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         tabLayout = findViewById(R.id.tabLayout)
         viewPager = findViewById(R.id.viewPager)
@@ -91,7 +92,8 @@ class ProfileFragment : AppCompatActivity() {
             tabLayout!!.setBackgroundColor(getColor(R.color.white))
         }
 
-        val adapter = this.let { ProfileAdapter(this, supportFragmentManager, tabLayout!!.tabCount) }
+        val adapter =
+            this.let { ProfileAdapter(this, supportFragmentManager, tabLayout!!.tabCount) }
         viewPager!!.adapter = adapter
 //        viewPager!!.beginFakeDrag()
 
@@ -130,7 +132,7 @@ class ProfileFragment : AppCompatActivity() {
             Last_name = getsecond.substring(0, 1)
         }
 
-        username_txt.text = First_name+Last_name
+        username_txt.text = First_name + Last_name
 
         user_name_txt.text = sessionManager.fetchUSERNAME()!!.capitalize(Locale.ROOT)
         user_role_txt.text = sessionManager.fetchUSERROLE()!!.capitalize(Locale.ROOT)
@@ -143,12 +145,12 @@ class ProfileFragment : AppCompatActivity() {
             user_gender_img.setImageResource(R.drawable.femaleicon)
         }
 
-        edit_layout.setOnClickListener {
+        edit_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@ProfileFragment, AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family")
             i.putExtra("FAMILY", "PROFILE")
             startActivity(i)
-        }
+        })
 
 //        return root
     }

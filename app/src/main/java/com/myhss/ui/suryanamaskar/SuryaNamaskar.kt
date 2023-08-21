@@ -29,6 +29,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
@@ -105,17 +106,17 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         layout_pieChart_lable = findViewById(R.id.layout_pieChart_lable)
         add_more.setImageResource(R.drawable.ic_plus)
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@SuryaNamaskar, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
+        })
         callMemberListApi()
         add_more.visibility = View.VISIBLE
-        add_more.setOnClickListener {
+        add_more.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@SuryaNamaskar, AddSuryaNamaskarActivity::class.java)
             startActivity(i)
-        }
+        })
 
 //        SwipeleftToRightBack.enableSwipeBack(this)
 //        SwipeleftToRightBack.enableSwipeBackFullView(this)
@@ -428,9 +429,9 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         chip.isCheckable = false
         chip.isClickable = true
         chip.setTextColor(Color.WHITE)
-        chip.setOnClickListener {
+        chip.setOnClickListener(DebouncedClickListener {
             openBarChart(label.toString())
-        }
+        })
         return chip
     }
 

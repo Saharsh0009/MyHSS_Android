@@ -13,6 +13,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
@@ -72,12 +73,12 @@ class ContactInfoFragment : Fragment() {
                     sessionManager.fetchGUAEMRRELATIONSHIP() + " | " + sessionManager.fetchGUAEMRRELATIONSHIP_OTHER()
             }
         }
-        mainedit_layout.setOnClickListener {
+        mainedit_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family")
             i.putExtra("FAMILY", "PROFILE")
             startActivity(i)
-        }
+        })
         return root
     }
 }

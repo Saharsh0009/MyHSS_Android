@@ -12,6 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
@@ -74,11 +75,11 @@ class GuruDakshinaOneTimeCompleteActivity() : AppCompatActivity() {
         payment_status_txt.text = intent.getStringExtra("status")
         message_txt.text = intent.getStringExtra("giftAid")
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@GuruDakshinaOneTimeCompleteActivity, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
+        })
     }
 
     @Deprecated("Deprecated in Java")

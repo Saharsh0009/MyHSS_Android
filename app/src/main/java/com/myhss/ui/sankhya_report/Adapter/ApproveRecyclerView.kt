@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.ui.my_family.Model.Datum
 import java.util.*
 
@@ -230,7 +231,7 @@ internal class ApproveRecyclerView(
             }
 
             //===========click listner of check box===============//
-            checkBoxparent.setOnClickListener {
+            checkBoxparent.setOnClickListener(DebouncedClickListener {
                 val isChecked = checkBoxparent.isChecked
 //                for (i in 0 until athelets_Beans) {
                 if (isChecked) {
@@ -297,7 +298,7 @@ internal class ApproveRecyclerView(
                         arrayListUser.toString().replace("[", "").replace("]", "").trim()
                 }
 //                }
-            }
+            })
         }
     }
 

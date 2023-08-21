@@ -28,6 +28,7 @@ import androidx.core.app.ActivityCompat
 import java.text.DecimalFormat
 
 import android.widget.*
+import com.myhss.Utils.DebouncedClickListener
 import java.lang.Exception
 
 class ShakhaAdapter(
@@ -199,7 +200,7 @@ class ShakhaAdapter(
 //                        shakha_distance.text = "$strDouble Miles"
             }
 
-            shakha_adapter_view.setOnClickListener {
+            shakha_adapter_view.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Suchana", Toast.LENGTH_SHORT).show()
                 val i = Intent(itemView.context, ShakhaDetailsActivity::class.java)
                 i.putExtra("Shakha_ID", shakha_list.getOrgChapterId())
@@ -215,18 +216,18 @@ class ShakhaAdapter(
                 i.putExtra("Longi", shakha_list.getLongitude())
                 i.putExtra("MAP", "")
                 itemView.context.startActivity(i)
-            }
+            })
 
-            shakha_phone.setOnClickListener {
+            shakha_phone.setOnClickListener(DebouncedClickListener {
                 val call: Uri = Uri.parse("tel:" + shakha_phone.text.toString())
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = call
                 if (ActivityCompat.checkSelfPermission(itemView.context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     itemView.context.startActivity(intent)
                 }
-            }
+            })
 
-            shakha_email.setOnClickListener {
+            shakha_email.setOnClickListener(DebouncedClickListener {
                 val to = shakha_email.text.toString()
                 val subject = ""
                 val message = ""
@@ -238,9 +239,9 @@ class ShakhaAdapter(
                 intent.putExtra(Intent.EXTRA_TEXT, message)
                 intent.type = "message/rfc822"
                 itemView.context.startActivity(Intent.createChooser(intent, "Send Email using:"));
-            }
+            })
 
-            shakha_adapter_map.setOnClickListener {
+            shakha_adapter_map.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Go to Map", Toast.LENGTH_SHORT).show()
                 val intent = Intent(
                     Intent.ACTION_VIEW,
@@ -281,7 +282,7 @@ class ShakhaAdapter(
                     }
                     e.printStackTrace()
                 }*/
-            }
+            })
         }
 
         private fun distance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {

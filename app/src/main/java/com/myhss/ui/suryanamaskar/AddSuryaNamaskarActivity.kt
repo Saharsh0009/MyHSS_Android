@@ -21,6 +21,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonParser
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.ui.suryanamaskar.Model.save_suryanamaskarResponse
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -112,9 +113,9 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
 
         family_txt = findViewById(R.id.family_txt)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         if (Functions.isConnectingToInternet(this@AddSuryaNamaskarActivity)) {
             val end: Int = 100
@@ -169,15 +170,15 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         layout_dynamic_view.addView(inflater, layout_dynamic_view.childCount)
         manageDynamicView(layout_dynamic_view)
 
-        btn_add_more.setOnClickListener {
+        btn_add_more.setOnClickListener(DebouncedClickListener {
             val inflater_new =
                 LayoutInflater.from(this).inflate(R.layout.include_suryanamaskar_dynamic_view, null)
             layout_dynamic_view.addView(inflater_new, layout_dynamic_view.childCount)
             manageDynamicView(layout_dynamic_view)
-        }
+        })
 
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             val count = layout_dynamic_view.childCount
             var view: View?
             if (count == 0) {
@@ -214,7 +215,8 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                         DATE = ""
                         COUNT = ""
                         break
-                    } else if (edit_count.text.toString().toDouble() < 1 || edit_count.text.toString()
+                    } else if (edit_count.text.toString()
+                            .toDouble() < 1 || edit_count.text.toString()
                             .toDouble() > 100
                     ) {
                         Toast.makeText(
@@ -250,9 +252,9 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                     ).show()
                 }
             }
-        }
+        })
 
-        btnCancel.setOnClickListener {
+        btnCancel.setOnClickListener(DebouncedClickListener {
 //            val count = layout_dynamic_view.childCount
 //            var viewClear: View?
 //            for (i in 0 until count) {
@@ -263,7 +265,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
 //                edit_count.setText("")
 //            }
             finish()
-        }
+        })
     }
 
     private fun manageDynamicView(linear_count: LinearLayout) {
@@ -273,12 +275,12 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
             v = linear_count.getChildAt(i)
             val text_date: TextView = v.findViewById(R.id.select_date)
             val img_removeView: ImageView = v.findViewById(R.id.img_delete_view)
-            text_date.setOnClickListener {
+            text_date.setOnClickListener(DebouncedClickListener {
                 setDateFoSuryaNamaskar(text_date)
-            }
-            img_removeView.setOnClickListener {
+            })
+            img_removeView.setOnClickListener(DebouncedClickListener {
                 removeItemFromDynamicView(i)
-            }
+            })
         }
     }
 

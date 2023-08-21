@@ -14,6 +14,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.ui.SanghSandesh.Adapter.SanghSandeshAdapter
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Datum
@@ -82,11 +83,11 @@ class SanghSandeshActivity : AppCompatActivity() {
 
         header_title.text = getString(R.string.my_sangh_sandesh)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@SanghSandeshActivity, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
+        })
 
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         notification_list = findViewById(R.id.notification_list)

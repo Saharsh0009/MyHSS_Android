@@ -9,6 +9,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
 
@@ -45,9 +46,9 @@ class SuchanaDetails: AppCompatActivity() {
 
         header_title.text = intent.getStringExtra("Suchana_Type")
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         suchna_title.text = intent.getStringExtra("Suchana_Title")
         suchna_discription.text = intent.getStringExtra("Suchana_Discription")

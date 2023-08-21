@@ -24,6 +24,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 
 import com.uk.myhss.R
@@ -118,9 +119,9 @@ class MemberShipActivity : AppCompatActivity() {
             )
         }
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         add_family_layout = findViewById(R.id.add_family_layout)
@@ -468,12 +469,12 @@ class MemberShipActivity : AppCompatActivity() {
 
         })
 
-        add_family_layout.setOnClickListener {
+        add_family_layout.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(rootview, "Add Sankhya", Snackbar.LENGTH_SHORT).show()
             startActivity(Intent(this@MemberShipActivity, AddSankhyaActivity::class.java))/*val i = Intent(this, AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family");
             startActivity(i)*/
-        }
+        })
 
     }
 
@@ -742,7 +743,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 active_layout.visibility = View.GONE
             }
 
-            active_txt.setOnClickListener {
+            active_txt.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Approved", Toast.LENGTH_SHORT).show()
                 val alertDialog: AlertDialog.Builder = AlertDialog.Builder(itemView.context)
 //            alertDialog.setTitle("Logout")
@@ -780,11 +781,11 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                         Toast.LENGTH_SHORT
                     ).show()
                 }*/
-            }
+            })
 
             reject_txt.text = itemView.context.getString(R.string.inactivate_txt)
 
-            reject_txt.setOnClickListener {
+            reject_txt.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Rejected", Toast.LENGTH_SHORT).show()
                 val alertDialog: AlertDialog.Builder = AlertDialog.Builder(itemView.context)
 //            alertDialog.setTitle("Logout")
@@ -816,9 +817,9 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 val alert: AlertDialog = alertDialog.create()
                 alert.setCanceledOnTouchOutside(false)
                 alert.show()
-            }
+            })
 
-            righr_menu.setOnClickListener {
+            righr_menu.setOnClickListener(DebouncedClickListener {
                 val alertDialog: AlertDialog.Builder = AlertDialog.Builder(itemView.context)
 //            alertDialog.setTitle("Logout")
                 alertDialog.setMessage("Are you sure you want to delete this member?")
@@ -845,7 +846,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 val alert: AlertDialog = alertDialog.create()
                 alert.setCanceledOnTouchOutside(false)
                 alert.show()
-            }
+            })
 
 //            righr_menu.setOnClickListener {
 //                val popup = PopupMenu(itemView.context, itemView, Gravity.NO_GRAVITY)
@@ -891,7 +892,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
 //                popup.show()
 //            }
 
-            adapter_view.setOnClickListener {
+            adapter_view.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Adapter", Toast.LENGTH_SHORT).show()
 //                itemView.context.startActivity(Intent(itemView.context, SankhyaDetail::class.java))
 
@@ -899,9 +900,9 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
 //                i.putExtra("SANKHYA", "SANKHYA")
 //                i.putExtra("SANKHYA_ID", my_family_DatumGurudakshina.memberId)
 //                itemView.context.startActivity(i)
-            }
+            })
 
-            call_img.setOnClickListener {
+            call_img.setOnClickListener(DebouncedClickListener {
                 val call: Uri = Uri.parse("tel:" + call_txt.text.toString())
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = call
@@ -911,7 +912,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 ) {
                     itemView.context.startActivity(intent)
                 }
-            }
+            })
         }
 
         /*For Approved API*/

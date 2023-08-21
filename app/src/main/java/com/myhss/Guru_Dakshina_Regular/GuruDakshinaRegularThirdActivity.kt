@@ -19,6 +19,7 @@ import com.uk.myhss.Guru_Dakshina_OneTime.Model.Get_Regular.Get_Create_Regular
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.Utils.SessionManager
@@ -103,24 +104,24 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
         edit_country.setText(sessionManager.fetchCOUNTRY())
         edit_postcode.setText(sessionManager.fetchPOSTCODE())
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        edit_payment.setOnClickListener {
+        edit_payment.setOnClickListener(DebouncedClickListener {
             depositDialog()
-        }
+        })
 
         if (intent.getStringExtra("Amount") != "") {
             AMOUNT_PAID = intent.getStringExtra("Amount")!!
             donate_amount_txt.text = getString(R.string.pound_icon) + " " + AMOUNT_PAID
         }
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (edit_address.text.toString() == "") {
                 Snackbar.make(rootLayout, "Please enter address", Snackbar.LENGTH_SHORT).show()
             } else if (edit_city.text.toString() == "") {
@@ -176,7 +177,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                 i.putExtra("DATE", intent.getStringExtra("DATE"))
                 startActivity(i)
             }*/
-        }
+        })
     }
 
     fun depositDialog() {
@@ -195,7 +196,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
             edit_amount.text = AMOUNT_PAID // intent.getStringExtra("Amount")
         }
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             if (edit_amount.text.toString().isNotEmpty()) {
                 edit_amount.filters = arrayOf<InputFilter>(
                     InputFilterMinMax(
@@ -216,7 +217,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
             } else {
                 Snackbar.make(edit_amount, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 
     /*Guru_Payment_Donate API*/

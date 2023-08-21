@@ -21,6 +21,7 @@ import com.uk.myhss.Main.Family_Member.Family_Member_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.Utils.SessionManager
@@ -197,7 +198,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                 }
             }
 
-        edit_dateofbirth.setOnClickListener {
+        edit_dateofbirth.setOnClickListener(DebouncedClickListener {
             calendar = Calendar.getInstance()
 //            calendar.add(Calendar.YEAR, +1)
             year = calendar.get(Calendar.YEAR)
@@ -234,7 +235,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
 //            dialog.datePicker.minDate = calendar.set(day, month, year)
 //            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
-        }
+        })
 
         /*For Selection Dasgina drop down*/
         /*SearchSpinner(gift_aid, gift_aid_select_txt)
@@ -243,7 +244,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
             SearchSpinner(gift_aid, gift_aid_select_txt)
         }*/
 
-        donating_individual_family_yes_view.setOnClickListener {
+        donating_individual_family_yes_view.setOnClickListener(DebouncedClickListener {
             donating_individual_family_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             donating_individual_family_no_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -258,9 +259,9 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
 //            medical_information_details_view.visibility = View.VISIBLE
 
             donating_dakshina = "Individual"
-        }
+        })
 
-        donating_individual_family_no_view.setOnClickListener {
+        donating_individual_family_no_view.setOnClickListener(DebouncedClickListener {
             donating_individual_family_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             donating_individual_family_yes_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -287,9 +288,9 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
+        })
 
-        tooltip_view.setOnClickListener {
+        tooltip_view.setOnClickListener(DebouncedClickListener {
             MESSAGE =
                 "Gift Aid Declaration: I want the above charity to treat the entered sum as a Gift Aid donation. \n\nI have paid sufficient UK Income Tax and/or capital gains tax to cover all my charitable donations equal to the tax that the charity will claim from HMRC and I am aware that other taxes such as council tax and VAT do not qualify. \n\n\nI understand that I am liable for the difference if the income tax or the capital gains tax payable by me for the tax year, is less than the amount of tax that all the charities and CASCs that I donate to will reclaim on my gifts made or deemed to be made in that year."
             depositDialogTooltip(MESSAGE)
@@ -308,21 +309,21 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                 .position(Position.BOTTOM)
                 .clickToHide(true)
                 .show()*/
-        }
+        })
 
         back_layout = findViewById(R.id.back_layout)
         next_layout = findViewById(R.id.next_layout)
         rootLayout = findViewById(R.id.rootLayout)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (GIFTAID_ID == "") {
                 Snackbar.make(rootLayout, "Please select gift aid", Snackbar.LENGTH_SHORT).show()
             } else if (edit_dateofbirth.text.toString() == "") {
@@ -344,11 +345,11 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                 i.putExtra("donating_dakshina", donating_dakshina)
                 startActivity(i)
             }
-        }
+        })
 
-        edit_payment.setOnClickListener {
+        edit_payment.setOnClickListener(DebouncedClickListener {
             depositDialog()
-        }
+        })
     }
 
     private fun SearchSpinner(
@@ -397,9 +398,9 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
 
         tvTitle.text = message
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             dialog?.dismiss()
-        }
+        })
     }
 
     fun depositDialog() {
@@ -418,7 +419,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
             edit_amount.text = AMOUNT_PAID // intent.getStringExtra("Amount")
         }
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             if (edit_amount.text.toString().isNotEmpty()) {
                 edit_amount.filters = arrayOf<InputFilter>(
                     InputFilterMinMax(
@@ -439,7 +440,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
             } else {
                 Snackbar.make(edit_amount, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 
     /*FamilyList API*/
@@ -551,9 +552,9 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                             )
                             family_list_view.adapter = adapter
 
-                            btnOk.setOnClickListener {
+                            btnOk.setOnClickListener(DebouncedClickListener {
                                 dialog?.dismiss()
-                            }
+                            })
                         }
 
                     } else {

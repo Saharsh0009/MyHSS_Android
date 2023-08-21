@@ -18,6 +18,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.ui.profile.DialogViewCertificate
@@ -170,24 +171,24 @@ class OtherInfoFragment : Fragment() {
             txt_originating.text = "-"
         }
 
-        qualification_first_file_view.setOnClickListener {
+        qualification_first_file_view.setOnClickListener(DebouncedClickListener {
             DialogViewCertificate().show(childFragmentManager, "DialogViewCertificate.TAG")
-        }
+        })
 
-        qualification_first_file_download.setOnClickListener {
+        qualification_first_file_download.setOnClickListener(DebouncedClickListener {
             val browserIntent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
             )
             startActivity(browserIntent)
-        }
+        })
 
-        mainedit_layout.setOnClickListener {
+        mainedit_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family")
             i.putExtra("FAMILY", "PROFILE")
             startActivity(i)
-        }
+        })
         return root
     }
 }

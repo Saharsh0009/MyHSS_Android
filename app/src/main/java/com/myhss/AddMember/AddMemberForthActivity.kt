@@ -44,6 +44,7 @@ import com.google.gson.JsonObject
 import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
 import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -260,21 +261,21 @@ class AddMemberForthActivity : AppCompatActivity() {
             ).show()
         }
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        qualification_file.setOnClickListener {
+        qualification_file.setOnClickListener(DebouncedClickListener {
             if (!checkPermission()) {
                 requestPermission()
             } else {
                 openFileUploadDialog()
             }
-        }
+        })
 
 
         if (intent.getStringExtra("IS_SELF") != "self") { //  profile or add family
@@ -362,7 +363,7 @@ class AddMemberForthActivity : AppCompatActivity() {
         agreement_txt.text = span
         agreement_txt.movementMethod = LinkMovementMethod.getInstance()
 
-        medical_information_view.setOnClickListener {
+        medical_information_view.setOnClickListener(DebouncedClickListener {
             medical_information_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             medical_information_no_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -377,9 +378,9 @@ class AddMemberForthActivity : AppCompatActivity() {
             medical_information_details_view.visibility = View.VISIBLE
 
             medical_info = "1"
-        }
+        })
 
-        medical_information_no_view.setOnClickListener {
+        medical_information_no_view.setOnClickListener(DebouncedClickListener {
             medical_information_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             medical_information_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -394,9 +395,9 @@ class AddMemberForthActivity : AppCompatActivity() {
             medical_information_details_view.visibility = View.GONE
 
             medical_info = "0"
-        }
+        })
 
-        qualification_First_view.setOnClickListener {
+        qualification_First_view.setOnClickListener(DebouncedClickListener {
             qualification_First_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             qualification_First_no_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -421,9 +422,9 @@ class AddMemberForthActivity : AppCompatActivity() {
             edit_aid_type.setTitle("Select First Aid Qualification Type")
             edit_aid_type.setSelection(0)
             qualified_info = "1"
-        }
+        })
 
-        qualification_First_no_view.setOnClickListener {
+        qualification_First_no_view.setOnClickListener(DebouncedClickListener {
             qualification_First_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             qualification_First_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -440,9 +441,9 @@ class AddMemberForthActivity : AppCompatActivity() {
             professionl_body_regi_view.visibility = View.GONE
 
             qualified_info = "0"
-        }
+        })
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             /*Add Member First*/
             checkDeitaryIds()
             checkLanguageIds()
@@ -454,7 +455,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                     "Please select the medical information",
                     Snackbar.LENGTH_SHORT
                 ).show()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (medical_info == "1" && edit_medical_information_details.text.toString()
                     .isEmpty()
             ) {
@@ -469,7 +470,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                     "Please select the qualification information",
                     Snackbar.LENGTH_SHORT
                 ).show()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (qualified_info == "1" && isDocApload && edit_date_of_first_aid_qualification.text.toString()
                     .isNullOrEmpty()
             ) {
@@ -479,7 +480,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                     Snackbar.LENGTH_SHORT
                 ).show()
                 edit_date_of_first_aid_qualification.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
 
             } else if (qualified_info == "1" && isDocApload && edit_qualification_file.text.toString()
                     .isNullOrEmpty()
@@ -490,7 +491,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                     Snackbar.LENGTH_SHORT
                 ).show()
                 edit_qualification_file.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
 
             } else if (qualified_info == "1" && !isDocApload && edit_profe_body_regis_num.text.toString()
                     .isNullOrEmpty()
@@ -501,7 +502,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                     Snackbar.LENGTH_SHORT
                 ).show()
                 edit_profe_body_regis_num.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
 
             } else {
                 DebugLog.e("qualified_info : " + qualified_info)
@@ -530,7 +531,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                                 "Please check Membership AgreementHSS",
                                 Snackbar.LENGTH_SHORT
                             ).show()
-                            return@setOnClickListener
+                            return@DebouncedClickListener
                         } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             callMembershipApi("self", false)
                             DebugLog.e("Add Self =>  Without Image")
@@ -568,7 +569,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                                 "Please check Membership AgreementHSS",
                                 Snackbar.LENGTH_SHORT
                             ).show()
-                            return@setOnClickListener
+                            return@DebouncedClickListener
                         } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             callMembershipApi("self", true)
                             DebugLog.e("Add Self :  with doc file")
@@ -582,9 +583,9 @@ class AddMemberForthActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
+        })
 
-        edit_date_of_first_aid_qualification.setOnClickListener {
+        edit_date_of_first_aid_qualification.setOnClickListener(DebouncedClickListener {
             calendar = Calendar.getInstance()
 //            calendar.add(Calendar.YEAR, -3)
 
@@ -612,7 +613,7 @@ class AddMemberForthActivity : AppCompatActivity() {
 //            calendar.add(Calendar.YEAR, 0)
 //            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
-        }
+        })
 
         edit_special_dietary_requirements.onItemSelectedListener = mOnItemSelectedListener_dietary
         edit_spoken_language.onItemSelectedListener = mOnItemSelectedListener_spoken
@@ -624,9 +625,9 @@ class AddMemberForthActivity : AppCompatActivity() {
         edit_originating_state_in_india.setTitle("Select Originationg State In India")
         edit_aid_type.setTitle("Select First Aid Qualification Type")
 
-        first_aid_type_view.setOnClickListener {
+        first_aid_type_view.setOnClickListener(DebouncedClickListener {
             SearchSpinner(firstAidInfoName.toTypedArray(), edit_aid_type)
-        }
+        })
 
     }
 
@@ -1512,18 +1513,18 @@ class AddMemberForthActivity : AppCompatActivity() {
         val btn_image = view_d.findViewById<LinearLayout>(R.id.select_gallery)
         val btn_pdf = view_d.findViewById<LinearLayout>(R.id.select_pdf)
 
-        btnClose.setOnClickListener {
+        btnClose.setOnClickListener(DebouncedClickListener {
             dialog.dismiss()
-        }
+        })
 
-        btn_image.setOnClickListener {
+        btn_image.setOnClickListener(DebouncedClickListener {
             openGalleryForImage()
             dialog.dismiss()
-        }
-        btn_pdf.setOnClickListener {
+        })
+        btn_pdf.setOnClickListener(DebouncedClickListener {
             showFileChooserforPDF()
             dialog.dismiss()
-        }
+        })
         dialog.setCancelable(true)
         dialog.setContentView(view_d)
         dialog.show()

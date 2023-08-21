@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.uk.myhss.Utils.SessionManager
@@ -128,9 +129,9 @@ class SankhyaDetail : AppCompatActivity() {
             }
         }
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
     }
 
     private fun mySankhya_Record(user_id: String, sankhya_id: String) {

@@ -20,6 +20,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
@@ -61,17 +62,17 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
         val u_case = intent.getStringExtra("case")
         val u_listData = intent.getSerializableExtra("list_data") as ArrayList<BarchartDataModel>
         header_title.text = u_listData.get(0).getValue_user()
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             this.finish()
-        }
+        })
         when (u_case) {
             "1" -> {
                 add_more.visibility = View.VISIBLE
-                add_more.setOnClickListener {
+                add_more.setOnClickListener(DebouncedClickListener {
                     val i = Intent(this@ViewBarchartActivity, AddSuryaNamaskarActivity::class.java)
                     startActivity(i)
                     isBarClickable = false
-                }
+                })
                 colorCode = "#ff9800"
                 chartDigit = 0
                 screenName = "SuryaNamaskar"

@@ -37,6 +37,7 @@ import retrofit2.Response
 import java.util.*
 import androidx.activity.ComponentActivity
 import com.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime.OneTimeSuccess
+import com.myhss.Utils.DebouncedClickListener
 import com.stripe.android.PaymentAuthConfig
 
 
@@ -90,24 +91,24 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         donate_amount_txt = findViewById(R.id.donate_amount_txt)
         cardInputWidget = findViewById(R.id.cardInputWidget)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
-        edit_payment.setOnClickListener {
+        })
+        edit_payment.setOnClickListener(DebouncedClickListener {
             depositDialog()
-        }
+        })
         if (intent.getStringExtra("Amount") != "") {
             donate_amount_txt.text = intent.getStringExtra("Amount")
         }
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
         cardInputWidget.setShouldShowPostalCode(false) // to hide and show postal code
         startCheckout()
     }
 
     private fun startCheckout() {
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (Functions.isConnectingToInternet(this@GuruDakshinaOneTimeFourthActivity)) {
                 if (cardInputWidget.validateAllFields()) {
                     callApiForStripeData() //MyHSS API
@@ -122,7 +123,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
+        })
     }
 
     private fun callApiForStripeData() {
@@ -268,7 +269,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             edit_amount.text = intent.getStringExtra("Amount")
         }
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             if (edit_amount.text.toString().isNotEmpty()) {
                 edit_amount.filters = arrayOf<InputFilter>(
                     InputFilterMinMax(
@@ -286,7 +287,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             } else {
                 Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 
     @Deprecated("Deprecated in Java")

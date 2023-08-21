@@ -13,6 +13,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.QRCode.QRCodeFragment
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
 import java.util.*
@@ -73,16 +74,16 @@ class EventsDetails : AppCompatActivity() {
         discription_txt.text = intent.getStringExtra("DISCRIPTION")
         info_txt.text = intent.getStringExtra("INFO")
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        events_list_layout.setOnClickListener {
+        events_list_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@EventsDetails, QRCodeFragment::class.java)
             i.putExtra("EVENT", event_name_txt.text.toString())
             i.putExtra("DISCRIPTION", discription_txt.text.toString())
             i.putExtra("INFO", info_txt.text.toString())
             startActivity(i)
-        }
+        })
     }
 }

@@ -23,6 +23,7 @@ import com.uk.myhss.AddMember.Get_Relationship.Get_Relationship_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -133,13 +134,13 @@ class AddMemberThirdActivity : AppCompatActivity() {
             guardian_relationship.text = "Guardian Relationship"
         }*/
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
 //        Log.d(
 //            "Fetch_Data two-->",
@@ -259,7 +260,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
             til_guardian_relatives_name.isErrorEnabled = false
         }
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
 
             if (REALTIONSHIP_ID == "5") {
                 OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
@@ -273,24 +274,24 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     til_guardian_full_name.error = "Please Enter the Guardian Name"
                     til_guardian_full_name.isErrorEnabled = true
                     edit_guardian_full_name.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_guardian_contact_number.text.toString().isEmpty()) {
                     til_guardian_number.error = "Please Enter the Guardian Contact number"
                     til_guardian_number.isErrorEnabled = true
                     edit_guardian_contact_number.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_guardian_email.text.toString().isEmpty()) {
                     til_guardian_email.error = "Please Enter the Guardian Contact Email"
                     til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_guardian_email.text.toString())
                         .matches()
                 ) {
                     til_guardian_email.error = "Please Enter the valid Guardian Email"
                     til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (REALTIONSHIP_ID == "5" && edit_emergency_realationship_name.text.toString()
                         .isEmpty()
                 ) {
@@ -298,7 +299,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                         "Please Enter the Guardian relationship name"
                     til_guardian_relatives_name.isErrorEnabled = true
                     edit_emergency_realationship_name.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else {
                     if (intent.getStringExtra("IS_SELF") != "self") { // Profile or Add Family(under age 18)
                         val i =
@@ -431,24 +432,24 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     til_guardian_full_name.error = "Please Enter the Emergency Contact Name"
                     til_guardian_full_name.isErrorEnabled = true
                     edit_guardian_full_name.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_guardian_contact_number.text.toString().isEmpty()) {
                     til_guardian_number.error = "Please Enter the Emergency Contact Number"
                     til_guardian_number.isErrorEnabled = true
                     edit_guardian_contact_number.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_guardian_email.text.toString().isEmpty()) {
                     til_guardian_email.error = "Please Enter the Emergency Contact Email"
                     til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_guardian_email.text.toString())
                         .matches()
                 ) {
                     til_guardian_email.error = "Please Enter the Valid Emergency Contact Email"
                     til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (REALTIONSHIP_ID == "5" && edit_emergency_realationship_name.text.toString()
                         .isEmpty()
                 ) {
@@ -456,7 +457,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                         "Please Enter the Emergency relationship name"
                     til_guardian_relatives_name.isErrorEnabled = true
                     edit_emergency_realationship_name.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else {
                     if (intent.getStringExtra("IS_SELF") != "self") { // profile or Add family(age above 18)
                         val i =
@@ -586,7 +587,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
+        })
 
         if (Functions.isConnectingToInternet(this@AddMemberThirdActivity)) {
             myRelationship()
@@ -602,11 +603,11 @@ class AddMemberThirdActivity : AppCompatActivity() {
 
         edit_guardian_relationship.setTitle("Select Guardian Relationship")
 
-        guardian_relationship_txt.setOnClickListener {
+        guardian_relationship_txt.setOnClickListener(DebouncedClickListener {
             SearchSpinner(relationshipName.toTypedArray(), edit_guardian_relationship)
-        }
+        })
     }
-    
+
     private fun SearchSpinner(
         spinner_search: Array<String>, edit_txt: SearchableSpinner
     ) {

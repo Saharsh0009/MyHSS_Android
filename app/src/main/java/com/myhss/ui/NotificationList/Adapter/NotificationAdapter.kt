@@ -11,12 +11,14 @@ import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
 import java.util.*
 
 
-class NotificationAdapter(val userList: List<String>, val tab_type: String) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
+class NotificationAdapter(val userList: List<String>, val tab_type: String) :
+    RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
 
     val suchna_discriptio = ArrayList<String>()
 
@@ -51,7 +53,11 @@ class NotificationAdapter(val userList: List<String>, val tab_type: String) : Re
         var b: Boolean = true
 
         @SuppressLint("SetTextI18n", "ResourceAsColor")
-        fun bindItems(my_family_DatumGurudakshina: String, suchna_discriptio: String, tab_type: String) { // listener: OnItemClickListener
+        fun bindItems(
+            my_family_DatumGurudakshina: String,
+            suchna_discriptio: String,
+            tab_type: String
+        ) { // listener: OnItemClickListener
 
             sessionManager = SessionManager(itemView.context)
 
@@ -61,12 +67,14 @@ class NotificationAdapter(val userList: List<String>, val tab_type: String) : Re
             )
 
             val suchna_title = itemView.findViewById(R.id.suchna_title) as TextView
-            val suchna_discription  = itemView.findViewById(R.id.suchna_discription) as TextView
+            val suchna_discription = itemView.findViewById(R.id.suchna_discription) as TextView
 
-            val suchna_discriptionnew  = itemView.findViewById(R.id.suchna_discriptionnew) as TextView
+            val suchna_discriptionnew =
+                itemView.findViewById(R.id.suchna_discriptionnew) as TextView
 
-            val suchna_adapter_view  = itemView.findViewById(R.id.suchna_adapter_view) as LinearLayout
-            val redLayout  = itemView.findViewById(R.id.redLayout) as LinearLayout
+            val suchna_adapter_view =
+                itemView.findViewById(R.id.suchna_adapter_view) as LinearLayout
+            val redLayout = itemView.findViewById(R.id.redLayout) as LinearLayout
 
 //            sessionManager.saveNOTIFICATION_READ(false)
 
@@ -106,7 +114,7 @@ class NotificationAdapter(val userList: List<String>, val tab_type: String) : Re
             suchna_discriptionnew.text = suchna_discriptio
 //                "Kotlin is a cross-platform, statically typed, general-purpose programming language with type inference. Kotlin is designed to interoperate fully with Java, and the JVM version of Kotlin's standard library depends on the Java Class Library, but type inference allows its syntax to be more concise. Kotlin is a cross-platform, statically typed, general-purpose programming language with type inference. Kotlin is designed to interoperate fully with Java, and the JVM version of Kotlin's standard library depends on the Java Class Library, but type inference allows its syntax to be more concise."
 
-            suchna_adapter_view.setOnClickListener {
+            suchna_adapter_view.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Suchana", Toast.LENGTH_SHORT).show()
                 /*val i = Intent(itemView.context, SuchanaDetails::class.java)
                 i.putExtra("Suchana_Type", tab_type)
@@ -137,7 +145,7 @@ class NotificationAdapter(val userList: List<String>, val tab_type: String) : Re
 //                    slideDown(redLayout)
                     eventsIsVisible = true
                 }
-            }
+            })
         }
 
         // slide the view from below itself to the current position

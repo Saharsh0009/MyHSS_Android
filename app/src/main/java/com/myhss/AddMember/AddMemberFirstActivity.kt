@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -28,6 +29,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
@@ -373,7 +375,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             setSelfInfoFromSession()
         }
 
-        male_view.setOnClickListener {
+        male_view.setOnClickListener(DebouncedClickListener {
             male_right_img.visibility = View.VISIBLE
 
             male_view.setBackgroundResource(R.drawable.edit_primery_color_round)
@@ -383,20 +385,20 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             male_right_img.setImageResource(R.drawable.righttikmark)
             male_icon.setColorFilter(
                 ContextCompat.getColor(this, R.color.primaryColor),
-                android.graphics.PorterDuff.Mode.MULTIPLY
+                PorterDuff.Mode.MULTIPLY
             )
 
             female_txt.setTextColor(getColor(R.color.grayColorColor))
             female_right.visibility = View.INVISIBLE
             female_img.setColorFilter(
                 ContextCompat.getColor(this, R.color.grayColorColor),
-                android.graphics.PorterDuff.Mode.MULTIPLY
+                PorterDuff.Mode.MULTIPLY
             )
 
             GENDER = "M"
-        }
+        })
 
-        female_view.setOnClickListener {
+        female_view.setOnClickListener(DebouncedClickListener {
             female_right.visibility = View.VISIBLE
 
             female_view.setBackgroundResource(R.drawable.edit_pink_color_round)
@@ -417,11 +419,11 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             )
 
             GENDER = "F"
-        }
+        })
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         edit_username.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -463,7 +465,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         }
 
         //Validation Start here
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (intent.getStringExtra("TYPE_SELF") != "self") { // profile or Family member
                 if (intent.getStringExtra("FAMILY") != "PROFILE") {// Add family
                     if (edit_firstname.text.toString().isEmpty()) {
@@ -471,13 +473,13 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         til_firstName.isErrorEnabled = true
                         til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
                         til_firstName.error = getString(R.string.valid_first_name)
                         til_firstName.isErrorEnabled = true
                         til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!edit_middlename.text.toString()
                             .isEmpty() && !UtilCommon.isOnlyLetters(edit_middlename.text.toString())
                     ) {
@@ -485,37 +487,37 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         til_middleName.isErrorEnabled = true
                         til_middleName.setErrorIconDrawable(null)
                         edit_middlename.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_surname.text.toString().isEmpty()) {
                         til_surname.error = getString(R.string.sur_name)
                         til_surname.isErrorEnabled = true
                         til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
                         til_surname.error = getString(R.string.valid_surname)
                         til_surname.isErrorEnabled = true
                         til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_username.text.toString().isEmpty()) {
                         til_username.error = getString(R.string.user_name)
                         til_username.isErrorEnabled = true
                         til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isValidUserName(edit_username.text.toString())) {
                         til_username.error = getString(R.string.valid_user_name)
                         til_username.isErrorEnabled = true
                         til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_email.text.toString().isEmpty()) {
                         til_email.error = getString(R.string.email_id)
                         til_email.isErrorEnabled = true
                         til_email.setErrorIconDrawable(null)
                         edit_email.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString())
                             .matches()
                     ) {
@@ -523,31 +525,31 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         til_email.isErrorEnabled = true
                         til_email.setErrorIconDrawable(null)
                         edit_email.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_password.text.toString().isEmpty()) {
                         til_password.error = getString(R.string.enter_password)
                         til_password.isErrorEnabled = true
                         til_password.setErrorIconDrawable(null)
                         edit_password.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isValidPassword(edit_password.text.toString())) {
                         til_password.error = getString(R.string.valid_password)
                         til_password.isErrorEnabled = true
                         til_password.setErrorIconDrawable(null)
                         edit_password.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_confirm_password.text.toString().isEmpty()) {
                         til_confirm_password.error = getString(R.string.enter_confirm_password)
                         til_confirm_password.isErrorEnabled = true
                         til_confirm_password.setErrorIconDrawable(null)
                         edit_confirm_password.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isValidPassword(edit_confirm_password.text.toString())) {
                         til_confirm_password.error = getString(R.string.valid_confirm_password)
                         til_confirm_password.isErrorEnabled = true
                         til_confirm_password.setErrorIconDrawable(null)
                         edit_confirm_password.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_password.text.toString() != edit_confirm_password.text.toString()) {
                         til_confirm_password.error = getString(R.string.confirm_both_pass)
                         til_confirm_password.isErrorEnabled = true
@@ -579,13 +581,13 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         til_firstName.isErrorEnabled = true
                         til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
                         til_firstName.error = getString(R.string.valid_first_name)
                         til_firstName.isErrorEnabled = true
                         til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!edit_middlename.text.toString()
                             .isEmpty() && !UtilCommon.isOnlyLetters(
                             edit_middlename.text.toString()
@@ -595,19 +597,19 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         til_middleName.isErrorEnabled = true
                         til_middleName.setErrorIconDrawable(null)
                         edit_middlename.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_surname.text.toString().isEmpty()) {
                         til_surname.error = getString(R.string.sur_name)
                         til_surname.isErrorEnabled = true
                         til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
                         til_surname.error = getString(R.string.valid_surname)
                         til_surname.isErrorEnabled = true
                         til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     }/* else if (edit_username.text.toString().isEmpty()) {
                     til_username.error = getString(R.string.user_name)
                     til_username.isErrorEnabled = true
@@ -640,13 +642,13 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     til_firstName.isErrorEnabled = true
                     til_firstName.setErrorIconDrawable(null)
                     edit_firstname.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
                     til_firstName.error = getString(R.string.valid_first_name)
                     til_firstName.isErrorEnabled = true
                     til_firstName.setErrorIconDrawable(null)
                     edit_firstname.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!edit_middlename.text.toString().isEmpty() && !UtilCommon.isOnlyLetters(
                         edit_middlename.text.toString()
                     )
@@ -655,31 +657,31 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     til_middleName.isErrorEnabled = true
                     til_middleName.setErrorIconDrawable(null)
                     edit_middlename.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_surname.text.toString().isEmpty()) {
                     til_surname.error = getString(R.string.sur_name)
                     til_surname.isErrorEnabled = true
                     til_surname.setErrorIconDrawable(null)
                     edit_surname.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
                     til_surname.error = getString(R.string.valid_surname)
                     til_surname.isErrorEnabled = true
                     til_surname.setErrorIconDrawable(null)
                     edit_surname.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_email.text.toString().isEmpty()) {
                     til_email.error = getString(R.string.email_id)
                     til_email.isErrorEnabled = true
                     til_email.setErrorIconDrawable(null)
                     edit_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString()).matches()) {
                     til_email.error = getString(R.string.valid_email)
                     til_email.isErrorEnabled = true
                     til_email.setErrorIconDrawable(null)
                     edit_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (GENDER == "") {
                     Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
                 } else if (edit_dateofbirth.text.toString().isEmpty()) {
@@ -688,7 +690,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     CallNextMethod()
                 }
             }
-        }
+        })
         //Validation End here
 
         edit_dateofbirth.addTextChangedListener(object : TextWatcher {
@@ -795,9 +797,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         }
 
 
-        edit_dateofbirth.setOnClickListener {
+        edit_dateofbirth.setOnClickListener(DebouncedClickListener {
             openDatePickerForDOB()
-        }
+        })
 
         occupation_other_view.visibility = View.GONE
 //        if (edit_occupation_select_other.equals("Other")) {
@@ -899,7 +901,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             SearchSpinner(ShakhaName.toTypedArray(), edit_shakha_branch)
         }*/
 
-        tooltip_view.setOnClickListener {
+        tooltip_view.setOnClickListener(DebouncedClickListener {
             /*ProfileBalloonFactory(true)
             createBalloon(this)*/
 
@@ -912,7 +914,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
 //                .iconEndSize(30, 30)
                 .border(resources.getColor(R.color.orangeColor), 5f).clickToHide(true).corner(10)
                 .shadowPadding(10f).position(Position.BOTTOM).clickToHide(true).show(4000)
-        }
+        })
     }
 
     private fun openDatePickerForDOB() {

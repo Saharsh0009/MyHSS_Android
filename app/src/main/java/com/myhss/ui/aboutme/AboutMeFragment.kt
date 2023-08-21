@@ -13,6 +13,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
@@ -33,9 +34,9 @@ class AboutMeFragment : Fragment() {
     lateinit var occupation_txt: TextView
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_about_me, container, false)
         sessionManager = SessionManager(requireContext())
@@ -64,33 +65,33 @@ class AboutMeFragment : Fragment() {
         occupation_txt = root.findViewById(R.id.occupation_txt)
 
         shakha__address.text = sessionManager.fetchSHAKHANAME()
-        address_txt.text = sessionManager.fetchADDRESS()+", "+sessionManager.fetchCITY()+
-                ", "+sessionManager.fetchPOSTCODE()+", "+sessionManager.fetchCOUNTRY()
+        address_txt.text = sessionManager.fetchADDRESS() + ", " + sessionManager.fetchCITY() +
+                ", " + sessionManager.fetchPOSTCODE() + ", " + sessionManager.fetchCOUNTRY()
         spoken_lang_txt.text = sessionManager.fetchSPOKKENLANGUAGE()
         occupation_txt.text = sessionManager.fetchOCCUPATIONNAME()
 
-        my_shakha_icon_view.setOnClickListener {
-//            Snackbar.make(root_view, "My Shakha", Snackbar.LENGTH_SHORT).show()
-        }
+//        my_shakha_icon_view.setOnClickListener {
+////            Snackbar.make(root_view, "My Shakha", Snackbar.LENGTH_SHORT).show()
+//        }
+//
+//        address_icon_view.setOnClickListener {
+////            Snackbar.make(root_view, "My Address", Snackbar.LENGTH_SHORT).show()
+//        }
+//
+//        spoken_lang_icon_view.setOnClickListener {
+////            Snackbar.make(root_view, "Spoken Language", Snackbar.LENGTH_SHORT).show()
+//        }
+//
+//        occupation_icon_view.setOnClickListener {
+////            Snackbar.make(root_view, "Occupation", Snackbar.LENGTH_SHORT).show()
+//        }
 
-        address_icon_view.setOnClickListener {
-//            Snackbar.make(root_view, "My Address", Snackbar.LENGTH_SHORT).show()
-        }
-
-        spoken_lang_icon_view.setOnClickListener {
-//            Snackbar.make(root_view, "Spoken Language", Snackbar.LENGTH_SHORT).show()
-        }
-
-        occupation_icon_view.setOnClickListener {
-//            Snackbar.make(root_view, "Occupation", Snackbar.LENGTH_SHORT).show()
-        }
-
-        mainedit_layout.setOnClickListener {
+        mainedit_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family")
             i.putExtra("FAMILY", "PROFILE")
             startActivity(i)
-        }
+        })
 
         return root
     }
