@@ -1,4 +1,4 @@
-package com.myhss.ui.Barchat
+package com.myhss.ui.suryanamaskar
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -21,9 +21,9 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonParser
 import com.myhss.Utils.CustomProgressBar
-import com.myhss.Utils.DebugLog
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
-import com.myhss.ui.Barchat.Model.save_suryanamaskarResponse
+import com.myhss.ui.suryanamaskar.Model.save_suryanamaskarResponse
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -48,18 +48,16 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
 
-    lateinit var submit_layout: LinearLayout
     lateinit var layout_dynamic_view: LinearLayout
     lateinit var layout_spiner: LinearLayout
     lateinit var username: TextView
     private var DATE: String = ""
     private var COUNT: String = ""
 
-    //    var spinner:Spinner? = null
     private lateinit var family_txt: SearchableSpinner
 
-    var arrayListUser: ArrayList<String> = ArrayList()
-    var arrayListUserId: ArrayList<String> = ArrayList()
+    //    var arrayListUser: ArrayList<String> = ArrayList()
+//    var arrayListUserId: ArrayList<String> = ArrayList()
     var UserName: ArrayList<String> = ArrayList<String>()
     var UserCategory: ArrayList<String> = ArrayList<String>()
 
@@ -83,30 +81,6 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
     private lateinit var calendar: Calendar
 
     val sdf: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    //    val sdfnew: SimpleDateFormat = SimpleDateFormat("dd MMM | EEEE", Locale.getDefault())
-
-    private var scoreList = ArrayList<String>()
-
-    //    private var mAdapter: ProductListAdapter? = null
-    //    private var modelToBeUpdated: Stack<ProductModel> = Stack()
-
-    lateinit var add_listview: RecyclerView
-
-    //    private val mOnProductClickListener = object : OnProductClickListener {
-    //        fun onUpdate(position: Int, model: ProductModel) {
-    //
-    //            modelToBeUpdated.add(model)
-    //
-    //            productName.setText(model.name)
-    //            productUnit.setText(model.price)
-    //        }
-    //
-    //        fun onDelete(model: ProductModel) {
-    //
-    //            mProductListAdapter.removeProduct(model)
-    //        }
-    //    }
-
 
     @SuppressLint("Range")
     @RequiresApi(Build.VERSION_CODES.N)
@@ -130,7 +104,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
 
         back_arrow = findViewById(R.id.back_arrow)
         header_title = findViewById(R.id.header_title)
-        submit_layout = findViewById(R.id.submit_layout)
+
         layout_dynamic_view = findViewById(R.id.layout_dynamic_view)
         layout_spiner = findViewById(R.id.layout_spiner)
         username = findViewById(R.id.username)
@@ -138,13 +112,10 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         header_title.text = getString(R.string.record_surya_namaskar)
 
         family_txt = findViewById(R.id.family_txt)
-        add_listview = findViewById(R.id.add_listview)
-        add_listview.layoutManager = LinearLayoutManager(this)
-        add_listview.setHasFixedSize(true)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         if (Functions.isConnectingToInternet(this@AddSuryaNamaskarActivity)) {
             val end: Int = 100
@@ -173,9 +144,6 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
             val subJsonObject = JSONObject()
             subJsonObject.put("date", "28/01/2022")
             subJsonObject.put("count", "1")
-            //            subJsonObject.put("lastname", "xyz")
-            //            jsonObject.put("customer", subJsonObject)
-            //            jsonObject.put("password", "password")
         } catch (e: JSONException) {
             e.printStackTrace()
         }
@@ -183,35 +151,12 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         val gsonObject = jsonParser.parse(jsonObject.toString())
         Log.e("gsonObject", gsonObject.toString())
 
-        val JSONestimate = JSONObject()
-        val JSONestimate1 = JSONObject()
-        val JSONestimate2 = JSONObject()
         val myarray = JSONArray()
-
-        //        for (i in 0 until items.size()) {
-        //            try {
-        //                JSONestimate.put("date:" + (i + 1).toString(), items.get(i).getJSONObject())
-        //                myarray.put(items.get(i).getJSONObject())
-        //            } catch (e: JSONException) {
-        //                e.printStackTrace()
-        //            }
-        //        }
-        //        JSONestimate.put("date", "28/01/2022")
-        //        JSONestimate.put("count", "1")
-        //
-        //        JSONestimate.put("date", "27/01/2022")
-        //        JSONestimate.put("count", "5")
-        //
-        //        myarray.put(JSONestimate)
-        //        Log.d("JSONobject: ", JSONestimate.toString())
-        //        Log.d("JSONArray : ", myarray.toString())
-        //        spinner = findViewById(R.id.mySpinner)
-
         family_txt.onItemSelectedListener = mOnItemSelectedListener_family
         family_txt.setTitle("Select Family Member")
 
         val btnOk = findViewById(R.id.btnOk) as TextView
-        val add_more_btn = findViewById(R.id.add_more_btn) as TextView
+//        val add_more_btn = findViewById(R.id.add_more_btn) as TextView
         val btn_add_more = findViewById(R.id.btn_add_more) as TextView
         val btnCancel = findViewById(R.id.btnCancel) as TextView
 
@@ -220,28 +165,20 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         cal.add(Calendar.DATE, -1)
         dateFormat.format(cal.time)
 
-        submit_layout.setOnClickListener {
-            if (Functions.isConnectingToInternet(this)) {
-                //                AddSuryanamaskar(sessionManager.fetchMEMBERID()!!, myarray)
-            } else {
-                Toast.makeText(
-                    this, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
+        val inflater =
+            LayoutInflater.from(this).inflate(R.layout.include_suryanamaskar_dynamic_view, null)
+        layout_dynamic_view.addView(inflater, layout_dynamic_view.childCount)
+        manageDynamicView(layout_dynamic_view)
 
-        add_more_btn.visibility = View.GONE
-        btn_add_more.setOnClickListener {
-            val inflater =
+        btn_add_more.setOnClickListener(DebouncedClickListener {
+            val inflater_new =
                 LayoutInflater.from(this).inflate(R.layout.include_suryanamaskar_dynamic_view, null)
-            layout_dynamic_view.addView(inflater, layout_dynamic_view.childCount)
-
-            val count = layout_dynamic_view.childCount
+            layout_dynamic_view.addView(inflater_new, layout_dynamic_view.childCount)
             manageDynamicView(layout_dynamic_view)
-        }
+        })
 
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             val count = layout_dynamic_view.childCount
             var view: View?
             if (count == 0) {
@@ -278,8 +215,9 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                         DATE = ""
                         COUNT = ""
                         break
-                    } else if (edit_count.text.toString().toInt() < 0 || edit_count.text.toString()
-                            .toInt() > 100
+                    } else if (edit_count.text.toString()
+                            .toDouble() < 1 || edit_count.text.toString()
+                            .toDouble() > 100
                     ) {
                         Toast.makeText(
                             this,
@@ -314,33 +252,35 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                     ).show()
                 }
             }
-        }
+        })
 
-        btnCancel.setOnClickListener {
-            val count = layout_dynamic_view.childCount
-            var viewClear: View?
-            for (i in 0 until count) {
-                viewClear = layout_dynamic_view.getChildAt(i)
-                val text_date: TextView = viewClear.findViewById(R.id.select_date)
-                val edit_count: EditText = viewClear.findViewById(R.id.edit_count)
-                text_date.setText("")
-                edit_count.setText("")
-            }
-        }
+        btnCancel.setOnClickListener(DebouncedClickListener {
+//            val count = layout_dynamic_view.childCount
+//            var viewClear: View?
+//            for (i in 0 until count) {
+//                viewClear = layout_dynamic_view.getChildAt(i)
+//                val text_date: TextView = viewClear.findViewById(R.id.select_date)
+//                val edit_count: EditText = viewClear.findViewById(R.id.edit_count)
+//                text_date.setText("")
+//                edit_count.setText("")
+//            }
+            finish()
+        })
     }
 
     private fun manageDynamicView(linear_count: LinearLayout) {
+
         var v: View?
         for (i in 0 until linear_count.childCount) {
             v = linear_count.getChildAt(i)
             val text_date: TextView = v.findViewById(R.id.select_date)
             val img_removeView: ImageView = v.findViewById(R.id.img_delete_view)
-            text_date.setOnClickListener {
+            text_date.setOnClickListener(DebouncedClickListener {
                 setDateFoSuryaNamaskar(text_date)
-            }
-            img_removeView.setOnClickListener {
+            })
+            img_removeView.setOnClickListener(DebouncedClickListener {
                 removeItemFromDynamicView(i)
-            }
+            })
         }
     }
 
@@ -619,6 +559,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
             calendar[Calendar.DAY_OF_MONTH] = day_of_month
             dateTextView.text = sdf.format(calendar.time)
         }, year, month, day)
+        dialog.datePicker.maxDate = System.currentTimeMillis()
         dialog.show()
     }
 }

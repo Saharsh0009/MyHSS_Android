@@ -19,6 +19,7 @@ import com.uk.myhss.Guru_Dakshina_OneTime.Model.Get_Regular.Get_Create_Regular
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.Utils.SessionManager
@@ -103,24 +104,24 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
         edit_country.setText(sessionManager.fetchCOUNTRY())
         edit_postcode.setText(sessionManager.fetchPOSTCODE())
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        edit_payment.setOnClickListener {
+        edit_payment.setOnClickListener(DebouncedClickListener {
             depositDialog()
-        }
+        })
 
         if (intent.getStringExtra("Amount") != "") {
             AMOUNT_PAID = intent.getStringExtra("Amount")!!
             donate_amount_txt.text = getString(R.string.pound_icon) + " " + AMOUNT_PAID
         }
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (edit_address.text.toString() == "") {
                 Snackbar.make(rootLayout, "Please enter address", Snackbar.LENGTH_SHORT).show()
             } else if (edit_city.text.toString() == "") {
@@ -176,7 +177,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                 i.putExtra("DATE", intent.getStringExtra("DATE"))
                 startActivity(i)
             }*/
-        }
+        })
     }
 
     fun depositDialog() {
@@ -185,7 +186,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
             dialog = Dialog(this, R.style.StyleCommonDialog)
         }
         dialog?.setContentView(R.layout.edit_dialog_diposit_money)
-        dialog?.setCanceledOnTouchOutside(false)
+        dialog?.setCanceledOnTouchOutside(true)
         dialog?.show()
 
         val edit_amount = dialog!!.findViewById(R.id.edit_amount) as TextView
@@ -195,7 +196,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
             edit_amount.text = AMOUNT_PAID // intent.getStringExtra("Amount")
         }
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             if (edit_amount.text.toString().isNotEmpty()) {
                 edit_amount.filters = arrayOf<InputFilter>(
                     InputFilterMinMax(
@@ -209,14 +210,14 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                     AMOUNT_PAID = edit_amount.text.toString()
                     dialog?.dismiss()
                 } else {
-                    Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(edit_amount, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
                         .show()
                 }
 
             } else {
-                Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(edit_amount, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 
     /*Guru_Payment_Donate API*/

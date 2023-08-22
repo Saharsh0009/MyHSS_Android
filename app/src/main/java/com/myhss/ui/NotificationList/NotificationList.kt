@@ -14,6 +14,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.ui.SuchanaBoard.Adapter.NotificationAdapter
 import com.uk.myhss.Main.HomeActivity
@@ -28,7 +29,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class NotificationList: AppCompatActivity() {  // Fragment()
+class NotificationList : AppCompatActivity() {  // Fragment()
 
     private lateinit var sessionManager: SessionManager
 
@@ -86,12 +87,12 @@ class NotificationList: AppCompatActivity() {  // Fragment()
 
         header_title.text = getString(R.string.my_notification)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
 //            (context as Activity).finishAffinity()
-        }
+        })
 
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         notification_list = findViewById(R.id.notification_list)
@@ -102,8 +103,8 @@ class NotificationList: AppCompatActivity() {  // Fragment()
         mLayoutManager = LinearLayoutManager(this@NotificationList)
         notification_list.layoutManager = mLayoutManager
 
-        val end:Int = 100
-        val start:Int = 0
+        val end: Int = 100
+        val start: Int = 0
 
         if (sessionManager.fetchSHAKHAID() != "") {
             if (Functions.isConnectingToInternet(this)) {
@@ -117,7 +118,17 @@ class NotificationList: AppCompatActivity() {  // Fragment()
                 SEARCH = ""
                 CHAPTERID = ""
                 Tab_Type = "Suchana Board"
-                myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID, Tab_Type)
+                myMemberList(
+                    USERID,
+                    TAB,
+                    MEMBERID,
+                    STATUS,
+                    LENGTH,
+                    START,
+                    SEARCH,
+                    CHAPTERID,
+                    Tab_Type
+                )
             } else {
                 Toast.makeText(
                     this,

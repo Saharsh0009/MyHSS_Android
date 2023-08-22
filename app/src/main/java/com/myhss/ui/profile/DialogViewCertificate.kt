@@ -10,6 +10,7 @@ import androidx.annotation.Nullable
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
@@ -44,9 +45,9 @@ class DialogViewCertificate : DialogFragment() {
                 image_file_view
             )
 
-        image_close.setOnClickListener {
+        image_close.setOnClickListener(DebouncedClickListener {
             dismiss()
-        }
+        })
     }
 
 }

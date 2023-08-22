@@ -17,6 +17,7 @@ import com.google.firebase.ktx.Firebase
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.guru_dakshina.Model.Get_Sankhya_Add_Response
@@ -213,9 +214,9 @@ class SankhyaFormDetail : AppCompatActivity() {
             }
         }
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         user_name_txt.text = intent.getStringExtra("UTSAVE_ID")!!
             .capitalize(Locale.ROOT) + " " + intent.getStringExtra("CURRENT_DATE")
@@ -268,11 +269,11 @@ class SankhyaFormDetail : AppCompatActivity() {
 
         justifyListViewHeightBasedOnChildren(sankhya_list_view)
 
-        reportview_layout.setOnClickListener {
+        reportview_layout.setOnClickListener(DebouncedClickListener {
             ReviewDetailsDialog()
-        }
+        })
 
-        submit_layout.setOnClickListener {
+        submit_layout.setOnClickListener(DebouncedClickListener {
 //            val i = Intent(this@SankhyaFormDetail, SankhyaDetail::class.java)
 //            i.putExtra("SANKHYA", "SANKHYA")
 //            i.putExtra("SANKHYA_ID", "")
@@ -325,117 +326,117 @@ class SankhyaFormDetail : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
+        })
 
-        shishu_decriese_btn.setOnClickListener {
+        shishu_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(shishu_type_txt.text.toString())
             if (shishu_type_txt.text.toString().toInt() != 0) {
                 shishu_type_txt.text = (shishu_type_txt.text.toString().toInt() - 1).toString()
                 SHISHU_MALE = shishu_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        shishu_increse_btn.setOnClickListener {
+        shishu_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(shishu_type_txt.text.toString())
             if (shishu_type_txt.text.toString().toInt() <= 99) {
                 shishu_type_txt.text = (shishu_type_txt.text.toString().toInt() + 1).toString()
                 SHISHU_MALE = shishu_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        baal_decriese_btn.setOnClickListener {
+        baal_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(baal_type_txt.text.toString())
             if (baal_type_txt.text.toString().toInt() != 0) {
                 baal_type_txt.text = (baal_type_txt.text.toString().toInt() - 1).toString()
                 BAAL = baal_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        baal_increse_btn.setOnClickListener {
+        baal_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(baal_type_txt.text.toString())
             if (baal_type_txt.text.toString().toInt() <= 99) {
                 baal_type_txt.text = (baal_type_txt.text.toString().toInt() + 1).toString()
                 BAAL = baal_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        kishore_decriese_btn.setOnClickListener {
+        kishore_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(kishore_type_txt.text.toString())
             if (kishore_type_txt.text.toString().toInt() != 0) {
                 kishore_type_txt.text = (kishore_type_txt.text.toString().toInt() - 1).toString()
                 KISHOR = kishore_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        kishore_increse_btn.setOnClickListener {
+        kishore_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(kishore_type_txt.text.toString())
             if (kishore_type_txt.text.toString().toInt() <= 99) {
                 kishore_type_txt.text = (kishore_type_txt.text.toString().toInt() + 1).toString()
                 KISHOR = kishore_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        tarun_decriese_btn.setOnClickListener {
+        tarun_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(tarun_type_txt.text.toString())
             if (tarun_type_txt.text.toString().toInt() != 0) {
                 tarun_type_txt.text = (tarun_type_txt.text.toString().toInt() - 1).toString()
                 TARUN = tarun_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        tarun_increse_btn.setOnClickListener {
+        tarun_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(tarun_type_txt.text.toString())
             if (tarun_type_txt.text.toString().toInt() <= 99) {
                 tarun_type_txt.text = (tarun_type_txt.text.toString().toInt() + 1).toString()
                 TARUN = tarun_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        yuva_decriese_btn.setOnClickListener {
+        yuva_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(yuva_type_txt.text.toString())
             if (yuva_type_txt.text.toString().toInt() != 0) {
                 yuva_type_txt.text = (yuva_type_txt.text.toString().toInt() - 1).toString()
                 YUVA = yuva_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        yuva_increse_btn.setOnClickListener {
+        yuva_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(yuvati_type_txt.text.toString())
             if (yuva_type_txt.text.toString().toInt() <= 99) {
                 yuva_type_txt.text = (yuva_type_txt.text.toString().toInt() + 1).toString()
                 YUVA = yuva_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        jyeshta_decriese_btn.setOnClickListener {
+        jyeshta_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(jyeshta_type_txt.text.toString())
             if (jyeshta_type_txt.text.toString().toInt() != 0) {
                 jyeshta_type_txt.text = (jyeshta_type_txt.text.toString().toInt() - 1).toString()
                 PRODH = jyeshta_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        jyeshta_increse_btn.setOnClickListener {
+        jyeshta_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(jyeshta_type_txt.text.toString())
             if (jyeshta_type_txt.text.toString().toInt() <= 99) {
                 jyeshta_type_txt.text = (jyeshta_type_txt.text.toString().toInt() + 1).toString()
                 PRODH = jyeshta_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        female_shishu_decriese_btn.setOnClickListener {
+        female_shishu_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(female_shishu_type_txt.text.toString())
             if (female_shishu_type_txt.text.toString().toInt() != 0) {
                 female_shishu_type_txt.text =
@@ -443,9 +444,9 @@ class SankhyaFormDetail : AppCompatActivity() {
                 SHISHU_FEMALE = female_shishu_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        female_shishu_increse_btn.setOnClickListener {
+        female_shishu_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(female_shishu_type_txt.text.toString())
             if (female_shishu_type_txt.text.toString().toInt() <= 99) {
                 female_shishu_type_txt.text =
@@ -453,97 +454,97 @@ class SankhyaFormDetail : AppCompatActivity() {
                 SHISHU_FEMALE = female_shishu_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        balika_decriese_btn.setOnClickListener {
+        balika_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(balika_type_txt.text.toString())
             if (balika_type_txt.text.toString().toInt() != 0) {
                 balika_type_txt.text = (balika_type_txt.text.toString().toInt() - 1).toString()
                 BAALIKA = balika_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        balika_increse_btn.setOnClickListener {
+        balika_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(balika_type_txt.text.toString())
             if (balika_type_txt.text.toString().toInt() <= 99) {
                 balika_type_txt.text = (balika_type_txt.text.toString().toInt() + 1).toString()
                 BAALIKA = balika_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        kishori_decriese_btn.setOnClickListener {
+        kishori_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(kishori_type_txt.text.toString())
             if (kishori_type_txt.text.toString().toInt() != 0) {
                 kishori_type_txt.text = (kishori_type_txt.text.toString().toInt() - 1).toString()
                 KISHORI = kishori_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        kishori_increse_btn.setOnClickListener {
+        kishori_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(kishori_type_txt.text.toString())
             if (kishori_type_txt.text.toString().toInt() <= 99) {
                 kishori_type_txt.text = (kishori_type_txt.text.toString().toInt() + 1).toString()
                 KISHORI = kishori_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        taruni_decriese_btn.setOnClickListener {
+        taruni_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(taruni_type_txt.text.toString())
             if (taruni_type_txt.text.toString().toInt() != 0) {
                 taruni_type_txt.text = (taruni_type_txt.text.toString().toInt() - 1).toString()
                 TARUNI = taruni_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        taruni_increse_btn.setOnClickListener {
+        taruni_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(taruni_type_txt.text.toString())
             if (taruni_type_txt.text.toString().toInt() <= 99) {
                 taruni_type_txt.text = (taruni_type_txt.text.toString().toInt() + 1).toString()
                 TARUNI = taruni_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        yuvati_decriese_btn.setOnClickListener {
+        yuvati_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(yuvati_type_txt.text.toString())
             if (yuvati_type_txt.text.toString().toInt() != 0) {
                 yuvati_type_txt.text = (yuvati_type_txt.text.toString().toInt() - 1).toString()
                 YUVTI = yuvati_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        yuvati_increse_btn.setOnClickListener {
+        yuvati_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(yuvati_type_txt.text.toString())
             if (yuvati_type_txt.text.toString().toInt() <= 99) {
                 yuvati_type_txt.text = (yuvati_type_txt.text.toString().toInt() + 1).toString()
                 YUVTI = yuvati_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        jyeshtaa_decriese_btn.setOnClickListener {
+        jyeshtaa_decriese_btn.setOnClickListener(DebouncedClickListener {
 //            decreaseInteger(jyeshtaa_type_txt.text.toString())
             if (jyeshtaa_type_txt.text.toString().toInt() != 0) {
                 jyeshtaa_type_txt.text = (jyeshtaa_type_txt.text.toString().toInt() - 1).toString()
                 PRODHA = jyeshtaa_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
 
-        jyeshtaa_increse_btn.setOnClickListener {
+        jyeshtaa_increse_btn.setOnClickListener(DebouncedClickListener {
 //            increaseInteger(jyeshtaa_type_txt.text.toString())
             if (jyeshtaa_type_txt.text.toString().toInt() <= 99) {
                 jyeshtaa_type_txt.text = (jyeshtaa_type_txt.text.toString().toInt() + 1).toString()
                 PRODHA = jyeshtaa_type_txt.text.toString()
                 setSankhyaCountView()
             }
-        }
+        })
     }
 
     private fun setSankhyaCountView() {
@@ -905,9 +906,9 @@ class SankhyaFormDetail : AppCompatActivity() {
 //            }
 //        }
         justifyListViewHeightBasedOnChildren(sankhya_list_view)
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             dialog?.dismiss()
-        }
+        })
     }
 
     fun justifyListViewHeightBasedOnChildren(listView: ListView) {

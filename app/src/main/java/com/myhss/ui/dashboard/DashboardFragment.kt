@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,20 +20,18 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.AllShakha.AllShakhaListActivity
-import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.ScrollableGridView
 import com.myhss.appConstants.AppParam
-import com.myhss.ui.Barchat.SuryaNamaskar
+import com.myhss.ui.suryanamaskar.SuryaNamaskar
 import com.myhss.ui.SanghSandesh.SanghSandeshActivity
-import com.myhss.ui.ShakhaMap.MapsActivity
 import com.myhss.ui.SuchanaBoard.SuchanaBoardActivity
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.Guru_Dakshina_OneTime.GuruDakshinaOneTimeFirstActivity
 import com.uk.myhss.Guru_Dakshina_Regular.GuruDakshinaRegularFirstActivity
-import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.Main.Get_Privileges.Get_Privileges_Response
 import com.uk.myhss.Main.Get_Prpfile.Datum_Get_Profile
 import com.uk.myhss.Main.Get_Prpfile.Get_Profile_Response
@@ -42,9 +39,7 @@ import com.uk.myhss.Main.Get_Prpfile.Member_Get_Profile
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
-import com.uk.myhss.Welcome.WelcomeActivity
 import com.uk.myhss.ui.policies.ProfileFragment
-import com.uk.myhss.ui.policies.SankhyaActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -113,7 +108,8 @@ class DashboardFragment : Fragment() {
 
     /*Guru Puja ship Grid View*/
     lateinit var guru_puja_gridview: ScrollableGridView
-    var guru_pujaNames = arrayOf("One-Off Dakshina", "Regular Dakshina") //, "Shakha Guru Dakshina")
+    var guru_pujaNames =
+        arrayOf("One-Time Dakshina", "Regular Dakshina") //, "Shakha Guru Dakshina")
     var guru_pujaImages = intArrayOf(
         R.drawable.one_off,
         R.drawable.regular_dakshina,
@@ -144,9 +140,9 @@ class DashboardFragment : Fragment() {
 
     /*Shakha Grid View*/
     lateinit var shakha_gridview: ScrollableGridView
-    var shakhaNames = arrayOf("Suchana Board", "Surya Namasakar") /*"Find a Shakha"*/
+    var shakhaNames = arrayOf("Suchana Board", "Surya Namaskar") /*"Find a Shakha"*/
     var shakhaNamesNew =
-        arrayOf("Suchana Board", "My Shakha", "Surya Namasakar") /*"Find a Shakha"*/
+        arrayOf("Suchana Board", "My Shakha", "Surya Namaskar") /*"Find a Shakha"*/
 //    var shakhaNames = arrayOf("My Shakha")
 
     //        "Sankhiya Form", "My Shakha")
@@ -423,7 +419,7 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        member_hide_show_layout.setOnClickListener {
+        member_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (membershipIsVisible) {
                 membership_gridview.visibility = View.GONE
                 membershipIsVisible = false
@@ -433,9 +429,9 @@ class DashboardFragment : Fragment() {
                 membershipIsVisible = true
                 member_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        events_hide_show_layout.setOnClickListener {
+        events_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (eventsIsVisible) {
                 events_gridview.visibility = View.GONE
                 eventsIsVisible = false
@@ -445,9 +441,9 @@ class DashboardFragment : Fragment() {
                 eventsIsVisible = true
                 event_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        gurupuja_hide_show_layout.setOnClickListener {
+        gurupuja_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (gurupujaIsVisible) {
                 guru_puja_gridview.visibility = View.GONE
                 gurupujaIsVisible = false
@@ -457,9 +453,9 @@ class DashboardFragment : Fragment() {
                 gurupujaIsVisible = true
                 gurupuja_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        news_hide_show_layout.setOnClickListener {
+        news_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (newsIsVisible) {
                 news_gridview.visibility = View.GONE
                 newsIsVisible = false
@@ -469,9 +465,9 @@ class DashboardFragment : Fragment() {
                 newsIsVisible = true
                 news_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        reports_hide_show_layout.setOnClickListener {
+        reports_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (reportsIsVisible) {
                 reports_gridview.visibility = View.GONE
                 reportsIsVisible = false
@@ -479,9 +475,9 @@ class DashboardFragment : Fragment() {
                 reports_gridview.visibility = View.VISIBLE
                 reportsIsVisible = true
             }
-        }
+        })
 
-        shakha_hide_show_layout.setOnClickListener {
+        shakha_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (shakhaIsVisible) {
                 shakha_gridview.visibility = View.GONE
                 shakhaIsVisible = false
@@ -491,9 +487,9 @@ class DashboardFragment : Fragment() {
                 shakhaIsVisible = true
                 shakha_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
-        other_hide_show_layout.setOnClickListener {
+        other_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (otherIsVisible) {
                 other_gridview.visibility = View.GONE
                 otherIsVisible = false
@@ -503,7 +499,7 @@ class DashboardFragment : Fragment() {
                 otherIsVisible = true
                 other_hide.setImageResource(R.drawable.drop_up_icon)
             }
-        }
+        })
 
         if (Functions.isConnectingToInternet(requireContext())) {
             val user_id = sessionManager.fetchUserID()

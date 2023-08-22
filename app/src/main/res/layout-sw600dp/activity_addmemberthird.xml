@@ -95,20 +95,24 @@
                             android:layout_height="wrap_content">
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_guardian_full_name"
                                 style="@style/EditText.OutlinedBox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
-                                app:boxStrokeColor="@color/primaryColor">
+                                app:boxStrokeColor="@color/primaryColor"
+                                app:errorIconDrawable="@null">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/edit_guardian_full_name"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:inputType="text"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:textSize="@dimen/font_size25"
                                     android:theme="@style/StyleEditTextView" />
 
@@ -163,21 +167,25 @@
                             android:layout_height="wrap_content">
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_guardian_email"
                                 style="@style/EditText.OutlinedBox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
-                                app:boxStrokeColor="@color/primaryColor">
+                                app:boxStrokeColor="@color/primaryColor"
+                                app:errorIconDrawable="@null">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/edit_guardian_contact_number"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:inputType="number"
                                     android:maxLength="13"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:textSize="@dimen/font_size25"
                                     android:theme="@style/StyleEditTextView" />
 
@@ -242,20 +250,24 @@
                             android:layout_height="wrap_content">
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_guardian_number"
                                 style="@style/EditText.OutlinedBox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
-                                app:boxStrokeColor="@color/primaryColor">
+                                app:boxStrokeColor="@color/primaryColor"
+                                app:errorIconDrawable="@null">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/edit_guardian_email"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:inputType="textEmailAddress"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:textSize="@dimen/font_size25"
                                     android:theme="@style/StyleEditTextView" />
 
@@ -317,6 +329,7 @@
                                 android:gravity="center_vertical"
                                 android:paddingStart="@dimen/font_size15"
                                 app:boxStrokeColor="@color/primaryColor"
+                                app:errorIconDrawable="@null"
                                 tools:ignore="RtlSymmetry">
 
                                 <com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -325,9 +338,11 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:tag="@string/occupation_select_other"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:textSize="@dimen/font_size25"
                                     android:theme="@style/MineCustomTabText" />
 
@@ -395,11 +410,13 @@
                                 android:layout_height="wrap_content">
 
                                 <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/til_guardian_relatives_name"
                                     style="@style/EditText.OutlinedBox"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
                                     app:boxStrokeColor="@color/primaryColor"
+                                    app:errorIconDrawable="@null"
                                     tools:ignore="RtlSymmetry">
 
                                     <com.google.android.material.textfield.TextInputEditText
@@ -407,9 +424,11 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:background="@android:color/transparent"
+                                        android:cursorVisible="true"
                                         android:inputType="text"
                                         android:textColor="@color/blackColor"
                                         android:textColorHint="@color/grayColorColor"
+                                        android:textCursorDrawable="@null"
                                         android:textSize="@dimen/font_size25"
                                         android:theme="@style/StyleEditTextView" />
 

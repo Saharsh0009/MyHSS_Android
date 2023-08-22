@@ -19,9 +19,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.adapter.StudentAdapter
 import com.myhss.ui.sankhya_report.Adapter.ApproveRecyclerView
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.R
@@ -98,7 +98,8 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     private var selected_userNameAll: ArrayList<String> = ArrayList<String>()
     private var selected_userAll: ArrayList<String> = ArrayList<String>()
     private var mAdapterGuru: SankhyaAdapter? = null
-    private var mAdapterGurunew: StudentAdapter? = null
+
+    //    private var mAdapterGurunew: StudentAdapter? = null
     private var approveRecyclerView: ApproveRecyclerView? = null
 
     var arrayListUser: ArrayList<String> = ArrayList()
@@ -158,9 +159,9 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 
         header_title.text = "Add " + getString(R.string.sankhya)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         utsav_txt = findViewById(R.id.utsav_txt)
 
@@ -208,7 +209,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         val smsTime = Calendar.getInstance()
         smsTime.timeInMillis = actualDate.timeInMillis
 
-        previous_date.setOnClickListener(View.OnClickListener {
+        previous_date.setOnClickListener(DebouncedClickListener {
             //modify actual date, removing one day
             actualDate.add(Calendar.DAY_OF_MONTH, -1)
             val date = sdf.format(actualDate.time)
@@ -224,7 +225,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         } else {
             next_date.setBackgroundResource(R.drawable.button_round)
 
-            next_date.setOnClickListener(View.OnClickListener {
+            next_date.setOnClickListener(DebouncedClickListener {
                 actualDate.add(Calendar.DAY_OF_MONTH, 1)
                 val date = sdf.format(actualDate.time)
                 Log.d("next_date==>", date)
@@ -235,7 +236,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             })
         }
 
-        current_date_txt.setOnClickListener {
+        current_date_txt.setOnClickListener(DebouncedClickListener {
             calendar = Calendar.getInstance()
 //            calendar.add(Calendar.YEAR, -3)
             year = calendar.get(Calendar.YEAR)
@@ -256,9 +257,9 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 //            calendar.add(Calendar.YEAR, 0)
 //            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
-        }
+        })
 
-        calender_icon.setOnClickListener {
+        calender_icon.setOnClickListener(DebouncedClickListener {
             calendar = Calendar.getInstance()
 //            calendar.add(Calendar.YEAR, -3)
             year = calendar.get(Calendar.YEAR)
@@ -279,7 +280,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 //            calendar.add(Calendar.YEAR, 0)
             dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
-        }
+        })
 
         /*if (date.get(Calendar.DATE).equals(smsTime.get(Calendar.DATE))) {
             next_date.setBackgroundResource(R.drawable.gray_round_border)
@@ -424,7 +425,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 }
                 //Toast.makeText(getApplicationContext(), "select item text : " + itemDto.getItemText(), Toast.LENGTH_SHORT).show();
             }*/
-        additional_guest_layout.setOnClickListener {
+        additional_guest_layout.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(root_view, "Additional Guest Information", Snackbar.LENGTH_SHORT).show()
 //            startActivity(Intent(this@AddSankhyaActivity, SankhyaDetail::class.java))
 //            val i = Intent(this@AddSankhyaActivity, SankhyaDetail::class.java)
@@ -515,7 +516,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 //            i.putExtra("ALL_USER", selected_userAll)
                 startActivity(i)
             }
-        }
+        })
 
         for (element in selected_user) {
             println(element)
@@ -527,7 +528,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             selected_userNameAll.add(element)
         }
 
-        submit_layout.setOnClickListener {
+        submit_layout.setOnClickListener(DebouncedClickListener {
 
             Log.d("arrayListUserId==>", arrayListUserId.toString())
 
@@ -626,7 +627,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 ).show()
             }
         }
-        }
+        })
 
         attended_list.setOnItemClickListener(object : SankhyaAdapter.ClickListener {
             override fun onItemClick(v: View, position: Int) {

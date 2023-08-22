@@ -12,6 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.ui.policies.WebViewPolicies
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -27,17 +28,17 @@ class PolicieshowFragment : Fragment() {
     private lateinit var terms_condition_layout: LinearLayout
     private lateinit var privacy_policy_layout: LinearLayout
 
-    private var CODE_CONTENT: String = MyHssApplication.BaseURL+"page/code-of-conduct/6"
-    private var DATA_PROTECTION: String = MyHssApplication.BaseURL+"page/data-protection-policy/4"
-    private var MEMBERSHIP: String = MyHssApplication.BaseURL+"page/hss-uk-membership-agreement/7"
-    private var TERMS_CONDITION: String = MyHssApplication.BaseURL+"page/myhss-terms-conditions/2"
-    private var PRIVACY_POLICY: String = MyHssApplication.BaseURL+"page/privacy-policy/1"
+    private var CODE_CONTENT: String = MyHssApplication.BaseURL + "page/code-of-conduct/6"
+    private var DATA_PROTECTION: String = MyHssApplication.BaseURL + "page/data-protection-policy/4"
+    private var MEMBERSHIP: String = MyHssApplication.BaseURL + "page/hss-uk-membership-agreement/7"
+    private var TERMS_CONDITION: String = MyHssApplication.BaseURL + "page/myhss-terms-conditions/2"
+    private var PRIVACY_POLICY: String = MyHssApplication.BaseURL + "page/privacy-policy/1"
 
     @SuppressLint("MissingPermission")
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_policies, container, false)
 
@@ -58,40 +59,40 @@ class PolicieshowFragment : Fragment() {
         terms_condition_layout = root.findViewById(R.id.terms_condition_layout)
         privacy_policy_layout = root.findViewById(R.id.privacy_policy_layout)
 
-        code_of_content_layout.setOnClickListener {
+        code_of_content_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), WebViewPolicies::class.java)
             i.putExtra("CODECONTENT", "Code of Conduct")
 //            i.putExtra("CODE_CONTENT", CODE_CONTENT)
             startActivity(i)
-        }
+        })
 
-        data_protection_layout.setOnClickListener {
+        data_protection_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), WebViewPolicies::class.java)
             i.putExtra("DATAPROTECTION", "Data Protection Policy")
 //            i.putExtra("DATA_PROTECTION", DATA_PROTECTION)
             startActivity(i)
-        }
+        })
 
-        membership_agreement_layout.setOnClickListener {
+        membership_agreement_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), WebViewPolicies::class.java)
             i.putExtra("MEMBERSHIP_A", "Membership Agreement")
 //            i.putExtra("MEMBERSHIP", MEMBERSHIP)
             startActivity(i)
-        }
+        })
 
-        terms_condition_layout.setOnClickListener {
+        terms_condition_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), WebViewPolicies::class.java)
             i.putExtra("TERMSCONDITION", "Terms & Conditions")
 //            i.putExtra("TERMS_CONDITION", TERMS_CONDITION)
             startActivity(i)
-        }
+        })
 
-        privacy_policy_layout.setOnClickListener {
+        privacy_policy_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), WebViewPolicies::class.java)
             i.putExtra("PRIVACYPOLICY", "Privacy Policy")
 //            i.putExtra("PRIVACY_POLICY", PRIVACY_POLICY)
             startActivity(i)
-        }
+        })
 
         return root
     }

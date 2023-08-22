@@ -11,7 +11,6 @@ import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -37,12 +36,12 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.Utils.SwipeleftToRightBack
 import com.myhss.Utils.UtilCommon
-import com.myhss.ui.Barchat.Model.BarchartDataModel
-import com.myhss.ui.Barchat.ViewBarchartActivity
+import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
+import com.myhss.ui.suryanamaskar.ViewBarchartActivity
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.Guru_Dakshina_OneTime.GuruDakshinaOneTimeFirstActivity
 import com.uk.myhss.Guru_Dakshina_Regular.GuruDakshinaRegularFirstActivity
@@ -55,11 +54,9 @@ import com.uk.myhss.ui.linked_family.MemberShipActivity
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
 import com.uk.myhss.ui.my_family.Adapter.CustomAdapter
-import com.uk.myhss.ui.my_family.Adapter.GuruCustomAdapter
 import com.uk.myhss.ui.my_family.Model.Datum_guru_dakshina
 import com.uk.myhss.ui.my_family.Model.guru_dakshina_response
 import com.uk.myhss.ui.policies.SankhyaActivity
-import okhttp3.internal.notify
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -166,11 +163,12 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         header_title = findViewById(R.id.header_title)
         header_title.text = intent.getStringExtra("headerName")
 //        DebugLog.e("Linked Family fragment")
-        back_arrow.setOnClickListener {
-            val i = Intent(this@LinkedFamilyFragment, HomeActivity::class.java)
-            startActivity(i)
-            finishAffinity()
-        }
+        back_arrow.setOnClickListener(
+            DebouncedClickListener {
+                val i = Intent(this@LinkedFamilyFragment, HomeActivity::class.java)
+                startActivity(i)
+                finishAffinity()
+            })
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         shakha_count_layout = findViewById(R.id.shakha_count_layout)
         shakha_count_txt = findViewById(R.id.shakha_count_txt)
@@ -188,13 +186,13 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         member_count = findViewById(R.id.member_count)
         pieChart_guru = findViewById(R.id.pieChart_guru)
         layout_pieChart_lable = findViewById(R.id.layout_pieChart_lable)
-        shakha_count_layout.setOnClickListener {
+        shakha_count_layout.setOnClickListener(DebouncedClickListener {
             val shakha_count = sessionManager.fetchSHAKHA_SANKHYA_AVG()!!
             val shakha_name = sessionManager.fetchSHAKHANAME()!!
             val nagar_name = sessionManager.fetchNAGARNAME()!!
             val vibhag_name = sessionManager.fetchVIBHAGNAME()!!
             ShakhaCountDialog(shakha_count, shakha_name, nagar_name, vibhag_name)
-        }
+        })
 
         /*My Family*/
         add_family_layout = findViewById(R.id.add_family_layout)
@@ -256,12 +254,12 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
 
 //        add_family_layout.visibility = View.GONE
 
-        add_family_layout.setOnClickListener {
+        add_family_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@LinkedFamilyFragment, AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family")
 //                i.putExtra("FAMILY", "FAMILY")
             startActivity(i)
-        }/*End*/
+        })/*End*/
 
         /*My Shakha*/
         membership_view = findViewById(R.id.membership_view)
@@ -274,36 +272,36 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
 
         rejected_member.visibility = View.VISIBLE
 
-        membership_view.setOnClickListener {
+        membership_view.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(root_view, "Member Ship", Snackbar.LENGTH_SHORT).show()
             val i = Intent(this@LinkedFamilyFragment, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "ALL_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        active_membership_view.setOnClickListener {
+        active_membership_view.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(root_view, "Active Member", Snackbar.LENGTH_SHORT).show()
             val i = Intent(this@LinkedFamilyFragment, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "ACTIVE_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        inactive_member.setOnClickListener {
+        inactive_member.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@LinkedFamilyFragment, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "INACTIVE_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        rejected_member.setOnClickListener {
+        rejected_member.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(root_view, "Rejected Member", Snackbar.LENGTH_SHORT).show()
             val i = Intent(this@LinkedFamilyFragment, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "REJECTED_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        sankhya_layout.setOnClickListener {
+        sankhya_layout.setOnClickListener(DebouncedClickListener {
             startActivity(Intent(this@LinkedFamilyFragment, SankhyaActivity::class.java))
-        }/*End My Shakha*/
+        })/*End My Shakha*/
 
         /*Guru Dakshina*/
         one_time_layout = findViewById(R.id.one_time_layout)
@@ -359,7 +357,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
 //
 //        })
 
-        one_time_layout.setOnClickListener {
+        one_time_layout.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(rootview, "One-Time Dakshina", Snackbar.LENGTH_SHORT).show()
             startActivity(
                 Intent(
@@ -369,16 +367,16 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
 //            val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
 //            i.putExtra("TYPE_SELF", "family");
 //            startActivity(i)
-        }
+        })
 
-        regular_layout.setOnClickListener {
+        regular_layout.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(rootview, "Regular Dakshina", Snackbar.LENGTH_SHORT).show()
             startActivity(
                 Intent(
                     this@LinkedFamilyFragment, GuruDakshinaRegularFirstActivity::class.java
                 )
             )
-        }/*End*/
+        })/*End*/
 
         if (sessionManager.fetchSHAKHA_TAB() == "yes") {
             myshakha_layout.visibility = View.VISIBLE
@@ -418,7 +416,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         shakha_layout.visibility = View.INVISIBLE
         guru_dakshina_layout.visibility = View.INVISIBLE
 
-        myfamily_view.setOnClickListener {
+        myfamily_view.setOnClickListener(DebouncedClickListener {
             myfamily_line.visibility = View.VISIBLE
             myshakha_line.visibility = View.INVISIBLE
             gurudakshina_line.visibility = View.INVISIBLE
@@ -447,9 +445,9 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
             val end: Int = 100
             val start: Int = 0
             CallAPI(start, end, false)
-        }
+        })
 
-        myshakha_view.setOnClickListener {
+        myshakha_view.setOnClickListener(DebouncedClickListener {
             data_not_found_layout.visibility = View.GONE
 
             myfamily_line.visibility = View.INVISIBLE
@@ -482,9 +480,9 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
             val start: Int = 0
             CallAPI(start, end, true)
 
-        }
+        })
 
-        gurudakshina_view.setOnClickListener {
+        gurudakshina_view.setOnClickListener(DebouncedClickListener {
             myfamily_line.visibility = View.INVISIBLE
             myshakha_line.visibility = View.INVISIBLE
             gurudakshina_line.visibility = View.VISIBLE
@@ -531,7 +529,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                     ).show()
                 }*/
             }
-        }
+        })
 
 //        SwipeleftToRightBack.enableSwipeBack(this)
 //        SwipeleftToRightBack.enableSwipeBackFullView(this)
@@ -675,9 +673,9 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         my_nagar_name.text = nagar_name.capitalize(Locale.ROOT)
         my_vibhag_name.text = vibhag_name.capitalize(Locale.ROOT)
 
-        close_button.setOnClickListener {
+        close_button.setOnClickListener(DebouncedClickListener {
             dialog?.dismiss()
-        }
+        })
     }
 
     private fun myMemberList(
@@ -795,9 +793,9 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                         }
                     } else {
 //                        data_not_found_layout.visibility = View.VISIBLE
-                        Functions.displayMessage(
-                            this@LinkedFamilyFragment, response.body()?.message
-                        )
+//                        Functions.displayMessage(
+//                            this@LinkedFamilyFragment, response.body()?.message
+//                        )
 //                        Functions.showAlertMessageWithOK(
 //                            this@LinkedFamilyFragment, "",
 ////                        "Message",
@@ -1037,7 +1035,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         chip.isCheckable = false
         chip.isClickable = true
         chip.setTextColor(Color.WHITE)
-        chip.setOnClickListener { openBarChart(label.toString()) }
+        chip.setOnClickListener(DebouncedClickListener { openBarChart(label.toString()) })
         return chip
     }
 

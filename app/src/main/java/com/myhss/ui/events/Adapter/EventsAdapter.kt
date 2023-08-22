@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.ui.events.EventsDetails
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -76,7 +77,7 @@ class EventsAdapter(val userList: List<Get_Member_Listing_Datum>) :
 //                )
 
 
-            adapter_view.setOnClickListener {
+            adapter_view.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Adapter", Toast.LENGTH_SHORT).show()
                 val i = Intent(itemView.context, EventsDetails::class.java)
                 i.putExtra("EVENT", "Youth Club Event")
@@ -86,7 +87,7 @@ class EventsAdapter(val userList: List<Get_Member_Listing_Datum>) :
                 )
                 i.putExtra("INFO", "Sunday (06-01-2022)\n\n09:30 AM 11:00 AM\n\n")
                 itemView.context.startActivity(i)
-            }
+            })
 
         }
     }

@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/font_size30"
                 android:layout_margin="@dimen/font_size15"
-                android:src="@drawable/payment_fourth_top" />
+                android:src="@drawable/addmember_step4" />
 
             <TextView
                 android:layout_width="match_parent"

@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputFilter
-import android.util.Log
 import android.widget.*
 
 import com.google.android.material.snackbar.Snackbar
@@ -37,10 +36,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import androidx.activity.ComponentActivity
-import com.google.gson.JsonObject
+import com.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime.OneTimeSuccess
+import com.myhss.Utils.DebouncedClickListener
 import com.stripe.android.PaymentAuthConfig
-import com.uk.myhss.Main.HomeActivity
-import org.json.JSONArray
 
 
 class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
@@ -92,24 +90,25 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         edit_payment = findViewById(R.id.edit_payment)
         donate_amount_txt = findViewById(R.id.donate_amount_txt)
         cardInputWidget = findViewById(R.id.cardInputWidget)
-        back_arrow.setOnClickListener {
+
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
-        edit_payment.setOnClickListener {
+        })
+        edit_payment.setOnClickListener(DebouncedClickListener {
             depositDialog()
-        }
+        })
         if (intent.getStringExtra("Amount") != "") {
             donate_amount_txt.text = intent.getStringExtra("Amount")
         }
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
         cardInputWidget.setShouldShowPostalCode(false) // to hide and show postal code
         startCheckout()
     }
 
     private fun startCheckout() {
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (Functions.isConnectingToInternet(this@GuruDakshinaOneTimeFourthActivity)) {
                 if (cardInputWidget.validateAllFields()) {
                     callApiForStripeData() //MyHSS API
@@ -124,7 +123,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
+        })
     }
 
     private fun callApiForStripeData() {
@@ -270,7 +269,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             edit_amount.text = intent.getStringExtra("Amount")
         }
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             if (edit_amount.text.toString().isNotEmpty()) {
                 edit_amount.filters = arrayOf<InputFilter>(
                     InputFilterMinMax(
@@ -288,7 +287,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             } else {
                 Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 
     @Deprecated("Deprecated in Java")
@@ -300,7 +299,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                 if (paymentIntent.status == StripeIntent.Status.Succeeded) {
                     val gson = GsonBuilder().setPrettyPrinting().create()
                     DebugLog.e("Succeeded : " + " Response : " + gson.toJson(paymentIntent))
-                    paymentStatus = "Completed"
+                    paymentStatus = "Succeeded"
                     paymentStatusReason = ""
                     pd3.dismiss()
                     savePaymentDataintoDB(gson.toJson(paymentIntent))
@@ -353,38 +352,33 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                 requestBody.writeTo(buffer)
                 buffer.readUtf8()
             } ?: ""
-            DebugLog.e("Param : " + "$key: $value")
+            DebugLog.e("Param : $key: $value")
         }
 
-        val call: Call<JsonObject> =
+        val call: Call<OneTimeSuccess> =
             MyHssApplication.instance!!.api.postSaveStripePaymentData(requestBody)
-        call.enqueue(object : Callback<JsonObject> {
+        call.enqueue(object : Callback<OneTimeSuccess> {
             override fun onResponse(
-                call: Call<JsonObject>, response: Response<JsonObject>
+                call: Call<OneTimeSuccess>, response: Response<OneTimeSuccess>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     if (response.isSuccessful) {
-
-                        var resp = ""
-                        if (response.body().toString().startsWith("{")) {
-                            resp = "[" + response.body().toString() + "]"
-                        }
-                        DebugLog.e(resp)
-                        val jsonObj = JSONArray(resp)
-                        val jsonObject = jsonObj.getJSONObject(0)
-                        val status = jsonObject.get("status")
-                        val message = jsonObject.get("message")
-                        if (status == true) {
+                        if (response.body()!!.status == true) {
                             val alertDialog: AlertDialog.Builder =
                                 AlertDialog.Builder(this@GuruDakshinaOneTimeFourthActivity)
                             alertDialog.setTitle("Guru Dakshina Payment")
-                            alertDialog.setMessage("$message")
+                            alertDialog.setMessage(response.body()!!.message)
                             alertDialog.setPositiveButton(
                                 "Okay"
                             ) { _, _ ->
                                 val i = Intent(
-                                    this@GuruDakshinaOneTimeFourthActivity, HomeActivity::class.java
+                                    this@GuruDakshinaOneTimeFourthActivity,
+                                    GuruDakshinaOneTimeCompleteActivity::class.java
                                 )
+                                i.putExtra("paidAmount", response.body()!!.details.paid_amount)
+                                i.putExtra("orderId", response.body()!!.details.order_id)
+                                i.putExtra("status", response.body()!!.details.status)
+                                i.putExtra("giftAid", response.body()!!.details.gift_aid)
                                 startActivity(i)
                                 finishAffinity()
                             }
@@ -394,7 +388,9 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                             alert.show()
                         } else {
                             Functions.showAlertMessageWithOK(
-                                this@GuruDakshinaOneTimeFourthActivity, "", message.toString()
+                                this@GuruDakshinaOneTimeFourthActivity,
+                                "",
+                                response.body()!!.message
                             )
                         }
                         pd1.dismiss()
@@ -408,7 +404,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                 pd1.dismiss()
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            override fun onFailure(call: Call<OneTimeSuccess>, t: Throwable) {
                 pd1.dismiss()
                 Functions.showAlertMessageWithOK(
                     this@GuruDakshinaOneTimeFourthActivity,

@@ -18,6 +18,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 
 import com.uk.myhss.AddMember.AddMemberFirstActivity
@@ -81,8 +82,8 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
 
     private var loading = true
     var pastVisiblesItems = 0
-    var visibleItemCount:Int = 0
-    var totalItemCount:Int = 0
+    var visibleItemCount: Int = 0
+    var totalItemCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,11 +106,11 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
 
         header_title.text = getString(R.string.events)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@EventsFragment, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
+        })
 
         events_list = findViewById(R.id.events_list)
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
@@ -162,7 +163,7 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
             )
         )
 
-        allevents_view.setOnClickListener {
+        allevents_view.setOnClickListener(DebouncedClickListener {
             allevents_line.visibility = View.VISIBLE
             upcoming_events_line.visibility = View.INVISIBLE
             completed_events_line.visibility = View.INVISIBLE
@@ -190,9 +191,9 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
             val start: Int = 0
 
             CallAPI(start, end)
-        }
+        })
 
-        upcoming_events_view.setOnClickListener {
+        upcoming_events_view.setOnClickListener(DebouncedClickListener {
             allevents_line.visibility = View.INVISIBLE
             upcoming_events_line.visibility = View.VISIBLE
             completed_events_line.visibility = View.INVISIBLE
@@ -220,9 +221,9 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
             val start: Int = 0
 
             CallAPI(start, end)
-        }
+        })
 
-        completed_events_view.setOnClickListener {
+        completed_events_view.setOnClickListener(DebouncedClickListener {
             allevents_line.visibility = View.INVISIBLE
             upcoming_events_line.visibility = View.INVISIBLE
             completed_events_line.visibility = View.VISIBLE
@@ -250,12 +251,12 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
             val start: Int = 0
 
             CallAPI(start, end)
-        }
+        })
         events_list_layout.visibility = View.GONE
-        events_list_layout.setOnClickListener {
-//            val i = Intent(this@EventsFragment, AddMemberFirstActivity::class.java)
-//            startActivity(i)
-        }
+//        events_list_layout.setOnClickListener(DebouncedClickListener {
+////            val i = Intent(this@EventsFragment, AddMemberFirstActivity::class.java)
+////            startActivity(i)
+//        })
 
     }
 

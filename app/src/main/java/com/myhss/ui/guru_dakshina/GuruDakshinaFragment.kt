@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,7 +25,6 @@ import com.uk.myhss.Guru_Dakshina_Regular.GuruDakshinaRegularFirstActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
-import com.myhss.Utils.EndLessScroll
 import com.myhss.Utils.Functions
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.my_family.Adapter.GuruCustomAdapter
@@ -37,7 +35,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.collections.ArrayList
 import android.widget.RelativeLayout
-import androidx.core.content.ContextCompat.getDrawable
 import android.widget.LinearLayout
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
@@ -46,9 +43,8 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.utils.MPPointF
-import com.google.gson.annotations.Until
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
-import com.myhss.ui.Barchat.Model.Datum_Get_SuryaNamaskar
 
 
 class GuruDakshinaFragment : Fragment() {
@@ -156,18 +152,18 @@ class GuruDakshinaFragment : Fragment() {
 
         })
 
-        one_time_layout.setOnClickListener {
+        one_time_layout.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(rootview, "One-Time Dakshina", Snackbar.LENGTH_SHORT).show()
             startActivity(Intent(context, GuruDakshinaOneTimeFirstActivity::class.java))
 //            val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
 //            i.putExtra("TYPE_SELF", "family");
 //            startActivity(i)
-        }
+        })
 
-        regular_layout.setOnClickListener {
+        regular_layout.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(rootview, "Regular Dakshina", Snackbar.LENGTH_SHORT).show()
             startActivity(Intent(context, GuruDakshinaRegularFirstActivity::class.java))
-        }
+        })
 
         /*membership_view.setOnClickListener {
             showPopup()

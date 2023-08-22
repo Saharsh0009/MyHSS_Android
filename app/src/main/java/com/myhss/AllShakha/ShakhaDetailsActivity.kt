@@ -18,6 +18,7 @@ import com.google.firebase.ktx.Firebase
 import com.myhss.AllShakha.Model.Datum_Get_Shakha_Details
 import com.myhss.AllShakha.Model.Get_Shakha_Details_Response
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -84,9 +85,9 @@ class ShakhaDetailsActivity : AppCompatActivity() {
 
         header_title.text = getString(R.string.shakha_details)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         Log.d("Shakha_ID", intent.getStringExtra("Shakha_ID")!!)
         Log.d("Lati", intent.getStringExtra("Lati")!!)
@@ -170,14 +171,14 @@ class ShakhaDetailsActivity : AppCompatActivity() {
             day_address_txt.text = intent.getStringExtra("Shakha_Day")
             time_name_txt.text = intent.getStringExtra("Shakha_Day") // "Timing"
 
-            shakha_adapter_map.setOnClickListener {
+            shakha_adapter_map.setOnClickListener(DebouncedClickListener {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("http://maps.google.com/maps?daddr="+ intent.getStringExtra("Lati")!!
                         .toDouble()+","+intent.getStringExtra("Longi")!!.toDouble())
                 )
                 startActivity(intent)
-            }
+            })
         }
     }
 
@@ -257,14 +258,14 @@ class ShakhaDetailsActivity : AppCompatActivity() {
                                 time_name_txt.text = shakhadetails.day // "Timing"
                                 time_address_txt.text = Start_time + "-" + End_time
 
-                                shakha_adapter_map.setOnClickListener {
+                                shakha_adapter_map.setOnClickListener(DebouncedClickListener {
                                     val intent = Intent(
                                         Intent.ACTION_VIEW,
                                         Uri.parse("http://maps.google.com/maps?daddr="+ shakhadetails.latitude!!
                                             .toDouble()+","+shakhadetails.longitude!!.toDouble())
                                     )
                                     startActivity(intent)
-                                }
+                                })
 
                             }
 

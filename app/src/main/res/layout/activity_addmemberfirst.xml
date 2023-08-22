@@ -90,9 +90,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:inputType="text"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -146,9 +148,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:inputType="text"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -223,9 +227,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:inputType="text"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -314,10 +320,12 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:imeOptions="actionDone"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
@@ -402,9 +410,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
@@ -478,10 +488,12 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^_+\|"
                                 android:inputType="textPassword"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
@@ -555,9 +567,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
@@ -952,11 +966,13 @@
                             android:layout_height="wrap_content">
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_relatioship_other_name"
                                 style="@style/EditText.OutlinedBox"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
                                 app:boxStrokeColor="@color/primaryColor"
+                                app:errorIconDrawable="@null"
                                 tools:ignore="RtlSymmetry">
 
                                 <com.google.android.material.textfield.TextInputEditText
@@ -964,9 +980,11 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:inputType="text"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:theme="@style/StyleEditTextView" />
 
                             </com.google.android.material.textfield.TextInputLayout>

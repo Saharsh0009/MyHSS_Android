@@ -1,11 +1,10 @@
-package com.uk.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime
+package com.myhss.ui.suryanamaskar.Model
 
 import com.google.gson.annotations.Expose
-
 import com.google.gson.annotations.SerializedName
 
+class save_suryanamaskarResponse {
 
-class Get_Create_Onetime {
     @SerializedName("status")
     @Expose
     var status: Boolean? = null
@@ -13,8 +12,4 @@ class Get_Create_Onetime {
     @SerializedName("message")
     @Expose
     var message: String? = null
-
-    @SerializedName("data")
-    @Expose
-    var data: List<Datum_Create_Onetime>? = null
 }

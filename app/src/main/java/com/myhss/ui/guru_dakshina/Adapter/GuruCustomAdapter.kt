@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.ui.guru_dakshina.GuruDakshinaRegularDetail
 import com.uk.myhss.ui.my_family.Model.Datum_guru_dakshina
@@ -83,7 +84,7 @@ class GuruCustomAdapter(val userList: List<Datum_guru_dakshina>) :
 
             righr_menu.visibility = View.GONE
 
-            righr_menu.setOnClickListener {
+            righr_menu.setOnClickListener(DebouncedClickListener {
                 val popup = PopupMenu(itemView.context, itemView, Gravity.RIGHT)
                 popup.inflate(R.menu.header_menu)
                 popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
@@ -98,9 +99,9 @@ class GuruCustomAdapter(val userList: List<Datum_guru_dakshina>) :
                     true
                 })
                 popup.show()
-            }
+            })
 
-            adapter_view.setOnClickListener {
+            adapter_view.setOnClickListener(DebouncedClickListener {
                 val i = Intent(itemView.context, GuruDakshinaRegularDetail::class.java)
                 i.putExtra("username_name", username_name.text.toString())
                 i.putExtra("user_shakha_type", user_shakha_type.text.toString())
@@ -115,7 +116,7 @@ class GuruCustomAdapter(val userList: List<Datum_guru_dakshina>) :
                 i.putExtra("dakshina", my_family_DatumGurudakshina.dakshina)
                 i.putExtra("recurring", my_family_DatumGurudakshina.recurring)
                 itemView.context.startActivity(i)
-            }
+            })
         }
     }
 }

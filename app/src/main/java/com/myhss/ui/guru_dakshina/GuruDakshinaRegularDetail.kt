@@ -12,6 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.SwipeleftToRightBack
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
@@ -87,12 +88,12 @@ class GuruDakshinaRegularDetail : AppCompatActivity() {
         reference_txt.text = intent.getStringExtra("order_id")
         contribution_type_txt.text = intent.getStringExtra("dakshina")
         guru_dakshina_txt.text = intent.getStringExtra("amount_txt")
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
-        close_layout.setOnClickListener {
+        })
+        close_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
 //        SwipeleftToRightBack.enableSwipeBack(this)
 //        SwipeleftToRightBack.enableSwipeBackFullView(this)

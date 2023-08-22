@@ -36,6 +36,7 @@ import com.myhss.Fingerprint.BiometricUtils
 import com.myhss.Fingerprint.FingerPrintPopUp
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.appConstants.AppParam
@@ -109,7 +110,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
     private lateinit var sessionManager: SessionManager
     private lateinit var passcode_layout: RelativeLayout
     private lateinit var line_view: View
-    private var receivedNotiData  = "no"
+    private var receivedNotiData = "no"
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -278,12 +279,14 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         btnNine!!.setBackgroundResource(R.drawable.empty_dot)
         btnZero!!.setBackgroundResource(R.drawable.empty_dot)
 
-        passcode_layout.setOnClickListener {
+        passcode_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
-            if (receivedNotiData == AppParam.NOTIFIC_VALUE) { i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE) }
+            if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
+                i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+            }
             startActivity(i)
             finishAffinity()
-        }
+        })
 
         backarrow.visibility = View.INVISIBLE
         actiontitle.text = "Passcode"
@@ -297,7 +300,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             passcode_logout!!.setVisibility(View.VISIBLE)
         }
         tv_forgot_password = findViewById<View>(R.id.tv_forgot_password) as TextView
-        tv_forgot_password!!.setOnClickListener(View.OnClickListener { v: View? ->
+        tv_forgot_password!!.setOnClickListener(DebouncedClickListener {
             startActivity(
                 Intent(
                     this@Passcode_Activity, LoginActivity::class.java
@@ -310,6 +313,11 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         imgPass4 = findViewById<View>(R.id.img4) as ImageView
         imgBackDelete = findViewById<View>(R.id.imgBackDelete) as ImageView
         setListener()
+
+        passcode_logout!!.setOnClickListener(DebouncedClickListener {
+            buttonclickLogout()
+        })
+
     }
 
     fun getColoredSpanned(text: String, color: String): String? {
@@ -341,13 +349,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         btnZero!!.setOnClickListener(this)
         btnDalet!!.setOnClickListener(this)
         imgBackDelete!!.setOnClickListener(this)
-        passcode_logout!!.setOnClickListener(this)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//            if (checkPermission()) {
-//            } else {
-//                requestPermission()
-//            }
-//        }
     }
 
     fun adjustPassCodeScreen() {
@@ -502,7 +503,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     DebugLog.e("" + sharedPreferences.getString("MEMBERID", "").toString())
                     if (sharedPreferences.getString("MEMBERID", "") != "") {
                         val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
-                        if (receivedNotiData == AppParam.NOTIFIC_VALUE) { i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE) }
+                        if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
+                            i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+                        }
                         startActivity(i)
                         finish()
                     } else {
@@ -552,7 +555,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
                             if (sharedPreferences.getString("MEMBERID", "") != "") {
                                 val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
-                                if (receivedNotiData == AppParam.NOTIFIC_VALUE) { i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE) }
+                                if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
+                                    i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+                                }
                                 startActivity(i)
                                 finish()
                             } else {
@@ -778,7 +783,9 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
         if (sharedPreferences.getString("MEMBERID", "") != "") {
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
-            if (receivedNotiData == AppParam.NOTIFIC_VALUE) { i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE) }
+            if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
+                i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+            }
             startActivity(i)
             finish()
         } else {
@@ -791,25 +798,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
     override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {}
 
-//    fun checkPermission(): Boolean {
-//        val result_read = ContextCompat.checkSelfPermission(
-//            this@Passcode_Activity, Manifest.permission.READ_EXTERNAL_STORAGE
-//        )
-//        val result_write = ContextCompat.checkSelfPermission(
-//            this@Passcode_Activity, Manifest.permission.WRITE_EXTERNAL_STORAGE
-//        )
-//        return result_write == PackageManager.PERMISSION_GRANTED && result_read == PackageManager.PERMISSION_GRANTED
-//    }
-
-//    fun requestPermission() {
-//        ActivityCompat.requestPermissions(
-//            this@Passcode_Activity, arrayOf(
-//                Manifest.permission.READ_EXTERNAL_STORAGE,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//            ), PERMISSION_REQUEST_CODE
-//        )
-//    }
-
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btnOne -> {
@@ -818,18 +806,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//                    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnOne!!.text.toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnTwo -> {
                 if (strPasslock.length < 4) {
@@ -837,18 +813,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnTwo!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnThree -> {
                 if (strPasslock.length < 4) {
@@ -856,18 +820,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnThree!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnFour -> {
                 if (strPasslock.length < 4) {
@@ -875,18 +827,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnFour!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnFive -> {
                 if (strPasslock.length < 4) {
@@ -894,18 +834,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnFive!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnSix -> {
                 if (strPasslock.length < 4) {
@@ -913,18 +841,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnSix!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnSeven -> {
                 if (strPasslock.length < 4) {
@@ -932,18 +848,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnSeven!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnEight -> {
                 if (strPasslock.length < 4) {
@@ -951,18 +855,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnEight!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnNine -> {
                 if (strPasslock.length < 4) {
@@ -970,18 +862,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnNine!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnZero -> {
                 if (strPasslock.length < 4) {
@@ -989,18 +869,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     setPointView()
                 }
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    this@Passcode_Activity,
-//                    "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnZero!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnDalet -> if (strPasslock.length > 0) {
                 strPasslock = strPasslock.substring(0, strPasslock.length - 1)
@@ -1011,97 +879,90 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                 strPasslock = strPasslock.substring(0, strPasslock.length - 1)
                 setPointView()
             }
-
-            R.id.passcode_logout -> {
-                val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@Passcode_Activity)
-//            alertDialog.setTitle("Logout")
-                alertDialog.setMessage("Are you sure you would like to logout?")
-                alertDialog.setPositiveButton(
-                    "yes"
-                ) { _, _ ->
-
-                    val sharedPreferences = this@Passcode_Activity.getSharedPreferences(
-                        "production", Context.MODE_PRIVATE
-                    )
-                    sessionManager.saveFIRSTNAME("")
-                    sessionManager.saveSURNAME("")
-                    sessionManager.saveUSERNAME("")
-                    sessionManager.saveUserID("")
-                    sessionManager.saveUSEREMAIL("")
-                    sessionManager.saveUSERROLE("")
-                    sessionManager.saveMEMBERID("")
-                    sessionManager.saveSECURITYKEY("")
-                    sessionManager.saveAuthToken("")
-                    sessionManager.saveMIDDLENAME("")
-                    sessionManager.saveSHAKHA_SANKHYA_AVG("")
-                    sessionManager.saveSHAKHA_TAB("")
-                    sessionManager.saveSHAKHANAME("")
-                    sessionManager.savePOSTCODE("")
-                    sessionManager.saveCOUNTRY("")
-                    sessionManager.saveCITY("")
-                    sessionManager.saveLineOne("")
-                    sessionManager.saveGENDER("")
-                    sessionManager.saveAGE("")
-                    sessionManager.saveQUALIFICATIONAID("")
-                    sessionManager.saveQUALIFICATION_VALUE("")
-                    sessionManager.saveQUALIFICATION_VALUE_NAME("")
-                    sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
-                    sessionManager.saveQUALIFICATION_DATE("")
-                    sessionManager.saveQUALIFICATION_FILE("")
-                    sessionManager.saveQUALIFICATION_IS_DOC("")
-                    sessionManager.saveDOB("")
-                    sessionManager.saveVIBHAGNAME("")
-                    sessionManager.saveSPOKKENLANGUAGE("")
-                    sessionManager.saveMOBILENO("")
-                    sessionManager.saveSECMOBILENO("")
-                    sessionManager.saveOCCUPATIONNAME("")
-                    sessionManager.saveADDRESS("")
-                    sessionManager.saveGUAEMREMAIL("")
-                    sessionManager.saveGUAEMRNAME("")
-                    sessionManager.saveGUAEMRPHONE("")
-                    sessionManager.saveGUAEMRRELATIONSHIP("")
-                    sessionManager.saveSPOKKENLANGUAGEID("")
-                    sessionManager.saveSPOKKENLANGUAGE("")
-                    sessionManager.saveRELATIONSHIPNAME("")
-                    sessionManager.saveRELATIONSHIPNAME_OTHER("")
-                    sessionManager.saveNAGARID("")
-                    sessionManager.saveDIETARY("")
-                    sessionManager.saveDIETARYID("")
-                    sessionManager.saveVIBHAGID("")
-                    sessionManager.saveSTATE_IN_INDIA("")
-                    sessionManager.saveSHAKHAID("")
-
-                    sharedPreferences.edit().apply {
-                        putString("FIRSTNAME", "")
-                        putString("SURNAME", "")
-                        putString("USERNAME", "")
-                        putString("USERID", "")
-                        putString("USEREMAIL", "")
-                        putString("USERROLE", "")
-                        putString("MEMBERID", "")
-                        putString("SECURITYKEY", "")
-                        putString("USERTOKEN", "")
-                    }.apply()
-
-                    val i = Intent(this@Passcode_Activity, LoginActivity::class.java)
-                    startActivity(i)
-                    finishAffinity()
-                }
-                alertDialog.setNegativeButton(
-                    "No"
-                ) { _, _ ->
-//                    val i = Intent(this@Passcode_Activity, Passcode_Activity::class.java)
-//                    startActivity(i)
-//                    finishAffinity()
-                }
-                val alert: AlertDialog = alertDialog.create()
-                alert.setCanceledOnTouchOutside(false)
-                alert.show()
-            }
-
-            else -> {
-            }
         }
-        Functions.printLog("str passCode", strPasslock)
     }
+
+    fun buttonclickLogout() {
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@Passcode_Activity)
+        alertDialog.setMessage("Are you sure you would like to logout?")
+        alertDialog.setPositiveButton(
+            "yes"
+        ) { _, _ ->
+
+            val sharedPreferences = this@Passcode_Activity.getSharedPreferences(
+                "production", Context.MODE_PRIVATE
+            )
+            sessionManager.saveFIRSTNAME("")
+            sessionManager.saveSURNAME("")
+            sessionManager.saveUSERNAME("")
+            sessionManager.saveUserID("")
+            sessionManager.saveUSEREMAIL("")
+            sessionManager.saveUSERROLE("")
+            sessionManager.saveMEMBERID("")
+            sessionManager.saveSECURITYKEY("")
+            sessionManager.saveAuthToken("")
+            sessionManager.saveMIDDLENAME("")
+            sessionManager.saveSHAKHA_SANKHYA_AVG("")
+            sessionManager.saveSHAKHA_TAB("")
+            sessionManager.saveSHAKHANAME("")
+            sessionManager.savePOSTCODE("")
+            sessionManager.saveCOUNTRY("")
+            sessionManager.saveCITY("")
+            sessionManager.saveLineOne("")
+            sessionManager.saveGENDER("")
+            sessionManager.saveAGE("")
+            sessionManager.saveQUALIFICATIONAID("")
+            sessionManager.saveQUALIFICATION_VALUE("")
+            sessionManager.saveQUALIFICATION_VALUE_NAME("")
+            sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
+            sessionManager.saveQUALIFICATION_DATE("")
+            sessionManager.saveQUALIFICATION_FILE("")
+            sessionManager.saveQUALIFICATION_IS_DOC("")
+            sessionManager.saveDOB("")
+            sessionManager.saveVIBHAGNAME("")
+            sessionManager.saveSPOKKENLANGUAGE("")
+            sessionManager.saveMOBILENO("")
+            sessionManager.saveSECMOBILENO("")
+            sessionManager.saveOCCUPATIONNAME("")
+            sessionManager.saveADDRESS("")
+            sessionManager.saveGUAEMREMAIL("")
+            sessionManager.saveGUAEMRNAME("")
+            sessionManager.saveGUAEMRPHONE("")
+            sessionManager.saveGUAEMRRELATIONSHIP("")
+            sessionManager.saveSPOKKENLANGUAGEID("")
+            sessionManager.saveSPOKKENLANGUAGE("")
+            sessionManager.saveRELATIONSHIPNAME("")
+            sessionManager.saveRELATIONSHIPNAME_OTHER("")
+            sessionManager.saveNAGARID("")
+            sessionManager.saveDIETARY("")
+            sessionManager.saveDIETARYID("")
+            sessionManager.saveVIBHAGID("")
+            sessionManager.saveSTATE_IN_INDIA("")
+            sessionManager.saveSHAKHAID("")
+
+            sharedPreferences.edit().apply {
+                putString("FIRSTNAME", "")
+                putString("SURNAME", "")
+                putString("USERNAME", "")
+                putString("USERID", "")
+                putString("USEREMAIL", "")
+                putString("USERROLE", "")
+                putString("MEMBERID", "")
+                putString("SECURITYKEY", "")
+                putString("USERTOKEN", "")
+            }.apply()
+
+            val i = Intent(this@Passcode_Activity, LoginActivity::class.java)
+            startActivity(i)
+            finishAffinity()
+        }
+        alertDialog.setNegativeButton(
+            "No"
+        ) { _, _ ->
+        }
+        val alert: AlertDialog = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
+    }
+
 }

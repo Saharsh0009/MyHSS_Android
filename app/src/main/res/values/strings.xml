@@ -157,7 +157,7 @@
     <string name="profile">Profile</string>
     <string name="family_member">Family Member</string>
     <string name="select_family_member">Select Family Member</string>
-    <string name="suryanamaskar_graph">Suryanamaskar Graph</string>
+    <string name="suryanamaskar_graph">Surya Namaskar Graph</string>
 
     <!--Other String-->
     <string name="edit_txt">Edit</string>
@@ -351,8 +351,8 @@
     <string name="user_profile">User Profile</string>
     <string name="linked_family_member">Linked Family Members</string>
     <string name="qr_code">QR Code Scan/Read</string>
-    <string name="surya_namaskar">Suryanamaskar</string>
-    <string name="record_surya_namaskar">Record Suryanamaskar</string>
+    <string name="surya_namaskar">Surya Namaskar</string>
+    <string name="record_surya_namaskar">Record Surya Namaskar</string>
     <string name="add_family_member">Add a Family Member</string>
     <string name="add_sankhya">Add Sankhya</string>
     <string name="change_username">Change Username</string>
@@ -428,7 +428,7 @@
     <string name="sur_name">Please Enter the Surname</string>
     <string name="valid_surname">Surname should contain alphabetical characters only without any space. e.g. xyz</string>
     <string name="user_name">Please Enter User name</string>
-    <string name="valid_user_name">Username should contain alphabetical and numerical characters only without any space/special character. e.g. FirstnameSurname</string>
+    <string name="valid_user_name">Username should contain alphabetical and numerical characters only without any space/special character, and contain at least minimum Five character. e.g. FirstnameSurname</string>
     <string name="email_id">Please Enter Email</string>
     <string name="valid_email">Please Enter Valid Email</string>
     <string name="enter_password">Please Enter Password</string>
@@ -444,4 +444,5 @@
     <string name="payment_error_title">Family Members record not found.</string>
     <string name="payment_error_message">\nYou do not have an active family members listed on MyHSS.\n\nPlease contact your Shakha Karyawaha if you need further assistance.</string>
     <string name="quit_myhss">Are you sure you want to quit MyHSS?</string>
+    <string name="under_age_18">As your age is below 18 We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications.</string>
 </resources>

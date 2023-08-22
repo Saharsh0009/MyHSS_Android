@@ -6,7 +6,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ContentResolver
-import android.content.ContentUris
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -15,7 +14,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
 import android.text.Spannable
@@ -29,9 +27,15 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
+import androidx.core.view.indices
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -40,6 +44,7 @@ import com.google.gson.JsonObject
 import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
 import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -54,7 +59,6 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.Welcome.WelcomeActivity
-import mabbas007.tagsedittext.TagsEditText
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -68,7 +72,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListener {
+class AddMemberForthActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
     private var year = 0
     private var month = 0
@@ -78,31 +82,19 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     private var medical_info: String = ""
     private var qualified_info: String = ""
 
-    var dietaryName: List<String> = ArrayList<String>()
-    var dietaryID: List<String> = ArrayList<String>()
-    var spokenName: List<String> = ArrayList<String>()
-    var spokenID: List<String> = ArrayList<String>()
-    var originName: List<String> = ArrayList<String>()
-    var originID: List<String> = ArrayList<String>()
     var firstAidInfoName: List<String> = ArrayList<String>()
     var firstAidInfoID: List<String> = ArrayList<String>()
 
-    private var DIETARY_ID: String = ""
-    private var SPOKEN_ID: String = ""
-    private var ORIGIN_ID: String = ""
+
     private var FIRSTAID_ID: String = ""
+
+    private lateinit var til_medical_information_details: TextInputLayout
+    private lateinit var til_profe_body_regis_num: TextInputLayout
 
     private lateinit var edit_medical_information_details: TextInputEditText
     private lateinit var edit_date_of_first_aid_qualification: TextView
     private lateinit var edit_qualification_file: TextView
 
-    private lateinit var edit_special_dietary_requirements: SearchableSpinner
-    private lateinit var edit_spoken_language: SearchableSpinner
-    private lateinit var edit_originating_state_in_india: SearchableSpinner
-
-    private lateinit var originating_state_in_india_view: RelativeLayout
-    private lateinit var spoken_language_view: RelativeLayout
-    private lateinit var special_dietary_requirements_view: RelativeLayout
 
     private lateinit var medical_information_view: LinearLayout
     private lateinit var medical_information_no_view: LinearLayout
@@ -116,17 +108,10 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     private lateinit var back_layout: LinearLayout
     private lateinit var next_layout: LinearLayout
 
-    private lateinit var dietary_txt_view: LinearLayout
-    private lateinit var dietary_txt_layout: RelativeLayout
-    private lateinit var dietary_txt: TextView
-    private lateinit var cross_item: ImageView
     private lateinit var qualification_file: ImageView
     private lateinit var qualification_file_image: ImageView
 
-    private lateinit var spoken_language_txt_view: LinearLayout
-    private lateinit var spoken_language_txt_layout: RelativeLayout
-    private lateinit var spoken_language_txt: TextView
-    private lateinit var spoken_languagecross_item: ImageView
+
     private lateinit var checkbox: CheckBox
     private lateinit var agreement_txt: TextView
 
@@ -139,9 +124,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     private lateinit var first_aid_type_view: LinearLayout
     private lateinit var data_firstaidInfo: List<DataFirstAidInfo>
 
-    private lateinit var mTagsEditText: TagsEditText
-
-    private var File_name: String = ""
     var Check_value: String = ""
 
 
@@ -155,6 +137,34 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     var Upload_file: String = ""
     var mediaFileDoc: File? = null
     private val PERMISSION_REQUEST_CODE = 200
+
+    //Dietary
+    private lateinit var edit_special_dietary_requirements: SearchableSpinner
+    private lateinit var chipGroup_dietary: ChipGroup
+    private lateinit var dietaryDataList: List<Datum_Get_Dietaries>
+    var dietaryName: List<String> = ArrayList<String>()
+    var dietaryID: List<String> = ArrayList<String>()
+    private var DIETARY_ID: String = ""
+    var uiDietary = false
+
+    //Language
+    private lateinit var edit_spoken_language: SearchableSpinner
+    private lateinit var chipGroup_language: ChipGroup
+    private lateinit var spokenLanguageDataList: List<Datum_Get_Language>
+    var spokenName: List<String> = ArrayList<String>()
+    var spokenID: List<String> = ArrayList<String>()
+    private var SPOKEN_ID: String = ""
+    var uiLanguage = false
+
+    //state
+    private lateinit var edit_originating_state_in_india: SearchableSpinner
+    private lateinit var chipGroup_state: ChipGroup
+    private lateinit var stateDataList: List<Datum_Get_Indianstates>
+    var originName: List<String> = ArrayList<String>()
+    var originID: List<String> = ArrayList<String>()
+    private var ORIGIN_ID: String = ""
+    var uiState = false
+    var isDocApload = false
 
     @SuppressLint("NewApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,9 +190,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         edit_special_dietary_requirements = findViewById(R.id.edit_special_dietary_requirements)
         edit_spoken_language = findViewById(R.id.edit_spoken_language)
         edit_originating_state_in_india = findViewById(R.id.edit_originating_state_in_india)
-        originating_state_in_india_view = findViewById(R.id.originating_state_in_india_view)
-        spoken_language_view = findViewById(R.id.spoken_language_view)
-        special_dietary_requirements_view = findViewById(R.id.special_dietary_requirements_view)
         medical_information_view = findViewById(R.id.medical_information_view)
         medical_information_no_view = findViewById(R.id.medical_information_no_view)
         qualification_First_view = findViewById(R.id.qualification_First_view)
@@ -191,43 +198,24 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         date_of_first_aid_qualification_view =
             findViewById(R.id.date_of_first_aid_qualification_view)
         qualification_file_view = findViewById(R.id.qualification_file_view)
-        dietary_txt_layout = findViewById(R.id.dietary_txt_layout)
-        dietary_txt_view = findViewById(R.id.dietary_txt_view)
-        dietary_txt = findViewById(R.id.dietary_txt)
-        cross_item = findViewById(R.id.cross_item)
         qualification_file = findViewById(R.id.qualification_file)
         qualification_file_image = findViewById(R.id.qualification_file_image)
         checkbox = findViewById(R.id.checkbox)
         agreement_txt = findViewById(R.id.agreement_txt)
         check_box_layout = findViewById(R.id.check_box_layout)
-        spoken_language_txt_view = findViewById(R.id.spoken_language_txt_view)
-        spoken_language_txt_layout = findViewById(R.id.spoken_language_txt_layout)
-        spoken_language_txt = findViewById(R.id.spoken_language_txt)
-        spoken_languagecross_item = findViewById(R.id.spoken_languagecross_item)
         back_layout = findViewById(R.id.back_layout)
         next_layout = findViewById(R.id.next_layout)
         edit_date_of_first_aid_qualification =
             findViewById(R.id.edit_date_of_first_aid_qualification)
         edit_qualification_file = findViewById(R.id.edit_qualification_file)
+        til_medical_information_details = findViewById(R.id.til_medical_information_details)
+        til_profe_body_regis_num = findViewById(R.id.til_profe_body_regis_num)
         // first aid
         first_aid_type_view = findViewById(R.id.first_air_type_view)
         edit_aid_type = findViewById(R.id.edit_aid_type)
         relative_aid_type = findViewById(R.id.relative_aid_type)
         professionl_body_regi_view = findViewById(R.id.professionl_body_regi_view)
         edit_profe_body_regis_num = findViewById<TextInputEditText>(R.id.edit_profe_body_regis_num)
-
-        mTagsEditText = findViewById<View>(R.id.tagsEditText) as TagsEditText
-
-        mTagsEditText.visibility = View.GONE
-        mTagsEditText.hint = "Enter names of fruits"
-        mTagsEditText.setTagsListener(this@AddMemberForthActivity)
-        mTagsEditText.setTagsWithSpacesEnabled(true)
-        mTagsEditText.setAdapter(
-            ArrayAdapter(
-                this, android.R.layout.simple_dropdown_item_1line, dietaryName
-            )
-        )
-        mTagsEditText.threshold = 1
 
         val rootLayout = findViewById<RelativeLayout>(R.id.rootLayout)
         val edit_date_of_first_aid_qualification =
@@ -243,10 +231,21 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             findViewById<ImageView>(R.id.qualification_First_yes_icon)
         val qualification_First_no_img = findViewById<ImageView>(R.id.qualification_First_no_img)
 
+        chipGroup_dietary = findViewById(R.id.chipGroup_dietary)
+        chipGroup_language = findViewById(R.id.chipGroup_language)
+        chipGroup_state = findViewById(R.id.chipGroup_state)
+
         checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
             Check_value = isChecked.toString()
         }
         header_title.text = intent.getStringExtra("TITLENAME")
+
+        chipGroup_dietary.isSingleSelection = false
+        chipGroup_dietary.isSingleLine = false
+        chipGroup_language.isSingleSelection = false
+        chipGroup_language.isSingleLine = false
+        chipGroup_state.isSingleSelection = false
+        chipGroup_state.isSingleLine = false
 
 
         if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
@@ -262,40 +261,32 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             ).show()
         }
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        qualification_file.setOnClickListener {
+        qualification_file.setOnClickListener(DebouncedClickListener {
             if (!checkPermission()) {
                 requestPermission()
             } else {
                 openFileUploadDialog()
             }
-        }
+        })
+
 
         if (intent.getStringExtra("IS_SELF") != "self") { //  profile or add family
+            check_box_layout.visibility = View.GONE
             if (intent.getStringExtra("TITLENAME") == "Profile") { //  only profile
 
-                check_box_layout.visibility = View.GONE
+//                check_box_layout.visibility = View.GONE
                 edit_medical_information_details.setText(sessionManager.fetchMEDICAL_OTHER_INFO())
                 edit_date_of_first_aid_qualification.text = sessionManager.fetchQUALIFICATION_DATE()
                 edit_qualification_file.text = sessionManager.fetchQUALIFICATION_FILE()
-                dietary_txt.text = sessionManager.fetchDIETARY()
-                spoken_language_txt.text = sessionManager.fetchSPOKKENLANGUAGE()
-                edit_originating_state_in_india.setSelection(originName.indexOf(sessionManager.fetchSTATE_IN_INDIA()))
 //                edit_aid_type.setSelection(firstAidInfoName.indexOf(sessionManager.fetchQUALIFICATION_VALUE())) // nik
-
-
-                Functions.printLog("MEDICAL_OTHER_INFO", sessionManager.fetchMEDICAL_OTHER_INFO())
-                Functions.printLog("QUALIFICATION_DATE", sessionManager.fetchQUALIFICATION_DATE())
-                Functions.printLog("QUALIFICATION_FILE", sessionManager.fetchQUALIFICATION_FILE())
-                Functions.printLog("STATE_IN_INDIA", sessionManager.fetchSTATE_IN_INDIA())
-
                 if (sessionManager.fetchDOHAVEMEDICAL() == "1") {
                     medical_information_view.setBackgroundResource(R.drawable.edit_primery_color_round)
                     medical_information_no_view.setBackgroundResource(R.drawable.edittext_round)
@@ -372,7 +363,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         agreement_txt.text = span
         agreement_txt.movementMethod = LinkMovementMethod.getInstance()
 
-        medical_information_view.setOnClickListener {
+        medical_information_view.setOnClickListener(DebouncedClickListener {
             medical_information_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             medical_information_no_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -387,9 +378,9 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             medical_information_details_view.visibility = View.VISIBLE
 
             medical_info = "1"
-        }
+        })
 
-        medical_information_no_view.setOnClickListener {
+        medical_information_no_view.setOnClickListener(DebouncedClickListener {
             medical_information_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             medical_information_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -404,9 +395,9 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             medical_information_details_view.visibility = View.GONE
 
             medical_info = "0"
-        }
+        })
 
-        qualification_First_view.setOnClickListener {
+        qualification_First_view.setOnClickListener(DebouncedClickListener {
             qualification_First_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             qualification_First_no_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -428,19 +419,12 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             }
             DebugLog.e("visibile value 1   " + visible_value)
             setFirstAidInfo(visible_value)
-
-
             edit_aid_type.setTitle("Select First Aid Qualification Type")
             edit_aid_type.setSelection(0)
-
-//            }
-//            date_of_first_aid_qualification_view.visibility = View.VISIBLE
-//            qualification_file_view.visibility = View.VISIBLE
-//            professionl_body_regi_view.visibility = View.VISIBLE
             qualified_info = "1"
-        }
+        })
 
-        qualification_First_no_view.setOnClickListener {
+        qualification_First_no_view.setOnClickListener(DebouncedClickListener {
             qualification_First_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             qualification_First_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -457,117 +441,69 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             professionl_body_regi_view.visibility = View.GONE
 
             qualified_info = "0"
-        }
+        })
 
-        Log.d(
-            "Fetch_Data three-->",
-            "  --FIRST_NAME : " + intent.getStringExtra("FIRST_NAME") + "  --MIDDLE_NAME : " + intent.getStringExtra(
-                "MIDDLE_NAME"
-            ) + "  --LAST_NAME : " + intent.getStringExtra("LAST_NAME") + "  --USERNAME : " + intent.getStringExtra(
-                "USERNAME"
-            ) + "  --EMAIL : " + intent.getStringExtra("EMAIL") + "  --PASSWORD : " + intent.getStringExtra(
-                "PASSWORD"
-            ) + "  --GENDER: " + intent.getStringExtra("GENDER") + "  --DOB: " + intent.getStringExtra(
-                "DOB"
-            ) + "  --RELATIONSHIP: " + intent.getStringExtra("RELATIONSHIP") + "  --OTHER_RELATIONSHIP: " + intent.getStringExtra(
-                "OTHER_RELATIONSHIP"
-            ) + "  --OCCUPATION: " + intent.getStringExtra("OCCUPATION") + "  --OCCUPATION_NAME: " + intent.getStringExtra(
-                "OCCUPATION_NAME"
-            ) + "  --SHAKHA: " + intent.getStringExtra("SHAKHA") + "  --AGE: " + intent.getStringExtra(
-                "AGE"
-            ) + "  --IS_LINKED: " + intent.getStringExtra("IS_LINKED") + "  --IS_SELF: " + intent.getStringExtra(
-                "IS_SELF"
-            ) + "  --TYPE: " + intent.getStringExtra("TYPE") + "  --PARENT_MEMBER: " + intent.getStringExtra(
-                "PARENT_MEMBER"
-            ) + "  --MOBILE: " + intent.getStringExtra("MOBILE") + "  --SECOND_EMAIL: " + intent.getStringExtra(
-                "SECOND_EMAIL"
-            ) + "  --LAND_LINE: " + intent.getStringExtra("LAND_LINE") + "  --POST_CODE: " + intent.getStringExtra(
-                "POST_CODE"
-            ) + "  --BUILDING_NAME: " + intent.getStringExtra("BUILDING_NAME") + "  --ADDRESS_ONE: " + intent.getStringExtra(
-                "ADDRESS_ONE"
-            ) + "  --ADDRESS_TWO: " + intent.getStringExtra("ADDRESS_TWO") + "  --POST_TOWN: " + intent.getStringExtra(
-                "POST_TOWN"
-            ) + "  --COUNTY: " + intent.getStringExtra("COUNTY") + "  --EMERGENCY_NAME: " + intent.getStringExtra(
-                "EMERGENCY_NAME"
-            ) + "  --EMERGENCY_PHONE: " + intent.getStringExtra("EMERGENCY_PHONE") + "  --EMERGENCY_EMAIL: " + intent.getStringExtra(
-                "EMERGENCY_EMAIL"
-            ) + "  --EMERGENCY_RELATIONSHIP: " + intent.getStringExtra("EMERGENCY_RELATIONSHIP") + "  --OTHER_EMERGENCY_RELATIONSHIP: " + intent.getStringExtra(
-                "OTHER_EMERGENCY_RELATIONSHIP"
-            )
-        )
-
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             /*Add Member First*/
-            val first_name = intent.getStringExtra("FIRST_NAME")
-            val middle_name = intent.getStringExtra("MIDDLE_NAME")
-            val last_name = intent.getStringExtra("LAST_NAME")
-            val username = intent.getStringExtra("USERNAME")
-            val email = intent.getStringExtra("EMAIL")
-            val password = intent.getStringExtra("PASSWORD")
-            val gender = intent.getStringExtra("GENDER")
-            val dob = intent.getStringExtra("DOB")
-            val age = intent.getStringExtra("AGE")
-            val relationship = intent.getStringExtra("RELATIONSHIP")
-            val other_relationship = intent.getStringExtra("OTHER_RELATIONSHIP")
-            val occupation = intent.getStringExtra("OCCUPATION")
-            val occupation_name = intent.getStringExtra("OCCUPATION_NAME")
-            val shakha = intent.getStringExtra("SHAKHA")
-
-            /*Add Member Second*/
-            val mobile = intent.getStringExtra("MOBILE")
-            val land_line = intent.getStringExtra("LAND_LINE")
-            val second_email = intent.getStringExtra("SECOND_EMAIL")
-            val post_code = intent.getStringExtra("POST_CODE")
-            val building_name = intent.getStringExtra("BUILDING_NAME")
-            val address_line_1 = intent.getStringExtra("ADDRESS_ONE")
-            val address_line_2 = intent.getStringExtra("ADDRESS_TWO")
-            val post_town = intent.getStringExtra("POST_TOWN")
-            val county = intent.getStringExtra("COUNTY")
-
-            /*Add Member Third*/
-            val emergency_name = intent.getStringExtra("EMERGENCY_NAME")
-            val emergency_phone = intent.getStringExtra("EMERGENCY_PHONE")
-            val emergency_email = intent.getStringExtra("EMERGENCY_EMAIL")
-            val emergency_relatioship = intent.getStringExtra("EMERGENCY_RELATIONSHIP")
-            val other_emergency_relationship = intent.getStringExtra("OTHER_EMERGENCY_RELATIONSHIP")
-
-            /*Add Member Fourth*/
-            val medical_information = medical_info
-            val provide_details = edit_medical_information_details.text.toString()
-            val is_qualified_in_first_aid = qualified_info
-            val date_of_first_aid_qualification =
-                edit_date_of_first_aid_qualification.text.toString()
-            val qualification_file = Upload_file  //edit_qualification_file.text.toString()
-            val special_med_dietry_info = DIETARY_ID
-            val language = SPOKEN_ID
-            val state = ORIGIN_ID
-            val firstAid: String = FIRSTAID_ID
-
-            /*Default*/
-            val parent_member_id = intent.getStringExtra("PARENT_MEMBER")
-            val type = intent.getStringExtra("TYPE")
-            val is_linked = intent.getStringExtra("IS_LINKED")
-            val is_self = intent.getStringExtra("IS_SELF")
-            val app = "yes"
+            checkDeitaryIds()
+            checkLanguageIds()
+            checkStateIds()
 
             if (medical_info == "") {
                 Snackbar.make(
-                    rootLayout, "Please select medical information", Snackbar.LENGTH_SHORT
+                    rootLayout,
+                    "Please select the medical information",
+                    Snackbar.LENGTH_SHORT
                 ).show()
-                return@setOnClickListener
+                return@DebouncedClickListener
+            } else if (medical_info == "1" && edit_medical_information_details.text.toString()
+                    .isEmpty()
+            ) {
+                Snackbar.make(
+                    rootLayout,
+                    "Please add medical information data.",
+                    Snackbar.LENGTH_SHORT
+                ).show()
             } else if (qualified_info == "") {
                 Snackbar.make(
-                    rootLayout, "Please select qualification information", Snackbar.LENGTH_SHORT
+                    rootLayout,
+                    "Please select the qualification information",
+                    Snackbar.LENGTH_SHORT
                 ).show()
-                return@setOnClickListener
-//            } else if (Check_value != "true") {
-//                Snackbar.make(
-//                    rootLayout,
-//                    "Please check Membership AgreementHSS",
-//                    Snackbar.LENGTH_SHORT
-//                )
-//                    .show()
-//                return@setOnClickListener
+                return@DebouncedClickListener
+            } else if (qualified_info == "1" && isDocApload && edit_date_of_first_aid_qualification.text.toString()
+                    .isNullOrEmpty()
+            ) {
+                Snackbar.make(
+                    rootLayout,
+                    "Please select the date of First Aid qualification",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                edit_date_of_first_aid_qualification.requestFocus()
+                return@DebouncedClickListener
+
+            } else if (qualified_info == "1" && isDocApload && edit_qualification_file.text.toString()
+                    .isNullOrEmpty()
+            ) {
+                Snackbar.make(
+                    rootLayout,
+                    "Please select the file for First Aid qualification",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                edit_qualification_file.requestFocus()
+                return@DebouncedClickListener
+
+            } else if (qualified_info == "1" && !isDocApload && edit_profe_body_regis_num.text.toString()
+                    .isNullOrEmpty()
+            ) {
+                Snackbar.make(
+                    rootLayout,
+                    "Please enter the professional body registration number",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                edit_profe_body_regis_num.requestFocus()
+                return@DebouncedClickListener
+
             } else {
                 DebugLog.e("qualified_info : " + qualified_info)
                 if (qualified_info == "0") {// docs upload = no
@@ -595,7 +531,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                 "Please check Membership AgreementHSS",
                                 Snackbar.LENGTH_SHORT
                             ).show()
-                            return@setOnClickListener
+                            return@DebouncedClickListener
                         } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             callMembershipApi("self", false)
                             DebugLog.e("Add Self =>  Without Image")
@@ -633,7 +569,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                 "Please check Membership AgreementHSS",
                                 Snackbar.LENGTH_SHORT
                             ).show()
-                            return@setOnClickListener
+                            return@DebouncedClickListener
                         } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             callMembershipApi("self", true)
                             DebugLog.e("Add Self :  with doc file")
@@ -647,9 +583,9 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                     }
                 }
             }
-        }
+        })
 
-        edit_date_of_first_aid_qualification.setOnClickListener {
+        edit_date_of_first_aid_qualification.setOnClickListener(DebouncedClickListener {
             calendar = Calendar.getInstance()
 //            calendar.add(Calendar.YEAR, -3)
 
@@ -677,7 +613,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 //            calendar.add(Calendar.YEAR, 0)
 //            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
-        }
+        })
 
         edit_special_dietary_requirements.onItemSelectedListener = mOnItemSelectedListener_dietary
         edit_spoken_language.onItemSelectedListener = mOnItemSelectedListener_spoken
@@ -689,23 +625,9 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         edit_originating_state_in_india.setTitle("Select Originationg State In India")
         edit_aid_type.setTitle("Select First Aid Qualification Type")
 
-        originating_state_in_india_view.setOnClickListener {
-//            SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
-            SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
-        }
-
-        spoken_language_view.setOnClickListener {
-            SearchSpinner(spokenName.toTypedArray(), edit_spoken_language)
-        }
-
-        special_dietary_requirements_view.setOnClickListener {
-//            SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
-            SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
-        }
-
-        first_aid_type_view.setOnClickListener {
+        first_aid_type_view.setOnClickListener(DebouncedClickListener {
             SearchSpinner(firstAidInfoName.toTypedArray(), edit_aid_type)
-        }
+        })
 
     }
 
@@ -720,46 +642,45 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 
         if (intent.getStringExtra("TYPE_SELF") != "self") {
             if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
-                edit_special_dietary_requirements.setSelection(dietaryName.indexOf(sessionManager.fetchDIETARY()))
-                edit_spoken_language.setSelection(spokenName.indexOf(sessionManager.fetchSPOKKENLANGUAGE()))
-                edit_originating_state_in_india.setSelection(originName.indexOf(sessionManager.fetchSTATE_IN_INDIA()))
+                if (sessionManager.fetchDIETARY()?.isNotEmpty() == true) {
+                    val inputString = sessionManager.fetchDIETARY()
+                    val parts = inputString?.split(", ")
+                    for (part in parts!!) {
+                        addDietaryChip(part)
+                    }
+                }
+                if (sessionManager.fetchSPOKKENLANGUAGE()?.isNotEmpty() == true) {
+                    val inputString = sessionManager.fetchSPOKKENLANGUAGE()
+                    val parts = inputString?.split(", ")
+                    for (part in parts!!) {
+                        addLanguageChip(part)
+                    }
+                }
+                if (sessionManager.fetchSTATE_IN_INDIA()?.isNotEmpty() == true) {
+                    val inputString = sessionManager.fetchSTATE_IN_INDIA()
+                    val parts = inputString?.split(", ")
+                    for (part in parts!!) {
+                        addStateChip(part)
+                    }
+                }
             }
         }
     }
+
 
     private val mOnItemSelectedListener_dietary: AdapterView.OnItemSelectedListener =
         object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-//            TODO("Not yet implemented")
-                Log.d("Name", dietaryName[position])
-                Log.d("Postion", dietaryID[position])
-                DIETARY_ID = dietaryID[position]
-
-                val N = dietaryID.size
-
-                dietary_txt_layout.visibility = View.VISIBLE
-
-                dietary_txt.text = dietaryName[position]
-
-                for (i in 0..N) {
-
-                    dietary_txt_view.removeView(dietary_txt)
-                    dietary_txt_view.removeView(cross_item)
-                    dietary_txt_view.addView(dietary_txt)
-                    dietary_txt_view.addView(cross_item)
-
-                    cross_item.setOnClickListener {
-                        dietary_txt_view.removeView(dietary_txt)
-                    }
-
+                if (uiDietary) {
+                    addDietaryChip(dietaryName[position])
                 }
+                uiDietary = true
+//                edit_special_dietary_requirements.setSelection(0)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-                dietary_txt_layout.visibility = View.GONE
             }
         }
 
@@ -768,28 +689,15 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-//            TODO("Not yet implemented")
-                Log.d("Name", spokenName[position])
-                Log.d("Postion", spokenID[position])
-                SPOKEN_ID = spokenID[position]
-
-                spoken_language_txt_layout.visibility = View.VISIBLE
-
-                spoken_language_txt.text = spokenName[position]
-
-                spoken_language_txt_view.removeView(spoken_language_txt)
-                spoken_language_txt_view.removeView(spoken_languagecross_item)
-                spoken_language_txt_view.addView(spoken_language_txt)
-                spoken_language_txt_view.addView(spoken_languagecross_item)
-
-                spoken_languagecross_item.setOnClickListener {
-                    spoken_language_txt_view.removeView(spoken_language_txt)
+                if (uiLanguage) {
+                    addLanguageChip(spokenName[position])
                 }
+                uiLanguage = true
+//                edit_spoken_language.setSelection(0)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-                spoken_language_txt_layout.visibility = View.GONE
+
             }
         }
 
@@ -798,14 +706,14 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-//            TODO("Not yet implemented")
-                Log.d("Name", originName[position])
-                Log.d("Postion", originID[position])
-                ORIGIN_ID = originID[position]
+                if (uiState) {
+                    addStateChip(originName[position])
+                }
+                uiState = true
+//                edit_originating_state_in_india.setSelection(0)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
             }
         }
 
@@ -815,7 +723,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-//            TODO("Not yet implemented")
                 DebugLog.e("Name : " + firstAidInfoName[position])
                 DebugLog.e("Postion : " + firstAidInfoID[position])
                 FIRSTAID_ID = firstAidInfoID[position]
@@ -831,25 +738,34 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
 
         for (n in data_firstaidInfo.indices) {
             if (data_firstaidInfo.get(n).id == firstaidId) {
+
                 when (data_firstaidInfo.get(n).is_doc) {
                     "1" -> {
                         date_of_first_aid_qualification_view.visibility = View.VISIBLE
                         qualification_file_view.visibility = View.VISIBLE
                         professionl_body_regi_view.visibility = View.GONE
                         edit_profe_body_regis_num.setText("")
-
+                        isDocApload = true
                     }
 
                     "0" -> {
                         date_of_first_aid_qualification_view.visibility = View.GONE
                         qualification_file_view.visibility = View.GONE
                         professionl_body_regi_view.visibility = View.VISIBLE
-                        edit_profe_body_regis_num.setText(
-                            sessionManager.fetchQUALIFICATION_PRO_BODY_RED_NO().toString()
-                        )
+                        if (sessionManager.fetchQUALIFICATION_PRO_BODY_RED_NO()
+                                .toString() == "null" || sessionManager.fetchQUALIFICATION_PRO_BODY_RED_NO()
+                                .toString().isNullOrEmpty()
+                        ) {
+                            edit_profe_body_regis_num.setText("")
+                        } else {
+                            edit_profe_body_regis_num.setText(
+                                sessionManager.fetchQUALIFICATION_PRO_BODY_RED_NO().toString()
+                            )
+                        }
+                        isDocApload = false
                     }
                 }
-                edit_aid_type.setSelection(n) // nik
+                edit_aid_type.setSelection(n)
                 break
             }
         }
@@ -866,48 +782,29 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                 call: Call<Get_Dietaries_Response>, response: Response<Get_Dietaries_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
+                    DebugLog.d("Dietary status : " + response.body()?.status.toString())
                     if (response.body()?.status!!) {
-
-                        var data_relationship: List<Datum_Get_Dietaries> =
-                            ArrayList<Datum_Get_Dietaries>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d(
-                                "relationshipName",
-                                data_relationship[i].dietaryRequirementsName.toString()
-                            )
-                        }
-                        dietaryName = listOf(arrayOf(data_relationship).toString())
-                        dietaryID = listOf(arrayOf(data_relationship).toString())
+                        dietaryDataList = ArrayList<Datum_Get_Dietaries>()
+                        dietaryDataList = response.body()!!.data!!
+                        dietaryName = listOf(arrayOf(dietaryDataList).toString())
+                        dietaryID = listOf(arrayOf(dietaryDataList).toString())
 
                         val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
+                        for (i in 0 until dietaryDataList.size) {
                             mStringList.add(
 //                            data_relationship[i].memberRelationshipId.toString() +
-                                data_relationship[i].dietaryRequirementsName.toString()
+                                dietaryDataList[i].dietaryRequirementsName.toString()
                             )
                         }
 
                         val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
+                        for (i in 0 until dietaryDataList.size) {
                             mStringListnew.add(
-                                data_relationship[i].dietaryRequirementsId.toString()
+                                dietaryDataList[i].dietaryRequirementsId.toString()
                             )
                         }
-
                         var mStringArray = mStringList.toArray()
                         var mStringArraynew = mStringListnew.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
                         mStringArray = mStringList.toArray(mStringArray)
                         mStringArraynew = mStringListnew.toArray(mStringArraynew)
 
@@ -915,32 +812,22 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-                            Log.d("list==>", list.toString())
-
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                                 dietaryName =
                                     list//listOf(listn.toCollection(ArrayList()).toString())
                             }
                         }
-
                         for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
-
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                                 dietaryID =
                                     listnew//listOf(listn.toCollection(ArrayList()).toString())
                             }
                         }
-
-                        Log.d("dietaryName==>", dietaryName.toString())
                         SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
-
                     } else {
                         Functions.displayMessage(
                             this@AddMemberForthActivity, response.body()?.message
@@ -975,41 +862,30 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                     Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
 
-                        var data_relationship: List<Datum_Get_Language> =
+                        spokenLanguageDataList =
                             ArrayList<Datum_Get_Language>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d("relationshipName", data_relationship[i].languageName.toString())
-                        }
-                        spokenName = listOf(arrayOf(data_relationship).toString())
-                        spokenID = listOf(arrayOf(data_relationship).toString())
+                        spokenLanguageDataList = response.body()!!.data!!
+
+                        spokenName = listOf(arrayOf(spokenLanguageDataList).toString())
+                        spokenID = listOf(arrayOf(spokenLanguageDataList).toString())
 
                         val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
+                        for (i in 0 until spokenLanguageDataList.size) {
                             mStringList.add(
 //                            data_relationship[i].memberRelationshipId.toString() +
-                                data_relationship[i].languageName.toString()
+                                spokenLanguageDataList[i].languageName.toString()
                             )
                         }
 
                         val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
+                        for (i in 0 until spokenLanguageDataList.size) {
                             mStringListnew.add(
-                                data_relationship[i].languageId.toString()
+                                spokenLanguageDataList[i].languageId.toString()
                             )
                         }
 
                         var mStringArray = mStringList.toArray()
                         var mStringArraynew = mStringListnew.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
 
                         mStringArray = mStringList.toArray(mStringArray)
                         mStringArraynew = mStringListnew.toArray(mStringArraynew)
@@ -1018,9 +894,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-                            Log.d("list==>", list.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1030,9 +904,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         }
 
                         for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1040,8 +912,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                     listnew//listOf(listn.toCollection(ArrayList()).toString())
                             }
                         }
-
-                        Log.d("spokenName==>", spokenName.toString())
                         SearchSpinner(spokenName.toTypedArray(), edit_spoken_language)
 
                     } else {
@@ -1079,41 +949,28 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                     Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
 
-                        var data_relationship: List<Datum_Get_Indianstates> =
-                            ArrayList<Datum_Get_Indianstates>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d("relationshipName", data_relationship[i].stateName.toString())
-                        }
-                        originName = listOf(arrayOf(data_relationship).toString())
-                        originID = listOf(arrayOf(data_relationship).toString())
+                        stateDataList = ArrayList<Datum_Get_Indianstates>()
+                        stateDataList = response.body()!!.data!!
+                        originName = listOf(arrayOf(stateDataList).toString())
+                        originID = listOf(arrayOf(stateDataList).toString())
 
                         val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
+                        for (i in 0 until stateDataList.size) {
                             mStringList.add(
 //                            data_relationship[i].memberRelationshipId.toString() +
-                                data_relationship[i].stateName.toString()
+                                stateDataList[i].stateName.toString()
                             )
                         }
 
                         val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
+                        for (i in 0 until stateDataList.size) {
                             mStringListnew.add(
-                                data_relationship[i].indianStateListId.toString()
+                                stateDataList[i].indianStateListId.toString()
                             )
                         }
 
                         var mStringArray = mStringList.toArray()
                         var mStringArraynew = mStringList.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
 
                         mStringArray = mStringList.toArray(mStringArray)
                         mStringArraynew = mStringListnew.toArray(mStringArraynew)
@@ -1122,10 +979,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         val listnew: ArrayList<String> = arrayListOf<String>()
 
                         for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
                             list.add(element.toString())
-                            Log.d("list==>", list.toString())
-
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                                 originName =
@@ -1134,9 +988,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         }
 
                         for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
                             listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
 
                             val listn = arrayOf(element)
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -1144,19 +996,11 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                     listnew//listOf(listn.toCollection(ArrayList()).toString())
                             }
                         }
-
-                        Log.d("originName==>", originName.toString())
                         SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
-
                     } else {
                         Functions.displayMessage(
                             this@AddMemberForthActivity, response.body()?.message
                         )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberForthActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -1289,24 +1133,7 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
-            mTagsEditText.showDropDown()
-        }
-    }
-
-    override fun onTagsChanged(tags: Collection<String?>) {
-        Log.d("TAG", "Tags changed: ")
-        Log.d("TAG", tags.toTypedArray().contentToString())
-        Log.d("TAG", tags.toString())
-        dietary_txt_layout.visibility = View.VISIBLE
-        dietary_txt.text = tags.toString()
-        dietary_txt_view.addView(dietary_txt)
-        dietary_txt_view.addView(cross_item)
-    }
-
-    override fun onEditingFinished() {
-        Log.d("TAG", "OnEditing finished")
-        cross_item.setOnClickListener {
-            dietary_txt_view.removeView(dietary_txt)
+//            mTagsEditText.showDropDown()
         }
     }
 
@@ -1445,8 +1272,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             } ?: ""
             DebugLog.e("$key: $value")
         }
-
-
         val call: Call<JsonObject> =
             MyHssApplication.instance!!.api.postAddOrCreateMembership(requestBody)
         call.enqueue(object : Callback<JsonObject> {
@@ -1636,7 +1461,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             DebugLog.e("$key: $value")
         }
 
-
         val call: Call<JsonObject> =
             MyHssApplication.instance!!.api.postUpdateMembership(requestBody)
         call.enqueue(object : Callback<JsonObject> {
@@ -1689,18 +1513,18 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         val btn_image = view_d.findViewById<LinearLayout>(R.id.select_gallery)
         val btn_pdf = view_d.findViewById<LinearLayout>(R.id.select_pdf)
 
-        btnClose.setOnClickListener {
+        btnClose.setOnClickListener(DebouncedClickListener {
             dialog.dismiss()
-        }
+        })
 
-        btn_image.setOnClickListener {
+        btn_image.setOnClickListener(DebouncedClickListener {
             openGalleryForImage()
             dialog.dismiss()
-        }
-        btn_pdf.setOnClickListener {
+        })
+        btn_pdf.setOnClickListener(DebouncedClickListener {
             showFileChooserforPDF()
             dialog.dismiss()
-        }
+        })
         dialog.setCancelable(true)
         dialog.setContentView(view_d)
         dialog.show()
@@ -1846,27 +1670,13 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                     applicationContext,
                     Manifest.permission.READ_MEDIA_IMAGES
                 )
-//            val result2 = ContextCompat.checkSelfPermission(
-//                applicationContext,
-//                Manifest.permission.READ_EXTERNAL_STORAGE
-//            )
-//            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
-//            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
             return result1 == PackageManager.PERMISSION_GRANTED
-//                    && result2 == PackageManager.PERMISSION_GRANTED
-//                    && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED
-//                    && result4 == PackageManager.PERMISSION_GRANTED
         } else {
             val result1 = ContextCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
-//            val result2 = ContextCompat.checkSelfPermission(applicationContext, permission.CALL_PHONE)
-//            val result3 = ContextCompat.checkSelfPermission(applicationContext, permission.CAMERA)
-//            val result4 = ContextCompat.checkSelfPermission(applicationContext, permission.WRITE_EXTERNAL_STORAGE)
-
             return result1 == PackageManager.PERMISSION_GRANTED
-//                    && result2 == PackageManager.PERMISSION_GRANTED && result3 == PackageManager.PERMISSION_GRANTED && result4 == PackageManager.PERMISSION_GRANTED
         }
     }
 
@@ -1877,18 +1687,12 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             ActivityCompat.requestPermissions(
                 this, arrayOf(
                     Manifest.permission.READ_MEDIA_IMAGES
-//                    Manifest.permission.READ_EXTERNAL_STORAGE
-//                    permission.CAMERA
-//                    , permission.WRITE_EXTERNAL_STORAGE
                 ), PERMISSION_REQUEST_CODE
             )
         } else {
             ActivityCompat.requestPermissions(
                 this, arrayOf(
                     Manifest.permission.READ_EXTERNAL_STORAGE
-//                    permission.CALL_PHONE,
-//                    permission.CAMERA,
-//                    permission.WRITE_EXTERNAL_STORAGE
                 ), PERMISSION_REQUEST_CODE
             )
         }
@@ -1901,16 +1705,10 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PERMISSION_REQUEST_CODE -> if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-
                 val readAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
-//                val readExternalStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED
-//                val cameraAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//                    if (readAccepted && callAccepted && cameraAccepted) {
                     if (readAccepted) {
                         openFileUploadDialog()
-//                        Log.d("File_name", File_name)
                     } else {
                         if (shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_IMAGES)) {
                             showMessageOKCancel("You need to allow permission, in order to upload Qualification File",
@@ -1919,136 +1717,37 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                                         requestPermissions(
                                             arrayOf(
                                                 Manifest.permission.READ_MEDIA_IMAGES
-//                                                Manifest.permission.READ_EXTERNAL_STORAGE
-//                                                permission.CALL_PHONE,
-//                                                permission.CAMERA,
                                             ), PERMISSION_REQUEST_CODE
                                         )
                                     }
                                 })
                             return
-                        } /*else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                            showMessageOKCancel("You need to allow permission, in order to upload Qualification File",
-                                DialogInterface.OnClickListener { dialog, which ->
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                        requestPermissions(
-                                            arrayOf(
-                                                Manifest.permission.READ_MEDIA_IMAGES,
-                                                Manifest.permission.READ_EXTERNAL_STORAGE
-//                                                permission.CALL_PHONE,
-//                                                permission.CAMERA,
-                                            ), PERMISSION_REQUEST_CODE
-                                        )
-                                    }
-                                })
-                            return
-                        }*/ /* else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
-                            showMessageOKCancel("You need to allow access to phone the permissions",
-                                DialogInterface.OnClickListener { dialog, which ->
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                        requestPermissions(
-                                            arrayOf(
-                                                permission.READ_MEDIA_IMAGES,
-                                                permission.CALL_PHONE,
-                                                permission.CAMERA
-                                            ), PERMISSION_REQUEST_CODE
-                                        )
-                                    }
-                                })
-                            return
-                        } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
-                            showMessageOKCancel("You need to allow access to Camera the permissions",
-                                DialogInterface.OnClickListener { dialog, which ->
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                        requestPermissions(
-                                            arrayOf(
-                                                permission.READ_MEDIA_IMAGES,
-                                                permission.CALL_PHONE,
-                                                permission.CAMERA
-                                            ), PERMISSION_REQUEST_CODE
-                                        )
-                                    }
-                                })
-                            return
-                        }*/
+                        }
                     }
                 } else {
-//                    val writeAccepted = grantResults[3] == PackageManager.PERMISSION_GRANTED
-//                    if (writeAccepted && readAccepted && callAccepted && cameraAccepted) {
                     if (readAccepted) {
                         openFileUploadDialog()
                     } else {
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            /*if (shouldShowRequestPermissionRationale(permission.WRITE_EXTERNAL_STORAGE)) {
-                                showMessageOKCancel("You need to allow access to Write the permissions",
-                                    DialogInterface.OnClickListener { dialog, which ->
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                            requestPermissions(
-                                                arrayOf(
-                                                    permission.WRITE_EXTERNAL_STORAGE,
-                                                    permission.READ_EXTERNAL_STORAGE,
-                                                    permission.CALL_PHONE,
-                                                    permission.CAMERA,
-                                                ), PERMISSION_REQUEST_CODE
-                                            )
-                                        }
-                                    })
-                                return
-                            } else*/
                             if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                                 showMessageOKCancel("You need to allow permission, in order to upload Qualification File",
                                     DialogInterface.OnClickListener { dialog, which ->
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                                             requestPermissions(
                                                 arrayOf(
-//                                                    permission.WRITE_EXTERNAL_STORAGE,
                                                     Manifest.permission.READ_EXTERNAL_STORAGE
-//                                                    permission.CALL_PHONE,
-//                                                    permission.CAMERA,
                                                 ), PERMISSION_REQUEST_CODE
                                             )
                                         }
                                     })
                                 return
-                            } /*else if (shouldShowRequestPermissionRationale(permission.CALL_PHONE)) {
-                                showMessageOKCancel("You need to allow access to phone the permissions",
-                                    DialogInterface.OnClickListener { dialog, which ->
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                            requestPermissions(
-                                                arrayOf(
-                                                    permission.WRITE_EXTERNAL_STORAGE,
-                                                    permission.READ_EXTERNAL_STORAGE,
-                                                    permission.CALL_PHONE,
-                                                    permission.CAMERA
-                                                ), PERMISSION_REQUEST_CODE
-                                            )
-                                        }
-                                    })
-                                return
-                            } else if (shouldShowRequestPermissionRationale(permission.CAMERA)) {
-                                showMessageOKCancel("You need to allow access to Camera the permissions",
-                                    DialogInterface.OnClickListener { dialog, which ->
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                            requestPermissions(
-                                                arrayOf(
-                                                    permission.WRITE_EXTERNAL_STORAGE,
-                                                    permission.READ_EXTERNAL_STORAGE,
-                                                    permission.CALL_PHONE,
-                                                    permission.CAMERA
-                                                ), PERMISSION_REQUEST_CODE
-                                            )
-                                        }
-                                    })
-                                return
-                            }*/
+                            }
                         }
                     }
                 }
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CALL_PHONE)
-                    //  || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CAMERA)
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(
                             this,
                             Manifest.permission.READ_MEDIA_IMAGES
@@ -2059,9 +1758,6 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
                         reRequestPermissionAccessDialog()
                     }
                 } else {
-                    //|| !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CALL_PHONE)
-                    // || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.CAMERA)
-                    // || !ActivityCompat.shouldShowRequestPermissionRationale(this, permission.WRITE_EXTERNAL_STORAGE)
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(
                             this, Manifest.permission.READ_EXTERNAL_STORAGE
                         )
@@ -2120,4 +1816,126 @@ class AddMemberForthActivity : AppCompatActivity(), TagsEditText.TagsEditListene
             ) { dialogInterface, i -> finishAffinity() }.create().show()
     }
 
+    private fun addDietaryChip(sLabel: String) {
+        val isChipAlreadyAdded = chipGroup_dietary.children.any { view ->
+            (view is Chip) && (view.text == sLabel)
+        }
+        if (!isChipAlreadyAdded) {
+            val chip = Chip(this)
+            chip.text = sLabel
+            chip.isCloseIconVisible = true
+            chip.setChipBackgroundColorResource(android.R.color.transparent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                chip.chipStrokeColor = getColorStateList(R.color.primaryColor)
+            }
+            chip.chipStrokeWidth = 2f
+            chip.setOnCloseIconClickListener {
+                chipGroup_dietary.removeView(chip)
+            }
+            chipGroup_dietary.addView(chip)
+        }
+    }
+
+    private fun checkDeitaryIds(): String {
+        DIETARY_ID = ""
+        for (i in 0 until chipGroup_dietary.childCount) {
+            val chip = chipGroup_dietary.getChildAt(i)
+            if (chip is Chip) {
+                val chipText = chip.text.toString()
+
+                for (dietaryItem in dietaryDataList) {
+                    if (chipText == dietaryItem.dietaryRequirementsName) {
+                        DIETARY_ID = if (DIETARY_ID.isEmpty())
+                            dietaryItem.dietaryRequirementsId.toString()
+                        else
+                            DIETARY_ID + ", " + dietaryItem.dietaryRequirementsId.toString()
+                        break
+                    }
+                }
+            }
+        }
+        return DIETARY_ID
+    }
+
+    private fun addLanguageChip(sLabel: String) {
+        val isChipAlreadyAdded = chipGroup_language.children.any { view ->
+            (view is Chip) && (view.text == sLabel)
+        }
+        if (!isChipAlreadyAdded) {
+            val chip = Chip(this)
+            chip.text = sLabel
+            chip.isCloseIconVisible = true
+            chip.setChipBackgroundColorResource(android.R.color.transparent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                chip.chipStrokeColor = getColorStateList(R.color.primaryColor)
+            }
+            chip.chipStrokeWidth = 2f
+            chip.setOnCloseIconClickListener {
+                chipGroup_language.removeView(chip)
+            }
+            chipGroup_language.addView(chip)
+        }
+    }
+
+    private fun checkLanguageIds(): String {
+        SPOKEN_ID = ""
+        for (i in 0 until chipGroup_language.childCount) {
+            val chip = chipGroup_language.getChildAt(i)
+            if (chip is Chip) {
+                val chipText = chip.text.toString()
+
+                for (languageItem in spokenLanguageDataList) {
+                    if (chipText == languageItem.languageName) {
+                        SPOKEN_ID = if (SPOKEN_ID.isEmpty())
+                            languageItem.languageId.toString()
+                        else
+                            SPOKEN_ID + ", " + languageItem.languageId.toString()
+                        break
+                    }
+                }
+            }
+        }
+        return SPOKEN_ID
+    }
+
+    private fun addStateChip(sLabel: String) {
+        val isChipAlreadyAdded = chipGroup_state.children.any { view ->
+            (view is Chip) && (view.text == sLabel)
+        }
+        if (!isChipAlreadyAdded) {
+            val chip = Chip(this)
+            chip.text = sLabel
+            chip.isCloseIconVisible = true
+            chip.setChipBackgroundColorResource(android.R.color.transparent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                chip.chipStrokeColor = getColorStateList(R.color.primaryColor)
+            }
+            chip.chipStrokeWidth = 2f
+            chip.setOnCloseIconClickListener {
+                chipGroup_state.removeView(chip)
+            }
+            chipGroup_state.addView(chip)
+        }
+    }
+
+    private fun checkStateIds(): String {
+        ORIGIN_ID = ""
+        for (i in 0 until chipGroup_state.childCount) {
+            val chip = chipGroup_state.getChildAt(i)
+            if (chip is Chip) {
+                val chipText = chip.text.toString()
+
+                for (stateItem in stateDataList) {
+                    if (chipText == stateItem.stateName) {
+                        ORIGIN_ID = if (ORIGIN_ID.isEmpty())
+                            stateItem.indianStateListId.toString()
+                        else
+                            ORIGIN_ID + ", " + stateItem.indianStateListId.toString()
+                        break
+                    }
+                }
+            }
+        }
+        return ORIGIN_ID
+    }
 }

@@ -18,6 +18,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.ui.profile.DialogViewCertificate
@@ -45,6 +46,8 @@ class OtherInfoFragment : Fragment() {
     lateinit var qualification_first_file_download: TextView
     lateinit var txt_first_aid_qua_type: TextView
     lateinit var txt_pro_body_reg_no: TextView
+    lateinit var txt_dietary_req: TextView
+    lateinit var txt_originating: TextView
     lateinit var image_file_view: ImageView
     lateinit var mainedit_layout: LinearLayout
     lateinit var medical_information_yesview: LinearLayout
@@ -96,6 +99,8 @@ class OtherInfoFragment : Fragment() {
             root.findViewById(R.id.layout_first_aid_qualification_file)
         layout_first_aid_pro_body = root.findViewById(R.id.layout_first_aid_pro_body)
         txt_pro_body_reg_no = root.findViewById(R.id.txt_pro_body_reg_no)
+        txt_dietary_req = root.findViewById(R.id.txt_dietary_req)
+        txt_originating = root.findViewById(R.id.txt_originating)
 
         if (sessionManager.fetchDOHAVEMEDICAL() == "1") {
             medical_info_yes_no_txt.text = getString(R.string.yes)
@@ -123,7 +128,10 @@ class OtherInfoFragment : Fragment() {
 
                 Glide.with(requireContext())
                     .load(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
-                    .apply(RequestOptions.placeholderOf(R.drawable.ic_loading_img).error(R.drawable.ic_error))
+                    .apply(
+                        RequestOptions.placeholderOf(R.drawable.ic_loading_img)
+                            .error(R.drawable.ic_error)
+                    )
                     .into(image_file_view)
 
             } else {
@@ -152,24 +160,35 @@ class OtherInfoFragment : Fragment() {
             }
         }
 
-        qualification_first_file_view.setOnClickListener {
-            DialogViewCertificate().show(childFragmentManager, "DialogViewCertificate.TAG")
+        if (sessionManager.fetchDIETARY() != "") {
+            txt_dietary_req.text = sessionManager.fetchDIETARY().toString()
+        } else {
+            txt_dietary_req.text = "-"
+        }
+        if (sessionManager.fetchSTATE_IN_INDIA() != "") {
+            txt_originating.text = sessionManager.fetchSTATE_IN_INDIA().toString()
+        } else {
+            txt_originating.text = "-"
         }
 
-        qualification_first_file_download.setOnClickListener {
+        qualification_first_file_view.setOnClickListener(DebouncedClickListener {
+            DialogViewCertificate().show(childFragmentManager, "DialogViewCertificate.TAG")
+        })
+
+        qualification_first_file_download.setOnClickListener(DebouncedClickListener {
             val browserIntent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
             )
             startActivity(browserIntent)
-        }
+        })
 
-        mainedit_layout.setOnClickListener {
+        mainedit_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family")
             i.putExtra("FAMILY", "PROFILE")
             startActivity(i)
-        }
+        })
         return root
     }
 }

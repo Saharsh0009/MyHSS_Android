@@ -56,6 +56,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 
 import com.google.android.gms.location.LocationRequest
+import com.myhss.Utils.DebouncedClickListener
 
 
 class AllShakhaListActivity : AppCompatActivity() {
@@ -131,19 +132,19 @@ class AllShakhaListActivity : AppCompatActivity() {
 
         header_title.text = "Find a Shakha"//getString(R.string.all_shakha)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@AllShakhaListActivity, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
+        })
 
-        map_icon.setOnClickListener {
+        map_icon.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@AllShakhaListActivity, MapsActivity::class.java)
             i.putExtra("Sorted_List", shakhalistsort.toString())
             startActivity(i)
             finishAffinity()
             overridePendingTransition(R.anim.rotate_in, R.anim.rotate_out)
-        }
+        })
 
 //        Handler().postDelayed({
 //        startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));

@@ -11,6 +11,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.uk.myhss.R
 import com.myhss.Utils.InputFilterMinMax
@@ -28,6 +29,7 @@ class GuruDakshinaOneTimeFirstActivity() : AppCompatActivity() {
 
     private lateinit var user_name: TextView
     private lateinit var shakha_name: TextView
+    private lateinit var img_payment_step_one: ImageView
 
     private lateinit var next_layout: LinearLayout
     private lateinit var rootLayout: LinearLayout
@@ -61,14 +63,18 @@ class GuruDakshinaOneTimeFirstActivity() : AppCompatActivity() {
         next_layout = findViewById(R.id.next_layout)
         edit_amount = findViewById(R.id.edit_amount)
         rootLayout = findViewById(R.id.rootLayout)
+        img_payment_step_one = findViewById(R.id.img_payment_step_one)
 
         user_name.text = sessionManager.fetchUSERNAME()!!.capitalize(Locale.ROOT)
         shakha_name.text = sessionManager.fetchSHAKHANAME()!!.capitalize(Locale.ROOT)
 
-        back_arrow.setOnClickListener {
+        img_payment_step_one.setImageResource(R.drawable.addmember_step1)
+
+
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
-        next_layout.setOnClickListener {
+        })
+        next_layout.setOnClickListener(DebouncedClickListener {
             Amount = edit_amount.text.toString()
             edit_amount.filters = arrayOf<InputFilter>(InputFilterMinMax("1", "10000"))
             if (edit_amount.text.toString().isNotEmpty()) {
@@ -86,6 +92,6 @@ class GuruDakshinaOneTimeFirstActivity() : AppCompatActivity() {
             } else {
                 Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 }

@@ -85,6 +85,7 @@ import android.R.attr.data
 import android.provider.Settings
 import com.blikoon.qrcodescanner.QrCodeActivity
 import com.myhss.QRCode.CaptureActivityPortrait
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.appConstants.AppParam
 import com.myhss.ui.SuchanaBoard.SuchanaBoardActivity
@@ -208,7 +209,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         notification_img.visibility = View.GONE
         scan_qr_img.visibility = View.GONE
 
-        scan_qr_img.setOnClickListener {
+        scan_qr_img.setOnClickListener(DebouncedClickListener {
 //            val i = Intent(this@HomeActivity, QRCodeFragment::class.java)
 //            startActivity(i)
             val integrator = IntentIntegrator(this@HomeActivity)
@@ -221,17 +222,17 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             integrator.setTorchEnabled(true)
             integrator.setOrientationLocked(true)
             integrator.initiateScan()
-        }
+        })
 
         notification_img.visibility = View.GONE
-        notification_img.setOnClickListener {
+        notification_img.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@HomeActivity, NotificationList::class.java)
             startActivity(i)
 
             /*val NotificationListFragment = NotificationList()
             supportFragmentManager.beginTransaction()
                 .replace(R.id.activity_main_content_id, NotificationListFragment).commit()*/
-        }
+        })
 
         if (Functions.isConnectingToInternet(this@HomeActivity)) {
             val user_id = sessionManager.fetchUserID()
@@ -751,13 +752,13 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             user_name.text = First_name + Last_name
         }
 
-        profile_view.setOnClickListener {
+        profile_view.setOnClickListener(DebouncedClickListener {
             Log.d("Hi", "Profile")
             openCloseNavigationDrawer()
             val i = Intent(this@HomeActivity, ProfileFragment::class.java)
             i.putExtra("FAMILY", i.getStringExtra("PROFILE"))
             startActivity(i)
-        }
+        })
 
         val sharedNameValue = sessionManager.fetchUSERNAME()
         Log.d("NAME-->", "default name: ${sharedNameValue}")

@@ -44,6 +44,7 @@ import com.myhss.AllShakha.Adapter.ShakhaAdapter
 import com.myhss.AllShakha.AllShakhaListActivity
 import com.myhss.AllShakha.ShakhaDetailsActivity
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.AddMember.Get_Shakha.Datum_Get_Shakha
@@ -183,7 +184,8 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 
             if (!Currlatitude!!.equals("") && !Currlongitude!!.equals("")) {
                 if (intent.getStringExtra("Sorted_List") == "Sorted_List") {
-                    shakhalistsort = intent.getSerializableExtra("Sorted_List") as ArrayList<Datum_Get_Shakha>
+                    shakhalistsort =
+                        intent.getSerializableExtra("Sorted_List") as ArrayList<Datum_Get_Shakha>
                     for (i in 0 until shakhalistsort.size) {
                         latitude = shakhalistsort[i].getLatitude()!!.toDouble()
                         longitude = shakhalistsort[i].getLongitude()!!.toDouble()
@@ -232,7 +234,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                                     );
 
                                     val pos: LatLng = arg0.position
-                                    val arryListPosition: Int  = getArrayListPositionnew(pos)
+                                    val arryListPosition: Int = getArrayListPositionnew(pos)
 
                                     CALLDIALOG(arryListPosition)
 
@@ -290,8 +292,14 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         menu_icon = findViewById(R.id.menu_icon)
         header_title = findViewById(R.id.header_title)
 
-        map_icon.setColorFilter(ContextCompat.getColor(this, R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY)
-        menu_icon.setColorFilter(ContextCompat.getColor(this, R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY)
+        map_icon.setColorFilter(
+            ContextCompat.getColor(this, R.color.white),
+            android.graphics.PorterDuff.Mode.MULTIPLY
+        )
+        menu_icon.setColorFilter(
+            ContextCompat.getColor(this, R.color.white),
+            android.graphics.PorterDuff.Mode.MULTIPLY
+        )
 
         menu_icon.visibility = View.VISIBLE
         header_title.text = "Find a Shakha"
@@ -312,13 +320,13 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 //            allmap_listview.visibility = View.VISIBLE
 //        }
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@MapsActivity, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
+        })
 
-        menu_icon.setOnClickListener {
+        menu_icon.setOnClickListener(DebouncedClickListener {
             val popupMenu = PopupMenu(this@MapsActivity, filter)
             popupMenu.menu.add("Shakha List")
             popupMenu.menu.add("Reload Map")
@@ -337,6 +345,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                         finishAffinity()
                         overridePendingTransition(R.anim.rotate_out, R.anim.rotate_in)
                     }
+
                     "Reload Map" -> {
                         search_fields.setText("")
                         CallAPI()
@@ -345,9 +354,9 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                 false
             }
             popupMenu.show()
-        }
+        })
 
-        map_icon.setOnClickListener {
+        map_icon.setOnClickListener(DebouncedClickListener {
 //            menu_icon.visibility = View.VISIBLE
 //            map_icon.visibility = View.GONE
 //            header_title.text = getString(R.string.all_shakha)
@@ -358,16 +367,16 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
             startActivity(i)
             finishAffinity()
             overridePendingTransition(R.anim.rotate_out, R.anim.rotate_in)
-        }
+        })
 
-        map_reload.setOnClickListener {
+        map_reload.setOnClickListener(DebouncedClickListener {
             search_fields.setText("")
             CallAPI()
-        }
+        })
 
         zoom_list = findViewById(R.id.zoom_list)
 
-        filter.setOnClickListener {
+        filter.setOnClickListener(DebouncedClickListener {
 //            Log.d("click", "Yes")
 //            if (flag) {
 //                zoom_spiner!!.visibility = View.GONE
@@ -397,6 +406,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                             )
                         )
                     }
+
                     "20 Miles" -> {
                         ZOOM_ID = "12"
                         Log.d("ZOOM_ID", ZOOM_ID)
@@ -409,6 +419,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                             )
                         )
                     }
+
                     "30 Miles" -> {
                         ZOOM_ID = "13"
                         Log.d("ZOOM_ID", ZOOM_ID)
@@ -421,6 +432,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                             )
                         )
                     }
+
                     "40 Miles" -> {
                         ZOOM_ID = "14"
                         Log.d("ZOOM_ID", ZOOM_ID)
@@ -433,6 +445,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                             )
                         )
                     }
+
                     "50 Miles" -> {
                         ZOOM_ID = "15"
                         Log.d("ZOOM_ID", ZOOM_ID)
@@ -449,11 +462,11 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                 false
             }
             popupMenu.show()
-        }
+        })
 
         edit_Filter.setTitle("Search Shakha")
 
-        search_fields.setOnClickListener {
+        search_fields.setOnClickListener(DebouncedClickListener {
             edit_Filter.visibility = View.VISIBLE
             edit_Filter.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
@@ -504,7 +517,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 //                                            val yesBtn = dialog.findViewById(R.id.login_btn) as TextView
 //                                            val noBtn = dialog.findViewById(R.id.noBtn) as TextView
 
-                                body.setOnClickListener {
+                                body.setOnClickListener(DebouncedClickListener {
                                     dialog.dismiss()
 
                                     val intent = Intent(
@@ -512,8 +525,14 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                                         ShakhaDetailsActivity::class.java
                                     )
 //                            intent.putExtra("Shakha_ID", shakhalist[position].org_chapter_id)
-                                    intent.putExtra("Shakha_ID", shakhalist[position].getOrgChapterId())
-                                    intent.putExtra("Shakha_Name", shakhalist[position].getChapterName())
+                                    intent.putExtra(
+                                        "Shakha_ID",
+                                        shakhalist[position].getOrgChapterId()
+                                    )
+                                    intent.putExtra(
+                                        "Shakha_Name",
+                                        shakhalist[position].getChapterName()
+                                    )
                                     intent.putExtra(
                                         "Shakha_Contact_Person",
                                         shakhalist[position].getContactPersonName()
@@ -522,23 +541,30 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                                     intent.putExtra("Shakha_Email", shakhalist[position].getEmail())
                                     intent.putExtra("Shakha_Phone", shakhalist[position].getPhone())
                                     intent.putExtra("Shakha_Day", shakhalist[position].getDay())
-                                    intent.putExtra("Shakha_Start", shakhalist[position].getStartTime())
+                                    intent.putExtra(
+                                        "Shakha_Start",
+                                        shakhalist[position].getStartTime()
+                                    )
                                     intent.putExtra("Shakha_End", shakhalist[position].getEndTime())
                                     intent.putExtra("Lati", shakhalist[position].getLatitude())
                                     intent.putExtra("Longi", shakhalist[position].getLongitude())
                                     intent.putExtra("MAP", "MAP")
 //                            intent.putExtra("Shakha_ID", relationshipID[position])
                                     this@MapsActivity.startActivity(intent)
-                                }
+                                })
 
-                                info_img.setOnClickListener {
+                                info_img.setOnClickListener(DebouncedClickListener {
                                     dialog.dismiss()
                                     val intent = Intent(
                                         Intent.ACTION_VIEW,
-                                        Uri.parse("http://maps.google.com/maps?daddr="+shakhalist[position].getLatitude()!!.toDouble()+","+shakhalist[position].getLongitude()!!.toDouble())
+                                        Uri.parse(
+                                            "http://maps.google.com/maps?daddr=" + shakhalist[position].getLatitude()!!
+                                                .toDouble() + "," + shakhalist[position].getLongitude()!!
+                                                .toDouble()
+                                        )
                                     )
                                     this@MapsActivity.startActivity(intent)
-                                }
+                                })
 //                                            noBtn.setOnClickListener { dialog.dismiss() }
                                 dialog.show()
                             }
@@ -611,7 +637,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                         // TODO Auto-generated method stub
                     }
                 }
-        }
+        })
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -781,7 +807,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                                             );
 
                                             val pos: LatLng = arg0.position
-                                            val arryListPosition: Int  = getArrayListPosition(pos)
+                                            val arryListPosition: Int = getArrayListPosition(pos)
 
                                             CALLDIALOG(arryListPosition)
 
@@ -805,7 +831,8 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 
                                     Log.d("list-->", list.toString())
                                     shakhalist[i].setdistanceInMiles(newstrDouble)
-                                    Log.d("distanceInMiles",
+                                    Log.d(
+                                        "distanceInMiles",
                                         shakhalist[i].getdistanceInMiles().toString()
                                     )
                                 }
@@ -885,7 +912,8 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                             val latlongStringList = java.util.ArrayList<String>()
                             for (i in 0 until shakhalist.size) {
                                 latlongStringList.add(
-                                    shakhalist[i].getLatitude().toString() + " " + shakhalist[i].getLongitude()
+                                    shakhalist[i].getLatitude()
+                                        .toString() + " " + shakhalist[i].getLongitude()
                                 )
                             }
 
@@ -1008,7 +1036,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                             println("Family")
                         }
                     } else {
-                        Functions.displayMessage(this@MapsActivity,response.body()?.message)
+                        Functions.displayMessage(this@MapsActivity, response.body()?.message)
 //                        Functions.showAlertMessageWithOK(
 //                            this@MapsActivity, "",
 ////                        "Message",
@@ -1064,7 +1092,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 //                                            val yesBtn = dialog.findViewById(R.id.login_btn) as TextView
 //                                            val noBtn = dialog.findViewById(R.id.noBtn) as TextView
 
-        body.setOnClickListener {
+        body.setOnClickListener(DebouncedClickListener {
             dialog.dismiss()
             Log.d(
                 "chapter_name",
@@ -1129,16 +1157,19 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
             intent.putExtra("Longi", shakhalist[arryListPosition].getLongitude())
             intent.putExtra("MAP", "MAP")
             this@MapsActivity.startActivity(intent)
-        }
+        })
 
-        info_img.setOnClickListener {
+        info_img.setOnClickListener(DebouncedClickListener {
             dialog.dismiss()
             val intent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("http://maps.google.com/maps?daddr="+shakhalist[arryListPosition].getLatitude()!!.toDouble()+","+shakhalist[arryListPosition].getLongitude()!!.toDouble())
+                Uri.parse(
+                    "http://maps.google.com/maps?daddr=" + shakhalist[arryListPosition].getLatitude()!!
+                        .toDouble() + "," + shakhalist[arryListPosition].getLongitude()!!.toDouble()
+                )
             )
             this@MapsActivity.startActivity(intent)
-        }
+        })
 //                                            noBtn.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
@@ -1188,6 +1219,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                         TAG,
                         "All location settings are satisfied."
                     )
+
                 LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                     Log.i(
                         TAG,
@@ -1204,6 +1236,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                         Log.i(TAG, "PendingIntent unable to execute request.")
                     }
                 }
+
                 LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> Log.i(
                     TAG,
                     "Location settings are inadequate, and cannot be fixed here. Dialog not created."

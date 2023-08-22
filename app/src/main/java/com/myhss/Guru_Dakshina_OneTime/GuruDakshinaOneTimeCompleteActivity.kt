@@ -12,24 +12,23 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
+import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 
 
 class GuruDakshinaOneTimeCompleteActivity() : AppCompatActivity() {
-
     private lateinit var sessionManager: SessionManager
-
     private lateinit var rootLayout: LinearLayout
-
     private lateinit var payment_complete_image: ImageView
     private lateinit var donate_amount_txt: TextView
     private lateinit var success_txt: TextView
     private lateinit var order_id_txt: TextView
     private lateinit var payment_status_txt: TextView
     private lateinit var message_txt: TextView
-
     private lateinit var next_layout: LinearLayout
 
     @SuppressLint("NewApi")
@@ -42,7 +41,10 @@ class GuruDakshinaOneTimeCompleteActivity() : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("OneTimeDakshinaSuccessVC")
-        sessionManager.firebaseAnalytics.setUserProperty("OneTimeDakshinaSuccessVC", "GuruDakshinaOneTimeCompleteActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "OneTimeDakshinaSuccessVC",
+            "GuruDakshinaOneTimeCompleteActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -65,27 +67,26 @@ class GuruDakshinaOneTimeCompleteActivity() : AppCompatActivity() {
         payment_status_txt = findViewById(R.id.payment_status_txt)
         message_txt = findViewById(R.id.message_txt)
 
-//        donate_amount_txt.text = getString(R.string.pound_icon) + " " + intent.getStringExtra("paidAmount")
-        donate_amount_txt.text = getString(R.string.pound_icon) + " " + intent.getStringExtra("paidAmount")//intent.getStringExtra("Amount")
+
+        DebugLog.e("Amoutnt  : " + intent.getStringExtra("paidAmount"))
+        donate_amount_txt.text =
+            getString(R.string.pound_icon) + " " + intent.getStringExtra("paidAmount")
         order_id_txt.text = intent.getStringExtra("orderId")
         payment_status_txt.text = intent.getStringExtra("status")
         message_txt.text = intent.getStringExtra("giftAid")
 
-        next_layout.setOnClickListener {
-            val i =
-                Intent(this@GuruDakshinaOneTimeCompleteActivity, HomeActivity::class.java)
-//                    MainActivity::class.java)
+        next_layout.setOnClickListener(DebouncedClickListener {
+            val i = Intent(this@GuruDakshinaOneTimeCompleteActivity, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
-
-        if (intent.getStringExtra("Amount") != "") {
-            donate_amount_txt.text = intent.getStringExtra("Amount")
-        }
+        })
     }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-//        super.onBackPressed()
+        super.onBackPressed()
+        val i = Intent(this@GuruDakshinaOneTimeCompleteActivity, HomeActivity::class.java)
+        startActivity(i)
+        finishAffinity()
     }
 }

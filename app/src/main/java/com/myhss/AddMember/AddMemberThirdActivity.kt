@@ -10,8 +10,10 @@ import android.util.Patterns
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -21,7 +23,9 @@ import com.uk.myhss.AddMember.Get_Relationship.Get_Relationship_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.Utils.SessionManager
 import retrofit2.Call
@@ -52,6 +56,11 @@ class AddMemberThirdActivity : AppCompatActivity() {
     private lateinit var emergency_realationship_other_view: RelativeLayout
     private lateinit var back_layout: LinearLayout
     private lateinit var next_layout: LinearLayout
+    private lateinit var til_guardian_full_name: TextInputLayout
+    private lateinit var til_guardian_number: TextInputLayout
+    private lateinit var til_guardian_email: TextInputLayout
+    private lateinit var til_guardian_relatives_name: TextInputLayout
+
 
     @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +94,10 @@ class AddMemberThirdActivity : AppCompatActivity() {
         emergency_realationship_other_view = findViewById(R.id.emergency_realationship_other_view)
         back_layout = findViewById(R.id.back_layout)
         next_layout = findViewById(R.id.next_layout)
+        til_guardian_full_name = findViewById(R.id.til_guardian_full_name)
+        til_guardian_number = findViewById(R.id.til_guardian_number)
+        til_guardian_email = findViewById(R.id.til_guardian_email)
+        til_guardian_relatives_name = findViewById(R.id.til_guardian_relatives_name)
 
         val rootLayout = findViewById<LinearLayout>(R.id.rootLayout)
 
@@ -121,40 +134,40 @@ class AddMemberThirdActivity : AppCompatActivity() {
             guardian_relationship.text = "Guardian Relationship"
         }*/
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        Log.d(
-            "Fetch_Data two-->",
-            intent.getStringExtra("FIRST_NAME") + "--" + intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra(
-                "LAST_NAME"
-            ) + "--" + intent.getStringExtra(
-                "USERNAME"
-            ) + "--" + intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
-                "GENDER"
-            ) + "--" + intent.getStringExtra("DOB") + "--" + intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra(
-                "OTHER_RELATIONSHIP"
-            ) + "--" + intent.getStringExtra(
-                "OCCUPATION"
-            ) + "--" + intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
-                "AGE"
-            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" + intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra(
-                "TYPE"
-            ) + "--" + intent.getStringExtra(
-                "PARENT_MEMBER"
-            ) + "--" + intent.getStringExtra("MOBILE") + "--" + intent.getStringExtra("LAND_LINE") + "--" + intent.getStringExtra(
-                "SECOND_EMAIL"
-            ) + "--" + intent.getStringExtra("POST_CODE") + "--" + intent.getStringExtra("BUILDING_NAME") + "--" + intent.getStringExtra(
-                "ADDRESS_ONE"
-            ) + "--" + intent.getStringExtra(
-                "ADDRESS_TWO"
-            ) + "--" + intent.getStringExtra("POST_TOWN") + "--" + intent.getStringExtra("COUNTY")
-        )
+//        Log.d(
+//            "Fetch_Data two-->",
+//            intent.getStringExtra("FIRST_NAME") + "--" + intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra(
+//                "LAST_NAME"
+//            ) + "--" + intent.getStringExtra(
+//                "USERNAME"
+//            ) + "--" + intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
+//                "GENDER"
+//            ) + "--" + intent.getStringExtra("DOB") + "--" + intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra(
+//                "OTHER_RELATIONSHIP"
+//            ) + "--" + intent.getStringExtra(
+//                "OCCUPATION"
+//            ) + "--" + intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
+//                "AGE"
+//            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" + intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra(
+//                "TYPE"
+//            ) + "--" + intent.getStringExtra(
+//                "PARENT_MEMBER"
+//            ) + "--" + intent.getStringExtra("MOBILE") + "--" + intent.getStringExtra("LAND_LINE") + "--" + intent.getStringExtra(
+//                "SECOND_EMAIL"
+//            ) + "--" + intent.getStringExtra("POST_CODE") + "--" + intent.getStringExtra("BUILDING_NAME") + "--" + intent.getStringExtra(
+//                "ADDRESS_ONE"
+//            ) + "--" + intent.getStringExtra(
+//                "ADDRESS_TWO"
+//            ) + "--" + intent.getStringExtra("POST_TOWN") + "--" + intent.getStringExtra("COUNTY")
+//        )
 
         if (intent.getStringExtra("IS_SELF") != "self") {
             if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
@@ -173,11 +186,11 @@ class AddMemberThirdActivity : AppCompatActivity() {
 
         edit_guardian_contact_number.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // TODO Auto-generated method stub
+
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // TODO Auto-generated method stub
+
             }
 
             override fun afterTextChanged(s: Editable) {
@@ -230,47 +243,67 @@ class AddMemberThirdActivity : AppCompatActivity() {
             }
         })
 
-        next_layout.setOnClickListener {
+        edit_guardian_full_name.doOnTextChanged { text, start, before, count ->
+            til_guardian_full_name.isErrorEnabled = false
+        }
+
+        edit_guardian_contact_number.doOnTextChanged { text, start, before, count ->
+            til_guardian_number.isErrorEnabled = false
+        }
+        edit_guardian_email.doOnTextChanged { text, start, before, count ->
+            til_guardian_email.isErrorEnabled = false
+        }
+        edit_guardian_full_name.doOnTextChanged { text, start, before, count ->
+            til_guardian_full_name.isErrorEnabled = false
+        }
+        edit_emergency_realationship_name.doOnTextChanged { text, start, before, count ->
+            til_guardian_relatives_name.isErrorEnabled = false
+        }
+
+        next_layout.setOnClickListener(DebouncedClickListener {
+
+            if (REALTIONSHIP_ID == "5") {
+                OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
+            } else {
+                OTHER_EMERGENCY_RELATIONSHIP = ""
+            }
+
             if (intent.getStringExtra("AGE") == "1") {// age under 18
 
                 if (edit_guardian_full_name.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter Emergency Name", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_guardian_full_name.error = "Emergency name required"
+                    til_guardian_full_name.error = "Please Enter the Guardian Name"
+                    til_guardian_full_name.isErrorEnabled = true
                     edit_guardian_full_name.requestFocus()
-                    return@setOnClickListener
-                } else if (!isOnlyLetters(edit_guardian_full_name.text.toString())) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Valid Guardian Name", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_guardian_full_name.error = "Valid Guardian Name required"
-                    edit_guardian_full_name.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_guardian_contact_number.text.toString().isEmpty()) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Emergency Contact", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_guardian_contact_number.error = "Emergency contact required"
+                    til_guardian_number.error = "Please Enter the Guardian Contact number"
+                    til_guardian_number.isErrorEnabled = true
                     edit_guardian_contact_number.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_guardian_email.text.toString().isEmpty()) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Emergency Contact", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_guardian_email.error = "Emergency contact required"
+                    til_guardian_email.error = "Please Enter the Guardian Contact Email"
+                    til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_guardian_email.text.toString())
                         .matches()
                 ) {
-                    Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_guardian_email.error = "Valid Email required"
+                    til_guardian_email.error = "Please Enter the valid Guardian Email"
+                    til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
+                } else if (REALTIONSHIP_ID == "5" && edit_emergency_realationship_name.text.toString()
+                        .isEmpty()
+                ) {
+                    til_guardian_relatives_name.error =
+                        "Please Enter the Guardian relationship name"
+                    til_guardian_relatives_name.isErrorEnabled = true
+                    edit_emergency_realationship_name.requestFocus()
+                    return@DebouncedClickListener
                 } else {
                     if (intent.getStringExtra("IS_SELF") != "self") { // Profile or Add Family(under age 18)
-                        val i = Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
+                        val i =
+                            Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
                         i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                         i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
@@ -319,6 +352,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
 //                        i.putExtra("OTHER_EMERGENCY_RELATIONSHIP", REALTIONSHIP_ID)
 
                         if (REALTIONSHIP_ID == "5") {
+
                             i.putExtra("EMERGENCY_RELATIONSHIP", REALTIONSHIP_ID)
                             i.putExtra(
                                 "OTHER_EMERGENCY_RELATIONSHIP", OTHER_EMERGENCY_RELATIONSHIP
@@ -330,7 +364,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
                         i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
                         startActivity(i)
                     } else { // Add self(under age 18)
-                        val i = Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
+                        val i =
+                            Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
                         i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                         i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
@@ -394,36 +429,39 @@ class AddMemberThirdActivity : AppCompatActivity() {
                 }
             } else { // age above 18
                 if (edit_guardian_full_name.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please Enter Guardian Name", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_guardian_full_name.error = "Guardian name required"
+                    til_guardian_full_name.error = "Please Enter the Emergency Contact Name"
+                    til_guardian_full_name.isErrorEnabled = true
                     edit_guardian_full_name.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_guardian_contact_number.text.toString().isEmpty()) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Guardian Contact", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_guardian_contact_number.error = "Guardian contact required"
+                    til_guardian_number.error = "Please Enter the Emergency Contact Number"
+                    til_guardian_number.isErrorEnabled = true
                     edit_guardian_contact_number.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_guardian_email.text.toString().isEmpty()) {
-                    Snackbar.make(
-                        rootLayout, "Please Enter Guardian Contact", Snackbar.LENGTH_SHORT
-                    ).show()
-                    edit_guardian_email.error = "Guardian contact required"
+                    til_guardian_email.error = "Please Enter the Emergency Contact Email"
+                    til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_guardian_email.text.toString())
                         .matches()
                 ) {
-                    Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT)
-                        .show()
-                    edit_guardian_email.error = "Valid Email required"
+                    til_guardian_email.error = "Please Enter the Valid Emergency Contact Email"
+                    til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
+                } else if (REALTIONSHIP_ID == "5" && edit_emergency_realationship_name.text.toString()
+                        .isEmpty()
+                ) {
+                    til_guardian_relatives_name.error =
+                        "Please Enter the Emergency relationship name"
+                    til_guardian_relatives_name.isErrorEnabled = true
+                    edit_emergency_realationship_name.requestFocus()
+                    return@DebouncedClickListener
                 } else {
                     if (intent.getStringExtra("IS_SELF") != "self") { // profile or Add family(age above 18)
-                        val i = Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
+                        val i =
+                            Intent(this@AddMemberThirdActivity, AddMemberForthActivity::class.java)
                         i.putExtra("TITLENAME", header_title.text.toString())
                         i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                         i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
@@ -442,7 +480,10 @@ class AddMemberThirdActivity : AppCompatActivity() {
                             i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
                         } else {
                             i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
-                            i.putExtra("OTHER_RELATIONSHIP", intent.getStringExtra("OTHER_RELATIONSHIP"))
+                            i.putExtra(
+                                "OTHER_RELATIONSHIP",
+                                intent.getStringExtra("OTHER_RELATIONSHIP")
+                            )
                         }
 
                         if (intent.getStringExtra("OCCUPATION_NAME") == "") {
@@ -546,7 +587,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
+        })
 
         if (Functions.isConnectingToInternet(this@AddMemberThirdActivity)) {
             myRelationship()
@@ -562,18 +603,9 @@ class AddMemberThirdActivity : AppCompatActivity() {
 
         edit_guardian_relationship.setTitle("Select Guardian Relationship")
 
-        guardian_relationship_txt.setOnClickListener {
+        guardian_relationship_txt.setOnClickListener(DebouncedClickListener {
             SearchSpinner(relationshipName.toTypedArray(), edit_guardian_relationship)
-        }
-    }
-
-    fun isOnlyLetters(password: String?): Boolean {
-        val pattern: Pattern
-        val matcher: Matcher
-        val PASSWORD_PATTERN = "^[A-Za-z]*\$"
-        pattern = Pattern.compile(PASSWORD_PATTERN)
-        matcher = pattern.matcher(password)
-        return matcher.matches()
+        })
     }
 
     private fun SearchSpinner(

@@ -20,6 +20,7 @@ import com.uk.myhss.Main.Family_Member.Family_Member_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.Utils.SessionManager
@@ -89,7 +90,10 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("OneTimeDakshinaStep2VC")
-        sessionManager.firebaseAnalytics.setUserProperty("OneTimeDakshinaStep2VC", "GuruDakshinaOneTimeSecondActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "OneTimeDakshinaStep2VC",
+            "GuruDakshinaOneTimeSecondActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -172,11 +176,11 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
             SearchSpinner(gift_aid, gift_aid_select_txt)
         }*/
 
-        edit_payment.setOnClickListener {
+        edit_payment.setOnClickListener(DebouncedClickListener {
             depositDialogForEditPayment()
-        }
+        })
 
-        giving_dakshina_yes_view.setOnClickListener {
+        giving_dakshina_yes_view.setOnClickListener(DebouncedClickListener {
             giving_dakshina_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             giving_dakshina_no_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -191,9 +195,9 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
 //            medical_information_details_view.visibility = View.VISIBLE
 
             giving_dakshina = "1"
-        }
+        })
 
-        giving_dakshina_no_view.setOnClickListener {
+        giving_dakshina_no_view.setOnClickListener(DebouncedClickListener {
             giving_dakshina_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             giving_dakshina_yes_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -208,9 +212,9 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
 //            medical_information_details_view.visibility = View.GONE
 
             giving_dakshina = "0"
-        }
+        })
 
-        donating_individual_family_yes_view.setOnClickListener {
+        donating_individual_family_yes_view.setOnClickListener(DebouncedClickListener {
             donating_individual_family_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             donating_individual_family_no_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -225,9 +229,9 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
 //            medical_information_details_view.visibility = View.VISIBLE
 
             donating_dakshina = "Individual"
-        }
+        })
 
-        donating_individual_family_no_view.setOnClickListener {
+        donating_individual_family_no_view.setOnClickListener(DebouncedClickListener {
             donating_individual_family_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             donating_individual_family_yes_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -254,9 +258,9 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
+        })
 
-        tooltip_view.setOnClickListener {
+        tooltip_view.setOnClickListener(DebouncedClickListener {
             MESSAGE =
                 "Gift Aid Declaration: I want the above charity to treat the entered sum as a Gift Aid donation. \n\nI have paid sufficient UK Income Tax and/or capital gains tax to cover all my charitable donations equal to the tax that the charity will claim from HMRC and I am aware that other taxes such as council tax and VAT do not qualify. \n\n\nI understand that I am liable for the difference if the income tax or the capital gains tax payable by me for the tax year, is less than the amount of tax that all the charities and CASCs that I donate to will reclaim on my gifts made or deemed to be made in that year."
             depositDialog(MESSAGE)
@@ -275,20 +279,20 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                 .position(Position.BOTTOM)
                 .clickToHide(true)
                 .show()*/
-        }
+        })
 
         back_layout = findViewById(R.id.back_layout)
         next_layout = findViewById(R.id.next_layout)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (GIFTAID_ID == "") {
                 Snackbar.make(rootLayout, "Please select gift aid", Snackbar.LENGTH_SHORT).show()
             } else if (giving_dakshina == "") {
@@ -302,13 +306,13 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                         this@GuruDakshinaOneTimeSecondActivity,
                         GuruDakshinaOneTimeThirdActivity::class.java
                     )
-                i.putExtra("Amount",donate_amount_txt.text.toString())
+                i.putExtra("Amount", donate_amount_txt.text.toString())
                 i.putExtra("GIFTAID_ID", GIFTAID_ID)
                 i.putExtra("giving_dakshina", giving_dakshina)
                 i.putExtra("donating_dakshina", donating_dakshina)
                 startActivity(i)
             }
-        }
+        })
     }
 
     private fun SearchSpinner(
@@ -357,9 +361,9 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
 
         tvTitle.text = message
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             dialog?.dismiss()
-        }
+        })
     }
 
     /*FamilyList API*/
@@ -423,7 +427,8 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                             val mStringList = ArrayList<String>()
                             for (i in 0 until data_relationship.size) {
                                 mStringList.add(
-                                    data_relationship[i].firstName.toString().capitalize(Locale.ROOT)
+                                    data_relationship[i].firstName.toString()
+                                        .capitalize(Locale.ROOT)
                                             + " " + data_relationship[i].lastName.toString()
                                         .capitalize(Locale.ROOT)
 //                                    + " " + data_relationship[i].firstName.toString().capitalize(Locale.ROOT)
@@ -471,9 +476,9 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                             )
                             family_list_view.adapter = adapter
 
-                            btnOk.setOnClickListener {
+                            btnOk.setOnClickListener(DebouncedClickListener {
                                 dialog?.dismiss()
-                            }
+                            })
                         }
 
                     } else {
@@ -539,7 +544,7 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
             edit_amount.text = intent.getStringExtra("Amount")
         }
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             if (edit_amount.text.toString().isNotEmpty()) {
                 edit_amount.filters = arrayOf<InputFilter>(
                     InputFilterMinMax(
@@ -551,13 +556,13 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                     donate_amount_txt.text = edit_amount.text.toString()
                     dialog_p?.dismiss()
                 } else {
-                    Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(edit_amount, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
                         .show()
                 }
 
             } else {
-                Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(edit_amount, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 }

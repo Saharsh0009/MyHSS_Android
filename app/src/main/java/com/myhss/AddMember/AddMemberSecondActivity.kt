@@ -29,6 +29,7 @@ import com.uk.myhss.AddMember.PincodeAddress.Get_PincodeAddress_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.uk.myhss.Utils.SessionManager
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -55,6 +56,10 @@ class AddMemberSecondActivity : AppCompatActivity() {
     private lateinit var til_second_number: TextInputLayout
     private lateinit var til_second_email: TextInputLayout
     private lateinit var til_postcode: TextInputLayout
+    private lateinit var til_edit_building_name: TextInputLayout
+    private lateinit var til_edit_address_line1: TextInputLayout
+    private lateinit var til_edit_address_line2: TextInputLayout
+    private lateinit var til_edit_town_city: TextInputLayout
     private lateinit var find_address: ImageView
 
     private lateinit var edit_select_address: SearchableSpinner
@@ -118,39 +123,43 @@ class AddMemberSecondActivity : AppCompatActivity() {
         til_second_number = findViewById(R.id.til_second_number)
         til_second_email = findViewById(R.id.til_second_email)
         til_postcode = findViewById(R.id.til_postcode)
+        til_edit_building_name = findViewById(R.id.til_edit_building_name)
+        til_edit_address_line1 = findViewById(R.id.til_edit_address_line1)
+        til_edit_address_line2 = findViewById(R.id.til_edit_address_line2)
+        til_edit_town_city = findViewById(R.id.til_edit_town_city)
 
         header_title.text = intent.getStringExtra("TITLENAME")
 
 //            header_title.text = getString(R.string.Add_family_member)
 
-        Log.d(
-            "Fetch_Data one-->",
-            intent.getStringExtra("FIRST_NAME") + "--" + intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra(
-                "LAST_NAME"
-            ) + "--" + intent.getStringExtra(
-                "USERNAME"
-            ) + "--" + intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
-                "GENDER"
-            ) + "--" + intent.getStringExtra("DOB") + "--" + intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra(
-                "OTHER_RELATIONSHIP"
-            ) + "--" + intent.getStringExtra(
-                "OCCUPATION"
-            ) + "--" + intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
-                "AGE"
-            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" + intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra(
-                "TYPE"
-            ) + "--" + intent.getStringExtra(
-                "PARENT_MEMBER"
-            )
-        )
+//        Log.d(
+//            "Fetch_Data one-->",
+//            intent.getStringExtra("FIRST_NAME") + "--" + intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra(
+//                "LAST_NAME"
+//            ) + "--" + intent.getStringExtra(
+//                "USERNAME"
+//            ) + "--" + intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
+//                "GENDER"
+//            ) + "--" + intent.getStringExtra("DOB") + "--" + intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra(
+//                "OTHER_RELATIONSHIP"
+//            ) + "--" + intent.getStringExtra(
+//                "OCCUPATION"
+//            ) + "--" + intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
+//                "AGE"
+//            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" + intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra(
+//                "TYPE"
+//            ) + "--" + intent.getStringExtra(
+//                "PARENT_MEMBER"
+//            )
+//        )
 
         edit_primary_contact_number.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // TODO Auto-generated method stub
+
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // TODO Auto-generated method stub
+
             }
 
             override fun afterTextChanged(s: Editable) {
@@ -262,15 +271,13 @@ class AddMemberSecondActivity : AppCompatActivity() {
             }
         })
 
-        back_arrow.setOnClickListener {
-//            Snackbar.make(rootLayout, "Back", Snackbar.LENGTH_SHORT).show()
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
-//            Snackbar.make(rootLayout, "Next", Snackbar.LENGTH_SHORT).show()
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         if (intent.getStringExtra("IS_SELF") != "self") {
             if (sessionManager.fetchPOSTCODE() != "") {
@@ -298,58 +305,43 @@ class AddMemberSecondActivity : AppCompatActivity() {
             til_postcode.isErrorEnabled = false
         }
 
-        next_layout.setOnClickListener {
+        edit_address_line1.doOnTextChanged { text, start, before, count ->
+            til_edit_address_line1.isErrorEnabled = false
+        }
+
+        edit_town_city.doOnTextChanged { text, start, before, count ->
+            til_edit_town_city.isErrorEnabled = false
+        }
+
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (edit_primary_contact_number.text.toString().isEmpty()) {
-//                Snackbar.make(rootLayout, "Please Enter Primary Contact", Snackbar.LENGTH_SHORT)
-//                    .show()
-//                edit_primary_contact_number.error = "Primary contact required"
                 til_primary_number.error = "Please Enter Primary Contact"
                 til_primary_number.isErrorEnabled = true
                 edit_primary_contact_number.requestFocus()
-                return@setOnClickListener
-//            } else if (edit_secondary_contact_number.text.toString().isEmpty()) {
-//                Snackbar.make(rootLayout, "Please Enter Secondary Contact", Snackbar.LENGTH_SHORT).show()
-//                edit_secondary_contact_number.error = "Secondary contact required"
-//                edit_secondary_contact_number.requestFocus()
-//                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (!edit_secondary_email.text.toString()
                     .isEmpty() && !Patterns.EMAIL_ADDRESS.matcher(edit_secondary_email.text.toString())
                     .matches()
             ) {
-//                Snackbar.make(rootLayout, "Please Enter Valid Email", Snackbar.LENGTH_SHORT).show()
-//                edit_secondary_email.error = "Valid Email required"
                 til_second_email.error = "Please Enter Valid Email"
                 til_second_email.isErrorEnabled = true
                 edit_secondary_email.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (edit_find_address.text.toString().isEmpty()) {
-//                Snackbar.make(rootLayout, "Please Enter Post Code", Snackbar.LENGTH_SHORT).show()
-//                edit_find_address.error = "Post Code required"
                 til_postcode.error = "Please Enter Post Code"
                 til_postcode.isErrorEnabled = true
                 edit_find_address.requestFocus()
-                return@setOnClickListener
-//            } else if (edit_building_name.text.toString().isEmpty()) {
-//                Snackbar.make(rootLayout, "Please Enter Building Name", Snackbar.LENGTH_SHORT).show()
-//                edit_building_name.error = "Building Name required"
-//                edit_building_name.requestFocus()
-//                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (edit_address_line1.text.toString().isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Line 1 Address", Snackbar.LENGTH_SHORT)
-                    .show()
-                edit_address_line1.error = "Line 1 Address required"
+                til_edit_address_line1.error = "Please Enter Address Line 1"
+                til_edit_address_line1.isErrorEnabled = true
                 edit_address_line1.requestFocus()
-                return@setOnClickListener
-//            } else if (edit_address_line2.text.toString().isEmpty()) {
-//                Snackbar.make(rootLayout, "Please Enter Line 2 Address", Snackbar.LENGTH_SHORT).show()
-//                edit_address_line2.error = "Line 2 Address required"
-//                edit_address_line2.requestFocus()
-//                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (edit_town_city.text.toString().isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter City", Snackbar.LENGTH_SHORT).show()
-                edit_town_city.error = "City required"
+                til_edit_town_city.error = "Please Enter Town/City"
+                til_edit_town_city.isErrorEnabled = true
                 edit_town_city.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else {
                 if (intent.getStringExtra("IS_SELF") != "self") { // Profile or Add family
                     val i = Intent(this@AddMemberSecondActivity, AddMemberThirdActivity::class.java)
@@ -444,22 +436,17 @@ class AddMemberSecondActivity : AppCompatActivity() {
                     startActivity(i)
                 }
             }
-        }
+        })
 
         edit_select_address.onItemSelectedListener = mOnItemSelectedListener_address
 
         edit_select_address.setTitle("Select Address")
 
-        select_address.setOnClickListener {
-//            SearchSpinner(relationship, edit_select_address)
+        select_address.setOnClickListener(DebouncedClickListener {
             SearchSpinner(Pincode.toTypedArray(), edit_select_address)
-        }
+        })
 
-        find_address.setOnClickListener {
-//            edit_find_address
-//            edit_secondary_contact_number
-//            edit_primary_contact_number
-
+        find_address.setOnClickListener(DebouncedClickListener {
             if (edit_find_address.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please enter pin code", Snackbar.LENGTH_SHORT).show()
             } else {
@@ -473,7 +460,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
                     ).show()
                 }
             }
-        }
+        })
 
         val pincode = edit_find_address.text.toString()
     }
@@ -493,9 +480,6 @@ class AddMemberSecondActivity : AppCompatActivity() {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-//            TODO("Not yet implemented")
-                Log.d("Name", Pincode[position])
-                Log.d("Postion", PincodeID[position])
                 PINCODE_ID = PincodeID[position]
 
                 if (Functions.isConnectingToInternet(this@AddMemberSecondActivity)) {
@@ -510,7 +494,6 @@ class AddMemberSecondActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
             }
         }
 
@@ -595,7 +578,9 @@ class AddMemberSecondActivity : AppCompatActivity() {
                         SearchSpinner(Pincode.toTypedArray(), edit_select_address)
 
                     } else {
-                        full_address_view.visibility = View.GONE
+                        full_address_view.visibility = View.VISIBLE
+//                        edit_address_line1.setText("test") // temp
+//                        edit_town_city.setText("test")// temp
                         Functions.showAlertMessageWithOK(
                             this@AddMemberSecondActivity, "",
 //                        "Message",

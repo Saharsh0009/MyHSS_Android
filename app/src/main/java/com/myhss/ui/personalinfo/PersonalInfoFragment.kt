@@ -13,6 +13,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
@@ -35,9 +36,9 @@ class PersonalInfoFragment : Fragment() {
 
     @SuppressLint("MissingPermission", "Range")
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_personal_info, container, false)
 
@@ -46,7 +47,10 @@ class PersonalInfoFragment : Fragment() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         sessionManager.firebaseAnalytics.setUserId("ProfileVC_PersonalInfoView")
-        sessionManager.firebaseAnalytics.setUserProperty("ProfileVC_PersonalInfoView", "PersonalInfoFragment")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "ProfileVC_PersonalInfoView",
+            "PersonalInfoFragment"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -74,12 +78,12 @@ class PersonalInfoFragment : Fragment() {
         nagar_txt.text = sessionManager.fetchNAGARNAME()
         vibhag_txt.text = sessionManager.fetchVIBHAGNAME()
 
-        mainedit_layout.setOnClickListener {
+        mainedit_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family")
             i.putExtra("FAMILY", "PROFILE")
             startActivity(i)
-        }
+        })
 
         return root
     }

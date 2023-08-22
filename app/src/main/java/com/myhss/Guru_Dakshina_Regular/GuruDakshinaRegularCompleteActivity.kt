@@ -12,6 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
@@ -82,13 +83,13 @@ class GuruDakshinaRegularCompleteActivity() : AppCompatActivity() {
         account_number_txt.text = intent.getStringExtra("accountNumber")
         message_txt.text = intent.getStringExtra("giftAid")
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             val i =
                 Intent(this@GuruDakshinaRegularCompleteActivity, HomeActivity::class.java)
 //                    MainActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
+        })
 
         if (intent.getStringExtra("Amount") != "") {
             donate_amount_txt.text = intent.getStringExtra("Amount")

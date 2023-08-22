@@ -10,6 +10,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.my_family.Model.Datum
@@ -30,7 +31,8 @@ class SankhyaAdapter(
     lateinit var adapter_view: LinearLayout
 
     val mItems = mutableListOf<Datum>()
-//    private var selectAllItems: Boolean = false
+
+    //    private var selectAllItems: Boolean = false
     private val selected_position = -1
 
     //this method is returning the view for each item in the list
@@ -56,12 +58,12 @@ class SankhyaAdapter(
         notifyDataSetChanged()
     }
 
-    fun selectAllItems(selectAll: Boolean){
+    fun selectAllItems(selectAll: Boolean) {
         selectAllItems = selectAll
         notifyDataSetChanged()
     }
 
-    fun unselectAllItems(unselectAll: Boolean){
+    fun unselectAllItems(unselectAll: Boolean) {
         selectAllItems = unselectAll
         notifyDataSetChanged()
     }
@@ -81,8 +83,10 @@ class SankhyaAdapter(
     }
 
     //the class is hodling the list view
-    class ViewHolder(itemView: View, val selectAllItems: Boolean, val selected_user: ArrayList<String>,
-    val selected_userName: ArrayList<String>) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(
+        itemView: View, val selectAllItems: Boolean, val selected_user: ArrayList<String>,
+        val selected_userName: ArrayList<String>
+    ) : RecyclerView.ViewHolder(itemView) {
         private var IsVisible = true
         private var IsVisiblenew = true
 
@@ -97,20 +101,23 @@ class SankhyaAdapter(
         private lateinit var sessionManager: SessionManager
 
         fun bindItems(my_family_DatumGurudakshina: Datum) {
-            val active_inactive_view = itemView.findViewById(R.id.active_inactive_view) as RelativeLayout
+            val active_inactive_view =
+                itemView.findViewById(R.id.active_inactive_view) as RelativeLayout
             val family_user_name = itemView.findViewById(R.id.family_user_name) as TextView
-            val present_txt  = itemView.findViewById(R.id.present_txt) as TextView
-            val absent_txt  = itemView.findViewById(R.id.absent_txt) as TextView
-            val active_inactive_txt  = itemView.findViewById(R.id.active_inactive_txt) as TextView
-            val adapter_view  = itemView.findViewById(R.id.adapter_view) as LinearLayout
+            val present_txt = itemView.findViewById(R.id.present_txt) as TextView
+            val absent_txt = itemView.findViewById(R.id.absent_txt) as TextView
+            val active_inactive_txt = itemView.findViewById(R.id.active_inactive_txt) as TextView
+            val adapter_view = itemView.findViewById(R.id.adapter_view) as LinearLayout
 
             if (my_family_DatumGurudakshina.middleName == "") {
-                family_user_name.text = my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
+                family_user_name.text =
+                    my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
+                            my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
             } else {
-                family_user_name.text = my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.middleName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
+                family_user_name.text =
+                    my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
+                            my_family_DatumGurudakshina.middleName!!.capitalize(Locale.ROOT) + " " +
+                            my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
             }
 
             sessionManager = SessionManager(itemView.context)
@@ -186,47 +193,59 @@ class SankhyaAdapter(
                 absent_txt.tag = itemView
             }
 
-            present_txt.setOnClickListener {
+            present_txt.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Present", Toast.LENGTH_SHORT).show()
 
 //                select!!.isSelected
 
-                if(IsVisible) {
+                if (IsVisible) {
                     IsVisible = false
-                present_txt.isSelected = selectAllItems
+                    present_txt.isSelected = selectAllItems
 
-                present_txt.setBackgroundResource(R.drawable.gree_present_round)
-                present_txt.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
-
-                absent_txt.setBackgroundResource(R.drawable.grayround_border)
-                absent_txt.setTextColor(
-                    ContextCompat.getColor(
-                        itemView.context,
-                        R.color.grayColorColor
+                    present_txt.setBackgroundResource(R.drawable.gree_present_round)
+                    present_txt.setTextColor(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.white
+                        )
                     )
-                )
 
-                sessionManager.saveSELECTED_TRUE("true")
-                present_txt.tag = itemView
-                absent_txt.tag = itemView
+                    absent_txt.setBackgroundResource(R.drawable.grayround_border)
+                    absent_txt.setTextColor(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.grayColorColor
+                        )
+                    )
 
-                selected_user.add(my_family_DatumGurudakshina.memberId!!)
-                selected_userName.add(my_family_DatumGurudakshina.firstName.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.lastName.capitalize(Locale.ROOT))
+                    sessionManager.saveSELECTED_TRUE("true")
+                    present_txt.tag = itemView
+                    absent_txt.tag = itemView
+
+                    selected_user.add(my_family_DatumGurudakshina.memberId!!)
+                    selected_userName.add(
+                        my_family_DatumGurudakshina.firstName.capitalize(Locale.ROOT) + " " +
+                                my_family_DatumGurudakshina.lastName.capitalize(Locale.ROOT)
+                    )
 
                 } else {
-                IsVisible = true
-                present_txt.isSelected = selectAllItems
+                    IsVisible = true
+                    present_txt.isSelected = selectAllItems
 
-                present_txt.setBackgroundResource(R.drawable.grayround_border)
-                present_txt.setTextColor(ContextCompat.getColor(itemView.context, R.color.grayColorColor))
+                    present_txt.setBackgroundResource(R.drawable.grayround_border)
+                    present_txt.setTextColor(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.grayColorColor
+                        )
+                    )
 
-                sessionManager.saveSELECTED_TRUE("false")
-                present_txt.tag = itemView
-                absent_txt.tag = itemView
+                    sessionManager.saveSELECTED_TRUE("false")
+                    present_txt.tag = itemView
+                    absent_txt.tag = itemView
 
-                selected_user.clear()
-                selected_userName.clear()
+                    selected_user.clear()
+                    selected_userName.clear()
                 }
 
 
@@ -245,11 +264,11 @@ class SankhyaAdapter(
                     absent_txt.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
                     IsVisible = true
                 }*/
-            }
+            })
 
             absent_txt.visibility = View.INVISIBLE
 
-            absent_txt.setOnClickListener {
+            absent_txt.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Absent", Toast.LENGTH_SHORT).show()
 
 //                select!!.isSelected
@@ -293,12 +312,12 @@ class SankhyaAdapter(
                     present_txt.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
                     IsVisible = true
                 }*/
-            }
+            })
 
 
-            adapter_view.setOnClickListener {
-//                Toast.makeText(itemView.context, "Adapter", Toast.LENGTH_SHORT).show()
-            }
+//            adapter_view.setOnClickListener {
+////                Toast.makeText(itemView.context, "Adapter", Toast.LENGTH_SHORT).show()
+//            }
 
         }
     }

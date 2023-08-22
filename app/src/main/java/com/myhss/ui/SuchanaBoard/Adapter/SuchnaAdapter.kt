@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Datum
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Seen_Response
@@ -119,7 +120,7 @@ class SuchnaAdapter(
                 suchna_discriptionnew.setTextColor(Color.BLACK)
             }
 
-            suchna_adapter_view.setOnClickListener {
+            suchna_adapter_view.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Suchana", Toast.LENGTH_SHORT).show()
                 /*val i = Intent(itemView.context, SuchanaDetails::class.java)
                 i.putExtra("Suchana_Type", tab_type)
@@ -162,7 +163,7 @@ class SuchnaAdapter(
 //                    slideDown(redLayout)
                     eventsIsVisible = true
                 }
-            }
+            })
         }
 
         private fun mySuchanaSeen(

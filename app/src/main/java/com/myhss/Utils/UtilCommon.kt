@@ -27,11 +27,10 @@ class UtilCommon {
             pattern = Pattern.compile(PASSWORD_PATTERN)
             matcher = pattern.matcher(stringName)
             return matcher.matches()
-
         }
 
         fun isValidUserName(stringName: String): Boolean {
-            val regex = Regex("^[a-zA-Z0-9]+\$")
+            val regex = Regex("^[a-zA-Z0-9]{5,}\$")
             return regex.matches(stringName)
         }
 

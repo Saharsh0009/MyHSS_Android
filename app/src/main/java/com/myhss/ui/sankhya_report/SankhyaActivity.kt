@@ -20,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.EndLessScroll
 import com.myhss.Utils.Functions
 import com.myhss.ui.sankhya_report.Model.AddCheckbox
@@ -90,9 +91,9 @@ class SankhyaActivity : AppCompatActivity() {
 
         header_title.text = getString(R.string.sankhya)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         actualDate = Calendar.getInstance()
         val date = sdf.format(actualDate.time)
@@ -122,8 +123,8 @@ class SankhyaActivity : AppCompatActivity() {
         mLayoutManager = LinearLayoutManager(this@SankhyaActivity)
         my_family_list.layoutManager = mLayoutManager
 
-        val end:Int = 100
-        val start:Int = 0
+        val end: Int = 100
+        val start: Int = 0
 
         if (Functions.isConnectingToInternet(this@SankhyaActivity)) {
             USERID = sessionManager.fetchUserID()!!
@@ -189,8 +190,8 @@ class SankhyaActivity : AppCompatActivity() {
 
         search_fields.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val end:Int = 100
-                val start:Int = 0
+                val end: Int = 100
+                val start: Int = 0
 
                 if (Functions.isConnectingToInternet(this@SankhyaActivity)) {
                     USERID = sessionManager.fetchUserID()!!
@@ -232,14 +233,14 @@ class SankhyaActivity : AppCompatActivity() {
 
         })
 
-        add_family_layout.setOnClickListener {
+        add_family_layout.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(rootview, "Add Sankhya", Snackbar.LENGTH_SHORT).show()
 //            startActivity(Intent(this@SankhyaActivity, AddCheckbox::class.java))
             startActivity(Intent(this@SankhyaActivity, AddSankhyaActivity::class.java))
             /*val i = Intent(this, AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family");
             startActivity(i)*/
-        }
+        })
 
     }
 
