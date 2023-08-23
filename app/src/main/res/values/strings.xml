@@ -445,4 +445,6 @@
     <string name="payment_error_message">\nYou do not have an active family members listed on MyHSS.\n\nPlease contact your Shakha Karyawaha if you need further assistance.</string>
     <string name="quit_myhss">Are you sure you want to quit MyHSS?</string>
     <string name="under_age_18">As your age is below 18 We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -8,7 +8,8 @@ interface AppParam {
     companion object {
 
         val NOTIFIC_KEY = "notification"
-        val NOTIFIC_VALUE = "yes"
+        var NOTIFIC_VALUE = "0" //type 0-> suchana, 1-> DBS,
+        var NOTIFIC_TYPE = "0" //type 0-> suchana, 1-> DBS,
     }
 
 }

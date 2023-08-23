@@ -4,7 +4,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import com.google.android.material.textfield.TextInputEditText
+import java.text.DateFormat
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -14,6 +16,7 @@ import java.util.regex.Pattern
 class UtilCommon {
 
     companion object {
+        val timeStampFmt = "yyyy-MM-dd HH:mm:ss"
         fun roundOffDecimal(number: Double): Double? {
             val df = DecimalFormat("#.##")
 //            df.roundingMode = RoundingMode.CEILING
@@ -47,6 +50,25 @@ class UtilCommon {
 //                }
 //            }
 //        }
+
+        fun isNotificationTrue(sType: String): Boolean {
+            var isTrue = false
+            if (sType == "0" || sType == "1") {
+                isTrue = true
+            }
+            return isTrue
+        }
+
+        fun dateAndTimeformat(stringName: String): String {
+            val df: DateFormat = SimpleDateFormat(timeStampFmt)
+            val dt = df.parse(stringName)
+            val tdf: DateFormat = SimpleDateFormat("HH:mm a")
+            val dfmt: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+            val timeOnly = tdf.format(dt)
+            val dateOnly = dfmt.format(dt)
+
+            return "$dateOnly $timeOnly"
+        }
 
     }
 }

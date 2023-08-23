@@ -1,13 +1,9 @@
 package com.uk.myhss.Main
 
 import android.Manifest
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.R.attr
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -32,10 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.PendingResult
 import com.google.android.gms.common.api.Scope
-import com.google.android.gms.common.api.Status
 import com.google.android.gms.drive.Drive
 import com.google.android.gms.drive.DriveClient
 import com.google.android.gms.drive.DriveResourceClient
@@ -53,7 +46,6 @@ import com.myhss.Utils.Functions
 import com.myhss.ui.Biomeric.ChangeBiomerticFragment
 import com.myhss.ui.SuchanaBoard.NotificationList
 import com.uk.myhss.Login_Registration.LoginActivity
-import com.uk.myhss.Main.Get_Privileges.Get_Privileges_Response
 import com.uk.myhss.Main.Get_Prpfile.Datum_Get_Profile
 import com.uk.myhss.Main.Get_Prpfile.Get_Profile_Response
 import com.uk.myhss.Main.Get_Prpfile.Member_Get_Profile
@@ -71,28 +63,18 @@ import retrofit2.Response
 import java.io.File
 import java.util.*
 
-
-import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.zxing.integration.android.IntentIntegrator
-import com.myhss.QRCode.QRCodeFragment
 import android.content.DialogInterface
 
-import android.R.attr.data
 import android.provider.Settings
-import com.blikoon.qrcodescanner.QrCodeActivity
-import com.myhss.QRCode.CaptureActivityPortrait
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
+import com.myhss.Utils.UtilCommon
 import com.myhss.appConstants.AppParam
-import com.myhss.ui.SuchanaBoard.SuchanaBoardActivity
-
-
-//import com.blikoon.qrcodescanner.QrCodeActivity
-
 
 class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSelectedListener {
     private lateinit var sessionManager: SessionManager
@@ -115,6 +97,8 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     private val LOGTAG = "QRCScanner-MainActivity"
     private var receivedNotiData = "no"
 
+    private lateinit var notification_img: ImageView
+
     companion object {
         private val SCOPES = setOf<Scope>(Drive.SCOPE_FILE, Drive.SCOPE_APPFOLDER)
         val documentMimeTypes = arrayListOf(
@@ -128,21 +112,9 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         const val TAG = "GoogleDriveService"
     }
 
-    data class GoogleDriveConfig(
-        val activityTitle: String? = null, val mimeTypes: List<String>? = null
-    )
-
-//    class GoogleDriveService(
-//        private val activity: Activity, private val config: GoogleDriveConfig
-//    ) {
-//
-//    }
-
     private var items = arrayListOf(
         NavigationItemModel(R.drawable.home_icon, "Dashboard"),
         NavigationItemModel(R.drawable.shakha_icon, "Shakha"),
-//        NavigationItemModel(R.drawable.qr_code, "Scan QR Code"),
-//        NavigationItemModel(R.drawable.drive_img, "Google Drive"),
         NavigationItemModel(R.drawable.khel_icon, "Khel App"),  // Pratiyogita
         NavigationItemModel(R.drawable.lock, "Change Password"),
         NavigationItemModel(R.drawable.fingerprint, "Change Biometric"),
@@ -152,7 +124,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
     private var itemsnew = arrayListOf(
         NavigationItemModel(R.drawable.home_icon, "Dashboard"),
-//        NavigationItemModel(R.drawable.drive_img, "Google Drive"),
         NavigationItemModel(R.drawable.khel_icon, "Khel App"),  // Pratiyogita
         NavigationItemModel(R.drawable.lock, "Change Password"),
         NavigationItemModel(R.drawable.fingerprint, "Change Biometric"),
@@ -160,20 +131,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         NavigationItemModel(R.drawable.logout, "Logout")
     )
 
-    /*private var items = arrayListOf(
-        NavigationItemModel(R.drawable.home_icon, "Dashboard"),
-        NavigationItemModel(R.drawable.organisation_icon, "Organization"),
-        NavigationItemModel(R.drawable.shakha_icon, "Shakha"),
-        NavigationItemModel(R.drawable.shakha_type_icon, "Shakha Type"),
-        NavigationItemModel(R.drawable.roles_icon, "Roles"),
-        NavigationItemModel(R.drawable.roles_responsiblity_icon, "Roles & Responsibility"),
-        NavigationItemModel(R.drawable.karyakartas_icon, "Karyakartas"),
-        NavigationItemModel(R.drawable.sankhya_icon, "Sankhya Report"),
-        NavigationItemModel(R.drawable.setting_icon, "Setting"),
-        NavigationItemModel(R.drawable.policy_icon, "Policies"),
-        NavigationItemModel(R.drawable.khel_icon, "Khel Pratiyogita App"),
-        NavigationItemModel(R.drawable.logout_icon, "Logout")
-    )*/
 
     @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("SetTextI18n", "CutPasteId")
@@ -185,7 +142,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
         val toolbar_logo = toolbar.findViewById<ImageView>(R.id.toolbar_logo)
         val scan_qr_img = toolbar.findViewById<ImageView>(R.id.scan_qr_img)
-        val notification_img = toolbar.findViewById<ImageView>(R.id.notification_img)
+        notification_img = toolbar.findViewById<ImageView>(R.id.notification_img)
         val activity_main_toolbar_title =
             toolbar.findViewById<TextView>(R.id.activity_main_toolbar_title)
         toolbar_logo.visibility = View.VISIBLE
@@ -206,8 +163,9 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         //  Firebase crashlytics
 
-        notification_img.visibility = View.GONE
+
         scan_qr_img.visibility = View.GONE
+        notification_img.visibility = View.VISIBLE
 
         scan_qr_img.setOnClickListener(DebouncedClickListener {
 //            val i = Intent(this@HomeActivity, QRCodeFragment::class.java)
@@ -224,14 +182,9 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             integrator.initiateScan()
         })
 
-        notification_img.visibility = View.GONE
         notification_img.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@HomeActivity, NotificationList::class.java)
             startActivity(i)
-
-            /*val NotificationListFragment = NotificationList()
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.activity_main_content_id, NotificationListFragment).commit()*/
         })
 
         if (Functions.isConnectingToInternet(this@HomeActivity)) {
@@ -269,13 +222,12 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                         when (position) {
                             0 -> {
                                 toolbar.title = ""
-//                        activity_main_toolbar_title.setText("")
                                 toolbar_logo.visibility = View.VISIBLE
                                 scan_qr_img.visibility = View.GONE
-                                notification_img.visibility = View.GONE
+                                notification_img.visibility = View.VISIBLE
                                 // # Dashboard Fragment
                                 val dashboardFragment = DashboardFragment()
-                                if (receivedNotiData == "yes") {
+                                if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                                     val args = Bundle()
                                     args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
                                     dashboardFragment.arguments = args
@@ -287,42 +239,12 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             }
 
                             1 -> {
-                                // # QR Code Fragment
                                 val i = Intent(this@HomeActivity, LinkedFamilyFragment::class.java)
                                 i.putExtra("DashBoard", "SHAKHAVIEW")
                                 i.putExtra("headerName", getString(R.string.my_shakha))
                                 startActivity(i)
-//                            val organisationFragment = OrgranizationFragment()
-//                            supportFragmentManager.beginTransaction()
-//                                .replace(R.id.activity_main_content_id, organisationFragment).commit()
                             }
-                            /*2 -> {
-    //                            val i = Intent(this@HomeActivity, QrCodeActivity::class.java)
-    //                            startActivity(i)
 
-                                val integrator = IntentIntegrator(this@HomeActivity)
-                                integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
-                                integrator.setPrompt("Scan")
-                                integrator.setCameraId(0)
-                                integrator.setBeepEnabled(true)
-                                integrator.setBarcodeImageEnabled(true)
-    //            integrator.captureActivity = HomeActivity::class.java
-                                integrator.setTorchEnabled(false)
-                                integrator.captureActivity = CaptureActivityPortrait::class.java
-    //                            integrator.setResultDisplayDuration(0) //Text..
-    //                            integrator.setScanningRectangle(450, 450);//size
-                                integrator.setOrientationLocked(false)
-                                integrator.initiateScan()
-                            }*/
-//                        2 -> {
-//                            val i = Intent(this@HomeActivity, QRCodeFragment::class.java)
-//                            startActivity(i)
-//                        }
-                            /*2 -> {
-                                startOpenGoogleDriveApp()
-    //                            checkLoginStatus()
-    //                            startActivity(Intent(this@HomeActivity, GoogleCalendar::class.java))
-                            }*/
                             2 -> {
                                 // Use package name which we want to check
                                 val isAppInstalled: Boolean =
@@ -360,10 +282,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             }
 
                             4 -> {
-                                /*val i = Intent(this@HomeActivity, Passcode_Activity::class.java)
-                                i.putExtra("CHANGE_BIOMETRIC", "CHANGE_BIOMETRIC")
-                                startActivity(i)
-                                finish()*/
                                 toolbar.title = "Change Biometric"
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
@@ -377,7 +295,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
                             5 -> {
                                 toolbar.title = "Policies"
-//                        activity_main_toolbar_title.setText("Policies")
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
                                 notification_img.visibility = View.GONE
@@ -391,7 +308,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             6 -> {
                                 val alertDialog: AlertDialog.Builder =
                                     AlertDialog.Builder(this@HomeActivity)
-//            alertDialog.setTitle("Logout")
                                 alertDialog.setMessage("Are you sure you would like to logout?")
                                 alertDialog.setPositiveButton(
                                     "yes"
@@ -479,13 +395,12 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                         when (position) {
                             0 -> {
                                 toolbar.title = ""
-//                        activity_main_toolbar_title.setText("")
                                 toolbar_logo.visibility = View.VISIBLE
                                 scan_qr_img.visibility = View.GONE
-                                notification_img.visibility = View.GONE
+                                notification_img.visibility = View.VISIBLE
                                 // # Dashboard Fragment
                                 val dashboardFragment = DashboardFragment()
-                                if (receivedNotiData == "yes") {
+                                if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                                     val args = Bundle()
                                     args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
                                     dashboardFragment.arguments = args
@@ -495,11 +410,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
                                     .commit()
                             }
-                            /*1 -> {
-                                startOpenGoogleDriveApp()
-    //                            checkLoginStatus()
-    //                            startActivity(Intent(this@HomeActivity, GoogleCalendar::class.java))
-                            }*/
+
                             1 -> {
                                 // Use package name which we want to check
                                 val isAppInstalled: Boolean =
@@ -526,7 +437,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
                             2 -> {
                                 toolbar.title = "Change Password"
-//                        activity_main_toolbar_title.setText("Policies")
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
                                 notification_img.visibility = View.GONE
@@ -547,15 +457,10 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 supportFragmentManager.beginTransaction().replace(
                                     R.id.activity_main_content_id, organisationFragment
                                 ).commit()
-                                /*val i = Intent(this@HomeActivity, Passcode_Activity::class.java)
-                                i.putExtra("CHANGE_BIOMETRIC", "CHANGE_BIOMETRIC")
-                                startActivity(i)
-                                finish()*/
                             }
 
                             4 -> {
                                 toolbar.title = "Policies"
-//                        activity_main_toolbar_title.setText("Policies")
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
                                 notification_img.visibility = View.GONE
@@ -569,7 +474,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             5 -> {
                                 val alertDialog: AlertDialog.Builder =
                                     AlertDialog.Builder(this@HomeActivity)
-//            alertDialog.setTitle("Logout")
                                 alertDialog.setMessage("Are you sure you would like to logout?")
                                 alertDialog.setPositiveButton(
                                     "yes"
@@ -1004,7 +908,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 updateAdapter(0)
                                 // Set 'Home' as the default fragment when the app starts
                                 val dashboardFragment = DashboardFragment()
-                                if (receivedNotiData == "yes") {
+                                if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                                     val args = Bundle()
                                     args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
                                     dashboardFragment.arguments = args
@@ -1016,7 +920,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             } else {
                                 updateAdapter(0)
                                 val dashboardFragment = DashboardFragment()
-                                if (receivedNotiData == "yes") {
+                                if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                                     val args = Bundle()
                                     args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
                                     dashboardFragment.arguments = args
@@ -1134,7 +1038,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                 if (readAccepted) {
                 } else {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                        showMessageOKCancel("To start receiving notifications from MYHSS, please grant the necessary permission. This will enable the app to deliver notifications to your device effectively.",
+                        showMessageOKCancel("To start receiving notifications from MyHSS, please grant the necessary permission. This will enable the app to deliver notifications to your device effectively.",
                             DialogInterface.OnClickListener { dialog, which ->
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                                     requestPermissions(

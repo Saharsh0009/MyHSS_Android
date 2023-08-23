@@ -32,31 +32,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     lateinit var sharedPreferences: SharedPreferences
     private lateinit var sessionManager: SessionManager
 
-    // [START receive_message]
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // [START_EXCLUDE]
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         DebugLog.d("From : ${remoteMessage.from}")
-
         // Check if message contains a data payload.
         if (remoteMessage.data.isNotEmpty()) {
             DebugLog.d("Message data payload : ${remoteMessage.data}")
-
             // Compose and show notification
             if (!remoteMessage.data.isNullOrEmpty()) {
+                if (remoteMessage.data["type"] != null) {
+                    AppParam.NOTIFIC_VALUE = remoteMessage.data["type"].toString()
+                } else {
+                    AppParam.NOTIFIC_VALUE = "0"
+                }
                 val title: String = remoteMessage.data["suchana_title"].toString()
                 val msg: String = remoteMessage.data["message"].toString()
+                DebugLog.e("Stype : ${AppParam.NOTIFIC_VALUE}")
                 sendNotification(title, msg)
             }
-
-//            if (/* Check if data needs to be processed by long running job */ true) {
-//                // For long-running tasks (10 seconds or more) use WorkManager.
-////                scheduleJob()
-//            } else {
-//                // Handle message within 10 seconds
-////                handleNow()
-//            }
         }
 
         // Check if message contains a notification payload.
@@ -67,13 +59,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 remoteMessage.notification?.body!!
             )
         }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
-    // [END receive_message]
 
-    // [START on_new_token]
     override fun onNewToken(token: String) {
         sessionManager = SessionManager(this)
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
@@ -86,41 +73,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // FCM registration token to your app server.
         sendRegistrationToServer(token)
     }
-    // [END on_new_token]
-
-    /**
-     * Schedule async work using WorkManager.
-     */
-//    private fun scheduleJob() {
-//        // [START dispatch_job]
-////        val work = OneTimeWorkRequest.Builder(MyWorker::class.java).build()
-////        WorkManager.getInstance().beginWith(work).enqueue()
-//        // [END dispatch_job]
-//    }
-
-    /**
-     * Handle time allotted to BroadcastReceivers.
-     */
-//    private fun handleNow() {
-//        DebugLog.d("Short lived task is done.")
-//    }
 
     private fun sendRegistrationToServer(token: String?) {
-        // TODO: Implement this method to send token to your app server.
         DebugLog.d("sendRegistrationTokenToServer($token)")
     }
 
-    /**
-     * Create and show a simple notification containing the received FCM message.
-     *
-     * @param messageBody FCM message body received.
-     */
     private fun sendNotification(title: String, messageBody: String) {
+        val notID = getNotificationId()
         val intent = Intent(this, SplashActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra(AppParam.NOTIFIC_KEY,AppParam.NOTIFIC_VALUE)
+        intent.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
         val pendingIntent = PendingIntent.getActivity(
-            this, getNotificationId() /* Request code */, intent,
+            this, notID /* Request code */, intent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         // code change test
@@ -153,28 +117,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         notificationManager.notify(
-            getNotificationId() /* ID of notification */,
+            notID /* ID of notification */,
             notificationBuilder.build()
         )
     }
-
-    /*
-    *To get a Bitmap image from the URL received
-    * */
-//    fun getBitmapfromUrl(imageUrl: String?): Bitmap? {
-//        return try {
-//            val url = URL(imageUrl)
-//            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-//            connection.setDoInput(true)
-//            connection.connect()
-//            val input: InputStream = connection.getInputStream()
-//            BitmapFactory.decodeStream(input)
-//        } catch (e: Exception) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace()
-//            null
-//        }
-//    }
 
     private fun getNotificationId(): Int {
         val rnd = Random()

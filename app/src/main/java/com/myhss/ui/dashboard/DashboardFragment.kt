@@ -28,6 +28,7 @@ import com.myhss.Utils.ScrollableGridView
 import com.myhss.appConstants.AppParam
 import com.myhss.ui.suryanamaskar.SuryaNamaskar
 import com.myhss.ui.SanghSandesh.SanghSandeshActivity
+import com.myhss.ui.SuchanaBoard.NotificationList
 import com.myhss.ui.SuchanaBoard.SuchanaBoardActivity
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.Guru_Dakshina_OneTime.GuruDakshinaOneTimeFirstActivity
@@ -518,12 +519,21 @@ class DashboardFragment : Fragment() {
             ).show()
         }
 
-
         val receivedData = arguments?.getString(AppParam.NOTIFIC_KEY)
         if (receivedData != null) {
             DebugLog.e("receivedData $receivedData")
-            val i = Intent(requireContext(), SuchanaBoardActivity::class.java)
-            startActivity(i)
+            when (AppParam.NOTIFIC_VALUE) {
+                "0" -> {
+                    val i = Intent(requireContext(), SuchanaBoardActivity::class.java)
+                    startActivity(i)
+                }
+
+                "1" -> {
+                    val i = Intent(requireContext(), NotificationList::class.java)
+                    startActivity(i)
+                }
+            }
+
         }
         return root
     }
@@ -758,23 +768,5 @@ class DashboardFragment : Fragment() {
             adapter_image_view.setImageResource(Images[position])
             return view1
         }
-    }
-
-    fun CallMapRequest() {
-        val alertDialog: AlertDialog.Builder =
-            AlertDialog.Builder(requireContext())
-        alertDialog.setTitle(getString(R.string.app_name))
-        alertDialog.setMessage("GPS is not enabled. Do you want to enable")
-        alertDialog.setPositiveButton(
-            "yes"
-        ) { _, _ ->
-            val i = Intent(requireContext(), AllShakhaListActivity::class.java)
-//            val i = Intent(requireContext(), MapsActivity::class.java)
-//            i.putExtra("SHAKHA_LIST","SHAKHA_LIST")
-            startActivity(i)
-        }
-        val alert: AlertDialog = alertDialog.create()
-        alert.setCanceledOnTouchOutside(false)
-        alert.show()
     }
 }
