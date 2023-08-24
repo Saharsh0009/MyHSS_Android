@@ -17,6 +17,7 @@ import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.ui.NotificationList.Adapter.NotificationItemAdapter
 import com.myhss.ui.NotificationList.Model.Data
 import com.myhss.ui.NotificationList.Model.NotificationDatum
 import com.myhss.ui.NotificationList.Model.NotificationType
@@ -40,10 +41,11 @@ class NotificationList : AppCompatActivity() {
     lateinit var img_filter: ImageView
     lateinit var header_title: TextView
     lateinit var MEMBERID: String
-    private var notificationData: List<Data> = ArrayList<Data>()
-    val notificationTypeList: MutableList<NotificationType> = mutableListOf()
+    private var notificationData: List<Data> = ArrayList<Data>() // main api list
+    val notificationTypeList: MutableList<NotificationType> = mutableListOf() // type list
     private var notificationAdapter: NotificationAdapter? = null
     lateinit var mLayoutManager: LinearLayoutManager
+    private lateinit var notificationTypeDialog: BottomSheetDialog
 
     @SuppressLint("SetTextI18n", "CutPasteId", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +53,6 @@ class NotificationList : AppCompatActivity() {
         setContentView(R.layout.fragment_suchana_board)
 
         sessionManager = SessionManager(this)
-
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("Notification")
@@ -68,15 +69,12 @@ class NotificationList : AppCompatActivity() {
 
         header_title.text = getString(R.string.my_notification)
         img_filter.setImageResource(R.drawable.ic_filter)
-        img_filter.visibility = View.VISIBLE
+        img_filter.visibility = View.GONE
         back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
         })
-
-
-
 
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         notification_list = findViewById(R.id.notification_list)
@@ -86,7 +84,7 @@ class NotificationList : AppCompatActivity() {
         if (sessionManager.fetchSHAKHAID() != "") {
             if (Functions.isConnectingToInternet(this)) {
                 MEMBERID = sessionManager.fetchMEMBERID()!!
-                notificationListData(MEMBERID)
+                callNotificationListData(MEMBERID, "all")
             } else {
                 Toast.makeText(
                     this,
@@ -97,16 +95,16 @@ class NotificationList : AppCompatActivity() {
         }
 
         img_filter.setOnClickListener(DebouncedClickListener {
-
+            openNotificationTypeDialog()
         })
-
     }
 
-    private fun notificationListData(member_id: String) {
+    private fun callNotificationListData(member_id: String, sType: String) {
         val pd = CustomProgressBar(this)
         pd.show()
         val builderData: MultipartBody.Builder = MultipartBody.Builder().setType(MultipartBody.FORM)
         builderData.addFormDataPart("member_id", member_id)
+        builderData.addFormDataPart("type", sType)
         val requestBody: MultipartBody = builderData.build()
         val call: Call<NotificationDatum> =
             MyHssApplication.instance!!.api.postNotificationListData(requestBody)
@@ -120,21 +118,22 @@ class NotificationList : AppCompatActivity() {
                         data_not_found_layout.visibility = View.GONE
                         try {
                             notificationData = response.body()!!.data
+                            addNotificationType("ALL", "0")
                             val uniqueTypeNames: HashSet<String> = HashSet()
                             for (dataType in notificationData) {
                                 if (uniqueTypeNames.add(dataType.notific_type_name)) {
-                                    val notificationType = NotificationType(
+                                    addNotificationType(
                                         dataType.notific_type_name,
                                         dataType.notific_type_id
                                     )
-                                    notificationTypeList.add(notificationType)
                                 }
                             }
-                            notificationAdapter =
-                                NotificationAdapter(notificationData, "Notification Detail")
-                            notification_list.adapter = notificationAdapter
-                            notificationAdapter!!.notifyDataSetChanged()
-
+                            setNotificationRv(notificationData)
+                            if (notificationTypeList.size > 2) {
+                                img_filter.visibility = View.VISIBLE
+                            } else {
+                                img_filter.visibility = View.GONE
+                            }
                         } catch (e: ArithmeticException) {
                             DebugLog.e("e => $e")
                         }
@@ -156,27 +155,42 @@ class NotificationList : AppCompatActivity() {
         })
     }
 
-//    private fun openNotificationType() {
-//        val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
-//        val view_d = layoutInflater.inflate(R.layout.dialog_select_galley_pdf, null)
-//        val btnClose = view_d.findViewById<ImageView>(R.id.close_layout)
-//        val btn_image = view_d.findViewById<LinearLayout>(R.id.select_gallery)
-//        val btn_pdf = view_d.findViewById<LinearLayout>(R.id.select_pdf)
-//
-//        btnClose.setOnClickListener(DebouncedClickListener {
-//            dialog.dismiss()
-//        })
-//
-//        btn_image.setOnClickListener(DebouncedClickListener {
-//            openGalleryForImage()
-//            dialog.dismiss()
-//        })
-//        btn_pdf.setOnClickListener(DebouncedClickListener {
-//            showFileChooserforPDF()
-//            dialog.dismiss()
-//        })
-//        dialog.setCancelable(true)
-//        dialog.setContentView(view_d)
-//        dialog.show()
-//    }
+    private fun setNotificationRv(notificData: List<Data>) {
+        notificationAdapter = NotificationAdapter(notificData, "Notification Detail")
+        notification_list.adapter = notificationAdapter
+        notificationAdapter!!.notifyDataSetChanged()
+    }
+
+    private fun openNotificationTypeDialog() {
+        notificationTypeDialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
+        val bottomSheetView = layoutInflater.inflate(R.layout.dialog_notification_type, null)
+        notificationTypeDialog.setContentView(bottomSheetView)
+        val rv_notific_type = bottomSheetView.findViewById<RecyclerView>(R.id.rv_notific_type)
+        rv_notific_type.layoutManager = LinearLayoutManager(this)
+        val adapter = NotificationItemAdapter(notificationTypeList) { selectedItem ->
+            notificationTypeDialog.dismiss()
+            filterNotification(selectedItem)
+        }
+        rv_notific_type.adapter = adapter
+        notificationTypeDialog.show()
+    }
+
+    fun addNotificationType(sName: String, sId: String) {
+        val notificationType = NotificationType(sName, sId)
+        notificationTypeList.add(notificationType)
+    }
+
+    private fun filterNotification(selectedItem: String) {
+        if (selectedItem == "0") {
+            setNotificationRv(notificationData)
+        } else {
+            val notificFilterData: MutableList<Data> = mutableListOf()
+            for (dataType in notificationData) {
+                if (selectedItem == dataType.notific_type_id) {
+                    notificFilterData.add(dataType)
+                }
+            }
+            setNotificationRv(notificFilterData)
+        }
+    }
 }

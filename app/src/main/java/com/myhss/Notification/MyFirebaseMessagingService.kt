@@ -124,6 +124,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun getNotificationId(): Int {
         val rnd = Random()
-        return 100 + rnd.nextInt(9000)
+        return rnd.nextInt(9000) + 100
     }
 }

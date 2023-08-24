@@ -626,4 +626,7 @@ interface ApiInterface {
     @POST("api/v1/notification/notificationlist")
     fun postNotificationListData(@Body body: MultipartBody): Call<NotificationDatum>
 
+    @POST("api/v1/notification/seen_notification")
+    fun postSeenNotification(@Body body: MultipartBody): Call<Get_Suchana_Seen_Response>
+
 }

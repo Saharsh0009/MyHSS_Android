@@ -282,7 +282,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         passcode_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
             if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
-                i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+                i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
             }
             startActivity(i)
             finishAffinity()
@@ -504,7 +504,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     if (sharedPreferences.getString("MEMBERID", "") != "") {
                         val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
                         if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
-                            i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+                            i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
                         }
                         startActivity(i)
                         finish()
@@ -556,7 +556,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                             if (sharedPreferences.getString("MEMBERID", "") != "") {
                                 val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
                                 if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
-                                    i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+                                    i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
                                 }
                                 startActivity(i)
                                 finish()
@@ -784,7 +784,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         if (sharedPreferences.getString("MEMBERID", "") != "") {
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
             if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
-                i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+                i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
             }
             startActivity(i)
             finish()

@@ -164,7 +164,7 @@ class SplashActivity : AppCompatActivity() {
                                                 if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
                                                     i.putExtra(
                                                         AppParam.NOTIFIC_KEY,
-                                                        AppParam.NOTIFIC_VALUE
+                                                        receivedNotiData
                                                     )
                                                 }
 
@@ -220,7 +220,7 @@ class SplashActivity : AppCompatActivity() {
                                                     if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
                                                         i.putExtra(
                                                             AppParam.NOTIFIC_KEY,
-                                                            AppParam.NOTIFIC_VALUE
+                                                            receivedNotiData
                                                         )
                                                     }
                                                     startActivity(i)
