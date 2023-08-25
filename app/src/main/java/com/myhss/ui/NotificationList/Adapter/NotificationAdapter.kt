@@ -2,6 +2,7 @@ package com.myhss.ui.SuchanaBoard.Adapter
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -74,10 +75,13 @@ class NotificationAdapter(private val notificationList: List<Data>, private val 
             suchna_discription.text = noti_data.notific_type_name
             suchna_discriptionnew.text = noti_data.notification_message
             val notReadNoti = ContextCompat.getColor(itemView.context, R.color.darkfiroziColor)
+
+//            DebugLog.e("IS READ : " + noti_data.is_read)
             if (noti_data.is_read != "1") {
                 suchna_discriptionnew.setTextColor(notReadNoti)
+            } else {
+                suchna_discriptionnew.setTextColor(Color.BLACK)
             }
-
             suchna_adapter_view.setOnClickListener(DebouncedClickListener {
                 if (noti_data.is_read != "1") {
                     if (Functions.isConnectingToInternet(itemView.context)) {
@@ -136,7 +140,6 @@ class NotificationAdapter(private val notificationList: List<Data>, private val 
                             i.putExtra("Suchana_time", noti_data.created_at)
                             i.putExtra("recipientId", noti_data.recipientId)
                             itemView.context.startActivity(i)
-
                         } else {
                             Functions.displayMessage(itemView.context, response.body()?.message)
                         }

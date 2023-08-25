@@ -672,7 +672,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         val receivedIntent = intent
         if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
             receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
-            DebugLog.e("NOTIFIC_KEY : $receivedNotiData")
+            DebugLog.e("Notification Value : $receivedNotiData")
         }
     }
 

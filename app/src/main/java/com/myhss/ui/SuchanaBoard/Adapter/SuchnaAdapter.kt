@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
@@ -68,9 +69,10 @@ class SuchnaAdapter(
             suchna_title.text = suchana.suchana_title!!.capitalize(Locale.ROOT)
             suchna_discription.text = suchana.suchana_text
             suchna_discriptionnew.text = suchana.suchana_text
-            if (suchana.is_read == "1") {
-                suchna_discription.setTextColor(Color.GRAY)
-                suchna_discriptionnew.setTextColor(Color.GRAY)
+            val notReadNoti = ContextCompat.getColor(itemView.context, R.color.darkfiroziColor)
+            if (suchana.is_read != "1") {
+                suchna_discription.setTextColor(notReadNoti)
+                suchna_discriptionnew.setTextColor(notReadNoti)
             } else {
                 suchna_discription.setTextColor(Color.BLACK)
                 suchna_discriptionnew.setTextColor(Color.BLACK)
@@ -130,8 +132,8 @@ class SuchnaAdapter(
                     if (response.code() == 200 && response.body() != null) {
                         Log.d("status", response.body()?.status.toString())
                         if (response.body()?.status!!) {
-                            suchna_discription.setTextColor(Color.GRAY)
-                            suchna_discriptionnew.setTextColor(Color.GRAY)
+                            suchna_discription.setTextColor(Color.BLACK)
+                            suchna_discriptionnew.setTextColor(Color.BLACK)
                         } else {
                             Functions.displayMessage(itemView.context, response.body()?.message)
                         }

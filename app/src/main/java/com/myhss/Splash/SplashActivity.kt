@@ -116,7 +116,7 @@ class SplashActivity : AppCompatActivity() {
         val receivedIntent = intent
         if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
             receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
-            DebugLog.e("NOTIFIC_KEY : $receivedNotiData")
+//            DebugLog.e("Notification Value : $receivedNotiData")
         }
 
 
@@ -161,7 +161,7 @@ class SplashActivity : AppCompatActivity() {
                                                     Passcode_Activity::class.java
                                                 )
                                                 i.putExtra("CHANGE_BIOMETRIC", "")
-                                                if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
+                                                if (receivedNotiData != "no") {
                                                     i.putExtra(
                                                         AppParam.NOTIFIC_KEY,
                                                         receivedNotiData
@@ -217,7 +217,7 @@ class SplashActivity : AppCompatActivity() {
                                                         Passcode_Activity::class.java
                                                     )
                                                     i.putExtra("CHANGE_BIOMETRIC", "")
-                                                    if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
+                                                    if (receivedNotiData != "no") {
                                                         i.putExtra(
                                                             AppParam.NOTIFIC_KEY,
                                                             receivedNotiData

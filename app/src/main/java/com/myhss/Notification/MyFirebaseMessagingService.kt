@@ -1,5 +1,6 @@
 package com.myhss.Notification
 
+import android.app.ActivityManager
 import android.app.Notification.DEFAULT_VIBRATE
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -33,30 +34,25 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private lateinit var sessionManager: SessionManager
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        DebugLog.d("From : ${remoteMessage.from}")
-        // Check if message contains a data payload.
+        var notification_type = "0"
         if (remoteMessage.data.isNotEmpty()) {
-            DebugLog.d("Message data payload : ${remoteMessage.data}")
-            // Compose and show notification
             if (!remoteMessage.data.isNullOrEmpty()) {
                 if (remoteMessage.data["type"] != null) {
-                    AppParam.NOTIFIC_VALUE = remoteMessage.data["type"].toString()
+                    notification_type = remoteMessage.data["type"].toString()
                 } else {
-                    AppParam.NOTIFIC_VALUE = "0"
+                    notification_type = "0"
                 }
                 val title: String = remoteMessage.data["suchana_title"].toString()
                 val msg: String = remoteMessage.data["message"].toString()
-                DebugLog.e("Stype : ${AppParam.NOTIFIC_VALUE}")
-                sendNotification(title, msg)
+                sendNotification(title, msg, notification_type)
             }
         }
 
-        // Check if message contains a notification payload.
         remoteMessage.notification?.let {
-            DebugLog.d("Message Notification Body : ${it.body}")
             sendNotification(
                 remoteMessage.notification?.title!!,
-                remoteMessage.notification?.body!!
+                remoteMessage.notification?.body!!,
+                notification_type
             )
         }
     }
@@ -64,13 +60,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         sessionManager = SessionManager(this)
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
-
-        DebugLog.d("Refreshed token : $token")
         sessionManager.saveFCMDEVICE_TOKEN(token)
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // FCM registration token to your app server.
         sendRegistrationToServer(token)
     }
 
@@ -78,11 +68,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         DebugLog.d("sendRegistrationTokenToServer($token)")
     }
 
-    private fun sendNotification(title: String, messageBody: String) {
+    private fun sendNotification(title: String, messageBody: String, Stype: String) {
         val notID = getNotificationId()
         val intent = Intent(this, SplashActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+        intent.putExtra(AppParam.NOTIFIC_KEY, Stype)
         val pendingIntent = PendingIntent.getActivity(
             this, notID /* Request code */, intent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
