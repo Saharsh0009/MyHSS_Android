@@ -293,13 +293,21 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         })
 
         next_layout.setOnClickListener(DebouncedClickListener {
-            if (GIFTAID_ID == "") {
-                Snackbar.make(rootLayout, "Please select gift aid", Snackbar.LENGTH_SHORT).show()
-            } else if (giving_dakshina == "") {
-                Snackbar.make(rootLayout, "Please select given dakshina", Snackbar.LENGTH_SHORT)
+            if (giving_dakshina == "") {
+                Snackbar.make(
+                    rootLayout,
+                    "Please select the filed given dakshina as part of Guru Purnima Utsav",
+                    Snackbar.LENGTH_SHORT
+                )
                     .show()
             } else if (donating_dakshina == "") {
-                Snackbar.make(rootLayout, "Please donate dakshina", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    rootLayout,
+                    "Please select the field donating dakshina as Individual or as Family",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            } else if (GIFTAID_ID == "") {
+                Snackbar.make(rootLayout, "Please select gift aid", Snackbar.LENGTH_SHORT).show()
             } else if (intent.getStringExtra("Amount") != "") {
                 val i =
                     Intent(
@@ -541,7 +549,7 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         val btnOk = dialog_p!!.findViewById(R.id.btnOk) as TextView
 
         if (intent.getStringExtra("Amount") != "") {
-            edit_amount.text = intent.getStringExtra("Amount")
+            edit_amount.text = donate_amount_txt.text
         }
 
         btnOk.setOnClickListener(DebouncedClickListener {

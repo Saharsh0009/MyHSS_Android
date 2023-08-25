@@ -17,6 +17,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -144,7 +145,7 @@ class WebViewPolicies : AppCompatActivity() {
                 if (webView.canGoBack()) {
                     webView.goBack()
                 } else {
-//                    showToastToExit()
+                    finish()
                 }
                 return true
             }
@@ -158,5 +159,10 @@ class WebViewPolicies : AppCompatActivity() {
         if (this@WebViewPolicies != null && !this@WebViewPolicies.isFinishing && pd != null && pd.isShowing) {
             pd.cancel()
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }

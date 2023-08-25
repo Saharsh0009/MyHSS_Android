@@ -140,7 +140,7 @@ class GuruDakshinaOneTimeThirdActivity() : AppCompatActivity() {
         val btnOk = dialog!!.findViewById(R.id.btnOk) as TextView
 
         if (intent.getStringExtra("Amount") != "") {
-            edit_amount.text = intent.getStringExtra("Amount")
+            edit_amount.text = donate_amount_txt.text
         }
 
         btnOk.setOnClickListener(DebouncedClickListener {

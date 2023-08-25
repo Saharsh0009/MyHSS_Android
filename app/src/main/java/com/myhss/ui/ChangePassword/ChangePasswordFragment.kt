@@ -22,6 +22,7 @@ import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.myhss.ui.ChangePassword.Model.ChangePasswordResponse
 import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.Main.HomeActivity
@@ -72,44 +73,44 @@ class ChangePasswordFragment : Fragment() {
         change_btn = root.findViewById(R.id.change_btn)
 
         change_btn.setOnClickListener(DebouncedClickListener {
-            val reg = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!-_?&])(?=S+$).{8,}".toRegex()
             if (edit_old_password.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Old Password", Snackbar.LENGTH_SHORT).show()
-                edit_old_password.error = "old password required"
+//                edit_old_password.error = "old password required"
                 edit_old_password.requestFocus()
                 return@DebouncedClickListener
             } else if (edit_new_password.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter New Password", Snackbar.LENGTH_SHORT).show()
-                edit_new_password.error = "new password required"
+//                edit_new_password.error = "new password required"
                 edit_new_password.requestFocus()
                 return@DebouncedClickListener
-            } else if (edit_new_password.text.toString().length < 8 && reg.matches(edit_new_password.text.toString())) {
-                Snackbar.make(rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT)
+//            } else if (edit_new_password.text.toString().length < 8 && reg.matches(edit_new_password.text.toString())) {
+            } else if (!UtilCommon.isValidPassword(edit_new_password.text.toString())) {
+                Snackbar.make(rootLayout, getString(R.string.valid_password), Snackbar.LENGTH_SHORT)
                     .show()
-                edit_new_password.error = "Password 8 characters required"
+//                edit_new_password.error = "Password 8 characters required"
                 edit_new_password.requestFocus()
                 return@DebouncedClickListener
             } else if (edit_confirm_password.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Confirm Password", Snackbar.LENGTH_SHORT)
                     .show()
-                edit_confirm_password.error = "confirm password required"
+//                edit_confirm_password.error = "confirm password required"
                 edit_confirm_password.requestFocus()
                 return@DebouncedClickListener
-            } else if (edit_confirm_password.text.toString().length < 8 && reg.matches(
-                    edit_confirm_password.text.toString()
-                )
-            ) {
+            } else if (!UtilCommon.isValidPassword(edit_confirm_password.text.toString())) {
                 Snackbar.make(
                     rootLayout,
-                    "Please Enter Confirm Password 8 characters.",
+                    getString(R.string.valid_confirm_password),
                     Snackbar.LENGTH_SHORT
-                )
-                    .show()
-                edit_confirm_password.error = "Password 8 characters required"
+                ).show()
+//                edit_confirm_password.error = "Password 8 characters required"
                 edit_confirm_password.requestFocus()
                 return@DebouncedClickListener
             } else if (edit_new_password.text.toString() != edit_confirm_password.text.toString()) {
-                Snackbar.make(rootLayout, "Password Not matching", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    rootLayout,
+                    getString(R.string.confirm_both_pass),
+                    Snackbar.LENGTH_SHORT
+                ).show()
             } else {
 //                Snackbar.make(rootLayout, "Changed Password", Snackbar.LENGTH_SHORT).show()
                 if (Functions.isConnectingToInternet(requireContext())) {
