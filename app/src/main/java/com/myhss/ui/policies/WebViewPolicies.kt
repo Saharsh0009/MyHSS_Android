@@ -17,6 +17,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -60,8 +61,8 @@ class WebViewPolicies : AppCompatActivity() {
         if (intent.getStringExtra("CODECONTENT") == "Code of Conduct") {
             header_title.text = "Code of Conduct"
             webURL = CODE_CONTENT
-        } else if (intent.getStringExtra("DATAPROTECTION") == "Data Protection Policy") {
-            header_title.text = "Data Protection Policy"
+        } else if (intent.getStringExtra("DATAPROTECTION") == "NotificTypeData Protection Policy") {
+            header_title.text = "NotificTypeData Protection Policy"
             webURL = DATA_PROTECTION
         } else if (intent.getStringExtra("MEMBERSHIP_A") == "Membership Agreement") {
             header_title.text = "Membership Agreement"
@@ -144,7 +145,7 @@ class WebViewPolicies : AppCompatActivity() {
                 if (webView.canGoBack()) {
                     webView.goBack()
                 } else {
-//                    showToastToExit()
+                    finish()
                 }
                 return true
             }
@@ -158,5 +159,10 @@ class WebViewPolicies : AppCompatActivity() {
         if (this@WebViewPolicies != null && !this@WebViewPolicies.isFinishing && pd != null && pd.isShowing) {
             pd.cancel()
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }

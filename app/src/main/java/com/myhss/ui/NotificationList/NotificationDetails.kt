@@ -31,8 +31,8 @@ class NotificationDetails : AppCompatActivity() {
 
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        sessionManager.firebaseAnalytics.setUserId("MyShakhaVC")
-        sessionManager.firebaseAnalytics.setUserProperty("MyShakhaVC", "SuchanaDetails")
+        sessionManager.firebaseAnalytics.setUserId("Notification")
+        sessionManager.firebaseAnalytics.setUserProperty("Notification", "SuchanaDetails")
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -43,15 +43,9 @@ class NotificationDetails : AppCompatActivity() {
         header_title = findViewById(R.id.header_title)
         suchna_title = findViewById(R.id.suchna_title)
         suchna_discription = findViewById(R.id.suchna_discription)
-
         header_title.text = intent.getStringExtra("Suchana_Type")
-
-        back_arrow.setOnClickListener(DebouncedClickListener {
-            finish()
-        })
-
+        back_arrow.setOnClickListener(DebouncedClickListener { finish() })
         suchna_title.text = intent.getStringExtra("Suchana_Title")
-        suchna_discription.text = intent.getStringExtra("Suchana_Discription")
-
+        suchna_discription.text = intent.getStringExtra("Suchana_DiscriptionNew")
     }
 }

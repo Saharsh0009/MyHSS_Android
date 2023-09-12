@@ -52,6 +52,7 @@
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:textAlignment="center"
+                    android:text="TEST"
                     android:textColor="#ff4500"
                     android:textSize="30sp" />
 

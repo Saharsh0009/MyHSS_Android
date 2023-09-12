@@ -236,7 +236,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         val receivedIntent = intent
         if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
             receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
-            DebugLog.e("NOTIFIC_KEY : $receivedNotiData")
+            DebugLog.e("Notification Value : $receivedNotiData")
         }
 
     }
@@ -281,8 +281,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
         passcode_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
-            if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
-                i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+            if (receivedNotiData != "no") {
+                i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
             }
             startActivity(i)
             finishAffinity()
@@ -503,8 +503,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     DebugLog.e("" + sharedPreferences.getString("MEMBERID", "").toString())
                     if (sharedPreferences.getString("MEMBERID", "") != "") {
                         val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
-                        if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
-                            i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+                        if (receivedNotiData != "no") {
+                            i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
                         }
                         startActivity(i)
                         finish()
@@ -555,8 +555,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
                             if (sharedPreferences.getString("MEMBERID", "") != "") {
                                 val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
-                                if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
-                                    i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+                                if (receivedNotiData != "no") {
+                                    i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
                                 }
                                 startActivity(i)
                                 finish()
@@ -783,8 +783,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
         if (sharedPreferences.getString("MEMBERID", "") != "") {
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
-            if (receivedNotiData == AppParam.NOTIFIC_VALUE) {
-                i.putExtra(AppParam.NOTIFIC_KEY, AppParam.NOTIFIC_VALUE)
+            if (receivedNotiData != "no") {
+                i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
             }
             startActivity(i)
             finish()

@@ -330,7 +330,11 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                 Snackbar.make(rootLayout, "Please select start payment date", Snackbar.LENGTH_SHORT)
                     .show()
             } else if (donating_dakshina == "") {
-                Snackbar.make(rootLayout, "Please donate dakshina", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    rootLayout,
+                    "Please select the field donating dakshina as Individual or as Family",
+                    Snackbar.LENGTH_SHORT
+                ).show()
             } else if (intent.getStringExtra("Amount") != "") {
                 val i =
                     Intent(
