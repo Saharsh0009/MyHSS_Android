@@ -71,6 +71,9 @@ import com.google.zxing.integration.android.IntentIntegrator
 import android.content.DialogInterface
 
 import android.provider.Settings
+import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
+import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
+import com.myhss.Main.notific_type.NotificTypeModel
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.UtilCommon
@@ -197,6 +200,14 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 //            if (sessionManager.fetchMEMBERID() != "") {
             myProfile(user_id!!, member_id!!, devicetype, device_token)
 //            }
+        } else {
+            Toast.makeText(
+                this@HomeActivity, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        if (Functions.isConnectingToInternet(this@HomeActivity)) {
+            callNotificationTypeApi()
         } else {
             Toast.makeText(
                 this@HomeActivity, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
@@ -954,6 +965,43 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                 pd.dismiss()
             }
         })
+    }
+
+    private fun callNotificationTypeApi() {
+
+        val pd = CustomProgressBar(this@HomeActivity)
+        pd.show()
+        val call: Call<NotificTypeModel> = MyHssApplication.instance!!.api.getNotificationType()
+        call.enqueue(object : Callback<NotificTypeModel> {
+            override fun onResponse(
+                call: Call<NotificTypeModel>, response: Response<NotificTypeModel>
+            ) {
+                if (response.code() == 200 && response.body() != null) {
+                    DebugLog.e("Status : " + response.body()?.status.toString())
+
+                    if (response.body()?.status!!) {
+                        DebugLog.e("Type : " + response.body()!!.data)
+                        AppParam.notificTypeData = response.body()!!.data
+                    } else {
+                        Functions.displayMessage(
+                            this@HomeActivity, response.body()?.message
+                        )
+                    }
+                } else {
+                    Functions.showAlertMessageWithOK(
+                        this@HomeActivity, "Message",
+                        getString(R.string.some_thing_wrong),
+                    )
+                }
+                pd.dismiss()
+            }
+
+            override fun onFailure(call: Call<NotificTypeModel>, t: Throwable) {
+                Toast.makeText(this@HomeActivity, t.message, Toast.LENGTH_LONG).show()
+                pd.dismiss()
+            }
+        })
+
     }
 
 

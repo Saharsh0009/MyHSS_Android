@@ -61,8 +61,8 @@ class WebViewPolicies : AppCompatActivity() {
         if (intent.getStringExtra("CODECONTENT") == "Code of Conduct") {
             header_title.text = "Code of Conduct"
             webURL = CODE_CONTENT
-        } else if (intent.getStringExtra("DATAPROTECTION") == "Data Protection Policy") {
-            header_title.text = "Data Protection Policy"
+        } else if (intent.getStringExtra("DATAPROTECTION") == "NotificTypeData Protection Policy") {
+            header_title.text = "NotificTypeData Protection Policy"
             webURL = DATA_PROTECTION
         } else if (intent.getStringExtra("MEMBERSHIP_A") == "Membership Agreement") {
             header_title.text = "Membership Agreement"

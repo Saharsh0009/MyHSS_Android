@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import com.google.android.material.textfield.TextInputEditText
+import com.myhss.appConstants.AppParam
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -52,9 +53,16 @@ class UtilCommon {
 //        }
 
         fun isNotificationTrue(sType: String): Boolean {
+            DebugLog.e("sType : $sType")
             var isTrue = false
-            if (sType == "0" || sType == "1") {
+            if (sType == "0") { // 0 => suchana , no => nothing
                 isTrue = true
+            } else {
+                for (n in AppParam.notificTypeData?.indices!!) {
+                    if (sType == AppParam.notificTypeData!![n].id) {
+                        return true
+                    }
+                }
             }
             return isTrue
         }

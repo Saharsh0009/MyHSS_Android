@@ -236,7 +236,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         val receivedIntent = intent
         if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
             receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
-//            DebugLog.e("Notification Value : $receivedNotiData")
+            DebugLog.e("Notification Value : $receivedNotiData")
         }
 
     }

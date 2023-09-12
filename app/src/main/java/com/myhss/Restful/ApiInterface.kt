@@ -5,6 +5,7 @@ import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.AllShakha.Model.Get_Shakha_Details_Response
 import com.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime.OneTimeSuccess
 import com.myhss.Guru_Dakshina_OneTime.Model.StripeDataModel
+import com.myhss.Main.notific_type.NotificTypeModel
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Splash.Model.Biometric.Latest_Update.latest_update_response
 import com.myhss.ui.suryanamaskar.Model.Get_SuryaNamaskar_ModelResponse
@@ -628,5 +629,8 @@ interface ApiInterface {
 
     @POST("api/v1/notification/seen_notification")
     fun postSeenNotification(@Body body: MultipartBody): Call<Get_Suchana_Seen_Response>
+
+    @GET("api/v1/notification/notificationtype")
+    fun getNotificationType(): Call<NotificTypeModel>
 
 }
