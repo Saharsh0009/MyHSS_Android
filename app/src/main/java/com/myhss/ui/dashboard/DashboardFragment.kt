@@ -95,12 +95,12 @@ class DashboardFragment : Fragment() {
     /*Events ship Grid View*/
     lateinit var events_gridview: ScrollableGridView
     var eventsNames = arrayOf(
-        "Events"
+        "Register For Events", "Registered Events"
 //        "Add Events", "Registration For Events", "Event Calendar",
 //        "User Event History"
     )
     var eventsImages = intArrayOf(
-        R.drawable.add_events,
+        R.drawable.register_forevents, R.drawable.user_event
 //        R.drawable.register_forevents,
 //        R.drawable.register_for_events,
 //        R.drawable.user_event
@@ -221,8 +221,8 @@ class DashboardFragment : Fragment() {
 
         reports_gridview.visibility = View.GONE
         reports_hide_show_layout.visibility = View.GONE
-        events_hide_show_layout.visibility = View.GONE
-        events_gridview.visibility = View.GONE
+        events_hide_show_layout.visibility = View.VISIBLE
+        events_gridview.visibility = View.VISIBLE
         news_hide_show_layout.visibility = View.GONE
         news_gridview.visibility = View.GONE
 

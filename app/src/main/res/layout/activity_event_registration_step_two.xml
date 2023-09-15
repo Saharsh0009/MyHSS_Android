@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_background"
+    android:orientation="vertical"
+    tools:context="com.myhss.ui.events.EventRegistrationStepTwoActivity">
+
+    <include
+        android:id="@+id/topbar"
+        layout="@layout/action_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/padding15"
+            android:layout_marginTop="@dimen/padding10"
+            android:layout_marginEnd="@dimen/padding15"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/font_size30"
+                android:src="@drawable/payment_second_top" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:fontFamily="@font/sourcesanspro_bold"
+                android:text="@string/summary"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size25"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_round"
+                android:orientation="vertical"
+                android:padding="@dimen/padding10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size18" />
+
+                <TextView
+                    android:id="@+id/txt_event_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Event Name"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size18" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_round"
+                android:orientation="vertical"
+                android:padding="@dimen/padding10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/date_and_time"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size18" />
+
+                <TextView
+                    android:id="@+id/txt_event_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Web, March 03 2023, 09:30 AM To\nFri, March 05 2023, 06:00 PM"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size18" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:fontFamily="@font/sourcesanspro_bold"
+                android:text="@string/contact"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size25"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_round"
+                android:orientation="vertical"
+                android:padding="@dimen/padding10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/email"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size18" />
+
+                <TextView
+                    android:id="@+id/txt_event_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="event@gmail.com"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size18" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_round"
+                android:orientation="vertical"
+                android:padding="@dimen/padding10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/phone_no_txt"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size18" />
+
+                <TextView
+                    android:id="@+id/txt_event_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1234567890"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size18" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:fontFamily="@font/sourcesanspro_bold"
+                android:text="@string/vanue"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size25"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_round"
+                android:orientation="vertical"
+                android:padding="@dimen/padding10">
+
+                <TextView
+                    android:id="@+id/txt_event_vanue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="34 West Street\nLondon\nSW65 0HP"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size18" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:fontFamily="@font/sourcesanspro_bold"
+                android:text="@string/charges"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size25"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_round"
+                android:orientation="vertical"
+                android:padding="@dimen/padding10">
+
+                <TextView
+                    android:id="@+id/txt_event_charge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="£ 100"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size18" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:drawableStart="@drawable/ic_bullet"
+                android:drawablePadding="@dimen/padding15"
+                android:fontFamily="@font/sourcesanspro_regular"
+                android:text="@string/i_will_be_responsible_for_transportation_to_and_from_the_ssv_site"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size20" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:drawableStart="@drawable/ic_bullet"
+                android:drawablePadding="@dimen/padding15"
+                android:fontFamily="@font/sourcesanspro_regular"
+                android:text="@string/i_hereby_release_hindu_swayamsevak_sangh_uk_referred_to_as_hss_uk_and_its_officers_of_any_liability_for_any_accidents_or_injuries_or_loss_of_personal_effects_i_may_incur_while_travelling_to_and_from_ssv_and_or_while_attending_the_ssv"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size20" />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding20"
+                android:drawablePadding="@dimen/padding20"
+                android:fontFamily="@font/sourcesanspro_regular"
+                android:text="@string/i_understand_that_the_personal_data_collected_will_be_kept_confidential_and_will_be_used_by_hss_uk_for_it_s_activities_in_accordance_with_hss_uk_privacy_policy_i_shall_notify_hss_uk_of_any_charges_to_my_details"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size20" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:layout_marginEnd="@dimen/padding10"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:id="@+id/back_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/button_orange_round"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/padding35"
+                        android:paddingEnd="@dimen/padding35">
+
+                        <ImageView
+                            android:layout_width="@dimen/padding15"
+                            android:layout_height="@dimen/padding20"
+                            android:src="@drawable/prevarrowblue" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:gravity="center"
+                            android:padding="12dp"
+                            android:text="@string/prev"
+                            android:textColor="@color/primaryColor"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:layout_marginEnd="@dimen/padding10"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:id="@+id/next_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/button_round"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/padding35"
+                        android:paddingEnd="@dimen/padding35">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/sourcesanspro_regular"
+                            android:gravity="center"
+                            android:padding="12dp"
+                            android:text="@string/next"
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:layout_width="@dimen/padding15"
+                            android:layout_height="@dimen/padding20"
+                            android:src="@drawable/nextarrowwhite" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

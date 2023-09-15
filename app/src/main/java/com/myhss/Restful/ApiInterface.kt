@@ -14,6 +14,7 @@ import com.myhss.ui.ChangePassword.Model.ChangePasswordResponse
 import com.myhss.ui.NotificationList.Model.NotificationDatum
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Response
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Seen_Response
+import com.myhss.ui.events.model.EventListModel
 import com.uk.myhss.AddMember.Address_Model.Find_Address_By_Pincode
 import com.uk.myhss.AddMember.Dietaries_Model.Find_Address_dietaries
 import com.uk.myhss.AddMember.GetNagar.Get_Nagar_Response
@@ -632,5 +633,8 @@ interface ApiInterface {
 
     @GET("api/v1/notification/notificationtype")
     fun getNotificationType(): Call<NotificTypeModel>
+
+    @POST("api/v1/events/eventlist")
+    fun postEventListData(@Body body: MultipartBody): Call<EventListModel>
 
 }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fillViewport="false" >
+    android:fillViewport="false">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -52,9 +52,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fastScrollEnabled="true"
-            android:nestedScrollingEnabled="true"
             android:gravity="center"
             android:horizontalSpacing="1dp"
+            android:nestedScrollingEnabled="true"
             android:numColumns="3"
             android:stretchMode="columnWidth"
             android:verticalSpacing="1dp" />
@@ -63,60 +63,6 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/lightGrayColor" />
-
-        <RelativeLayout
-            android:id="@+id/events_hide_show_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/light_gray_background"
-            android:padding="@dimen/padding10">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/padding5"
-                android:text="@string/events"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size25"
-                android:textStyle="bold"
-                android:theme="@style/StyleTextView"
-                tools:ignore="RtlHardcoded" />
-
-            <ImageView
-                android:id="@+id/event_hide"
-                android:layout_width="@dimen/padding30"
-                android:layout_height="@dimen/padding20"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/padding5"
-                android:src="@drawable/drop_up_icon"
-                tools:ignore="RtlHardcoded" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/lightGrayColor" />
-
-        <com.myhss.Utils.ScrollableGridView
-            android:id="@+id/events_gridview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fastScrollEnabled="true"
-            android:nestedScrollingEnabled="true"
-            android:gravity="center"
-            android:horizontalSpacing="1dp"
-            android:numColumns="3"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="1dp" />
-
-        <!--<View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/lightGrayColor" />-->
 
         <RelativeLayout
             android:id="@+id/gurupuja_hide_show_layout"
@@ -160,9 +106,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fastScrollEnabled="true"
-            android:nestedScrollingEnabled="true"
             android:gravity="center"
             android:horizontalSpacing="1dp"
+            android:nestedScrollingEnabled="true"
             android:numColumns="3"
             android:stretchMode="columnWidth"
             android:verticalSpacing="1dp" />
@@ -213,9 +159,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fastScrollEnabled="true"
-            android:nestedScrollingEnabled="true"
             android:gravity="center"
             android:horizontalSpacing="1dp"
+            android:nestedScrollingEnabled="true"
             android:numColumns="3"
             android:stretchMode="columnWidth"
             android:verticalSpacing="1dp" />
@@ -266,9 +212,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fastScrollEnabled="true"
-            android:nestedScrollingEnabled="true"
             android:gravity="center"
             android:horizontalSpacing="1dp"
+            android:nestedScrollingEnabled="true"
             android:numColumns="3"
             android:stretchMode="columnWidth"
             android:verticalSpacing="1dp" />
@@ -321,8 +267,62 @@
             android:layout_height="wrap_content"
             android:fastScrollEnabled="true"
             android:gravity="center"
-            android:nestedScrollingEnabled="true"
             android:horizontalSpacing="1dp"
+            android:nestedScrollingEnabled="true"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <RelativeLayout
+            android:id="@+id/events_hide_show_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray_background"
+            android:padding="@dimen/padding10">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/padding5"
+                android:text="@string/events"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_size25"
+                android:textStyle="bold"
+                android:theme="@style/StyleTextView"
+                tools:ignore="RtlHardcoded" />
+
+            <ImageView
+                android:id="@+id/event_hide"
+                android:layout_width="@dimen/padding30"
+                android:layout_height="@dimen/padding20"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/padding5"
+                android:src="@drawable/drop_up_icon"
+                tools:ignore="RtlHardcoded" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/lightGrayColor" />
+
+        <com.myhss.Utils.ScrollableGridView
+            android:id="@+id/events_gridview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fastScrollEnabled="true"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:nestedScrollingEnabled="true"
             android:numColumns="3"
             android:stretchMode="columnWidth"
             android:verticalSpacing="1dp" />
@@ -334,11 +334,11 @@
 
         <RelativeLayout
             android:id="@+id/other_hide_show_layout"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_gray_background"
-            android:padding="@dimen/padding10">
+            android:padding="@dimen/padding10"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -368,21 +368,21 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:visibility="gone"
-            android:background="@color/lightGrayColor" />
+            android:background="@color/lightGrayColor"
+            android:visibility="gone" />
 
         <com.myhss.Utils.ScrollableGridView
             android:id="@+id/other_gridview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fastScrollEnabled="true"
-            android:visibility="gone"
-            android:nestedScrollingEnabled="true"
             android:gravity="center"
             android:horizontalSpacing="1dp"
+            android:nestedScrollingEnabled="true"
             android:numColumns="3"
             android:stretchMode="columnWidth"
-            android:verticalSpacing="1dp" />
+            android:verticalSpacing="1dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 

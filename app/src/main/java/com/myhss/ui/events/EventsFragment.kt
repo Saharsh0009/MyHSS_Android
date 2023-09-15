@@ -11,8 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -20,30 +18,30 @@ import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
-
-import com.uk.myhss.AddMember.AddMemberFirstActivity
+import com.myhss.ui.events.model.Data
+import com.myhss.ui.events.model.EventListModel
+import com.myhss.ui.events.model.Eventdata
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
-import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
-import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
 import com.uk.myhss.ui.my_family.Adapter.EventsAdapter
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class EventsFragment : AppCompatActivity() { //Fragment() {
     private lateinit var sessionManager: SessionManager
-    var tabLayout: TabLayout? = null
-    var viewPager: ViewPager? = null
+
+    //    var tabLayout: TabLayout? = null
+//    var viewPager: ViewPager? = null
     lateinit var total_count: TextView
     lateinit var home_layout: RelativeLayout
 
-    lateinit var allevents_layout: LinearLayout
+    //    lateinit var allevents_layout: LinearLayout
     lateinit var upcoming_events_layout: LinearLayout
     lateinit var completed_events_layout: LinearLayout
     lateinit var events_list_layout: LinearLayout
@@ -55,8 +53,8 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
 
-    lateinit var allevents_view: TextView
-    lateinit var allevents_line: ImageView
+    //    lateinit var allevents_view: TextView
+//    lateinit var allevents_line: ImageView
     lateinit var upcoming_events_view: TextView
     lateinit var upcoming_events_line: ImageView
     lateinit var completed_events_view: TextView
@@ -74,16 +72,10 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
     lateinit var CHAPTERID: String
 
     /*Start All Events*/
-    private var atheletsBeans: List<Get_Member_Listing_Datum> =
-        ArrayList<Get_Member_Listing_Datum>()
     private var mAdapterEvents: EventsAdapter? = null
     /*End All Events*/
 
-
-    private var loading = true
-    var pastVisiblesItems = 0
-    var visibleItemCount: Int = 0
-    var totalItemCount: Int = 0
+    lateinit var eventListApiData: List<Data>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,40 +108,24 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         events_list_layout = findViewById(R.id.events_list_layout)
 
-        allevents_view = findViewById(R.id.allevents_view)
-        allevents_line = findViewById(R.id.allevents_line)
+
         upcoming_events_view = findViewById(R.id.upcoming_events_view)
         upcoming_events_line = findViewById(R.id.upcoming_events_line)
         completed_events_view = findViewById(R.id.completed_events_view)
         completed_events_line = findViewById(R.id.completed_events_line)
 
-        allevents_layout = findViewById(R.id.allevents_layout)
         upcoming_events_layout = findViewById(R.id.upcoming_events_layout)
         completed_events_layout = findViewById(R.id.completed_events_layout)
 
-//        if (intent.getStringExtra("DashBoard") == "SHAKHAVIEW") {
-//            Handler().postDelayed({
-//                myshakha_view.callOnClick()
-//            }, 100)
-//        } else {
-        val end: Int = 100
-        val start: Int = 0
 
-        CallAPI(start, end)
+        CallAPI("", "1")
 
         mLayoutManager = LinearLayoutManager(this@EventsFragment)
         events_list.layoutManager = mLayoutManager
-
-        allevents_line.visibility = View.VISIBLE
-        upcoming_events_line.visibility = View.INVISIBLE
+        upcoming_events_line.visibility = View.VISIBLE
         completed_events_line.visibility = View.INVISIBLE
 
-        allevents_view.setTextColor(
-            ContextCompat.getColor(
-                this@EventsFragment,
-                R.color.primaryColor
-            )
-        )
+
         upcoming_events_view.setTextColor(
             ContextCompat.getColor(
                 this@EventsFragment,
@@ -162,48 +138,11 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                 R.color.grayColorColor
             )
         )
-
-        allevents_view.setOnClickListener(DebouncedClickListener {
-            allevents_line.visibility = View.VISIBLE
-            upcoming_events_line.visibility = View.INVISIBLE
-            completed_events_line.visibility = View.INVISIBLE
-
-            allevents_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.primaryColor
-                )
-            )
-            upcoming_events_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.grayColorColor
-                )
-            )
-            completed_events_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.grayColorColor
-                )
-            )
-
-            val end: Int = 100
-            val start: Int = 0
-
-            CallAPI(start, end)
-        })
-
         upcoming_events_view.setOnClickListener(DebouncedClickListener {
-            allevents_line.visibility = View.INVISIBLE
+//            allevents_line.visibility = View.INVISIBLE
             upcoming_events_line.visibility = View.VISIBLE
             completed_events_line.visibility = View.INVISIBLE
 
-            allevents_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.grayColorColor
-                )
-            )
             upcoming_events_view.setTextColor(
                 ContextCompat.getColor(
                     this@EventsFragment,
@@ -216,24 +155,19 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                     R.color.grayColorColor
                 )
             )
-
-            val end: Int = 100
-            val start: Int = 0
-
-            CallAPI(start, end)
         })
 
         completed_events_view.setOnClickListener(DebouncedClickListener {
-            allevents_line.visibility = View.INVISIBLE
+//            allevents_line.visibility = View.INVISIBLE
             upcoming_events_line.visibility = View.INVISIBLE
             completed_events_line.visibility = View.VISIBLE
 
-            allevents_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.grayColorColor
-                )
-            )
+//            allevents_view.setTextColor(
+//                ContextCompat.getColor(
+//                    this@EventsFragment,
+//                    R.color.grayColorColor
+//                )
+//            )
             upcoming_events_view.setTextColor(
                 ContextCompat.getColor(
                     this@EventsFragment,
@@ -246,11 +180,7 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                     R.color.primaryColor
                 )
             )
-
-            val end: Int = 100
-            val start: Int = 0
-
-            CallAPI(start, end)
+//                setEventListAdapter(eventListApiData.)
         })
         events_list_layout.visibility = View.GONE
 //        events_list_layout.setOnClickListener(DebouncedClickListener {
@@ -260,18 +190,9 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
 
     }
 
-    fun CallAPI(PAGE: Int, END: Int) {
+    fun CallAPI(timeLine: String, cuurentPage: String) {
         if (Functions.isConnectingToInternet(this@EventsFragment)) {
-            USERID = sessionManager.fetchUserID()!!
-            Log.d("USERID", USERID)
-            TAB = "family"
-            MEMBERID = sessionManager.fetchMEMBERID()!!
-            STATUS = "all"
-            LENGTH = END.toString()
-            START = PAGE.toString()
-            SEARCH = ""
-            CHAPTERID = ""
-            myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+            callEventListApi(timeLine, cuurentPage)
         } else {
             Toast.makeText(
                 this@EventsFragment,
@@ -281,39 +202,30 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
         }
     }
 
-    private fun myMemberList(
-        user_id: String, tab: String, member_id: String, status: String,
-        length: String, start: String, search: String, chapter_id: String
-    ) {
+    private fun callEventListApi(timeLine: String, cuurentPage: String) {
         val pd = CustomProgressBar(this@EventsFragment)
         pd.show()
-        val call: Call<Get_Member_Listing_Response> =
-            MyHssApplication.instance!!.api.get_member_listing(
-                user_id, tab, member_id,
-                status, length, start, search, chapter_id
-            )
-        call.enqueue(object : Callback<Get_Member_Listing_Response> {
+        val builderData: MultipartBody.Builder =
+            MultipartBody.Builder().setType(MultipartBody.FORM)
+        builderData.addFormDataPart("timeline", timeLine)
+        builderData.addFormDataPart("current_page", cuurentPage)
+        val requestBody: MultipartBody = builderData.build()
+
+        val call: Call<EventListModel> =
+            MyHssApplication.instance!!.api.postEventListData(requestBody)
+        call.enqueue(object : Callback<EventListModel> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(
-                call: Call<Get_Member_Listing_Response>,
-                response: Response<Get_Member_Listing_Response>
+                call: Call<EventListModel>,
+                response: Response<EventListModel>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
                         data_not_found_layout.visibility = View.GONE
                         try {
-                            atheletsBeans = response.body()!!.data!!
-                            Log.d("atheletsBeans", atheletsBeans.toString())
-                            for (i in 1 until atheletsBeans.size) {
-                                Log.d("firstName", atheletsBeans[i].firstName.toString())
-                            }
-                            Log.d("count=>", atheletsBeans.size.toString())
-
-                            mAdapterEvents = EventsAdapter(atheletsBeans)
-
-                            events_list.adapter = mAdapterEvents
-                            mAdapterEvents!!.notifyDataSetChanged()
+                            val eventData = response.body()!!.data!!
+                            setEventListAdapter(eventData.upcoming.eventdata)
 
                         } catch (e: ArithmeticException) {
                             println(e)
@@ -338,10 +250,16 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                 pd.dismiss()
             }
 
-            override fun onFailure(call: Call<Get_Member_Listing_Response>, t: Throwable) {
+            override fun onFailure(call: Call<EventListModel>, t: Throwable) {
                 Toast.makeText(this@EventsFragment, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
             }
         })
+    }
+
+    private fun setEventListAdapter(eventData_: List<Eventdata>) {
+        mAdapterEvents = EventsAdapter(eventData_)
+        events_list.adapter = mAdapterEvents
+        mAdapterEvents!!.notifyDataSetChanged()
     }
 }

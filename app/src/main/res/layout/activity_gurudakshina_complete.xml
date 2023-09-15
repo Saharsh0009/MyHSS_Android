@@ -126,6 +126,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/label_message_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/font_size15"
@@ -169,6 +170,7 @@
                     android:paddingEnd="@dimen/padding35">
 
                     <TextView
+                        android:id="@+id/txt_next_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/sourcesanspro_regular"
