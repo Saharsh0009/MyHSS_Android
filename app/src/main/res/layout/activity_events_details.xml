@@ -23,10 +23,10 @@
             android:padding="@dimen/padding10">
 
             <ImageView
+                android:id="@+id/imgEventBanner"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/padding170"
-                android:background="@drawable/border_edittext"
-                android:scaleType="centerCrop"
+                android:scaleType="fitXY"
                 android:src="@drawable/ic_dummy_event" />
 
 
@@ -101,7 +101,7 @@
                     android:src="@drawable/ic_user" />
 
                 <TextView
-                    android:id="@+id/event_user"
+                    android:id="@+id/event_contacts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/padding10"
@@ -124,7 +124,7 @@
                     android:src="@drawable/ic_pound" />
 
                 <TextView
-                    android:id="@+id/event_pound"
+                    android:id="@+id/event_fees"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/padding10"

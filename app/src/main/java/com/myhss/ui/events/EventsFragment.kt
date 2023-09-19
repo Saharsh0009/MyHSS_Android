@@ -33,15 +33,10 @@ import retrofit2.Response
 import java.util.*
 
 
-class EventsFragment : AppCompatActivity() { //Fragment() {
+class EventsFragment : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
-
-    //    var tabLayout: TabLayout? = null
-//    var viewPager: ViewPager? = null
     lateinit var total_count: TextView
     lateinit var home_layout: RelativeLayout
-
-    //    lateinit var allevents_layout: LinearLayout
     lateinit var upcoming_events_layout: LinearLayout
     lateinit var completed_events_layout: LinearLayout
     lateinit var events_list_layout: LinearLayout
@@ -52,9 +47,6 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
     var dialog: Dialog? = null
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
-
-    //    lateinit var allevents_view: TextView
-//    lateinit var allevents_line: ImageView
     lateinit var upcoming_events_view: TextView
     lateinit var upcoming_events_line: ImageView
     lateinit var completed_events_view: TextView
@@ -63,19 +55,13 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
     lateinit var events_list: RecyclerView
 
     lateinit var USERID: String
-    lateinit var TAB: String
     lateinit var MEMBERID: String
-    lateinit var STATUS: String
     lateinit var LENGTH: String
     lateinit var START: String
     lateinit var SEARCH: String
-    lateinit var CHAPTERID: String
-
-    /*Start All Events*/
     private var mAdapterEvents: EventsAdapter? = null
-    /*End All Events*/
 
-    lateinit var eventListApiData: List<Data>
+    lateinit var eventListApiData: Data
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,7 +125,6 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
             )
         )
         upcoming_events_view.setOnClickListener(DebouncedClickListener {
-//            allevents_line.visibility = View.INVISIBLE
             upcoming_events_line.visibility = View.VISIBLE
             completed_events_line.visibility = View.INVISIBLE
 
@@ -155,19 +140,12 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                     R.color.grayColorColor
                 )
             )
+            setEventListAdapter(eventListApiData.upcoming.eventdata, "1")
         })
 
         completed_events_view.setOnClickListener(DebouncedClickListener {
-//            allevents_line.visibility = View.INVISIBLE
             upcoming_events_line.visibility = View.INVISIBLE
             completed_events_line.visibility = View.VISIBLE
-
-//            allevents_view.setTextColor(
-//                ContextCompat.getColor(
-//                    this@EventsFragment,
-//                    R.color.grayColorColor
-//                )
-//            )
             upcoming_events_view.setTextColor(
                 ContextCompat.getColor(
                     this@EventsFragment,
@@ -180,14 +158,9 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                     R.color.primaryColor
                 )
             )
-//                setEventListAdapter(eventListApiData.)
+            setEventListAdapter(eventListApiData.past.eventdata, "2")
         })
         events_list_layout.visibility = View.GONE
-//        events_list_layout.setOnClickListener(DebouncedClickListener {
-////            val i = Intent(this@EventsFragment, AddMemberFirstActivity::class.java)
-////            startActivity(i)
-//        })
-
     }
 
     fun CallAPI(timeLine: String, cuurentPage: String) {
@@ -224,8 +197,8 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                     if (response.body()?.status!!) {
                         data_not_found_layout.visibility = View.GONE
                         try {
-                            val eventData = response.body()!!.data!!
-                            setEventListAdapter(eventData.upcoming.eventdata)
+                            eventListApiData = response.body()!!.data!!
+                            setEventListAdapter(eventListApiData.upcoming.eventdata, "1")
 
                         } catch (e: ArithmeticException) {
                             println(e)
@@ -234,12 +207,6 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                         }
                     } else {
                         data_not_found_layout.visibility = View.VISIBLE
-//                        Functions.displayMessage(this@LinkedFamilyFragment,response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            this@LinkedFamilyFragment, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -257,8 +224,8 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
         })
     }
 
-    private fun setEventListAdapter(eventData_: List<Eventdata>) {
-        mAdapterEvents = EventsAdapter(eventData_)
+    private fun setEventListAdapter(eventData_: List<Eventdata>, sEveType: String) {
+        mAdapterEvents = EventsAdapter(eventData_, sEveType)
         events_list.adapter = mAdapterEvents
         mAdapterEvents!!.notifyDataSetChanged()
     }

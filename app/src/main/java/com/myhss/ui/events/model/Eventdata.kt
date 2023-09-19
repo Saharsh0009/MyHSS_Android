@@ -1,5 +1,9 @@
 package com.myhss.ui.events.model
 
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
+
+
 data class Eventdata(
     val address_line_1: String,
     val address_line_2: String,
@@ -40,4 +44,4 @@ data class Eventdata(
     val offline_address_id: String,
     val postal_code: String,
     val status: String
-)
+) : Serializable
