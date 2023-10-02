@@ -196,30 +196,39 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                 // Check if we're running on Android 6.0 (M) or higher
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     //Fingerprint API only available on from Android 6.0 (M)
-                    val fingerprintManager =
-                        this.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
-                    if (!fingerprintManager.isHardwareDetected) {
-                        // Device doesn't support fingerprint authentication
-                    } else if (!fingerprintManager.hasEnrolledFingerprints()) {
-                        // User hasn't enrolled any fingerprints to authenticate with
-//                        if (sessionManager.getDEVICE_FACEID().equals("1", ignoreCase = true)) {
-//                            if (BiometricUtils.isSdkVersionSupported()) faceOpenLock()
-//                        } else
-//                            if (sessionManager!!.getDEVICE_FINGERID()
-//                                .equals("1", ignoreCase = true)
-//                        ) {
-                        if (BiometricUtils.isSdkVersionSupported()) fingerPrintLock()
-//                        }
-                    } else {
-                        // Everything is ready for fingerprint authentication
-//                        if (sessionManager.getDEVICE_FACEID().equals("1", ignoreCase = true)) {
-//                            if (BiometricUtils.isSdkVersionSupported()) faceOpenLock()
-//                        } else
-//                            if (sessionManager!!.getDEVICE_FINGERID()
-//                                .equals("1", ignoreCase = true)
-//                        ) {
-                        if (BiometricUtils.isSdkVersionSupported()) fingerPrintLock()
-//                        }
+                    val fingerprintManager = this.getSystemService(Context.FINGERPRINT_SERVICE) as? FingerprintManager
+                    if (fingerprintManager != null) {
+                        if (!fingerprintManager.isHardwareDetected) {
+                            DebugLog.e("Device doesn't support fingerprint authentication")
+                            // Device doesn't support fingerprint authentication
+                        } else if (!fingerprintManager.hasEnrolledFingerprints()) {
+                            DebugLog.e("User hasn't enrolled any fingerprints to authenticate with")
+                            // User hasn't enrolled any fingerprints to authenticate with
+                //                        if (sessionManager.getDEVICE_FACEID().equals("1", ignoreCase = true)) {
+                //                            if (BiometricUtils.isSdkVersionSupported()) faceOpenLock()
+                //                        } else
+                //                            if (sessionManager!!.getDEVICE_FINGERID()
+                //                                .equals("1", ignoreCase = true)
+                //                        ) {
+                            if (BiometricUtils.isSdkVersionSupported()) {
+                                fingerPrintLock()
+                                DebugLog.e("fingerPrintLock() 1")
+                            }
+                //                        }
+                        } else {
+                            // Everything is ready for fingerprint authentication
+                //                        if (sessionManager.getDEVICE_FACEID().equals("1", ignoreCase = true)) {
+                //                            if (BiometricUtils.isSdkVersionSupported()) faceOpenLock()
+                //                        } else
+                //                            if (sessionManager!!.getDEVICE_FINGERID()
+                //                                .equals("1", ignoreCase = true)
+                //                        ) {
+                            if (BiometricUtils.isSdkVersionSupported()) {
+                                fingerPrintLock()
+                                DebugLog.e("fingerPrintLock() 2")
+                            }
+                //                        }
+                        }
                     }
                 }
                 txtusername!!.visibility = View.VISIBLE

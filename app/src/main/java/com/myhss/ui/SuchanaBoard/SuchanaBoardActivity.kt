@@ -149,10 +149,15 @@ class SuchanaBoardActivity : AppCompatActivity() {
                     if (response.body()?.status!!) {
                         data_not_found_layout.visibility = View.GONE
                         try {
-                            suchana_data = response.body()!!.data!!
-                            suchana_adapter = SuchnaAdapter(suchana_data)
-                            notification_list.adapter = suchana_adapter
-                            suchana_adapter!!.notifyDataSetChanged()
+                            if (response.body()!!.data!!.isNullOrEmpty()) {
+                                data_not_found_layout.visibility = View.VISIBLE
+                            } else {
+                                suchana_data = response.body()!!.data!!
+                                suchana_adapter = SuchnaAdapter(suchana_data)
+                                notification_list.adapter = suchana_adapter
+                                suchana_adapter!!.notifyDataSetChanged()
+                            }
+
 
                         } catch (e: ArithmeticException) {
                             DebugLog.e("$e")
