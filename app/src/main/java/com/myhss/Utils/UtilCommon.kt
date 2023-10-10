@@ -1,8 +1,11 @@
 package com.myhss.Utils
 
+import android.os.Build
+import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.annotation.RequiresApi
 import com.google.android.material.textfield.TextInputEditText
 import com.myhss.appConstants.AppParam
 import java.text.DateFormat
@@ -78,5 +81,16 @@ class UtilCommon {
             return "$dateOnly $timeOnly"
         }
 
+
+        fun htmlToText(sText: String): String {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                var stext = Html.fromHtml(sText, Html.FROM_HTML_MODE_COMPACT)
+                stext.toString()
+            } else {
+                @Suppress("DEPRECATION")
+                var stext = Html.fromHtml(sText)
+                stext.toString()
+            }
+        }
     }
 }

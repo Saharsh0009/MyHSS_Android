@@ -1,14 +1,17 @@
 package com.uk.myhss.ui.dashboard
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -17,10 +20,13 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.ui.events.model.Data
 import com.myhss.ui.events.model.EventListModel
 import com.myhss.ui.events.model.Eventdata
+import com.myhss.ui.events.model.Past
+import com.myhss.ui.events.model.Upcoming
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -35,34 +41,30 @@ import java.util.*
 
 class EventsFragment : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
-    lateinit var total_count: TextView
     lateinit var home_layout: RelativeLayout
     lateinit var upcoming_events_layout: LinearLayout
     lateinit var completed_events_layout: LinearLayout
     lateinit var events_list_layout: LinearLayout
-
     lateinit var mLayoutManager: LinearLayoutManager
     lateinit var data_not_found_layout: RelativeLayout
-
-    var dialog: Dialog? = null
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
     lateinit var upcoming_events_view: TextView
     lateinit var upcoming_events_line: ImageView
     lateinit var completed_events_view: TextView
     lateinit var completed_events_line: ImageView
+    lateinit var rcv_events_list: RecyclerView
+    lateinit var search_fields: AppCompatEditText
 
-    lateinit var events_list: RecyclerView
-
-    lateinit var USERID: String
-    lateinit var MEMBERID: String
-    lateinit var LENGTH: String
-    lateinit var START: String
-    lateinit var SEARCH: String
     private var mAdapterEvents: EventsAdapter? = null
+    lateinit var upComingEventData: Upcoming
+    lateinit var pastEventData: Past
+    var pg_tot_page = 0
+    var pg_next_page = 1
+    var isLoading = false
+    var eventType = "1"
 
-    lateinit var eventListApiData: Data
-
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_events)
@@ -90,27 +92,26 @@ class EventsFragment : AppCompatActivity() {
             finishAffinity()
         })
 
-        events_list = findViewById(R.id.events_list)
+        rcv_events_list = findViewById(R.id.events_list)
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         events_list_layout = findViewById(R.id.events_list_layout)
-
-
         upcoming_events_view = findViewById(R.id.upcoming_events_view)
         upcoming_events_line = findViewById(R.id.upcoming_events_line)
         completed_events_view = findViewById(R.id.completed_events_view)
         completed_events_line = findViewById(R.id.completed_events_line)
-
         upcoming_events_layout = findViewById(R.id.upcoming_events_layout)
         completed_events_layout = findViewById(R.id.completed_events_layout)
+        search_fields = findViewById(R.id.search_fields)
 
-
-        CallAPI("", "1")
 
         mLayoutManager = LinearLayoutManager(this@EventsFragment)
-        events_list.layoutManager = mLayoutManager
+        rcv_events_list.layoutManager = mLayoutManager
         upcoming_events_line.visibility = View.VISIBLE
         completed_events_line.visibility = View.INVISIBLE
 
+        mAdapterEvents = EventsAdapter(ArrayList(), eventType)
+        rcv_events_list.adapter = mAdapterEvents
+        CallAPI("", pg_next_page.toString(), false)
 
         upcoming_events_view.setTextColor(
             ContextCompat.getColor(
@@ -125,6 +126,10 @@ class EventsFragment : AppCompatActivity() {
             )
         )
         upcoming_events_view.setOnClickListener(DebouncedClickListener {
+            eventType = "1"
+            pg_tot_page = upComingEventData.paginate.total_pages
+            pg_next_page = 1
+            isLoading = false
             upcoming_events_line.visibility = View.VISIBLE
             completed_events_line.visibility = View.INVISIBLE
 
@@ -140,10 +145,14 @@ class EventsFragment : AppCompatActivity() {
                     R.color.grayColorColor
                 )
             )
-            setEventListAdapter(eventListApiData.upcoming.eventdata, "1")
+            mAdapterEvents?.setData(upComingEventData.eventdata.toMutableList(), eventType)
         })
 
         completed_events_view.setOnClickListener(DebouncedClickListener {
+            eventType = "2"
+            pg_tot_page = pastEventData.paginate.total_pages
+            pg_next_page = 1
+            isLoading = false
             upcoming_events_line.visibility = View.INVISIBLE
             completed_events_line.visibility = View.VISIBLE
             upcoming_events_view.setTextColor(
@@ -158,14 +167,67 @@ class EventsFragment : AppCompatActivity() {
                     R.color.primaryColor
                 )
             )
-            setEventListAdapter(eventListApiData.past.eventdata, "2")
+            mAdapterEvents?.setData(pastEventData.eventdata.toMutableList(), eventType)
         })
         events_list_layout.visibility = View.GONE
+
+        rcv_events_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (!isLoading) {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                    ) {
+                        if (pg_next_page < pg_tot_page && pg_next_page > 0) {
+                            pg_next_page += 1
+                            isLoading = true
+                            DebugLog.e("SCROLL : pg_tot_page : $pg_tot_page  == pg_next_page : $pg_next_page")
+                            CallAPI(eventType, pg_next_page.toString(), true)
+                        }
+                    }
+                }
+            }
+        })
+
+        search_fields.doOnTextChanged { text, start, before, count ->
+            if (eventType == "1") {
+                var eventList = upComingEventData.eventdata
+                if (count > 0) {
+                    pg_next_page = 0
+                    val filteredList = eventList.filter { item ->
+                        item.event_title.contains(text!!, ignoreCase = true)
+                    }
+                    mAdapterEvents!!.setData(filteredList, eventType)
+                } else {
+                    pg_next_page = 1
+                    mAdapterEvents!!.setData(upComingEventData.eventdata, eventType)
+                }
+            } else {
+                var eventList = pastEventData.eventdata
+                if (count > 0) {
+                    pg_next_page = 0
+                    val filteredList = eventList.filter { item ->
+                        item.event_title.contains(text!!, ignoreCase = true)
+                    }
+                    mAdapterEvents!!.setData(filteredList, eventType)
+                } else {
+                    pg_next_page = 1
+                    mAdapterEvents!!.setData(pastEventData.eventdata, eventType)
+                }
+            }
+        }
+
     }
 
-    fun CallAPI(timeLine: String, cuurentPage: String) {
+    fun CallAPI(timeLine: String, cuurentPage: String, bFlag: Boolean) {
+        DebugLog.e("CallAPI pg_next_page ==> $pg_next_page")
         if (Functions.isConnectingToInternet(this@EventsFragment)) {
-            callEventListApi(timeLine, cuurentPage)
+            callEventListApi(timeLine, cuurentPage, bFlag)
         } else {
             Toast.makeText(
                 this@EventsFragment,
@@ -175,7 +237,7 @@ class EventsFragment : AppCompatActivity() {
         }
     }
 
-    private fun callEventListApi(timeLine: String, cuurentPage: String) {
+    private fun callEventListApi(timeLine: String, cuurentPage: String, bFlag: Boolean) {
         val pd = CustomProgressBar(this@EventsFragment)
         pd.show()
         val builderData: MultipartBody.Builder =
@@ -197,13 +259,40 @@ class EventsFragment : AppCompatActivity() {
                     if (response.body()?.status!!) {
                         data_not_found_layout.visibility = View.GONE
                         try {
-                            eventListApiData = response.body()!!.data!!
-                            setEventListAdapter(eventListApiData.upcoming.eventdata, "1")
+                            var eventListApiData = response.body()!!.data!!
+
+                            when (timeLine) {
+                                "" -> {
+                                    upComingEventData = eventListApiData.upcoming
+                                    pastEventData = eventListApiData.past
+                                }
+
+                                "1" -> {
+//                                    upComingEventData += eventListApiData.upcoming
+                                }
+
+                                "2" -> {
+//                                    pastEventData += eventListApiData.past
+                                }
+                            }
+
+                            if (bFlag) {
+                                mAdapterEvents?.addData(
+                                    eventListApiData.upcoming.eventdata.toMutableList(),
+                                    eventType
+                                )
+                            } else {
+                                mAdapterEvents?.setData(
+                                    eventListApiData.upcoming.eventdata.toMutableList(),
+                                    eventType
+                                )
+                            }
+                            pg_tot_page = eventListApiData.upcoming.paginate.total_pages
+                            isLoading = false
+                            DebugLog.e("API : pg_tot_page : $pg_tot_page  == pg_next_page : $pg_next_page")
 
                         } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Family")
+                            DebugLog.e("Error : $e")
                         }
                     } else {
                         data_not_found_layout.visibility = View.VISIBLE
@@ -222,11 +311,5 @@ class EventsFragment : AppCompatActivity() {
                 pd.dismiss()
             }
         })
-    }
-
-    private fun setEventListAdapter(eventData_: List<Eventdata>, sEveType: String) {
-        mAdapterEvents = EventsAdapter(eventData_, sEveType)
-        events_list.adapter = mAdapterEvents
-        mAdapterEvents!!.notifyDataSetChanged()
     }
 }

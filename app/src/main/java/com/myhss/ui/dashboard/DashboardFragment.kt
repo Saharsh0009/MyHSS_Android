@@ -388,17 +388,14 @@ class DashboardFragment : Fragment() {
         }
 
         events_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
-            if (position == 0) {
-                val i = Intent(requireContext(), EventsFragment::class.java)
-                startActivity(i)
-//                startActivity(Intent(requireContext(), ProfileFragment::class.java))
-//            } else if (position == 1) {
-//                startActivity(Intent(requireContext(), LinkedFamilyFragment::class.java))
-//            } else if (position == 2) {
-//                val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
-//                i.putExtra("TYPE_SELF", "family");
-//                startActivity(i)
-//            } else if (position == 3) {
+            when(position){
+                0 -> {
+                    val i = Intent(requireContext(), EventsFragment::class.java)
+                    startActivity(i)
+                }
+                1 -> {
+                    Toast.makeText(context,"Click on Registered Events",Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
