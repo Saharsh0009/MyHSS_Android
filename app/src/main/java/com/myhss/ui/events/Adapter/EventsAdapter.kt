@@ -64,7 +64,7 @@ class EventsAdapter(val eventListData: MutableList<Eventdata>, private var sEveT
                 itemView.findViewById(R.id.active_inactive_view) as RelativeLayout
 
             val adapter_view = itemView.findViewById(R.id.adapter_view) as RelativeLayout
-            event_name.text = eventdata.event_title
+            event_name.text = eventdata.event_title + " ==> $position"
             start_date.text = eventdata.event_start_date
             end_date.text = eventdata.event_end_date
             if (eventdata.event_chargable_or_not.toString()!! == "0") {

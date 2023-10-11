@@ -21,9 +21,7 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
-import com.myhss.Utils.EndLessScroll
 import com.myhss.Utils.Functions
-import com.myhss.ui.sankhya_report.Model.AddCheckbox
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.my_family.Model.my_family_response
 import com.uk.myhss.ui.sankhya_report.Adapter.SankhyaCustomAdapter

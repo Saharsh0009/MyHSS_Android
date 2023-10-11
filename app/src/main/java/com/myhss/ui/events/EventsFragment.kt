@@ -63,6 +63,9 @@ class EventsFragment : AppCompatActivity() {
     var pg_next_page = 1
     var isLoading = false
     var eventType = "1"
+    var isSerch = false
+    var pg_next_up = 1
+    var pg_next_past = 1
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,6 +114,7 @@ class EventsFragment : AppCompatActivity() {
 
         mAdapterEvents = EventsAdapter(ArrayList(), eventType)
         rcv_events_list.adapter = mAdapterEvents
+        pg_next_page = pg_next_up
         CallAPI("", pg_next_page.toString(), false)
 
         upcoming_events_view.setTextColor(
@@ -128,7 +132,9 @@ class EventsFragment : AppCompatActivity() {
         upcoming_events_view.setOnClickListener(DebouncedClickListener {
             eventType = "1"
             pg_tot_page = upComingEventData.paginate.total_pages
-            pg_next_page = 1
+            pg_next_page = pg_next_up
+            search_fields.setText("")
+            isSerch = false
             isLoading = false
             upcoming_events_line.visibility = View.VISIBLE
             completed_events_line.visibility = View.INVISIBLE
@@ -151,7 +157,9 @@ class EventsFragment : AppCompatActivity() {
         completed_events_view.setOnClickListener(DebouncedClickListener {
             eventType = "2"
             pg_tot_page = pastEventData.paginate.total_pages
-            pg_next_page = 1
+            pg_next_page = pg_next_past
+            search_fields.setText("")
+            isSerch = false
             isLoading = false
             upcoming_events_line.visibility = View.INVISIBLE
             completed_events_line.visibility = View.VISIBLE
@@ -183,8 +191,13 @@ class EventsFragment : AppCompatActivity() {
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                         && firstVisibleItemPosition >= 0
                     ) {
-                        if (pg_next_page < pg_tot_page && pg_next_page > 0) {
+                        if (pg_next_page < pg_tot_page && !isSerch) {
                             pg_next_page += 1
+                            if (eventType == "1") {
+                                pg_next_up = pg_next_page
+                            } else {
+                                pg_next_past = pg_next_page
+                            }
                             isLoading = true
                             DebugLog.e("SCROLL : pg_tot_page : $pg_tot_page  == pg_next_page : $pg_next_page")
                             CallAPI(eventType, pg_next_page.toString(), true)
@@ -198,34 +211,32 @@ class EventsFragment : AppCompatActivity() {
             if (eventType == "1") {
                 var eventList = upComingEventData.eventdata
                 if (count > 0) {
-                    pg_next_page = 0
+                    isSerch = true
                     val filteredList = eventList.filter { item ->
                         item.event_title.contains(text!!, ignoreCase = true)
                     }
                     mAdapterEvents!!.setData(filteredList, eventType)
                 } else {
-                    pg_next_page = 1
+                    isSerch = false
                     mAdapterEvents!!.setData(upComingEventData.eventdata, eventType)
                 }
             } else {
                 var eventList = pastEventData.eventdata
                 if (count > 0) {
-                    pg_next_page = 0
+                    isSerch = true
                     val filteredList = eventList.filter { item ->
                         item.event_title.contains(text!!, ignoreCase = true)
                     }
                     mAdapterEvents!!.setData(filteredList, eventType)
                 } else {
-                    pg_next_page = 1
+                    isSerch = false
                     mAdapterEvents!!.setData(pastEventData.eventdata, eventType)
                 }
             }
         }
-
     }
 
     fun CallAPI(timeLine: String, cuurentPage: String, bFlag: Boolean) {
-        DebugLog.e("CallAPI pg_next_page ==> $pg_next_page")
         if (Functions.isConnectingToInternet(this@EventsFragment)) {
             callEventListApi(timeLine, cuurentPage, bFlag)
         } else {
@@ -237,13 +248,14 @@ class EventsFragment : AppCompatActivity() {
         }
     }
 
-    private fun callEventListApi(timeLine: String, cuurentPage: String, bFlag: Boolean) {
+    private fun callEventListApi(timeLine: String, curentPage: String, bFlag: Boolean) {
+        DebugLog.e("timeLine => $timeLine :: pg_next_page => $curentPage  :: bFlag => $bFlag")
         val pd = CustomProgressBar(this@EventsFragment)
         pd.show()
         val builderData: MultipartBody.Builder =
             MultipartBody.Builder().setType(MultipartBody.FORM)
         builderData.addFormDataPart("timeline", timeLine)
-        builderData.addFormDataPart("current_page", cuurentPage)
+        builderData.addFormDataPart("current_page", curentPage)
         val requestBody: MultipartBody = builderData.build()
 
         val call: Call<EventListModel> =
@@ -268,11 +280,12 @@ class EventsFragment : AppCompatActivity() {
                                 }
 
                                 "1" -> {
-//                                    upComingEventData += eventListApiData.upcoming
+                                    upComingEventData.eventdata += eventListApiData.upcoming.eventdata
                                 }
 
                                 "2" -> {
 //                                    pastEventData += eventListApiData.past
+                                    pastEventData.eventdata += eventListApiData.past.eventdata
                                 }
                             }
 
@@ -289,8 +302,6 @@ class EventsFragment : AppCompatActivity() {
                             }
                             pg_tot_page = eventListApiData.upcoming.paginate.total_pages
                             isLoading = false
-                            DebugLog.e("API : pg_tot_page : $pg_tot_page  == pg_next_page : $pg_next_page")
-
                         } catch (e: ArithmeticException) {
                             DebugLog.e("Error : $e")
                         }

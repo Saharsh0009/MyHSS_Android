@@ -388,13 +388,14 @@ class DashboardFragment : Fragment() {
         }
 
         events_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
-            when(position){
+            when (position) {
                 0 -> {
                     val i = Intent(requireContext(), EventsFragment::class.java)
                     startActivity(i)
                 }
+
                 1 -> {
-                    Toast.makeText(context,"Click on Registered Events",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Click on Registered Events", Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -69,24 +69,35 @@ class EventsDetails : AppCompatActivity() {
         }
 
         when (eventData.event_attendee_gender) {
-            "M" -> {binding.eventGender.text = "Male"}
-            "F" -> {binding.eventGender.text = "Female"}
-            "A" -> {binding.eventGender.text = "All"}
+            "M" -> {
+                binding.eventGender.text = "Male"
+            }
+
+            "F" -> {
+                binding.eventGender.text = "Female"
+            }
+
+            "A" -> {
+                binding.eventGender.text = "All"
+            }
+
             else -> {
                 binding.eventGender.text = "All"
             }
         }
 
 
-        if(eventData.event_chargable_or_not.isNullOrEmpty() || eventData.event_chargable_or_not.isNullOrBlank() || eventData.event_chargable_or_not == "1"){
+        if (eventData.event_chargable_or_not.isNullOrEmpty() || eventData.event_chargable_or_not.isNullOrBlank() || eventData.event_chargable_or_not == "1") {
             binding.eventFees.text = "Free"
-        }else{
+        } else {
             var payinfo = ""
-            for(i in 0 until eventData.event_chargable_info!!.size){
-                if(payinfo.length == 0){
-                    payinfo =eventData.event_chargable_info[i].event_charge_category_label +"  :  £ "+ eventData.event_chargable_info[i].event_charge_value
-                }else{
-                    payinfo =payinfo + "\n" + eventData.event_chargable_info[i].event_charge_category_label +"  :  £ "+ eventData.event_chargable_info[i].event_charge_value
+            for (i in 0 until eventData.event_chargable_info!!.size) {
+                if (payinfo.length == 0) {
+                    payinfo =
+                        eventData.event_chargable_info[i].event_charge_category_label + "  :  £ " + eventData.event_chargable_info[i].event_charge_value
+                } else {
+                    payinfo =
+                        payinfo + "\n" + eventData.event_chargable_info[i].event_charge_category_label + "  :  £ " + eventData.event_chargable_info[i].event_charge_value
                 }
             }
             binding.eventFees.text = payinfo
