@@ -17,6 +17,7 @@ import com.myhss.Utils.DebouncedClickListener
 import com.myhss.ui.events.EventsDetails
 import com.myhss.ui.events.model.Eventdata
 import com.uk.myhss.R
+import com.uk.myhss.Restful.MyHssApplication
 import java.util.*
 
 
@@ -64,7 +65,7 @@ class EventsAdapter(val eventListData: MutableList<Eventdata>, private var sEveT
                 itemView.findViewById(R.id.active_inactive_view) as RelativeLayout
 
             val adapter_view = itemView.findViewById(R.id.adapter_view) as RelativeLayout
-            event_name.text = eventdata.event_title + " ==> $position"
+            event_name.text = eventdata.event_title
             start_date.text = eventdata.event_start_date
             end_date.text = eventdata.event_end_date
             if (eventdata.event_chargable_or_not.toString()!! == "0") {
@@ -75,8 +76,8 @@ class EventsAdapter(val eventListData: MutableList<Eventdata>, private var sEveT
                 active_inactive_view.setBackgroundResource(R.drawable.baal_background)
             }
             Glide.with(itemView.context)
-//                .load(eventdata.event_img)
-                .load("https://pbs.twimg.com/profile_images/1605297940242669568/q8-vPggS_400x400.jpg")
+                .load(MyHssApplication.IMAGE_URL_EVENT + eventdata.event_img)
+//                .load("https://pbs.twimg.com/profile_images/1605297940242669568/q8-vPggS_400x400.jpg")
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .transform(RoundedCorners(30))
                 .placeholder(R.drawable.splash) // Placeholder image while loading

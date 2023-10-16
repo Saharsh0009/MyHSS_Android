@@ -19,6 +19,7 @@ import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.UtilCommon
 import com.myhss.ui.events.model.Eventdata
 import com.uk.myhss.R
+import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.databinding.ActivityEventsDetailsBinding
 
@@ -114,7 +115,8 @@ class EventsDetails : AppCompatActivity() {
         binding.eventDetail.text = UtilCommon.htmlToText(eventData.event_detailed_description)
 
         Glide.with(applicationContext)
-            .load(eventData.event_img_detail)
+//            .load(eventData.event_img_detail)
+            .load(MyHssApplication.IMAGE_URL_EVENT + eventData.event_img_detail)
             .transition(DrawableTransitionOptions.withCrossFade())
             .transform(RoundedCorners(30))
             .placeholder(R.drawable.splash) // Placeholder image while loading
