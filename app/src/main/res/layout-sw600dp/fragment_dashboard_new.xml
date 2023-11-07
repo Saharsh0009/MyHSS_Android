@@ -64,59 +64,66 @@
             android:layout_height="1dp"
             android:background="@color/lightGrayColor" />
 
-        <RelativeLayout
-            android:id="@+id/gurupuja_hide_show_layout"
+        <LinearLayout
+            android:id="@+id/guruPoojaLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/light_gray_background"
-            android:padding="@dimen/padding10">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/gurupuja_hide_show_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/padding5"
-                android:text="@string/guru_puja"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_size25"
-                android:textStyle="bold"
-                android:theme="@style/StyleTextView"
-                tools:ignore="RtlHardcoded" />
+                android:background="@color/light_gray_background"
+                android:padding="@dimen/padding10">
 
-            <ImageView
-                android:id="@+id/gurupuja_hide"
-                android:layout_width="@dimen/padding30"
-                android:layout_height="@dimen/padding20"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/padding5"
-                android:src="@drawable/drop_up_icon"
-                tools:ignore="RtlHardcoded" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/padding5"
+                    android:text="@string/guru_puja"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_size25"
+                    android:textStyle="bold"
+                    android:theme="@style/StyleTextView"
+                    tools:ignore="RtlHardcoded" />
 
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/gurupuja_hide"
+                    android:layout_width="@dimen/padding30"
+                    android:layout_height="@dimen/padding20"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/padding5"
+                    android:src="@drawable/drop_up_icon"
+                    tools:ignore="RtlHardcoded" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/lightGrayColor" />
+            </RelativeLayout>
 
-        <com.myhss.Utils.ScrollableGridView
-            android:id="@+id/guru_puja_gridview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fastScrollEnabled="true"
-            android:gravity="center"
-            android:horizontalSpacing="1dp"
-            android:nestedScrollingEnabled="true"
-            android:numColumns="3"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="1dp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/lightGrayColor" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/lightGrayColor" />
+            <com.myhss.Utils.ScrollableGridView
+                android:id="@+id/guru_puja_gridview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fastScrollEnabled="true"
+                android:gravity="center"
+                android:horizontalSpacing="1dp"
+                android:nestedScrollingEnabled="true"
+                android:numColumns="3"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="1dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/lightGrayColor" />
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/news_hide_show_layout"

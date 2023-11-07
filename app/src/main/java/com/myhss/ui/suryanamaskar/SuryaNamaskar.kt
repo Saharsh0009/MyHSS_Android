@@ -7,12 +7,12 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
@@ -34,18 +34,14 @@ import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
 import com.myhss.ui.suryanamaskar.Model.Datum_Get_SuryaNamaskar
-import com.myhss.ui.suryanamaskar.Model.Get_SuryaNamaskar_ModelResponse
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
-import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
@@ -54,12 +50,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
     lateinit var layout_pieChart_lable: LinearLayout
-    private var MEMBER_ID: String = ""
     var IDMEMBER: ArrayList<String> = ArrayList<String>()
-    var UserName: ArrayList<String> = ArrayList<String>()
-    var UserCategory: ArrayList<String> = ArrayList<String>()
-    private var USER_NAME: String = ""
-    private var USER_ID: String = ""
     lateinit var USERID: String
     lateinit var TAB: String
     lateinit var MEMBERID: String
@@ -73,10 +64,8 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var linechart_layout: LinearLayout
     private lateinit var add_more: ImageView
     lateinit var pieChart_surya: PieChart
-    private var memberDataList: List<Get_Member_Listing_Datum> =
-        ArrayList<Get_Member_Listing_Datum>()
-    private var surya_namaskarlist: List<Datum_Get_SuryaNamaskar> =
-        ArrayList<Datum_Get_SuryaNamaskar>()
+    private var memberDataList: List<Get_Member_Listing_Datum> = ArrayList<Get_Member_Listing_Datum>()
+    private var surya_namaskarlist: List<Datum_Get_SuryaNamaskar> = ArrayList<Datum_Get_SuryaNamaskar>()
 
 
     @SuppressLint("MissingPermission")
@@ -86,12 +75,10 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         setContentView(R.layout.activity_barchart)
 
         sessionManager = SessionManager(this)
-
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("SuryaNamaskarVC")
         sessionManager.firebaseAnalytics.setUserProperty("SuryaNamaskarVC", "SuryaNamaskar")
-
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true)
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
@@ -106,47 +93,51 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         layout_pieChart_lable = findViewById(R.id.layout_pieChart_lable)
         add_more.setImageResource(R.drawable.ic_plus)
+        pieChart_surya.visibility = View.GONE
+        callApis()
         back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@SuryaNamaskar, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
         })
-        callMemberListApi()
         add_more.visibility = View.VISIBLE
         add_more.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@SuryaNamaskar, AddSuryaNamaskarActivity::class.java)
             startActivity(i)
         })
-
-//        SwipeleftToRightBack.enableSwipeBack(this)
-//        SwipeleftToRightBack.enableSwipeBackFullView(this)
     }
-//    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-//        return SwipeleftToRightBack.dispatchTouchEvent(this, event) || super.dispatchTouchEvent(event)
-//    }
 
-    private fun callMemberListApi() {
+    private fun callApis() {
+        val pd = CustomProgressBar(this@SuryaNamaskar)
+        pd.show()
         if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
-            val end: Int = 100
-            val start: Int = 0
-            USERID = sessionManager.fetchUserID()!!
-            Log.d("USERID", USERID)
-            TAB = "family"
-            MEMBERID = sessionManager.fetchMEMBERID()!!
-            STATUS = "all"
-            LENGTH = end.toString()
-            START = start.toString()
-            SEARCH = ""
-            CHAPTERID = ""
-            myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+            lifecycleScope.launch {
+                val job2 = async {
+                    USERID = sessionManager.fetchUserID()!!
+                    TAB = "family"
+                    MEMBERID = sessionManager.fetchMEMBERID()!!
+                    STATUS = "1"// all
+                    LENGTH = "100"
+                    START = "0"
+                    SEARCH = ""
+                    CHAPTERID = ""
+                    myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                }
+                val result2 = job2.await()
+                DebugLog.d("CORO - Results await 5: $result2")
+                pd.dismiss()
+            }
         } else {
             Toast.makeText(
-                this@SuryaNamaskar, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
+                this@SuryaNamaskar,
+                resources.getString(R.string.no_connection),
+                Toast.LENGTH_SHORT
             ).show()
+            pd.dismiss()
         }
     }
 
-    private fun myMemberList(
+    private suspend fun myMemberList(
         user_id: String,
         tab: String,
         member_id: String,
@@ -156,177 +147,92 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         search: String,
         chapter_id: String
     ) {
-        val pd = CustomProgressBar(this@SuryaNamaskar)
-        pd.show()
-        val call: Call<Get_Member_Listing_Response> =
-            MyHssApplication.instance!!.api.get_member_listing(
-                user_id, tab, member_id, status, length, start, search, chapter_id
+        try {
+            val response = MyHssApplication.instance!!.api.getMemberListing(
+                user_id,
+                tab,
+                member_id,
+                status,
+                length,
+                start,
+                search,
+                chapter_id
             )
-        call.enqueue(object : Callback<Get_Member_Listing_Response> {
-            override fun onResponse(
-                call: Call<Get_Member_Listing_Response>,
-                response: Response<Get_Member_Listing_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        try {
-                            memberDataList = response.body()!!.data!!
-                            Log.d("atheletsBeans", memberDataList.toString())
-
-                            val mStringList = ArrayList<String>()
-                            mStringList.add("All")
-                            mStringList.add(sessionManager.fetchFIRSTNAME()!! + " " + sessionManager.fetchSURNAME()!!)
-                            for (i in 0 until memberDataList.size) {
-                                if (memberDataList[i].firstName.toString() + " " + memberDataList[i].lastName.toString() != sessionManager.fetchFIRSTNAME() + " " + sessionManager.fetchSURNAME()) {
-                                    mStringList.add(
-                                        memberDataList[i].firstName.toString() + " " + memberDataList[i].lastName.toString()
-                                    )
-                                }
-                            }
-
-                            val mStringListnew = ArrayList<String>()
-                            mStringListnew.add("-99")
-                            mStringListnew.add(sessionManager.fetchMEMBERID()!!)
-                            for (i in 0 until memberDataList.size) {
-                                if (memberDataList[i].memberId != sessionManager.fetchMEMBERID()) {
-                                    mStringListnew.add(
-                                        memberDataList[i].memberId.toString()
-                                    )
-                                }
-                            }
-
-                            var mStringArray = mStringList.toArray()
-                            var mStringArraynew = mStringListnew.toArray()
-
-                            mStringArray = mStringList.toArray(mStringArray)
-                            mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                            val list: java.util.ArrayList<String> = arrayListOf<String>()
-                            val listnew: java.util.ArrayList<String> = arrayListOf<String>()
-
-                            for (element in mStringArray) {
-                                list.add(element.toString())
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                    UserName = list
-                                }
-                            }
-
-                            for (element in mStringArraynew) {
-                                listnew.add(element.toString())
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                    UserCategory = listnew
-                                }
-                            }
-                            val distinct = UserCategory.toSet().toList();
-                            if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
-                                MEMBER_ID =
-                                    distinct.toString().replace("[", "").replace("]", "").trim()
-                                SuryanamaskarList(MEMBER_ID, "true")
-                            } else {
-                                Toast.makeText(
-                                    this@SuryaNamaskar,
-                                    resources.getString(R.string.no_connection),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-
-                        } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Family")
-                        }
-                    } else {
-                        USER_NAME = sessionManager.fetchUSERNAME()!!
-                        USER_ID = sessionManager.fetchMEMBERID()!!
-                        if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
-                            DebugLog.e("MEMBER_ID 3==>" + sessionManager.fetchMEMBERID()!!)
-                            SuryanamaskarList(sessionManager.fetchMEMBERID()!!, "true")
-                        } else {
-                            Toast.makeText(
-                                this@SuryaNamaskar,
-                                resources.getString(R.string.no_connection),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+            if (response.status == true) {
+                memberDataList = response.data!!
+                val mStringListnew = mutableListOf(sessionManager.fetchMEMBERID() ?: "")
+                for (member in memberDataList) {
+                    if (member.memberId != sessionManager.fetchMEMBERID()) {
+                        mStringListnew.add(member.memberId.toString())
                     }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@SuryaNamaskar, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
                 }
-                pd.dismiss()
-            }
+                val listnew = mStringListnew.map { it.toString() }
+                val UserCategory = listnew.toSet().toList() as ArrayList<String>
 
-            override fun onFailure(call: Call<Get_Member_Listing_Response>, t: Throwable) {
-                Toast.makeText(this@SuryaNamaskar, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
+                if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
+                    var MEMBER_ID = UserCategory.joinToString(",")
+                    SuryanamaskarList(MEMBER_ID, "true")
+                } else {
+                    Toast.makeText(
+                        this@SuryaNamaskar,
+                        resources.getString(R.string.no_connection),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                Functions.displayMessage(this@SuryaNamaskar, response.message)
             }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@SuryaNamaskar,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
-    private fun SuryanamaskarList(member_id: String, is_api: String) {
-        val pd = CustomProgressBar(this)
-        pd.show()
-        val call: Call<Get_SuryaNamaskar_ModelResponse> =
-            MyHssApplication.instance!!.api.get_suryanamaskar_count(member_id, is_api)
-        call.enqueue(object : Callback<Get_SuryaNamaskar_ModelResponse> {
-            @RequiresApi(Build.VERSION_CODES.N)
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onResponse(
-                call: Call<Get_SuryaNamaskar_ModelResponse>,
-                response: Response<Get_SuryaNamaskar_ModelResponse>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    DebugLog.d("status => " + response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        data_not_found_layout.visibility = View.GONE
-                        try {
-                            surya_namaskarlist = response.body()!!.data!!
-                            val memberStringList = ArrayList<String>()
-                            for (i in 0 until surya_namaskarlist.size) {
-                                memberStringList.add(
-                                    surya_namaskarlist.get(i).getmember_id().toString()
-                                )
-                            }
-                            var memberStringArray = memberStringList.toArray()
-                            memberStringArray = memberStringList.toArray(memberStringArray)
-                            val list: ArrayList<String> = arrayListOf<String>()
-                            for (element in memberStringArray) {
-                                list.add(element.toString())
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    IDMEMBER = list
-                                }
-                            }
-                            pieChart_surya.visibility = View.VISIBLE
-                            setPieChartForSuryanamaskar(surya_namaskarlist)
-                        } catch (e: ArithmeticException) {
-                            DebugLog.e(e.toString())
-                        } finally {
-                            DebugLog.e("Family")
-                        }
-                    } else {
-                        data_not_found_layout.visibility = View.VISIBLE
-                        pieChart_surya.visibility = View.GONE
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@SuryaNamaskar,
-                        "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                    pieChart_surya.visibility = View.GONE
-                }
-                pd.dismiss()
-            }
+    private suspend fun SuryanamaskarList(member_id: String, is_api: String) {
+        DebugLog.d("member_id => $member_id")
+        try {
+            val response =
+                MyHssApplication.instance!!.api.get_suryanamaskar_count(member_id, is_api)
+            if (response.status == true) {
 
-            override fun onFailure(call: Call<Get_SuryaNamaskar_ModelResponse>, t: Throwable) {
-                Toast.makeText(this@SuryaNamaskar, t.message, Toast.LENGTH_LONG).show()
+                data_not_found_layout.visibility = View.GONE
+                surya_namaskarlist = response.data!!
+                val memberStringList = ArrayList<String>()
+                for (i in 0 until surya_namaskarlist.size) {
+                    memberStringList.add(
+                        surya_namaskarlist.get(i).getmember_id().toString()
+                    )
+                }
+                var memberStringArray = memberStringList.toArray()
+                memberStringArray = memberStringList.toArray(memberStringArray)
+                val list: ArrayList<String> = arrayListOf<String>()
+                for (element in memberStringArray) {
+                    list.add(element.toString())
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        IDMEMBER = list
+                    }
+                }
+                pieChart_surya.visibility = View.VISIBLE
+                setPieChartForSuryanamaskar(surya_namaskarlist)
+            } else {
+                Functions.displayMessage(this@SuryaNamaskar, response.message)
+                data_not_found_layout.visibility = View.VISIBLE
                 pieChart_surya.visibility = View.GONE
-                pd.dismiss()
             }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@SuryaNamaskar,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+            data_not_found_layout.visibility = View.VISIBLE
+            pieChart_surya.visibility = View.GONE
+        }
     }
 
     private fun setPieChartForSuryanamaskar(suryaNamaskarlistData: List<Datum_Get_SuryaNamaskar>) {

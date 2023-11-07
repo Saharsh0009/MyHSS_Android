@@ -64,7 +64,7 @@
                         android:layout_width="@dimen/padding20"
                         android:layout_height="@dimen/padding20"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/email_img" />
+                        android:src="@drawable/user_img" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_userName"

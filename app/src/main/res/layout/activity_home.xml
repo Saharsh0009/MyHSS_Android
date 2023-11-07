@@ -39,22 +39,22 @@
                     android:src="@drawable/dashboard_logo"
                     android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/activity_main_toolbar_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:ellipsize="marquee"
-                    android:fadingEdge="horizontal"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:textAlignment="center"
-                    android:text="TEST"
-                    android:textColor="#ff4500"
-                    android:textSize="30sp" />
+                <!--                <TextView-->
+                <!--                    android:id="@+id/activity_main_toolbar_title"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_gravity="center"-->
+                <!--                    android:ellipsize="marquee"-->
+                <!--                    android:fadingEdge="horizontal"-->
+                <!--                    android:focusable="true"-->
+                <!--                    android:focusableInTouchMode="true"-->
+                <!--                    android:marqueeRepeatLimit="marquee_forever"-->
+                <!--                    android:scrollHorizontally="true"-->
+                <!--                    android:singleLine="true"-->
+                <!--                    android:textAlignment="center"-->
+                <!--                    android:text="TEST"-->
+                <!--                    android:textColor="#ff4500"-->
+                <!--                    android:textSize="30sp" />-->
 
                 <LinearLayout
                     android:layout_width="wrap_content"

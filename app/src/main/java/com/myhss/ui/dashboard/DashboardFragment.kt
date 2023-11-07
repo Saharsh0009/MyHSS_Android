@@ -25,6 +25,7 @@ import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.ScrollableGridView
+import com.myhss.Utils.UtilCommon
 import com.myhss.appConstants.AppParam
 import com.myhss.ui.suryanamaskar.SuryaNamaskar
 import com.myhss.ui.SanghSandesh.SanghSandeshActivity
@@ -70,6 +71,7 @@ class DashboardFragment : Fragment() {
     lateinit var shakha_hide_show_layout: RelativeLayout
 
     lateinit var news_layout: LinearLayout
+    lateinit var guruPoojaLayout: LinearLayout
 
     lateinit var member_hide: ImageView
     lateinit var gurupuja_hide: ImageView
@@ -203,6 +205,7 @@ class DashboardFragment : Fragment() {
         other_hide_show_layout = root.findViewById(R.id.other_hide_show_layout) as RelativeLayout
 
         news_layout = root.findViewById(R.id.news_layout) as LinearLayout
+        guruPoojaLayout = root.findViewById(R.id.guruPoojaLayout) as LinearLayout
 
         membership_gridview = root.findViewById(R.id.membership_gridview) as ScrollableGridView
         events_gridview = root.findViewById(R.id.events_gridview) as ScrollableGridView
@@ -226,6 +229,12 @@ class DashboardFragment : Fragment() {
         news_hide_show_layout.visibility = View.GONE
         news_gridview.visibility = View.GONE
 
+        if (UtilCommon.isUserUnder18(sessionManager.fetchDOB().toString())) {
+            guruPoojaLayout.visibility = View.GONE
+        } else {
+            guruPoojaLayout.visibility = View.VISIBLE
+        }
+
         /*if (sessionManager.fetchSHAKHA_TAB() == "yes") {
             shakha_gridview.visibility = View.VISIBLE
             shakha_hide_show_layout.visibility = View.VISIBLE
@@ -243,13 +252,8 @@ class DashboardFragment : Fragment() {
         events_gridview.adapter = events_customAdapter
 
         /*For Guru Puja*/
-        val guru_customAdapter = context?.let {
-            Adapter_dashboard(
-                it,
-                guru_pujaImages,
-                guru_pujaNames
-            )
-        }
+        val guru_customAdapter =
+            context?.let { Adapter_dashboard(it, guru_pujaImages, guru_pujaNames) }
         guru_puja_gridview.adapter = guru_customAdapter
 
 
@@ -400,23 +404,28 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        guru_puja_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
-            if (position == 0) {
-                startActivity(
-                    Intent(
-                        requireContext(),
-                        GuruDakshinaOneTimeFirstActivity::class.java
+
+        guru_puja_gridview.onItemClickListener =
+            OnItemClickListener { parent, v, position, id ->
+                if (position == 0) {
+                    startActivity(
+                        Intent(
+                            requireContext(),
+                            GuruDakshinaOneTimeFirstActivity::class.java
+                        )
                     )
-                )
-            } else if (position == 1) {
-                startActivity(
-                    Intent(
-                        requireContext(),
-                        GuruDakshinaRegularFirstActivity::class.java
+                } else if (position == 1) {
+                    startActivity(
+                        Intent(
+                            requireContext(),
+                            GuruDakshinaRegularFirstActivity::class.java
+                        )
                     )
-                )
+                }
             }
-        }
+
+
+
 
         member_hide_show_layout.setOnClickListener(DebouncedClickListener {
             if (membershipIsVisible) {
@@ -500,22 +509,19 @@ class DashboardFragment : Fragment() {
             }
         })
 
-        if (Functions.isConnectingToInternet(requireContext())) {
-            val user_id = sessionManager.fetchUserID()
-            val member_id = sessionManager.fetchMEMBERID()
-            val devicetype = "A"
-            val device_token = sessionManager.fetchFCMDEVICE_TOKEN()
-//            myPrivileges("1", "approve")
-//            if (sessionManager.fetchMEMBERID() != "") {
-            myProfile(user_id!!, member_id!!, devicetype, device_token!!)
-//            }
-        } else {
-            Toast.makeText(
-                context,
-                resources.getString(R.string.no_connection),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+//        if (Functions.isConnectingToInternet(requireContext())) {
+//            val user_id = sessionManager.fetchUserID()
+//            val member_id = sessionManager.fetchMEMBERID()
+//            val devicetype = "A"
+//            val device_token = sessionManager.fetchFCMDEVICE_TOKEN()
+//            myProfile(user_id!!, member_id!!, devicetype, device_token!!)
+//        } else {
+//            Toast.makeText(
+//                context,
+//                resources.getString(R.string.no_connection),
+//                Toast.LENGTH_SHORT
+//            ).show()
+//        }
 
         val receivedData = arguments?.getString(AppParam.NOTIFIC_KEY)
         if (receivedData != null) {
@@ -582,159 +588,159 @@ class DashboardFragment : Fragment() {
     }
 
     /*myPrivileges API*/
-    private fun myProfile(
-        user_id: String,
-        member_id: String,
-        deviceType: String,
-        device_token: String
-    ) {
-        val pd = CustomProgressBar(requireContext())
-        pd.show()
-        val call: Call<Get_Profile_Response> =
-            MyHssApplication.instance!!.api.get_profile(
-                user_id,
-                member_id,
-                deviceType,
-                device_token
-            )
-        call.enqueue(object : Callback<Get_Profile_Response> {
-            override fun onResponse(
-                call: Call<Get_Profile_Response>,
-                response: Response<Get_Profile_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        try {
-                            var data_getprofile: List<Datum_Get_Profile> =
-                                ArrayList<Datum_Get_Profile>()
-                            data_getprofile = response.body()!!.data!!
-
-                            var data_getmember: List<Member_Get_Profile> =
-                                ArrayList<Member_Get_Profile>()
-                            data_getmember = response.body()!!.member!!
-//                    data_getmember = response.body()!!.data!![0].member!!
-
-                            val sharedPreferences = requireContext().getSharedPreferences(
-                                "production",
-                                Context.MODE_PRIVATE
-                            )
-
-                            sharedPreferences.edit().apply {
-                                putString("FIRSTNAME", data_getmember[0].firstName)
-                                putString("SURNAME", data_getmember[0].lastName)
-                                putString("USERNAME", data_getprofile[0].username)
-                                putString("USERID", data_getmember[0].userId)
-                                putString("USEREMAIL", data_getmember[0].email)
-                                putString("USERROLE", data_getprofile[0].role)
-                                putString("MEMBERID", data_getmember[0].memberId)
-                            }.apply()
-
-                            val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                            editor.putString("FIRSTNAME", data_getmember[0].firstName)
-                            editor.putString("SURNAME", data_getmember[0].lastName)
-                            editor.putString("USERNAME", data_getprofile[0].username)
-                            editor.putString("USERID", data_getmember[0].userId)
-                            editor.putString("USEREMAIL", data_getmember[0].email)
-                            editor.putString("USERROLE", data_getprofile[0].role)
-                            editor.putString("MEMBERID", data_getmember[0].memberId)
-                            editor.apply()
-                            editor.commit()
-
-                            sessionManager.saveFIRSTNAME(data_getmember[0].firstName.toString())
-                            sessionManager.saveMIDDLENAME(data_getmember[0].middleName.toString())
-                            sessionManager.saveSURNAME(data_getmember[0].lastName.toString())
-                            sessionManager.saveUSERNAME(data_getprofile[0].username.toString())
-                            sessionManager.saveUSEREMAIL(data_getprofile[0].email.toString())
-                            sessionManager.saveUSERROLE(data_getprofile[0].role.toString())
-                            sessionManager.saveDOB(data_getmember[0].dob.toString())
-                            sessionManager.saveSHAKHANAME(data_getmember[0].shakha.toString())
-                            sessionManager.saveSHAKHAID(data_getmember[0].shakhaId.toString())
-                            sessionManager.saveNAGARID(data_getmember[0].nagarId.toString())
-                            sessionManager.saveVIBHAGID(data_getmember[0].vibhagId.toString())
-                            sessionManager.saveNAGARNAME(data_getmember[0].nagar.toString())
-                            sessionManager.saveVIBHAGNAME(data_getmember[0].vibhag.toString())
-                            sessionManager.saveADDRESS(
-                                data_getmember[0].buildingName.toString() + " " + data_getmember[0].addressLine1.toString()
-                                        + " " + data_getmember[0].addressLine2.toString()
-                            )
-                            sessionManager.saveLineOne(data_getmember[0].addressLine1.toString())
-                            sessionManager.saveRELATIONSHIPNAME(data_getmember[0].relationship.toString())
-                            sessionManager.saveRELATIONSHIPNAME_OTHER(data_getmember[0].otherRelationship.toString())
-                            sessionManager.saveOCCUPATIONNAME(data_getmember[0].occupation.toString())
-                            sessionManager.saveSPOKKENLANGUAGE(data_getmember[0].rootLanguage.toString())
-                            sessionManager.saveSPOKKENLANGUAGEID(data_getmember[0].root_language_id.toString())
-                            sessionManager.saveMOBILENO(data_getmember[0].mobile.toString())
-                            if (!data_getmember[0].landLine.toString().equals("null")) {
-                                sessionManager.saveSECMOBILENO(data_getmember[0].landLine.toString())
-                            }
-                            if (!data_getmember[0].secondaryEmail.toString().equals("null")) {
-                                sessionManager.saveSECEMAIL(data_getmember[0].secondaryEmail.toString())
-                            }
-//                            sessionManager.saveSECMOBILENO(data_getmember[0].landLine.toString())
-//                            sessionManager.saveSECEMAIL(data_getmember[0].secondaryEmail.toString())
-                            sessionManager.saveGUAEMRNAME(data_getmember[0].emergencyName.toString())
-                            sessionManager.saveGUAEMRPHONE(data_getmember[0].emergencyPhone.toString())
-                            sessionManager.saveGUAEMREMAIL(data_getmember[0].emergencyEmail.toString())
-                            sessionManager.saveGUAEMRRELATIONSHIP(data_getmember[0].emergencyRelatioship.toString())
-                            sessionManager.saveGUAEMRRELATIONSHIP_OTHER(data_getmember[0].otherEmergencyRelationship.toString())
-                            sessionManager.saveDOHAVEMEDICAL(data_getmember[0].medicalInformationDeclare.toString())
-                            sessionManager.saveAGE(data_getmember[0].memberAge.toString())
-                            sessionManager.saveGENDER(data_getmember[0].gender.toString())
-                            sessionManager.saveCITY(data_getmember[0].city.toString())
-                            sessionManager.saveCOUNTRY(data_getmember[0].country.toString())
-                            sessionManager.savePOSTCODE(data_getmember[0].postalCode.toString())
-                            sessionManager.saveSHAKHA_TAB(data_getmember[0].shakha_tab.toString())
-                            var s_count = data_getmember[0].shakha_sankhya_avg.toString()
-                            if (s_count.length == 0) {
-                                s_count = "0"
-                            }
-                            sessionManager.saveSHAKHA_SANKHYA_AVG(s_count)
-                            sessionManager.saveMEDICAL_OTHER_INFO(data_getmember[0].medicalDetails.toString())
-                            sessionManager.saveQUALIFICATIONAID(data_getmember[0].isQualifiedInFirstAid.toString())
-                            sessionManager.saveQUALIFICATION_VALUE(data_getmember[0].first_aid_qualification_val.toString())
-                            sessionManager.saveQUALIFICATION_VALUE_NAME(data_getmember[0].first_aid_qualification_name.toString())// value name
-                            sessionManager.saveQUALIFICATION_IS_DOC(data_getmember[0].first_aid_qualification_is_doc.toString())
-                            sessionManager.saveQUALIFICATION_DATE(data_getmember[0].dateOfFirstAidQualification.toString())
-                            sessionManager.saveQUALIFICATION_FILE(data_getmember[0].firstAidQualificationFile.toString())
-                            sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO(data_getmember[0].professional_body_registartion_number.toString())
-                            sessionManager.saveDIETARY(data_getmember[0].specialMedDietryInfo.toString())
-                            sessionManager.saveDIETARYID(data_getmember[0].special_med_dietry_info_id.toString())
-                            sessionManager.saveSTATE_IN_INDIA(data_getmember[0].indianConnectionState.toString())
-
-                            Log.d("Address", sessionManager.fetchADDRESS()!!)
-                            Log.d("Username", sessionManager.fetchUSERNAME()!!)
-                            Log.d("Shakha_tab", sessionManager.fetchSHAKHA_TAB()!!)
-
-                        } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Profile")
-                        }
-
-                    } else {
-                        Functions.displayMessage(requireContext(), response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            requireContext(), "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        requireContext(), "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
-            }
-
-            override fun onFailure(call: Call<Get_Profile_Response>, t: Throwable) {
-                Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
-    }
+//    private fun myProfile(
+//        user_id: String,
+//        member_id: String,
+//        deviceType: String,
+//        device_token: String
+//    ) {
+//        val pd = CustomProgressBar(requireContext())
+//        pd.show()
+//        val call: Call<Get_Profile_Response> =
+//            MyHssApplication.instance!!.api.get_profile(
+//                user_id,
+//                member_id,
+//                deviceType,
+//                device_token
+//            )
+//        call.enqueue(object : Callback<Get_Profile_Response> {
+//            override fun onResponse(
+//                call: Call<Get_Profile_Response>,
+//                response: Response<Get_Profile_Response>
+//            ) {
+//                if (response.code() == 200 && response.body() != null) {
+//                    Log.d("status", response.body()?.status.toString())
+//                    if (response.body()?.status!!) {
+//                        try {
+//                            var data_getprofile: List<Datum_Get_Profile> =
+//                                ArrayList<Datum_Get_Profile>()
+//                            data_getprofile = response.body()!!.data!!
+//
+//                            var data_getmember: List<Member_Get_Profile> =
+//                                ArrayList<Member_Get_Profile>()
+//                            data_getmember = response.body()!!.member!!
+////                    data_getmember = response.body()!!.data!![0].member!!
+//
+//                            val sharedPreferences = requireContext().getSharedPreferences(
+//                                "production",
+//                                Context.MODE_PRIVATE
+//                            )
+//
+//                            sharedPreferences.edit().apply {
+//                                putString("FIRSTNAME", data_getmember[0].firstName)
+//                                putString("SURNAME", data_getmember[0].lastName)
+//                                putString("USERNAME", data_getprofile[0].username)
+//                                putString("USERID", data_getmember[0].userId)
+//                                putString("USEREMAIL", data_getmember[0].email)
+//                                putString("USERROLE", data_getprofile[0].role)
+//                                putString("MEMBERID", data_getmember[0].memberId)
+//                            }.apply()
+//
+//                            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+//                            editor.putString("FIRSTNAME", data_getmember[0].firstName)
+//                            editor.putString("SURNAME", data_getmember[0].lastName)
+//                            editor.putString("USERNAME", data_getprofile[0].username)
+//                            editor.putString("USERID", data_getmember[0].userId)
+//                            editor.putString("USEREMAIL", data_getmember[0].email)
+//                            editor.putString("USERROLE", data_getprofile[0].role)
+//                            editor.putString("MEMBERID", data_getmember[0].memberId)
+//                            editor.apply()
+//                            editor.commit()
+//
+//                            sessionManager.saveFIRSTNAME(data_getmember[0].firstName.toString())
+//                            sessionManager.saveMIDDLENAME(data_getmember[0].middleName.toString())
+//                            sessionManager.saveSURNAME(data_getmember[0].lastName.toString())
+//                            sessionManager.saveUSERNAME(data_getprofile[0].username.toString())
+//                            sessionManager.saveUSEREMAIL(data_getprofile[0].email.toString())
+//                            sessionManager.saveUSERROLE(data_getprofile[0].role.toString())
+//                            sessionManager.saveDOB(data_getmember[0].dob.toString())
+//                            sessionManager.saveSHAKHANAME(data_getmember[0].shakha.toString())
+//                            sessionManager.saveSHAKHAID(data_getmember[0].shakhaId.toString())
+//                            sessionManager.saveNAGARID(data_getmember[0].nagarId.toString())
+//                            sessionManager.saveVIBHAGID(data_getmember[0].vibhagId.toString())
+//                            sessionManager.saveNAGARNAME(data_getmember[0].nagar.toString())
+//                            sessionManager.saveVIBHAGNAME(data_getmember[0].vibhag.toString())
+//                            sessionManager.saveADDRESS(
+//                                data_getmember[0].buildingName.toString() + " " + data_getmember[0].addressLine1.toString()
+//                                        + " " + data_getmember[0].addressLine2.toString()
+//                            )
+//                            sessionManager.saveLineOne(data_getmember[0].addressLine1.toString())
+//                            sessionManager.saveRELATIONSHIPNAME(data_getmember[0].relationship.toString())
+//                            sessionManager.saveRELATIONSHIPNAME_OTHER(data_getmember[0].otherRelationship.toString())
+//                            sessionManager.saveOCCUPATIONNAME(data_getmember[0].occupation.toString())
+//                            sessionManager.saveSPOKKENLANGUAGE(data_getmember[0].rootLanguage.toString())
+//                            sessionManager.saveSPOKKENLANGUAGEID(data_getmember[0].root_language_id.toString())
+//                            sessionManager.saveMOBILENO(data_getmember[0].mobile.toString())
+//                            if (!data_getmember[0].landLine.toString().equals("null")) {
+//                                sessionManager.saveSECMOBILENO(data_getmember[0].landLine.toString())
+//                            }
+//                            if (!data_getmember[0].secondaryEmail.toString().equals("null")) {
+//                                sessionManager.saveSECEMAIL(data_getmember[0].secondaryEmail.toString())
+//                            }
+////                            sessionManager.saveSECMOBILENO(data_getmember[0].landLine.toString())
+////                            sessionManager.saveSECEMAIL(data_getmember[0].secondaryEmail.toString())
+//                            sessionManager.saveGUAEMRNAME(data_getmember[0].emergencyName.toString())
+//                            sessionManager.saveGUAEMRPHONE(data_getmember[0].emergencyPhone.toString())
+//                            sessionManager.saveGUAEMREMAIL(data_getmember[0].emergencyEmail.toString())
+//                            sessionManager.saveGUAEMRRELATIONSHIP(data_getmember[0].emergencyRelatioship.toString())
+//                            sessionManager.saveGUAEMRRELATIONSHIP_OTHER(data_getmember[0].otherEmergencyRelationship.toString())
+//                            sessionManager.saveDOHAVEMEDICAL(data_getmember[0].medicalInformationDeclare.toString())
+//                            sessionManager.saveAGE(data_getmember[0].memberAge.toString())
+//                            sessionManager.saveGENDER(data_getmember[0].gender.toString())
+//                            sessionManager.saveCITY(data_getmember[0].city.toString())
+//                            sessionManager.saveCOUNTRY(data_getmember[0].country.toString())
+//                            sessionManager.savePOSTCODE(data_getmember[0].postalCode.toString())
+//                            sessionManager.saveSHAKHA_TAB(data_getmember[0].shakha_tab.toString())
+//                            var s_count = data_getmember[0].shakha_sankhya_avg.toString()
+//                            if (s_count.length == 0) {
+//                                s_count = "0"
+//                            }
+//                            sessionManager.saveSHAKHA_SANKHYA_AVG(s_count)
+//                            sessionManager.saveMEDICAL_OTHER_INFO(data_getmember[0].medicalDetails.toString())
+//                            sessionManager.saveQUALIFICATIONAID(data_getmember[0].isQualifiedInFirstAid.toString())
+//                            sessionManager.saveQUALIFICATION_VALUE(data_getmember[0].first_aid_qualification_val.toString())
+//                            sessionManager.saveQUALIFICATION_VALUE_NAME(data_getmember[0].first_aid_qualification_name.toString())// value name
+//                            sessionManager.saveQUALIFICATION_IS_DOC(data_getmember[0].first_aid_qualification_is_doc.toString())
+//                            sessionManager.saveQUALIFICATION_DATE(data_getmember[0].dateOfFirstAidQualification.toString())
+//                            sessionManager.saveQUALIFICATION_FILE(data_getmember[0].firstAidQualificationFile.toString())
+//                            sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO(data_getmember[0].professional_body_registartion_number.toString())
+//                            sessionManager.saveDIETARY(data_getmember[0].specialMedDietryInfo.toString())
+//                            sessionManager.saveDIETARYID(data_getmember[0].special_med_dietry_info_id.toString())
+//                            sessionManager.saveSTATE_IN_INDIA(data_getmember[0].indianConnectionState.toString())
+//
+//                            Log.d("Address", sessionManager.fetchADDRESS()!!)
+//                            Log.d("Username", sessionManager.fetchUSERNAME()!!)
+//                            Log.d("Shakha_tab", sessionManager.fetchSHAKHA_TAB()!!)
+//
+//                        } catch (e: ArithmeticException) {
+//                            println(e)
+//                        } finally {
+//                            println("Profile")
+//                        }
+//
+//                    } else {
+//                        Functions.displayMessage(requireContext(), response.body()?.message)
+////                        Functions.showAlertMessageWithOK(
+////                            requireContext(), "",
+//////                        "Message",
+////                            response.body()?.message
+////                        )
+//                    }
+//                } else {
+//                    Functions.showAlertMessageWithOK(
+//                        requireContext(), "Message",
+//                        getString(R.string.some_thing_wrong),
+//                    )
+//                }
+//                pd.dismiss()
+//            }
+//
+//            override fun onFailure(call: Call<Get_Profile_Response>, t: Throwable) {
+//                Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
+//                pd.dismiss()
+//            }
+//        })
+//    }
 
     class Adapter_dashboard(var context: Context, var Images: IntArray, var Names: Array<String>) :
         BaseAdapter() {

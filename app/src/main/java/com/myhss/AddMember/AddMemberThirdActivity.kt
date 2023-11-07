@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -24,10 +25,14 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
+import com.myhss.appConstants.AppParam
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.Utils.SessionManager
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -141,34 +146,6 @@ class AddMemberThirdActivity : AppCompatActivity() {
         back_layout.setOnClickListener(DebouncedClickListener {
             finish()
         })
-
-//        Log.d(
-//            "Fetch_Data two-->",
-//            intent.getStringExtra("FIRST_NAME") + "--" + intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra(
-//                "LAST_NAME"
-//            ) + "--" + intent.getStringExtra(
-//                "USERNAME"
-//            ) + "--" + intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
-//                "GENDER"
-//            ) + "--" + intent.getStringExtra("DOB") + "--" + intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra(
-//                "OTHER_RELATIONSHIP"
-//            ) + "--" + intent.getStringExtra(
-//                "OCCUPATION"
-//            ) + "--" + intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
-//                "AGE"
-//            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" + intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra(
-//                "TYPE"
-//            ) + "--" + intent.getStringExtra(
-//                "PARENT_MEMBER"
-//            ) + "--" + intent.getStringExtra("MOBILE") + "--" + intent.getStringExtra("LAND_LINE") + "--" + intent.getStringExtra(
-//                "SECOND_EMAIL"
-//            ) + "--" + intent.getStringExtra("POST_CODE") + "--" + intent.getStringExtra("BUILDING_NAME") + "--" + intent.getStringExtra(
-//                "ADDRESS_ONE"
-//            ) + "--" + intent.getStringExtra(
-//                "ADDRESS_TWO"
-//            ) + "--" + intent.getStringExtra("POST_TOWN") + "--" + intent.getStringExtra("COUNTY")
-//        )
-
         if (intent.getStringExtra("IS_SELF") != "self") {
             if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
                 edit_guardian_full_name.setText(sessionManager.fetchGUAEMRNAME())
@@ -198,19 +175,9 @@ class AddMemberThirdActivity : AppCompatActivity() {
                 val textLength: Int = edit_guardian_contact_number.text!!.length
                 if (text.endsWith(" ") || text.endsWith(" ") || text.endsWith(" ")) return
                 if (textLength == 1) {
-//                    if (!text.contains("(")) {
-//                        edit_primary_contact_number.setText(
-//                            StringBuilder(text).insert(text.length - 1, "(").toString()
-//                        )
                     edit_guardian_contact_number.setSelection(edit_guardian_contact_number.text!!.length)
-//                    }
                 } else if (textLength == 4) {
-//                    if (!text.contains(")")) {
-//                        edit_primary_contact_number.setText(
-//                            StringBuilder(text).insert(text.length - 1, ")").toString()
-//                        )
                     edit_guardian_contact_number.setSelection(edit_guardian_contact_number.text!!.length)
-//                    }
                 } else if (textLength == 5) {
                     edit_guardian_contact_number.setText(
                         StringBuilder(text).insert(
@@ -590,7 +557,10 @@ class AddMemberThirdActivity : AppCompatActivity() {
         })
 
         if (Functions.isConnectingToInternet(this@AddMemberThirdActivity)) {
-            myRelationship()
+            lifecycleScope.launch {
+                val job1 = async { myRelationship() }
+                DebugLog.e("Coro 1 :::: $${job1.await()}")
+            }
         } else {
             Toast.makeText(
                 this@AddMemberThirdActivity,
@@ -629,11 +599,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
-//            TODO("Not yet implemented")
-                Log.d("Name", relationshipName[position])
-                Log.d("Postion", relationshipID[position])
                 REALTIONSHIP_ID = relationshipID[position]
-
                 if (REALTIONSHIP_ID == "5") {
                     emergency_realationship_other_view.visibility = View.VISIBLE
                     OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
@@ -644,115 +610,37 @@ class AddMemberThirdActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
             }
         }
 
     /*Relationship API*/
-    private fun myRelationship() {
+    private suspend fun myRelationship() {
         val pd = CustomProgressBar(this@AddMemberThirdActivity)
         pd.show()
-        val call: Call<Get_Relationship_Response> =
-            MyHssApplication.instance!!.api.get_relationship()
-        call.enqueue(object : Callback<Get_Relationship_Response> {
-            override fun onResponse(
-                call: Call<Get_Relationship_Response>, response: Response<Get_Relationship_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
+        try {
+            val response = MyHssApplication.instance?.api?.getRelationship()
+            if (response?.status == true) {
+                val data_relationship = response.data.orEmpty()
 
-                        var data_relationship: List<Datum_Relationship> =
-                            ArrayList<Datum_Relationship>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d(
-                                "relationshipName", data_relationship[i].relationshipName.toString()
-                            )
-                        }
-                        relationshipName = listOf(arrayOf(data_relationship).toString())
-                        relationshipID = listOf(arrayOf(data_relationship).toString())
+                relationshipName = data_relationship.map { it.relationshipName.toString() }
+                relationshipID = data_relationship.map { it.memberRelationshipId.toString() }
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringList.add(
-//                            data_relationship[i].memberRelationshipId.toString() +
-                                data_relationship[i].relationshipName.toString()
-                            )
-                        }
-
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringListnew.add(
-                                data_relationship[i].memberRelationshipId.toString()
-                            )
-                        }
-
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
-                            list.add(element.toString())
-                            Log.d("list==>", list.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                relationshipName =
-                                    list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
-                            listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                relationshipID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        Log.d("spokenName==>", relationshipName.toString())
-                        SearchSpinner(relationshipName.toTypedArray(), edit_guardian_relationship)
-
-                    } else {
-                        Functions.showAlertMessageWithOK(
-                            this@AddMemberThirdActivity, "",
-//                        "Message",
-                            response.body()?.message
-                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberThirdActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
+                SearchSpinner(relationshipName.toTypedArray(), edit_guardian_relationship)
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberThirdActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
-
-            override fun onFailure(call: Call<Get_Relationship_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberThirdActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberThirdActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        } finally {
+            pd.dismiss()
+        }
     }
 }

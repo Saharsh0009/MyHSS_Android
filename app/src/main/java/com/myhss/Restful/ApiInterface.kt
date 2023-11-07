@@ -45,6 +45,7 @@ import com.uk.myhss.ui.sankhya_report.Model.Sankhya_List_Response
 import com.uk.myhss.ui.sankhya_report.Model.Sankhya_details_Response
 import okhttp3.MultipartBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 
@@ -165,51 +166,51 @@ interface ApiInterface {
 
     /*Get Occupation*/
     @GET("api/v1/member/get_occupations")
-    fun get_occupation(): Call<Get_Occupation_Response>
+    suspend fun get_occupation(): Get_Occupation_Response
 
     /*Get Vibhag*/
     @GET("api/v1/member/get_vibhag")
-    fun get_vibhag(): Call<Get_Vibhag_Response>
+    suspend fun get_vibhag(): Get_Vibhag_Response
 
     /*Get Nagar*/
     @FormUrlEncoded
     @POST("api/v1/member/get_nagar_by_vibhag")
-    fun get_nagar(
-        @Field("vibhag_id") vibhag_id: String, @Field("user_id") user_id: String
-    ): Call<Get_Nagar_Response>
+    suspend fun get_nagar(
+        @Field("vibhag_id") vibhag_id: String,
+        @Field("user_id") user_id: String
+    ): Get_Nagar_Response
 
     /*Get Shakha*/
     @FormUrlEncoded
     @POST("api/v1/member/get_shakha_by_nagar")
-    fun get_shakha(
-        @Field("nagar_id") nagar_id: String, @Field("user_id") user_id: String
-    ): Call<Get_Shakha_Response>
+    suspend fun get_shakha(
+        @Field("nagar_id") nagar_id: String,
+        @Field("user_id") user_id: String
+    ): Get_Shakha_Response
 
     /*Get Pincode*/
     @FormUrlEncoded
     @POST("api/v1/member/find_address_by_pincode")
-    fun get_pincode(
-        @Field("pincode") pincode: String
-    ): Call<Get_Pincode_Response>
+    suspend fun getPincode(@Field("pincode") pincode: String): Get_Pincode_Response
 
     /*Get find_address_info_by_id*/
     @FormUrlEncoded
     @POST("api/v1/member/find_address_info_by_id")
-    fun get_pincodea_ddress(
+    suspend fun getPincodeAddress(
         @Field("id") pincode: String
-    ): Call<Get_PincodeAddress_Response>
+    ): Get_PincodeAddress_Response
 
     /*Get Dietaries*/
     @GET("api/v1/member/get_dietaries")
-    fun get_dietaries(): Call<Get_Dietaries_Response>
+    suspend fun getDietaries(): Get_Dietaries_Response
 
     /*Get Language*/
     @GET("api/v1/member/get_languages")
-    fun get_languages(): Call<Get_Language_Response>
+    suspend fun getLanguages(): Get_Language_Response
 
     /*Get Indianstates*/
     @GET("api/v1/member/get_indianstates")
-    fun get_indianstates(): Call<Get_Indianstates_Response>
+    suspend fun getIndianStates(): Get_Indianstates_Response
 
     /*Get create_membership*/
     @FormUrlEncoded
@@ -309,12 +310,12 @@ interface ApiInterface {
     /*Get profile*/
     @FormUrlEncoded
     @POST("api/v1/member/profile")
-    fun get_profile(
+    suspend fun get_profile(
         @Field("user_id") user_id: String,
         @Field("member_id") member_id: String,
         @Field("device") device: String,
         @Field("device_token") device_token: String
-    ): Call<Get_Profile_Response>
+    ): Get_Profile_Response
 
     /*Get privileges*/
     @FormUrlEncoded
@@ -592,8 +593,8 @@ interface ApiInterface {
     ): Call<save_suryanamaskarResponse>
 
     //    @Headers("Content-Type: application/json;charset=UTF-8")
-    @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
-    fun postsuryanamasakar_count(@Body logs: String): Call<save_suryanamaskarResponse>
+//    @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
+//    fun postsuryanamasakar_count(@Body logs: String): Call<save_suryanamaskarResponse>
 
 //    @FormUrlEncoded
 //    @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
@@ -603,9 +604,9 @@ interface ApiInterface {
     /*Post SuryaNamasakar List*/
     @FormUrlEncoded
     @POST("api/v1/suryanamaskar/get_suryanamaskar_count")
-    fun get_suryanamaskar_count(
+    suspend fun get_suryanamaskar_count(
         @Field("member_id") member_id: String, @Field("is_api") is_api: String
-    ): Call<Get_SuryaNamaskar_ModelResponse>
+    ): Get_SuryaNamaskar_ModelResponse
 
     //Nikunj
     @POST("api/v1/member/create_membership")
@@ -617,7 +618,7 @@ interface ApiInterface {
 
     /*Get First Aid Info*/
     @GET("api/v1/member/firstaidinfo")
-    fun getFirstAidInfor(): Call<FirstAidInfo>
+    suspend fun getFirstAidInfor(): FirstAidInfo
 
     @POST("api/v1/guru_dakshina/onetime_dakshina")
     fun postOneTimeDakshinaStripe(@Body body: MultipartBody): Call<StripeDataModel>
@@ -632,9 +633,27 @@ interface ApiInterface {
     fun postSeenNotification(@Body body: MultipartBody): Call<Get_Suchana_Seen_Response>
 
     @GET("api/v1/notification/notificationtype")
-    fun getNotificationType(): Call<NotificTypeModel>
+    suspend fun getNotificationType(): NotificTypeModel
 
     @POST("api/v1/events/eventlist")
     fun postEventListData(@Body body: MultipartBody): Call<EventListModel>
+
+    @FormUrlEncoded
+    @POST("api/v1/member/listing")
+    suspend fun getMemberListing(
+        @Field("user_id") user_id: String,
+        @Field("tab") tab: String,
+        @Field("member_id") member_id: String,
+        @Field("status") status: String,
+        @Field("length") length: String,
+        @Field("start") start: String,
+        @Field("search") search: String,
+        @Field("chapter_id") chapter_id: String
+    ): Get_Member_Listing_Response
+
+    /*Get Relationship*/
+    @GET("api/v1/member/get_relationship")
+    suspend fun getRelationship(): Get_Relationship_Response
+
 
 }

@@ -11,6 +11,7 @@ import com.myhss.appConstants.AppParam
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -91,6 +92,18 @@ class UtilCommon {
                 var stext = Html.fromHtml(sText)
                 stext.toString()
             }
+        }
+
+        fun isUserUnder18(dateString: String): Boolean {
+            val dateFormat = SimpleDateFormat("MM/dd/yyyy")
+            val birthDate: Date = dateFormat.parse(dateString)
+            val currentDate = Date()
+
+            // Calculate the user's age
+            val diff = currentDate.time - birthDate.time
+            val age = (diff / (1000L * 60 * 60 * 24 * 365.25)).toInt()
+
+            return age < 18
         }
     }
 }
