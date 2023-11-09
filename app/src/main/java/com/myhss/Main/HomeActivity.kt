@@ -125,7 +125,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
     private var items = arrayListOf(
         NavigationItemModel(R.drawable.home_icon, "Dashboard"),
-        NavigationItemModel(R.drawable.shakha_icon, "Shakha"),
+//        NavigationItemModel(R.drawable.shakha_icon, "Shakha"),
         NavigationItemModel(R.drawable.khel_icon, "Khel App"),  // Pratiyogita
         NavigationItemModel(R.drawable.lock, "Change Password"),
         NavigationItemModel(R.drawable.fingerprint, "Change Biometric"),
@@ -238,14 +238,14 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     .commit()
                             }
 
-                            1 -> {
-                                val i = Intent(this@HomeActivity, LinkedFamilyFragment::class.java)
-                                i.putExtra("DashBoard", "SHAKHAVIEW")
-                                i.putExtra("headerName", getString(R.string.my_shakha))
-                                startActivity(i)
-                            }
+//                            1 -> {
+//                                val i = Intent(this@HomeActivity, LinkedFamilyFragment::class.java)
+//                                i.putExtra("DashBoard", "SHAKHAVIEW")
+//                                i.putExtra("headerName", getString(R.string.my_shakha))
+//                                startActivity(i)
+//                            }
 
-                            2 -> {
+                            1 -> {
                                 // Use package name which we want to check
                                 val isAppInstalled: Boolean =
                                     appInstalledOrNot("market://details?id=com.hss.khelappandroid")
@@ -269,7 +269,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 }
                             }
 
-                            3 -> {
+                            2 -> {
                                 toolbar.title = "Change Password"
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
@@ -281,7 +281,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 ).commit()
                             }
 
-                            4 -> {
+                            3 -> {
                                 toolbar.title = "Change Biometric"
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
@@ -293,7 +293,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 ).commit()
                             }
 
-                            5 -> {
+                            4 -> {
                                 toolbar.title = "Policies"
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
@@ -305,7 +305,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 ).commit()
                             }
 
-                            6 -> {
+                            5 -> {
                                 val alertDialog: AlertDialog.Builder =
                                     AlertDialog.Builder(this@HomeActivity)
                                 alertDialog.setMessage("Are you sure you would like to logout?")

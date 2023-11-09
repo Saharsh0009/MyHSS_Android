@@ -215,11 +215,11 @@ class GuruDakshinaFragment : Fragment() {
             var s_name = ""
             for (j in 0 until guruDakshinaDataList.size) {
                 if (member_list.elementAt(i) == guruDakshinaDataList.get(j).memberId) {
-                    s_count = s_count + guruDakshinaDataList.get(j).paidAmount!!.toInt()
+                    s_count += guruDakshinaDataList.get(j).paidAmount!!.toInt()
                     s_name = guruDakshinaDataList.get(j).firstName.toString()
                 }
             }
-            t_count = t_count + s_count
+            t_count += s_count
             pieEntries.add(PieEntry(s_count.toFloat(), s_name))
         }
         val pieDataSet = PieDataSet(pieEntries, "")
