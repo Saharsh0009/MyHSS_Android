@@ -116,7 +116,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                     USERID = sessionManager.fetchUserID()!!
                     TAB = "family"
                     MEMBERID = sessionManager.fetchMEMBERID()!!
-                    STATUS = "1"// all
+                    STATUS = "all"// all
                     LENGTH = "100"
                     START = "0"
                     SEARCH = ""

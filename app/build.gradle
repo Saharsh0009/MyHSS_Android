@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
     namespace 'com.uk.myhss'
     buildFeatures {
         viewBinding = true
@@ -33,7 +33,7 @@ android {
     defaultConfig {
         applicationId "com.uk.myhss"
         minSdkVersion 21
-        targetSdk 33
+        targetSdk 34
         versionCode 22
         versionName "1.7"
         multiDexEnabled true
