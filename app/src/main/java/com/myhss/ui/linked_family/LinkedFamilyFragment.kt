@@ -197,14 +197,16 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         DebugLog.d("Dashboard => " + intent.getStringExtra("DashBoard").toString())
         if (intent.getStringExtra("DashBoard") == "SHAKHAVIEW") {
             Handler().postDelayed({ myshakha_view.callOnClick() }, 100)
-            val end: Int = 100
-            val start: Int = 0
-            CallAPI(start, end, true)
+//            val end: Int = 100
+//            val start: Int = 0
+//            CallAPI(start, end, true)
         } else {
             val end: Int = 100
             val start: Int = 0
             CallAPI(start, end, false)
         }
+
+
         search_fields.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val end: Int = 100
@@ -379,9 +381,12 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                     this@LinkedFamilyFragment, R.color.grayColorColor
                 )
             )
+
             val end: Int = 100
             val start: Int = 0
             CallAPI(start, end, false)
+
+
         })
 
         myshakha_view.setOnClickListener(DebouncedClickListener {
@@ -413,9 +418,11 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 )
             )
 
+
             val end: Int = 100
             val start: Int = 0
             CallAPI(start, end, true)
+
 
         })
 
@@ -429,7 +436,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
             guru_dakshina_layout.visibility = View.VISIBLE
 
 //            shakha_count_layout.visibility = View.INVISIBLE
-            
+
             myfamily_view.setTextColor(
                 ContextCompat.getColor(
                     this@LinkedFamilyFragment, R.color.grayColorColor
@@ -488,7 +495,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 USERID = sessionManager.fetchUserID()!!
                 TAB = "family"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
-                STATUS = "1"
+                STATUS = "all"
                 LENGTH = END.toString()
                 START = PAGE.toString()
                 SEARCH = ""

@@ -1059,6 +1059,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                         val status = jsonObject.get("status")
                         val message = jsonObject.get("message")
                         if (status == true) {
+
                             when (sType) {
                                 "family" -> {
                                     val i = Intent(
@@ -1077,9 +1078,24 @@ class AddMemberForthActivity : AppCompatActivity() {
                                     finishAffinity()
                                 }
                             }
+
                         } else {
+                            var errorMsg = ""
+                            val errorObject = jsonObject.getJSONObject("error")
+                            // Iterate through the keys of the error object
+                            val keys = errorObject.keys()
+                            while (keys.hasNext()) {
+                                val key = keys.next() as String
+                                val value = errorObject.getString(key)
+                                if (errorMsg.isEmpty()) {
+                                    errorMsg = value
+                                } else {
+                                    errorMsg = errorMsg + "\n\n" + value
+                                }
+                            }
                             Functions.showAlertMessageWithOK(
-                                this@AddMemberForthActivity, "", message.toString()
+                                this@AddMemberForthActivity, "Error",
+                                errorMsg
                             )
                         }
                     }
@@ -1255,8 +1271,22 @@ class AddMemberForthActivity : AppCompatActivity() {
                             finishAffinity()
 
                         } else {
+                            var errorMsg = ""
+                            val errorObject = jsonObject.getJSONObject("error")
+                            // Iterate through the keys of the error object
+                            val keys = errorObject.keys()
+                            while (keys.hasNext()) {
+                                val key = keys.next() as String
+                                val value = errorObject.getString(key)
+                                if (errorMsg.isEmpty()) {
+                                    errorMsg = value
+                                } else {
+                                    errorMsg = errorMsg + "\n\n" + value
+                                }
+                            }
                             Functions.showAlertMessageWithOK(
-                                this@AddMemberForthActivity, "", message.toString()
+                                this@AddMemberForthActivity, "Error",
+                                errorMsg
                             )
                         }
                     }

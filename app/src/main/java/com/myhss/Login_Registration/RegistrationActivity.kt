@@ -31,6 +31,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
 import com.uk.myhss.Login_Registration.LoginActivity
@@ -264,11 +265,22 @@ class RegistrationActivity : AppCompatActivity() {
                     if (response.body()?.status!!) {
                         dialogShow(edit_email.text.toString())
                     } else {
+                        var errorMsg = ""
+                        val error = response?.body()!!.error
+                        if (error != null) {
+                            for ((paramName, paramValue) in error) {
+                                if (errorMsg.isEmpty()) {
+                                    errorMsg = paramValue
+                                } else {
+                                    errorMsg = errorMsg + "\n\n" + paramValue
+                                }
+                            }
+                        }
                         Functions.showAlertMessageWithOK(
-                            this@RegistrationActivity, "",
-//                        "Message",
-                            response.body()?.message
+                            this@RegistrationActivity, "Error",
+                            errorMsg
                         )
+
                     }
                 } else {
                     Functions.showAlertMessageWithOK(

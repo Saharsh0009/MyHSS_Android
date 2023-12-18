@@ -111,7 +111,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name="com.myhss.ui.suryanamaskar.SuryaNamaskar"
             android:configChanges="orientation|screenSize|keyboardHidden"

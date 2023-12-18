@@ -277,30 +277,54 @@ class EventsFragment : AppCompatActivity() {
                                 "" -> {
                                     upComingEventData = eventListApiData.upcoming
                                     pastEventData = eventListApiData.past
+
+                                    if (bFlag) {
+                                        mAdapterEvents?.addData(
+                                            eventListApiData.upcoming.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    } else {
+                                        mAdapterEvents?.setData(
+                                            eventListApiData.upcoming.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    }
+                                    pg_tot_page = eventListApiData.upcoming.paginate.total_pages
                                 }
 
                                 "1" -> {
                                     upComingEventData.eventdata += eventListApiData.upcoming.eventdata
-                                }
 
+                                    if (bFlag) {
+                                        mAdapterEvents?.addData(
+                                            eventListApiData.upcoming.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    } else {
+                                        mAdapterEvents?.setData(
+                                            eventListApiData.upcoming.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    }
+                                    pg_tot_page = eventListApiData.upcoming.paginate.total_pages
+                                }
                                 "2" -> {
-//                                    pastEventData += eventListApiData.past
                                     pastEventData.eventdata += eventListApiData.past.eventdata
+
+                                    if (bFlag) {
+                                        mAdapterEvents?.addData(
+                                            eventListApiData.past.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    } else {
+                                        mAdapterEvents?.setData(
+                                            eventListApiData.past.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    }
+                                    pg_tot_page = eventListApiData.past.paginate.total_pages
                                 }
                             }
-
-                            if (bFlag) {
-                                mAdapterEvents?.addData(
-                                    eventListApiData.upcoming.eventdata.toMutableList(),
-                                    eventType
-                                )
-                            } else {
-                                mAdapterEvents?.setData(
-                                    eventListApiData.upcoming.eventdata.toMutableList(),
-                                    eventType
-                                )
-                            }
-                            pg_tot_page = eventListApiData.upcoming.paginate.total_pages
                             isLoading = false
                         } catch (e: ArithmeticException) {
                             DebugLog.e("Error : $e")

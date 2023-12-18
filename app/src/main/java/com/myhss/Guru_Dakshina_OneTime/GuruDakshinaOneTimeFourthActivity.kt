@@ -368,6 +368,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 AlertDialog.Builder(this@GuruDakshinaOneTimeFourthActivity)
                             alertDialog.setTitle("Guru Dakshina Payment")
                             alertDialog.setMessage(response.body()!!.message)
+                            alertDialog.setCancelable(false)
                             alertDialog.setPositiveButton(
                                 "Okay"
                             ) { _, _ ->

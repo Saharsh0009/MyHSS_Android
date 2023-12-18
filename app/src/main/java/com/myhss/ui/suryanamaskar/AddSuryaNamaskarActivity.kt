@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -23,6 +24,7 @@ import com.google.gson.JsonParser
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.myhss.ui.suryanamaskar.Model.save_suryanamaskarResponse
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.R
@@ -55,9 +57,6 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
     private var COUNT: String = ""
 
     private lateinit var family_txt: SearchableSpinner
-
-    //    var arrayListUser: ArrayList<String> = ArrayList()
-//    var arrayListUserId: ArrayList<String> = ArrayList()
     var UserName: ArrayList<String> = ArrayList<String>()
     var UserCategory: ArrayList<String> = ArrayList<String>()
 
@@ -125,7 +124,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
             Log.d("USERID", USERID)
             TAB = "family"
             MEMBERID = sessionManager.fetchMEMBERID()!!
-            STATUS = "all"
+            STATUS = "1"
             LENGTH = end.toString()
             START = start.toString()
             SEARCH = ""
@@ -138,18 +137,6 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                 Toast.LENGTH_SHORT
             ).show()
         }
-
-        val jsonObject = JSONObject()
-        try {
-            val subJsonObject = JSONObject()
-            subJsonObject.put("date", "28/01/2022")
-            subJsonObject.put("count", "1")
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        val jsonParser = JsonParser()
-        val gsonObject = jsonParser.parse(jsonObject.toString())
-        Log.e("gsonObject", gsonObject.toString())
 
         val myarray = JSONArray()
         family_txt.onItemSelectedListener = mOnItemSelectedListener_family
@@ -184,7 +171,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
             if (count == 0) {
                 Toast.makeText(
                     this,
-                    "Please Add Date and Count for Surya Namaskar by clicking Add More",
+                    "Please Add Date and Count for Surya Namaskar by clicking Add More.",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
@@ -195,7 +182,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                     if (select_date.text.isEmpty() && edit_count.text.isEmpty()) {
                         Toast.makeText(
                             this,
-                            "Please Enter the Date and Count for Surya Namaskar",
+                            "Please Enter the Date and Count for Surya Namaskar.",
                             Toast.LENGTH_SHORT
                         ).show()
                         DATE = ""
@@ -203,25 +190,25 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                         break
                     } else if (select_date.text.isEmpty()) {
                         Toast.makeText(
-                            this, "Please Enter the Date for Surya Namaskar", Toast.LENGTH_SHORT
+                            this, "Please Enter the Date for Surya Namaskar.", Toast.LENGTH_SHORT
                         ).show()
                         DATE = ""
                         COUNT = ""
                         break
                     } else if (edit_count.text.isEmpty()) {
                         Toast.makeText(
-                            this, "Please Enter the Count for Surya Namaskar", Toast.LENGTH_SHORT
+                            this, "Please Enter the Count for Surya Namaskar.", Toast.LENGTH_SHORT
                         ).show()
                         DATE = ""
                         COUNT = ""
                         break
                     } else if (edit_count.text.toString()
                             .toDouble() < 1 || edit_count.text.toString()
-                            .toDouble() > 100
+                            .toDouble() > 200
                     ) {
                         Toast.makeText(
                             this,
-                            "Please Enter the Count between 1 to 100 for the selected date",
+                            "Please enter a count between 1 and 200.",
                             Toast.LENGTH_SHORT
                         ).show()
                         DATE = ""
@@ -255,15 +242,6 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         })
 
         btnCancel.setOnClickListener(DebouncedClickListener {
-//            val count = layout_dynamic_view.childCount
-//            var viewClear: View?
-//            for (i in 0 until count) {
-//                viewClear = layout_dynamic_view.getChildAt(i)
-//                val text_date: TextView = viewClear.findViewById(R.id.select_date)
-//                val edit_count: EditText = viewClear.findViewById(R.id.edit_count)
-//                text_date.setText("")
-//                edit_count.setText("")
-//            }
             finish()
         })
     }
@@ -305,7 +283,6 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                //            TODO("Not yet implemented")
             }
         }
 
@@ -436,10 +413,6 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
     private fun AddSuryanamaskar(
         member_id: String, gsonObject: JSONArray, DATE: String, COUNT: String
     ) {
-        val fields: HashMap<String, String> = HashMap()
-        //        fields["member_id"] = member_id
-        //        fields["surynamaskar"] = gsonObject
-
         val jsonString: String =
             gsonObject.toString().replace("[{\"", "\"[{").replace("\"}]", "}]\"")
         Log.e("jsonString", jsonString)
@@ -453,25 +426,10 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         notebookUsers.put(paramObject)
         Log.e("notebookUsers", notebookUsers.toString())
 
-
-        //        val paramObject = JSONObject()
-        //        paramObject.put("member_id", member_id)
-        //        paramObject.put("surynamaskar", "123")   //  gsonObject
-
-        val listOfStringColumn: List<String> = ArrayList()
-        //        val commaSeperatedString = listOfStringColumn.joinToString { it -> "\'${it.}\'" }
-
         val pd = CustomProgressBar(this)
         pd.show()
         val call: Call<save_suryanamaskarResponse> =
-            MyHssApplication.instance!!.api.save_suryanamasakar_count(
-                member_id, "", DATE, COUNT
-                //            MyHssApplication.instance!!.api.postsuryanamasakar_count(notebookUsers.toString()
-                //                paramObject.toString()
-                //                fields
-                //                member_id,  "[{\"06-02-2022\",\"15\"}  {\"03-02-2022\",\"25\"}]"//.encodeUtf8().toString()
-                //                gsonObject as JsonObject
-            )
+            MyHssApplication.instance!!.api.save_suryanamasakar_count(member_id, "", DATE, COUNT)
         call.enqueue(object : Callback<save_suryanamaskarResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(
@@ -481,32 +439,13 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
-                        //                        Functions.showAlertMessageWithOK(
-                        //                            this@AddSuryaNamaskarActivity,
-                        //                            "MyHss Surya Namaskar",
-                        //                            response.body()?.message
-                        //                        )
-
-                        Handler().postDelayed({
-                            startActivity(
-                                Intent(
-                                    this@AddSuryaNamaskarActivity, SuryaNamaskar::class.java
-                                )
-                            )
-                            finish()
-                            Toast.makeText(
-                                this@AddSuryaNamaskarActivity,
-                                response.body()?.message,
-                                Toast.LENGTH_SHORT
-                            )
-                        }, 1500)
-
                         val alertDialog: AlertDialog.Builder =
                             AlertDialog.Builder(this@AddSuryaNamaskarActivity)
-                        alertDialog.setTitle("MyHss Surya Namaskar")
+                        alertDialog.setTitle("MyHSS")
                         alertDialog.setMessage(response.body()?.message)
+                        alertDialog.setCancelable(false)
                         alertDialog.setPositiveButton(
-                            "yes"
+                            "OK"
                         ) { _, _ ->
                             startActivity(
                                 Intent(
@@ -515,21 +454,10 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                             )
                             finish()
                         }
-                        //                        alertDialog.setNegativeButton(
-                        //                            "No"
-                        //                        ) { _, _ ->
-                        //
-                        //                        }
                         val alert: AlertDialog = alertDialog.create()
                         alert.setCanceledOnTouchOutside(false)
-                        //                        alert.show()
+                        alert.show()
 
-                        //                        startActivity(Intent(this@AddSuryaNamaskarActivity, SuryaNamaskar::class.java))
-                        //                        finish()
-
-                        //                        val i = Intent(this@AddSuryaNamaskarActivity, HomeActivity::class.java)
-                        //                        startActivity(i)
-                        //                        finishAffinity()
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -553,12 +481,15 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         month = calendar.get(Calendar.MONTH)
         day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        val dialog = DatePickerDialog(this, { _, year, month, day_of_month ->
+        calendar.add(Calendar.MONTH, -3)
+
+        val dialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
             calendar[Calendar.YEAR] = year
-            calendar[Calendar.MONTH] = month //+ 1
-            calendar[Calendar.DAY_OF_MONTH] = day_of_month
+            calendar[Calendar.MONTH] = month
+            calendar[Calendar.DAY_OF_MONTH] = dayOfMonth
             dateTextView.text = sdf.format(calendar.time)
         }, year, month, day)
+        dialog.datePicker.minDate = calendar.timeInMillis
         dialog.datePicker.maxDate = System.currentTimeMillis()
         dialog.show()
     }

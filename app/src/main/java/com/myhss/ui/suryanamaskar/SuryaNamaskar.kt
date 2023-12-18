@@ -64,8 +64,10 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var linechart_layout: LinearLayout
     private lateinit var add_more: ImageView
     lateinit var pieChart_surya: PieChart
-    private var memberDataList: List<Get_Member_Listing_Datum> = ArrayList<Get_Member_Listing_Datum>()
-    private var surya_namaskarlist: List<Datum_Get_SuryaNamaskar> = ArrayList<Datum_Get_SuryaNamaskar>()
+    private var memberDataList: List<Get_Member_Listing_Datum> =
+        ArrayList<Get_Member_Listing_Datum>()
+    private var surya_namaskarlist: List<Datum_Get_SuryaNamaskar> =
+        ArrayList<Datum_Get_SuryaNamaskar>()
 
 
     @SuppressLint("MissingPermission")
@@ -147,6 +149,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         search: String,
         chapter_id: String
     ) {
+        val mStringListnew = mutableListOf(sessionManager.fetchMEMBERID() ?: "")
         try {
             val response = MyHssApplication.instance!!.api.getMemberListing(
                 user_id,
@@ -160,35 +163,32 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
             )
             if (response.status == true) {
                 memberDataList = response.data!!
-                val mStringListnew = mutableListOf(sessionManager.fetchMEMBERID() ?: "")
                 for (member in memberDataList) {
                     if (member.memberId != sessionManager.fetchMEMBERID()) {
                         mStringListnew.add(member.memberId.toString())
                     }
                 }
-                val listnew = mStringListnew.map { it.toString() }
-                val UserCategory = listnew.toSet().toList() as ArrayList<String>
-
-                if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
-                    var MEMBER_ID = UserCategory.joinToString(",")
-                    SuryanamaskarList(MEMBER_ID, "true")
-                } else {
-                    Toast.makeText(
-                        this@SuryaNamaskar,
-                        resources.getString(R.string.no_connection),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } else {
-                Functions.displayMessage(this@SuryaNamaskar, response.message)
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Functions.showAlertMessageWithOK(
-                this@SuryaNamaskar,
-                "Message",
-                getString(R.string.some_thing_wrong)
-            )
+        } finally {
+            if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
+                val listnew = mStringListnew.map { it.toString() }
+                var MEMBER_ID = ""
+                if (listnew.size > 1) {
+                    val UserCategory = listnew.toSet().toList() as ArrayList<String>
+                    MEMBER_ID = UserCategory.joinToString(",")
+                } else {
+                    MEMBER_ID = listnew.firstOrNull() ?: ""
+                }
+                SuryanamaskarList(MEMBER_ID, "true")
+            } else {
+                Toast.makeText(
+                    this@SuryaNamaskar,
+                    resources.getString(R.string.no_connection),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 

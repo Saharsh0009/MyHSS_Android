@@ -1104,7 +1104,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                         val alertBuilder =
                             AlertDialog.Builder(this@AddSankhyaActivity) // , R.style.dialog_custom
 
-                        alertBuilder.setTitle("Message")
+//                        alertBuilder.setTitle("Message")
                         alertBuilder.setMessage(response.body()?.message)
                         alertBuilder.setPositiveButton(
                             "OK"
@@ -1118,6 +1118,8 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                         }
                         val alertDialog = alertBuilder.create()
                         alertDialog.show()
+                        alertDialog.setCancelable(false)
+                        alertDialog.setCanceledOnTouchOutside(false)
 
 //                    Functions.showAlertMessageWithOK(
 //                        this@AddSankhyaActivity,

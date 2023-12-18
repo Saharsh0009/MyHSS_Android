@@ -296,8 +296,11 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                             i.putExtra("sortCode", data_get.sortCode.toString())
                             i.putExtra("Amount", Amount)
                             startActivity(i)
+                            finishAffinity()
                         }
                         val alertDialog = alertBuilder.create()
+                        alertDialog.setCanceledOnTouchOutside(false)
+                        alertDialog.setCancelable(false)
                         alertDialog.show()
 
                     } else {
@@ -305,11 +308,6 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                             this@GuruDakshinaRegularThirdActivity,
                             response.body()?.message
                         )
-//                        Functions.showAlertMessageWithOK(
-//                            this@GuruDakshinaRegularThirdActivity,
-//                            "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(

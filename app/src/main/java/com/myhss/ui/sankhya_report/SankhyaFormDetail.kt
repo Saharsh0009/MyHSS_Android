@@ -667,6 +667,8 @@ class SankhyaFormDetail : AppCompatActivity() {
                         }
                         val alertDialog = alertBuilder.create()
                         alertDialog.show()
+                        alertDialog.setCancelable(false)
+                        alertDialog.setCanceledOnTouchOutside(false)
 
                     } else {
                         Functions.showAlertMessageWithOK(
