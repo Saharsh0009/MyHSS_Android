@@ -10,8 +10,10 @@ import com.google.android.material.textfield.TextInputEditText
 import com.myhss.appConstants.AppParam
 import java.text.DateFormat
 import java.text.DecimalFormat
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -80,6 +82,41 @@ class UtilCommon {
             val dateOnly = dfmt.format(dt)
 
             return "$dateOnly $timeOnly"
+        }
+
+        fun convertDateFormatUS(inputDate: String): String? {
+            val inputFormat = "dd-MM-yyyy"
+            val outputFormat = "yyyy-MM-dd"
+            val inputDateFormat = SimpleDateFormat(inputFormat, Locale.getDefault())
+            return try {
+                val date: Date = inputDateFormat.parse(inputDate)!!
+                val outputDateFormat = SimpleDateFormat(outputFormat, Locale.getDefault())
+                outputDateFormat.format(date)
+
+            } catch (e: ParseException) {
+                e.printStackTrace()
+                null
+            }
+        }
+
+        fun convertDateFormatUK_S(inputDate: String): String? {
+            val inputFormat = "yyyy-MM-dd"
+            val outputFormat = "dd-MM-yyyy"
+            val inputDateFormat = SimpleDateFormat(inputFormat, Locale.getDefault())
+            return try {
+                val date: Date = inputDateFormat.parse(inputDate)!!
+                val outputDateFormat = SimpleDateFormat(outputFormat, Locale.getDefault())
+                outputDateFormat.format(date)
+
+            } catch (e: ParseException) {
+                e.printStackTrace()
+                null
+            }
+        }
+
+        fun convertDateFormatUK(date: Date?): String {
+            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.UK)
+            return date?.let { dateFormat.format(it) } ?: "Invalid Date"
         }
 
 

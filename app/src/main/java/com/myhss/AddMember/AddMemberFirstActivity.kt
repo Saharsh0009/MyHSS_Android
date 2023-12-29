@@ -3,9 +3,12 @@ package com.uk.myhss.AddMember
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -140,6 +143,10 @@ class AddMemberFirstActivity() : AppCompatActivity() {
     private lateinit var nagar_select_default: TextView
     private lateinit var shakha_select_default: TextView
 
+    private val apiHandler = Handler(Looper.getMainLooper())
+    private var lastTypedText: String = ""
+    private var isUserNameValid = false
+    private lateinit var userNameValidError: String
 
     @SuppressLint("NewApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -291,25 +298,12 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
                 edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
 
-                DebugLog.e("VIBHAG " + sessionManager.fetchVIBHAGNAME())
-                DebugLog.e("NAGAR " + sessionManager.fetchNAGARNAME())
-                DebugLog.e("SHAKHA " + sessionManager.fetchSHAKHANAME())
-                DebugLog.e("RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME())
-                DebugLog.e("OTHER_RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME_OTHER())
-                DebugLog.e("OCCUPATION " + sessionManager.fetchOCCUPATIONNAME())
-
-
-//                if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-//                    val USER_ID = sessionManager.fetchUserID()!!
-//                    val MEMBER_ID = sessionManager.fetchMEMBERID()!!
-//                    myMemberView(USER_ID, MEMBER_ID)
-//                } else {
-//                    Toast.makeText(
-//                        this@AddMemberFirstActivity,
-//                        resources.getString(R.string.no_connection),
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
+//                DebugLog.e("VIBHAG " + sessionManager.fetchVIBHAGNAME())
+//                DebugLog.e("NAGAR " + sessionManager.fetchNAGARNAME())
+//                DebugLog.e("SHAKHA " + sessionManager.fetchSHAKHANAME())
+//                DebugLog.e("RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME())
+//                DebugLog.e("OTHER_RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME_OTHER())
+//                DebugLog.e("OCCUPATION " + sessionManager.fetchOCCUPATIONNAME())
 
             } else if (intent.getStringExtra("FAMILY") == "FAMILY") {
                 header_title.text = getString(R.string.family_member)
@@ -388,14 +382,29 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             finish()
         })
 
-        edit_username.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // Call your code here
-                CallUserNameMethod()
-                true
+        edit_username.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
-            false
-        }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val currentText = s.toString().trim()
+                if (currentText.length >= 5 && currentText != lastTypedText) {
+                    apiHandler.removeCallbacksAndMessages(null)
+                    apiHandler.postDelayed(
+                        { CallUserNameMethod(currentText) },
+                        1000
+                    )
+                } else if (currentText.length < 5 && currentText != lastTypedText) {
+                    apiHandler.removeCallbacksAndMessages(null)
+                }
+                lastTypedText = currentText
+
+            }
+        })
+
 
         edit_email.setText(sessionManager.fetchUSEREMAIL())
 
@@ -465,6 +474,12 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         return@DebouncedClickListener
                     } else if (edit_username.text.toString().isEmpty()) {
                         til_username.error = getString(R.string.user_name)
+                        til_username.isErrorEnabled = true
+                        til_username.setErrorIconDrawable(null)
+                        edit_username.requestFocus()
+                        return@DebouncedClickListener
+                    } else if (!isUserNameValid) {
+                        til_username.error = userNameValidError
                         til_username.isErrorEnabled = true
                         til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
@@ -785,7 +800,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
     }
 
     private fun callApis() {
-        DebugLog.d("CORO - Starting the API CALL with lifecycleScope 3")
         val pd = CustomProgressBar(this@AddMemberFirstActivity)
         pd.show()
         if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
@@ -811,7 +825,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             ).show()
             pd.dismiss()
         }
-        DebugLog.d("CORO - Afer the  API CALL, end of async 4")
     }
 
     private fun openDatePickerForDOB() {
@@ -1368,22 +1381,30 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         }
     }
 
-    private fun UserNameCheck(user_id: String, username: String, id: String) {
-        val pd = CustomProgressBar(this@AddMemberFirstActivity)
-        pd.show()
+    private fun UserNameCheck(username: String) {
         val call: Call<Get_Member_Check_Username_Exist_Response> =
-            MyHssApplication.instance!!.api.get_member_check_username_exist(
-                user_id, username, id
-            )
+            MyHssApplication.instance!!.api.get_member_check_username_exist(username)
         call.enqueue(object : Callback<Get_Member_Check_Username_Exist_Response> {
             override fun onResponse(
                 call: Call<Get_Member_Check_Username_Exist_Response>,
                 response: Response<Get_Member_Check_Username_Exist_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
+//                        til_username.isErrorEnabled = true
+//                        til_username.error = response.body()?.message.toString()
+//                        userNameValidError = response.body()?.message.toString()
+//                        til_username.setErrorTextColor(ColorStateList.valueOf(Color.GREEN))
+//                        til_username.setErrorIconDrawable(null)
+                        isUserNameValid = true
                     } else {
+                        til_username.error = response.body()?.message.toString()
+                        userNameValidError = response.body()?.message.toString()
+                        til_username.setErrorTextColor(ColorStateList.valueOf(Color.RED))
+                        til_username.isErrorEnabled = true
+                        til_username.setErrorIconDrawable(null)
+                        edit_username.requestFocus()
+                        isUserNameValid = false
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -1391,30 +1412,18 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         getString(R.string.some_thing_wrong),
                     )
                 }
-                pd.dismiss()
             }
 
             override fun onFailure(
                 call: Call<Get_Member_Check_Username_Exist_Response>, t: Throwable
             ) {
                 Toast.makeText(this@AddMemberFirstActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
             }
         })
     }
 
-    fun CallUserNameMethod() {
-        if (sessionManager.fetchMEMBERID() != "") {
-            UserNameCheck(
-                sessionManager.fetchUserID()!!,
-                edit_username.text.toString(),
-                sessionManager.fetchMEMBERID()!!
-            )
-        } else {
-            UserNameCheck(
-                sessionManager.fetchUserID()!!, edit_username.text.toString(), ""
-            )
-        }
+    fun CallUserNameMethod(userNameS: String) {
+        UserNameCheck(userNameS)
     }
 
     fun CallNextMethod() {
@@ -1474,15 +1483,4 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             startActivity(i)
         }
     }
-//    fun EditText.onDone(callback: () -> Unit) {
-//        imeOptions = EditorInfo.IME_ACTION_DONE
-//        maxLines = 1
-//        setOnEditorActionListener { _, actionId, _ ->
-//            if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                callback.invoke()
-//                true
-//            }
-//            false
-//        }
-//    }
 }

@@ -1,6 +1,7 @@
 package com.myhss.ui.suryanamaskar
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -29,9 +30,11 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.CustomProgressDialog
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
 import com.myhss.ui.suryanamaskar.Model.Datum_Get_SuryaNamaskar
 import com.uk.myhss.Main.HomeActivity
@@ -41,6 +44,9 @@ import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -63,11 +69,21 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var mLayoutManager: LinearLayoutManager
     lateinit var linechart_layout: LinearLayout
     private lateinit var add_more: ImageView
+    private lateinit var imgFrmDate: ImageView
+    private lateinit var imgToDate: ImageView
+    private lateinit var from_date: TextView
+    private lateinit var to_date: TextView
     lateinit var pieChart_surya: PieChart
     private var memberDataList: List<Get_Member_Listing_Datum> =
         ArrayList<Get_Member_Listing_Datum>()
     private var surya_namaskarlist: List<Datum_Get_SuryaNamaskar> =
         ArrayList<Datum_Get_SuryaNamaskar>()
+
+    private var fromDate: Date? = null
+    private var toDate: Date? = null
+    private var MEMBER_ID_temp = ""
+
+    private lateinit var chipGroup: ChipGroup
 
 
     @SuppressLint("MissingPermission")
@@ -92,11 +108,25 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         linechart_layout = findViewById(R.id.linechart_layout)
         pieChart_surya = findViewById(R.id.pieChart_surya)
         add_more = findViewById(R.id.info_tooltip)
+        imgFrmDate = findViewById(R.id.imgFrmDate)
+        imgToDate = findViewById(R.id.imgToDate)
+        from_date = findViewById(R.id.from_date)
+        to_date = findViewById(R.id.to_date)
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         layout_pieChart_lable = findViewById(R.id.layout_pieChart_lable)
         add_more.setImageResource(R.drawable.ic_plus)
         pieChart_surya.visibility = View.GONE
+
+        toDate = Calendar.getInstance().time
+        setToDate()
+        val pastDateCalendar = Calendar.getInstance()
+        pastDateCalendar.time = toDate
+        pastDateCalendar.add(Calendar.MONTH, -3)
+        fromDate = pastDateCalendar.time
+        setFromDate()
+
         callApis()
+
         back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@SuryaNamaskar, HomeActivity::class.java)
             startActivity(i)
@@ -107,10 +137,182 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
             val i = Intent(this@SuryaNamaskar, AddSuryaNamaskarActivity::class.java)
             startActivity(i)
         })
+
+        from_date.setOnClickListener(DebouncedClickListener {
+            showFromDateRangePicker()
+        })
+
+        to_date.setOnClickListener(DebouncedClickListener {
+            showToDateRangePicker()
+        })
+        imgFrmDate.setOnClickListener(DebouncedClickListener {
+            showFromDateRangePicker()
+        })
+
+        imgToDate.setOnClickListener(DebouncedClickListener {
+            showToDateRangePicker()
+        })
+    }
+
+    private fun showFromDateRangePicker() {
+
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+
+        val defaultDate =
+            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(from_date.text.toString())
+
+        val fromDatePickerDialog = DatePickerDialog(
+            this, { _, year, month, dayOfMonth ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(year, month, dayOfMonth)
+
+                // Validate that the selected date is up to yesterday
+                if (selectedDate.timeInMillis <= getYesterday().time) {
+                    fromDate = selectedDate.time
+                    setFromDate()
+                    if (isDateRangeValid(from_date.text.toString(), to_date.text.toString())) {
+                        lifecycleScope.launch {
+                            val job2 = async {
+                                SuryanamaskarList(
+                                    MEMBER_ID_temp,
+                                    from_date.text.toString(),
+                                    to_date.text.toString(),
+                                    "true",
+                                    true
+                                )
+                            }
+                            val result2 = job2.await()
+                        }
+                    }
+                } else {
+                    // Show an error message or handle the invalid selection
+                    showToast("Please select a date up to yesterday.")
+                }
+            },
+            currentYear,
+            currentMonth,
+            currentDay
+        )
+
+        // Set the "from" date as a past day
+//        val pastDateCalendar = Calendar.getInstance()
+//        pastDateCalendar.add(Calendar.YEAR, -1) // Set one day ago
+//        fromDatePickerDialog.datePicker.minDate = pastDateCalendar.timeInMillis
+        fromDatePickerDialog.datePicker.maxDate =
+            System.currentTimeMillis() - 86400000 // Set max date to (current date - 1 day)
+
+        defaultDate?.let {
+            fromDatePickerDialog.datePicker.updateDate(
+                it.year + 1900,
+                it.month,
+                it.date
+            )
+        }
+
+        fromDatePickerDialog.show()
+
+
+    }
+
+    private fun showToDateRangePicker() {
+        if (fromDate == null) {
+            showToast("Please select 'From Date' first.")
+            return
+        }
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val toDateMinDate = fromDate?.time ?: System.currentTimeMillis()
+
+        val defaultDate =
+            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(to_date.text.toString())
+
+        val toDatePickerDialog = DatePickerDialog(
+            this, { _, year, month, dayOfMonth ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(year, month, dayOfMonth)
+                if (selectedDate.timeInMillis <= System.currentTimeMillis()) {
+                    toDate = selectedDate.time
+                    setToDate()
+                    if (isDateRangeValid(from_date.text.toString(), to_date.text.toString())) {
+                        lifecycleScope.launch {
+                            val job2 = async {
+                                SuryanamaskarList(
+                                    MEMBER_ID_temp,
+                                    from_date.text.toString(),
+                                    to_date.text.toString(),
+                                    "true",
+                                    true
+                                )
+                            }
+                            val result2 = job2.await()
+                        }
+                    }
+                } else {
+                    showToast("Please select a date up to today.")
+                }
+            },
+            currentYear,
+            currentMonth,
+            currentDay
+        )
+        toDatePickerDialog.datePicker.minDate = toDateMinDate
+        toDatePickerDialog.datePicker.maxDate = System.currentTimeMillis()
+
+        defaultDate?.let {
+            toDatePickerDialog.datePicker.updateDate(
+                it.year + 1900,
+                it.month,
+                it.date
+            )
+        }
+
+        toDatePickerDialog.show()
+    }
+
+    private fun isDateRangeValid(sfromDate: String, stoDate: String): Boolean {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.UK)
+        try {
+            val fromDateParsed: Date? = dateFormat.parse(sfromDate)
+            val toDateParsed: Date? = dateFormat.parse(stoDate)
+            if (fromDateParsed!!.before(toDateParsed) || fromDateParsed == toDateParsed) {
+                return true
+            } else {
+                showToast("Invalid date range. 'From Date' must be less than to 'To Date'.")
+                return false
+            }
+        } catch (e: Exception) {
+            showToast("Please Select Proper From and To Date")
+            return false
+        }
+    }
+
+    private fun setToDate() {
+        to_date.text = UtilCommon.convertDateFormatUK(toDate)
+    }
+
+    private fun setFromDate() {
+        from_date.text = UtilCommon.convertDateFormatUK(fromDate)
+    }
+
+    private fun getYesterday(): Date {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        return calendar.time
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this@SuryaNamaskar, message, Toast.LENGTH_LONG).show()
     }
 
     private fun callApis() {
-        val pd = CustomProgressBar(this@SuryaNamaskar)
+        val pd = CustomProgressDialog(this@SuryaNamaskar)
         pd.show()
         if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
             lifecycleScope.launch {
@@ -174,14 +376,19 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         } finally {
             if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
                 val listnew = mStringListnew.map { it.toString() }
-                var MEMBER_ID = ""
                 if (listnew.size > 1) {
                     val UserCategory = listnew.toSet().toList() as ArrayList<String>
-                    MEMBER_ID = UserCategory.joinToString(",")
+                    MEMBER_ID_temp = UserCategory.joinToString(",")
                 } else {
-                    MEMBER_ID = listnew.firstOrNull() ?: ""
+                    MEMBER_ID_temp = listnew.firstOrNull() ?: ""
                 }
-                SuryanamaskarList(MEMBER_ID, "true")
+                SuryanamaskarList(
+                    MEMBER_ID_temp,
+                    from_date.text.toString(),
+                    to_date.text.toString(),
+                    "true",
+                    false
+                )
             } else {
                 Toast.makeText(
                     this@SuryaNamaskar,
@@ -192,11 +399,26 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         }
     }
 
-    private suspend fun SuryanamaskarList(member_id: String, is_api: String) {
+    private suspend fun SuryanamaskarList(
+        member_id: String,
+        from_date: String,
+        to_date: String,
+        is_api: String,
+        isProgressBar: Boolean
+    ) {
+
+        var pd = CustomProgressDialog(this@SuryaNamaskar)
+        isProgressBar?.let { if (it) pd.show() }
+
         DebugLog.d("member_id => $member_id")
         try {
             val response =
-                MyHssApplication.instance!!.api.get_suryanamaskar_count(member_id, is_api)
+                MyHssApplication.instance!!.api.get_suryanamaskar_count(
+                    member_id,
+                    UtilCommon.convertDateFormatUS(from_date)!!,
+                    UtilCommon.convertDateFormatUS(to_date)!!,
+                    is_api
+                )
             if (response.status == true) {
 
                 data_not_found_layout.visibility = View.GONE
@@ -217,11 +439,14 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                     }
                 }
                 pieChart_surya.visibility = View.VISIBLE
+                layout_pieChart_lable.visibility = View.VISIBLE
                 setPieChartForSuryanamaskar(surya_namaskarlist)
             } else {
                 Functions.displayMessage(this@SuryaNamaskar, response.message)
                 data_not_found_layout.visibility = View.VISIBLE
+                data_not_found_layout.setBackgroundColor(resources.getColor(R.color.surya_namaskar_bk))
                 pieChart_surya.visibility = View.GONE
+                layout_pieChart_lable.visibility = View.GONE
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -231,7 +456,11 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                 getString(R.string.some_thing_wrong)
             )
             data_not_found_layout.visibility = View.VISIBLE
+            data_not_found_layout.setBackgroundColor(resources.getColor(R.color.surya_namaskar_bk))
             pieChart_surya.visibility = View.GONE
+            layout_pieChart_lable.visibility = View.GONE
+        } finally {
+            isProgressBar?.let { if (it) pd.dismiss() }
         }
     }
 
@@ -302,7 +531,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     }
 
     private fun setupPieChartChipGroup(labelsList: java.util.ArrayList<String>) {
-        val chipGroup = ChipGroup(this)
+        chipGroup = ChipGroup(this)
         chipGroup.layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
@@ -319,6 +548,8 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
             t_color = if (t_color < (colorArray.length() - 1)) t_color + 1 else 0
             chip.chipBackgroundColor = ColorStateList.valueOf(chipColor)
         }
+
+        layout_pieChart_lable.removeAllViews()
         layout_pieChart_lable.addView(chipGroup)
     }
 
@@ -356,6 +587,9 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                 barchartDataModel.setValue_x(surya_namaskarlist.get(i).getcount_date())
                 barchartDataModel.setValue_y(surya_namaskarlist.get(i).getcount())
                 barchartDataModel.setValue_user(surya_namaskarlist.get(i).getmember_name())
+                barchartDataModel.setValue_ID(
+                    surya_namaskarlist.get(i).getsurya_namaskar_count_id()
+                )
                 listData_surya.add(barchartDataModel)
             }
         }

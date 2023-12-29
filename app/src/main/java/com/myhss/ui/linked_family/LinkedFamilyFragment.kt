@@ -887,6 +887,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 barchartDataModel.setValue_x(guru_dakshinaBeans[i].startDate)
                 barchartDataModel.setValue_y(guru_dakshinaBeans[i].paidAmount)
                 barchartDataModel.setValue_user(guru_dakshinaBeans[i].firstName)
+                barchartDataModel.setValue_user(guru_dakshinaBeans[i].id)
                 listData_guru.add(barchartDataModel)
                 listData_guruDakshina.add(guru_dakshinaBeans[i])
             }

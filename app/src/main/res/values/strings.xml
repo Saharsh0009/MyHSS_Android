@@ -96,6 +96,7 @@
     <string name="my_nagar">My Nagar</string>
     <string name="my_vibhag">My Vibhag</string>
     <string name="guru_dakshina">Guru Dakshina</string>
+
     <string name="shishu">Shishu</string>
     <string name="male_shishu">Shishu_male</string>
     <string name="female_shishu">Shishu_female</string>
@@ -112,8 +113,8 @@
     <string name="yuva">Yuva</string>
     <string name="yuvati">Yuvati</string>
     <string name="yuvati_content">30 to 60 years</string>
-    <string name="jyeshta">Jyeshta</string>
-    <string name="jyeshtaa">Jyeshtaa</string>
+    <string name="jyeshta">Jyeshtha</string>
+    <string name="jyeshtaa">Jyeshthaa</string>
     <string name="proudh">Proudh</string>
     <string name="proudha">Proudha</string>
     <string name="jyeshtaa_content">60+ years</string>
@@ -259,7 +260,7 @@
     <string name="Add_self">Add Self</string>
     <string name="Add_family_member">Add A Family Member</string>
     <string name="welocome_text_mag">You are not currently a member of MyHSS. If you are experiencing an issue, please contact your Shakha Admin.</string>
-    <string name="welcome_msg">We have recived your membership application. we will update you shortly.</string>
+    <string name="welcome_msg">We have received your membership application. we will update you shortly.</string>
     <string name="contact_information">Contact Information</string>
     <string name="primary_contact_number">Primary contact number</string>
     <string name="secondary_contact_number">Secondary contact number</string>
@@ -307,7 +308,7 @@
 
 
     <!--Error Message String-->
-    <string name="error_Please_enter_fname_text">Please enter firsr name text</string>
+    <string name="error_Please_enter_fname_text">Please enter first name text</string>
     <string name="error_Please_enter_mname_text">Please enter middle name text</string>
     <string name="error_Please_enter_sname_text">Please enter sur name text</string>
     <string name="error_Please_enter_full_name">Please enter full name text</string>
@@ -315,7 +316,7 @@
     <string name="error_Please_enter_middle_name">Please enter middle name text</string>
     <string name="error_Please_enter_sur_name">Please enter surname text</string>
     <string name="error_Please_choose_gender">Please choose gender</string>
-    <string name="error_Please_choose_date_of_birth">Plase choose date of birth</string>
+    <string name="error_Please_choose_date_of_birth">Please choose date of birth</string>
     <string name="error_Please_enter_occupation">Please enter occupation</string>
     <string name="error_Please_select_vibhag">Please select vibhag</string>
     <string name="error_Please_select_nagar">Please select nagar</string>
@@ -473,4 +474,13 @@
     <string name="pay_now">Pay Now</string>
     <string name="view_your_registration">View Your Registration</string>
     <string name="go_to_the_list_of_events">Go To The List Of Events</string>
+    <string name="surya_namaskar_date_range">Surya Namaskar Date Range</string>
+    <string name="from_date">From Date</string>
+    <string name="to_date">To Date</string>
+    <string name="edit_sn_count">Edit Count</string>
+    <string name="delete_sn_count">Delete Count</string>
+    <string name="would_you_like_to_edit_delete_the_surya_namaskar_count">Would you like to Edit/Delete the Surya Namaskar Count?</string>
+    <string name="count">Count</string>
+    <string name="would_you_like_to_edit_the_surya_namaskar_count">Would you like to Edit the Surya Namaskar Count?</string>
+    <string name="would_you_like_to_delete_the_surya_namaskar_count">Would you like to Delete the Surya Namaskar Count?</string>
 </resources>

@@ -22,6 +22,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonParser
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.CustomProgressDialog
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
@@ -204,11 +205,11 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                         break
                     } else if (edit_count.text.toString()
                             .toDouble() < 1 || edit_count.text.toString()
-                            .toDouble() > 200
+                            .toDouble() > 500
                     ) {
                         Toast.makeText(
                             this,
-                            "Please enter a count between 1 and 200.",
+                            "Please enter a count between 1 and 500.",
                             Toast.LENGTH_SHORT
                         ).show()
                         DATE = ""
@@ -296,7 +297,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         search: String,
         chapter_id: String
     ) {
-        val pd = CustomProgressBar(this@AddSuryaNamaskarActivity)
+        val pd = CustomProgressDialog(this@AddSuryaNamaskarActivity)
         pd.show()
         val call: Call<Get_Member_Listing_Response> =
             MyHssApplication.instance!!.api.get_member_listing(
@@ -426,10 +427,10 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         notebookUsers.put(paramObject)
         Log.e("notebookUsers", notebookUsers.toString())
 
-        val pd = CustomProgressBar(this)
+        val pd = CustomProgressDialog(this)
         pd.show()
         val call: Call<save_suryanamaskarResponse> =
-            MyHssApplication.instance!!.api.save_suryanamasakar_count(member_id, "", DATE, COUNT)
+            MyHssApplication.instance!!.api.save_suryanamasakar_count(member_id, DATE, COUNT)
         call.enqueue(object : Callback<save_suryanamaskarResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(
@@ -452,7 +453,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                                     this@AddSuryaNamaskarActivity, SuryaNamaskar::class.java
                                 )
                             )
-                            finish()
+                            finishAffinity()
                         }
                         val alert: AlertDialog = alertDialog.create()
                         alert.setCanceledOnTouchOutside(false)

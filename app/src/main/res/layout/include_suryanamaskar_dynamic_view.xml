@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/font_size15"
     android:layout_marginTop="@dimen/padding10"
+    android:id="@+id/linearDynamicSNEntry"
     android:layout_marginEnd="@dimen/font_size15"
     android:orientation="horizontal">
 
@@ -19,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_gray_background"
-            android:hint="Date"
+            android:hint="@string/date"
             android:padding="@dimen/padding15"
             android:textColor="@color/blackColor"
             android:textColorHint="@color/grayColorColor"
@@ -45,9 +46,10 @@
             android:layout_height="wrap_content"
             android:background="@color/light_gray_background"
             android:digits="0123456789"
-            android:hint="Count"
+            android:hint="@string/count"
             android:inputType="number"
             android:padding="@dimen/padding15"
+            android:maxLength="3"
             android:textColor="@color/blackColor"
             android:textColorHint="@color/grayColorColor"
             android:theme="@style/StyleEditTextView" />
@@ -60,10 +62,12 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/llDeleteSNCount"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/padding5"
         android:layout_weight="1.5"
+        android:gravity="center"
         android:orientation="vertical"
         android:visibility="visible">
 

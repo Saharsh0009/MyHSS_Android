@@ -7,6 +7,7 @@ class BarchartDataModel : java.io.Serializable {
     private var value_x: String? = null
     private var value_y: String? = null
     private var value_user: String? = null
+    private var value_id: String? = null
 
     fun getValue_x(): String? {
         return value_x
@@ -31,4 +32,14 @@ class BarchartDataModel : java.io.Serializable {
     fun setValue_user(value_user: String?) {
         this.value_user = value_user
     }
+
+    fun getValue_ID(): String? {
+        return value_id
+    }
+
+    fun setValue_ID(value_id: String?) {
+        this.value_id = value_id
+    }
+
+
 }

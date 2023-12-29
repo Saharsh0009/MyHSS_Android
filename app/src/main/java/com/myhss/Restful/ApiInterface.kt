@@ -15,6 +15,7 @@ import com.myhss.ui.NotificationList.Model.NotificationDatum
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Response
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Seen_Response
 import com.myhss.ui.events.model.EventListModel
+import com.myhss.ui.suryanamaskar.Model.DeleteSnCount
 import com.uk.myhss.AddMember.Address_Model.Find_Address_By_Pincode
 import com.uk.myhss.AddMember.Dietaries_Model.Find_Address_dietaries
 import com.uk.myhss.AddMember.GetNagar.Get_Nagar_Response
@@ -538,9 +539,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/member/check_username_exist")
     fun get_member_check_username_exist(
-        @Field("user_id") user_id: String,
-        @Field("username") username: String,
-        @Field("id") id: String
+        @Field("username") username: String
     ): Call<Get_Member_Check_Username_Exist_Response>
 
     /*Post sankhya utsav*/
@@ -579,33 +578,21 @@ interface ApiInterface {
 
     /*Post SuryaNamaskar Add*/
     @FormUrlEncoded
-//    @Headers("Content-Type: application/x-www-form-urlencoded; charset=UTF-8")
-//    @Headers("Content-Type: application/json; charset=UTF-8")
     @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
     fun save_suryanamasakar_count(
-//        @Body body: String
         @Field("member_id") member_id: String,
-//        @Body() surynamaskar: JsonObject
-        @Field("surynamaskar") surynamaskar: String,
         @Field("date") date: String,
         @Field("count") count: String
-//        @Field("surynamaskar") surynamaskar: ArrayList<String>
     ): Call<save_suryanamaskarResponse>
-
-    //    @Headers("Content-Type: application/json;charset=UTF-8")
-//    @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
-//    fun postsuryanamasakar_count(@Body logs: String): Call<save_suryanamaskarResponse>
-
-//    @FormUrlEncoded
-//    @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
-//    fun save_suryanamasakar_count(@Body save_suryanamaskarResponse: HashMap<String, String>): Call<save_suryanamaskarResponse>
-//    fun save_suryanamasakar_count(@Body MultipartTypedOutput multipartTypedOutput)//: Call<save_suryanamaskarResponse>
 
     /*Post SuryaNamasakar List*/
     @FormUrlEncoded
     @POST("api/v1/suryanamaskar/get_suryanamaskar_count")
     suspend fun get_suryanamaskar_count(
-        @Field("member_id") member_id: String, @Field("is_api") is_api: String
+        @Field("member_id") member_id: String,
+        @Field("from_date") from_date: String,
+        @Field("to_date") to_date: String,
+        @Field("is_api") is_api: String
     ): Get_SuryaNamaskar_ModelResponse
 
     //Nikunj
@@ -654,6 +641,19 @@ interface ApiInterface {
     /*Get Relationship*/
     @GET("api/v1/member/get_relationship")
     suspend fun getRelationship(): Get_Relationship_Response
+
+    @FormUrlEncoded
+    @POST("api/v1/suryanamaskar/delete_sn_count")
+    fun delete_suryanamasakar_count(
+        @Field("surya_namaskar_count_id") sn_id: String,
+    ): Call<DeleteSnCount>
+
+    @FormUrlEncoded
+    @POST("api/v1/suryanamaskar/edit_sn_count")
+    fun edit_suryanamasakar_count(
+        @Field("surya_namaskar_count_id") sn_id: String,
+        @Field("count") sn_count: String
+    ): Call<DeleteSnCount>
 
 
 }

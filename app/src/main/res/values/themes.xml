@@ -187,7 +187,5 @@
     </style>
 
     <style name="Stripe.CardMultilineWidget.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
     </style>
-
 </resources>
