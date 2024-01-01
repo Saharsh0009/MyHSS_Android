@@ -25,7 +25,7 @@
         android:fontFamily="@font/sourcesanspro_bold"
         android:paddingStart="@dimen/padding15"
         android:paddingEnd="@dimen/padding15"
-        android:text="@string/would_you_like_to_edit_the_surya_namaskar_count"
+        android:text="@string/would_you_like_to_edit_delete_the_surya_namaskar_count"
         android:textAlignment="center"
         android:textColor="@color/blueColor"
         android:textSize="@dimen/font_size15" />

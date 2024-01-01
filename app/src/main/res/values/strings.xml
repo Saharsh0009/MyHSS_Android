@@ -479,8 +479,8 @@
     <string name="to_date">To Date</string>
     <string name="edit_sn_count">Edit Count</string>
     <string name="delete_sn_count">Delete Count</string>
-    <string name="would_you_like_to_edit_delete_the_surya_namaskar_count">Would you like to Edit/Delete the Surya Namaskar Count?</string>
+    <string name="would_you_like_to_edit_delete_the_surya_namaskar_count">Would you like to edit or delete this Surya Namaskar count?</string>
     <string name="count">Count</string>
-    <string name="would_you_like_to_edit_the_surya_namaskar_count">Would you like to Edit the Surya Namaskar Count?</string>
-    <string name="would_you_like_to_delete_the_surya_namaskar_count">Would you like to Delete the Surya Namaskar Count?</string>
+    <string name="would_you_like_to_edit_the_surya_namaskar_count">Would you like to edit the Surya Namaskar count?</string>
+    <string name="would_you_like_to_delete_the_surya_namaskar_count">Would you like to delete the Surya Namaskar count?</string>
 </resources>
