@@ -116,6 +116,9 @@ class NotificationAdapter(
 
             if (notificID != "0") {
                 if (notificID == noti_data.notify_id && memberID == noti_data.member_id) {
+                    suchna_discriptionnew.setTextColor(Color.BLACK)
+                    noti_data.is_read = "1"
+
                     val i = Intent(itemView.context, NotificationDetails::class.java)
                     i.putExtra("Suchana_Type", tab_type)
                     i.putExtra("Suchana_Title", noti_data.notification_title)

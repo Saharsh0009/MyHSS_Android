@@ -126,6 +126,11 @@ class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val notifcID: Str
 
             if (notifcID != "0") {
                 if (notifcID == suchana.id) {
+                    suchana.is_read = "1"
+                    suchna_discription.setTextColor(Color.BLACK)
+                    suchna_discriptionnew.setTextColor(Color.BLACK)
+
+
                     val i = Intent(itemView.context, NotificationDetails::class.java)
                     i.putExtra("Suchana_Type", "Suchana Detail")
                     i.putExtra("Suchana_Title", suchna_title.text.toString())

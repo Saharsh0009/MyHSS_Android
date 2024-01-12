@@ -977,6 +977,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     }
 
 
+    @SuppressLint("MissingSuperCall")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
