@@ -593,12 +593,14 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                 listData_surya.add(barchartDataModel)
             }
         }
+        val reversedList: ArrayList<BarchartDataModel> = ArrayList(listData_surya.reversed())
         val intent = Intent(this@SuryaNamaskar, ViewBarchartActivity::class.java)
         intent.putExtra("case", "1")
-        intent.putExtra("list_data", listData_surya)
+        intent.putExtra("list_data", reversedList)
         startActivity(intent)
     }
 
+    @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         super.onBackPressed()
         val i = Intent(this@SuryaNamaskar, HomeActivity::class.java)

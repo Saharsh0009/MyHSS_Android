@@ -1,11 +1,14 @@
 package com.myhss.ui.SuchanaBoard
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import android.window.OnBackInvokedDispatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +20,7 @@ import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.appConstants.AppParam
 import com.myhss.ui.SuchanaBoard.Adapter.SuchnaAdapter
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Datum
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Response
@@ -54,6 +58,7 @@ class SuchanaBoardActivity : AppCompatActivity() {
     private var day = 0
     private lateinit var calendar: Calendar
     private var strCurrentDate: String = ""
+    var receivedNotiID = "0"
 
     @SuppressLint("SetTextI18n", "CutPasteId", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,9 +83,12 @@ class SuchanaBoardActivity : AppCompatActivity() {
         header_title.text = getString(R.string.my_suchna_board)
 
         back_arrow.setOnClickListener(DebouncedClickListener {
-            val i = Intent(this@SuchanaBoardActivity, HomeActivity::class.java)
-            startActivity(i)
-            finishAffinity()
+//            val i = Intent(this@SuchanaBoardActivity, HomeActivity::class.java)
+//            startActivity(i)
+//            finishAffinity()
+
+            onBackPressed()
+
         })
 
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
@@ -126,6 +134,20 @@ class SuchanaBoardActivity : AppCompatActivity() {
                 ).show()
             }
         }
+
+        val receivedIntent = intent
+        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_ID)) {
+            receivedNotiID = receivedIntent.getStringExtra(AppParam.NOTIFIC_ID).toString()
+        } else {
+            receivedNotiID = "0"
+        }
+
+
+//        val notificationManager =
+//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//        notificationManager.cancelAll()
+
+
     }
 
     private fun mySuchanaBoard(
@@ -153,7 +175,7 @@ class SuchanaBoardActivity : AppCompatActivity() {
                                 data_not_found_layout.visibility = View.VISIBLE
                             } else {
                                 suchana_data = response.body()!!.data!!
-                                suchana_adapter = SuchnaAdapter(suchana_data)
+                                suchana_adapter = SuchnaAdapter(suchana_data, receivedNotiID)
                                 notification_list.adapter = suchana_adapter
                                 suchana_adapter!!.notifyDataSetChanged()
                             }
@@ -179,4 +201,11 @@ class SuchanaBoardActivity : AppCompatActivity() {
             }
         })
     }
+
+
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
+
 }

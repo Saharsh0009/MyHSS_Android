@@ -10,5 +10,6 @@ data class Data(
     val notific_type_name: String,
     val notification_message: String,
     val notification_title: String,
-    val user_id: String
+    val user_id: String,
+    val notify_id: String
 )

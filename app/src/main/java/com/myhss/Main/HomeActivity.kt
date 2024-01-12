@@ -3,12 +3,15 @@ package com.uk.myhss.Main
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -16,12 +19,16 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -37,55 +44,32 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.google.zxing.integration.android.IntentIntegrator
 import com.myhss.Main.adapter.ClickListener
 import com.myhss.Main.adapter.NavigationItemModel
 import com.myhss.Main.adapter.NavigationRVAdapter
 import com.myhss.Main.adapter.RecyclerTouchListener
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
+import com.myhss.appConstants.AppParam
 import com.myhss.ui.Biomeric.ChangeBiomerticFragment
 import com.myhss.ui.SuchanaBoard.NotificationList
 import com.uk.myhss.Login_Registration.LoginActivity
-import com.uk.myhss.Main.Get_Prpfile.Datum_Get_Profile
-import com.uk.myhss.Main.Get_Prpfile.Get_Profile_Response
-import com.uk.myhss.Main.Get_Prpfile.Member_Get_Profile
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.dashboard.DashboardFragment
-import com.uk.myhss.ui.dashboard.LinkedFamilyFragment
 import com.uk.myhss.ui.policies.ChangePasswordFragment
 import com.uk.myhss.ui.policies.PolicieshowFragment
 import com.uk.myhss.ui.policies.ProfileFragment
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.google.zxing.integration.android.IntentIntegrator
-import android.content.DialogInterface
-
-import android.provider.Settings
-import androidx.lifecycle.lifecycleScope
-import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
-import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
-import com.myhss.Main.notific_type.NotificTypeModel
-import com.myhss.Utils.DebouncedClickListener
-import com.myhss.Utils.DebugLog
-import com.myhss.Utils.UtilCommon
-import com.myhss.appConstants.AppParam
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 
 class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSelectedListener {
     private lateinit var sessionManager: SessionManager
@@ -107,6 +91,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     private val REQUEST_CODE_QR_SCAN = 101
     private val LOGTAG = "QRCScanner-MainActivity"
     private var receivedNotiData = "no"
+    private var receivedNotiID = "0"
 
     private lateinit var notification_img: ImageView
 
@@ -206,6 +191,15 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             val i = Intent(this@HomeActivity, NotificationList::class.java)
             startActivity(i)
         })
+
+
+        val receivedIntent = intent
+        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
+            receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
+            receivedNotiID = receivedIntent.getStringExtra(AppParam.NOTIFIC_ID).toString()
+//            DebugLog.e("Notification Value : $receivedNotiData")
+        }
+
         callApis()
         // Set the toolbar
         setSupportActionBar(activity_main_toolbar)
@@ -230,8 +224,10 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                                     val args = Bundle()
                                     args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    args.putString(AppParam.NOTIFIC_ID, receivedNotiID)
                                     dashboardFragment.arguments = args
                                     receivedNotiData = "no"
+                                    receivedNotiID = "0"
                                 }
                                 supportFragmentManager.beginTransaction()
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
@@ -403,8 +399,10 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                                     val args = Bundle()
                                     args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    args.putString(AppParam.NOTIFIC_ID, receivedNotiID)
                                     dashboardFragment.arguments = args
                                     receivedNotiData = "no"
+                                    receivedNotiID = "0"
                                 }
                                 supportFragmentManager.beginTransaction()
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
@@ -663,6 +661,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     }
 
     private fun callApis() {
+
         DebugLog.d("CORO - Starting the API CALL with lifecycleScope 3")
         val pd = CustomProgressBar(this@HomeActivity)
         pd.show()
@@ -679,6 +678,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                 val job1 = async { myProfile(user_id!!, member_id!!, devicetype, device_token!!) }
                 val job2 = async { callNotificationTypeApi() }
 
+
                 val result1 = job1.await()
                 val result2 = job2.await()
 
@@ -692,8 +692,10 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                     if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                         val args = Bundle()
                         args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                        args.putString(AppParam.NOTIFIC_ID, receivedNotiID)
                         dashboardFragment.arguments = args
                         receivedNotiData = "no"
+                        receivedNotiID = "0"
                     }
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.activity_main_content_id, dashboardFragment)
@@ -704,20 +706,16 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                     if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                         val args = Bundle()
                         args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                        args.putString(AppParam.NOTIFIC_ID, receivedNotiID)
                         dashboardFragment.arguments = args
                         receivedNotiData = "no"
+                        receivedNotiID = "0"
                     }
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.activity_main_content_id, dashboardFragment)
                         .commit()
                 }
                 pd.dismiss()
-                val receivedIntent = intent
-                if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
-                    receivedNotiData =
-                        receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
-                    DebugLog.e("Notification Value : $receivedNotiData")
-                }
             }
         } else {
             pd.dismiss()

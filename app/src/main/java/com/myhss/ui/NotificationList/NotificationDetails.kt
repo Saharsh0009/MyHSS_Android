@@ -21,6 +21,7 @@ class NotificationDetails : AppCompatActivity() {
     lateinit var header_title: TextView
     lateinit var suchna_title: TextView
     lateinit var suchna_discription: TextView
+    lateinit var suchna_time: TextView
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,9 +44,12 @@ class NotificationDetails : AppCompatActivity() {
         header_title = findViewById(R.id.header_title)
         suchna_title = findViewById(R.id.suchna_title)
         suchna_discription = findViewById(R.id.suchna_discription)
-        header_title.text = intent.getStringExtra("Suchana_Type")
+        suchna_time = findViewById(R.id.txtTime)
         back_arrow.setOnClickListener(DebouncedClickListener { finish() })
+
+        header_title.text = intent.getStringExtra("Suchana_Type")
         suchna_title.text = intent.getStringExtra("Suchana_Title")
         suchna_discription.text = intent.getStringExtra("Suchana_DiscriptionNew")
+        suchna_time.text = intent.getStringExtra("Suchana_time")
     }
 }

@@ -524,16 +524,19 @@ class DashboardFragment : Fragment() {
 //        }
 
         val receivedData = arguments?.getString(AppParam.NOTIFIC_KEY)
+        val receivedNotificID = arguments?.getString(AppParam.NOTIFIC_ID)
         if (receivedData != null) {
             DebugLog.e("Notification Value $receivedData")
             when (receivedData) {
                 "0" -> {
                     val i = Intent(requireContext(), SuchanaBoardActivity::class.java)
+                    i.putExtra(AppParam.NOTIFIC_ID, receivedNotificID)
                     startActivity(i)
                 }
 
                 else -> {
                     val i = Intent(requireContext(), NotificationList::class.java)
+                    i.putExtra(AppParam.NOTIFIC_ID, receivedNotificID)
                     startActivity(i)
                 }
             }

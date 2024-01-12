@@ -111,6 +111,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
     private lateinit var passcode_layout: RelativeLayout
     private lateinit var line_view: View
     private var receivedNotiData = "no"
+    private var receivedNotiID = "0"
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -245,7 +246,8 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
         val receivedIntent = intent
         if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
             receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
-            DebugLog.e("Notification Value : $receivedNotiData")
+            receivedNotiID = receivedIntent.getStringExtra(AppParam.NOTIFIC_ID).toString()
+//            DebugLog.e("Notification Value : $receivedNotiData")
         }
 
     }
@@ -292,6 +294,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
             if (receivedNotiData != "no") {
                 i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
+                i.putExtra(AppParam.NOTIFIC_ID,receivedNotiID)
             }
             startActivity(i)
             finishAffinity()
@@ -514,6 +517,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                         val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
                         if (receivedNotiData != "no") {
                             i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
+                            i.putExtra(AppParam.NOTIFIC_ID,receivedNotiID)
                         }
                         startActivity(i)
                         finish()
@@ -566,6 +570,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                                 val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
                                 if (receivedNotiData != "no") {
                                     i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    i.putExtra(AppParam.NOTIFIC_ID,receivedNotiID)
                                 }
                                 startActivity(i)
                                 finish()
@@ -794,6 +799,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
             if (receivedNotiData != "no") {
                 i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
+                i.putExtra(AppParam.NOTIFIC_ID,receivedNotiID)
             }
             startActivity(i)
             finish()

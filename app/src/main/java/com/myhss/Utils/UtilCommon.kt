@@ -1,5 +1,7 @@
 package com.myhss.Utils
 
+import android.app.ActivityManager
+import android.content.Context
 import android.os.Build
 import android.text.Html
 import android.view.View
@@ -66,6 +68,7 @@ class UtilCommon {
             } else {
                 for (n in AppParam.notificTypeData?.indices!!) {
                     if (sType == AppParam.notificTypeData!![n].id) {
+                        isTrue = true
                         return true
                     }
                 }
@@ -142,5 +145,50 @@ class UtilCommon {
 
             return age < 18
         }
+
+        fun isAppInForeground(context: Context, packageName: String): Boolean {
+            val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+
+            if (activityManager != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val appTasks = activityManager.appTasks
+                    for (appTask in appTasks) {
+                        val taskInfo = appTask.taskInfo
+                        if (taskInfo.baseActivity?.packageName == packageName) {
+                            return true
+                        }
+                    }
+                } else {
+                    val runningTasks = activityManager.getRunningTasks(1)
+                    if (runningTasks.isNotEmpty()) {
+                        val foregroundTask = runningTasks[0]
+                        if (foregroundTask.topActivity?.packageName == packageName) {
+                            return true
+                        }
+                    }
+                }
+            }
+
+            return false
+        }
+
+        fun isAppRunning(context: Context, packageName: String): Boolean {
+            val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+
+            if (activityManager != null) {
+                val runningAppProcesses = activityManager.runningAppProcesses
+                if (runningAppProcesses != null) {
+                    for (processInfo in runningAppProcesses) {
+                        if (processInfo.processName == packageName) {
+                            return true
+                        }
+                    }
+                }
+            }
+
+            return false
+        }
+
+
     }
 }
