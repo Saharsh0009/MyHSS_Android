@@ -24,6 +24,7 @@ import com.google.gson.JsonParser
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.CustomProgressDialog
 import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
 import com.myhss.ui.suryanamaskar.Model.save_suryanamaskarResponse
@@ -172,10 +173,11 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
             if (count == 0) {
                 Toast.makeText(
                     this,
-                    "Please Add Date and Count for Surya Namaskar by clicking Add More.",
+                    getString(R.string.please_add_date_and_count_for_surya_namaskar_by_clicking_add_more),
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
+                val dateSet = HashSet<String>()
                 for (i in 0 until count) {
                     view = layout_dynamic_view.getChildAt(i)
                     val select_date: TextView = view.findViewById(R.id.select_date)
@@ -183,7 +185,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                     if (select_date.text.isEmpty() && edit_count.text.isEmpty()) {
                         Toast.makeText(
                             this,
-                            "Please Enter the Date and Count for Surya Namaskar.",
+                            getString(R.string.please_fill_in_all_the_details_in_order_to_log_your_surya_namaskar_count),
                             Toast.LENGTH_SHORT
                         ).show()
                         DATE = ""
@@ -191,14 +193,18 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                         break
                     } else if (select_date.text.isEmpty()) {
                         Toast.makeText(
-                            this, "Please Enter the Date for Surya Namaskar.", Toast.LENGTH_SHORT
+                            this,
+                            getString(R.string.please_fill_in_all_the_details_in_order_to_log_your_surya_namaskar_count),
+                            Toast.LENGTH_SHORT
                         ).show()
                         DATE = ""
                         COUNT = ""
                         break
                     } else if (edit_count.text.isEmpty()) {
                         Toast.makeText(
-                            this, "Please Enter the Count for Surya Namaskar.", Toast.LENGTH_SHORT
+                            this,
+                            getString(R.string.please_fill_in_all_the_details_in_order_to_log_your_surya_namaskar_count),
+                            Toast.LENGTH_SHORT
                         ).show()
                         DATE = ""
                         COUNT = ""
@@ -209,7 +215,16 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                     ) {
                         Toast.makeText(
                             this,
-                            "Please enter a count between 1 and 500.",
+                            getString(R.string.please_enter_a_count_between_1_and_500),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        DATE = ""
+                        COUNT = ""
+                        break
+                    } else if (dateSet.contains(select_date.text.toString())) {
+                        Toast.makeText(
+                            this,
+                            getString(R.string.please_enter_diverse_dates_in_order_to_log_your_surya_namaskar_count),
                             Toast.LENGTH_SHORT
                         ).show()
                         DATE = ""
@@ -228,11 +243,13 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                             }
                         }
                     }
+                    dateSet.add(select_date.text.toString())
                 }
 
                 if (Functions.isConnectingToInternet(this)) {
                     if (DATE.isNotEmpty() && COUNT.isNotEmpty()) {
                         AddSuryanamaskar(USER_ID, myarray, DATE, COUNT)
+//                        DebugLog.e("Validated")
                     }
                 } else {
                     Toast.makeText(

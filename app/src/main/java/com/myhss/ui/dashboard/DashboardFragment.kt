@@ -224,8 +224,8 @@ class DashboardFragment : Fragment() {
 
         reports_gridview.visibility = View.GONE
         reports_hide_show_layout.visibility = View.GONE
-        events_hide_show_layout.visibility = View.VISIBLE
-        events_gridview.visibility = View.VISIBLE
+        events_hide_show_layout.visibility = View.GONE
+        events_gridview.visibility = View.GONE
         news_hide_show_layout.visibility = View.GONE
         news_gridview.visibility = View.GONE
 

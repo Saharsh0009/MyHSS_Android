@@ -483,4 +483,9 @@
     <string name="count">Count</string>
     <string name="would_you_like_to_edit_the_surya_namaskar_count">Would you like to edit the Surya Namaskar count?</string>
     <string name="would_you_like_to_delete_the_surya_namaskar_count">Would you like to delete the Surya Namaskar count?</string>
+    <string name="are_you_sure_you_would_like_to_delete_the_surya_namaskar_count">Are you sure you would like to delete the Surya Namaskar count?</string>
+    <string name="please_fill_in_all_the_details_in_order_to_log_your_surya_namaskar_count">Please fill in all the details in order to log your Surya Namaskar count.</string>
+    <string name="please_enter_diverse_dates_in_order_to_log_your_surya_namaskar_count">Please enter diverse dates in order to log your Surya Namaskar count.</string>
+    <string name="please_enter_a_count_between_1_and_500">Please enter a count between 1 and 500.</string>
+    <string name="please_add_date_and_count_for_surya_namaskar_by_clicking_add_more">Please Add Date and Count for Surya Namaskar by clicking Add More.</string>
 </resources>

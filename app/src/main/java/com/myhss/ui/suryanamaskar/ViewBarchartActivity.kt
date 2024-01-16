@@ -270,7 +270,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     override fun deleteSNCount(snID: String) {
         val alertDialog: AlertDialog.Builder =
             AlertDialog.Builder(this@ViewBarchartActivity)
-        alertDialog.setMessage("Are you sure would like to delete the Surya Namaskar count?")
+        alertDialog.setMessage(getString(R.string.are_you_sure_you_would_like_to_delete_the_surya_namaskar_count))
         alertDialog.setPositiveButton(
             "yes"
         ) { _, _ ->

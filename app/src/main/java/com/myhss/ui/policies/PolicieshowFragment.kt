@@ -68,7 +68,7 @@ class PolicieshowFragment : Fragment() {
 
         data_protection_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(requireContext(), WebViewPolicies::class.java)
-            i.putExtra("DATAPROTECTION", "NotificTypeData Protection Policy")
+            i.putExtra("DATAPROTECTION", "Data Protection Policy")
 //            i.putExtra("DATA_PROTECTION", DATA_PROTECTION)
             startActivity(i)
         })
