@@ -34,15 +34,15 @@ android {
         applicationId "com.uk.myhss"
         minSdkVersion 21
         targetSdk 34
-        versionCode 22
-        versionName "1.7"
+        versionCode 25
+        versionName "1.9.1"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

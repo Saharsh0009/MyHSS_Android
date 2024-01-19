@@ -28,6 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -42,6 +43,7 @@ import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.myhss.Welcome.BiometricDialogV23
 import com.uk.myhss.Login_Registration.Model.ForgotPasswordResponse
 import com.uk.myhss.Login_Registration.Model.LoginResponse
@@ -173,13 +175,18 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
                 til_password.isErrorEnabled = true
                 edit_username.requestFocus()
                 return@DebouncedClickListener
-            } else if (user.isEmpty()) {
+            } else if (user.isEmpty() || user.isBlank()) {
                 til_userName.error = getString(R.string.username_required)
                 til_userName.isErrorEnabled = true
                 edit_username.requestFocus()
                 return@DebouncedClickListener
-            } else if (password.isEmpty()) {
+            } else if (password.isEmpty() || password.isBlank()) {
                 til_password.error = getString(R.string.password_required)
+                til_password.isErrorEnabled = true
+                edit_password.requestFocus()
+                return@DebouncedClickListener
+            } else if (!UtilCommon.isValidPassword(password)) {
+                til_password.error = getString(R.string.valid_password)
                 til_password.isErrorEnabled = true
                 edit_password.requestFocus()
                 return@DebouncedClickListener

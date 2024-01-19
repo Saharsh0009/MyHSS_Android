@@ -15,7 +15,7 @@ class ForgotPasswordDialog : DialogFragment() {
     private var forgotPasswordDialog: iForgotPasswordDialog? = null
 
 
-    companion object{
+    companion object {
         fun newInstance(listener: iForgotPasswordDialog): ForgotPasswordDialog {
             val fragment = ForgotPasswordDialog()
             fragment.forgotPasswordDialog = listener
@@ -44,7 +44,7 @@ class ForgotPasswordDialog : DialogFragment() {
 
         binding.forgotPasswordbtn.setOnClickListener(DebouncedClickListener {
             val forgotuser = binding.editForgotusername.text.toString()
-            if (forgotuser.isEmpty()) {
+            if (forgotuser.isEmpty() || forgotuser.isBlank()) {
                 binding.tilForgotPassword.error = getString(R.string.username_required)
                 binding.tilForgotPassword.isErrorEnabled = true
                 binding.editForgotusername.requestFocus()
