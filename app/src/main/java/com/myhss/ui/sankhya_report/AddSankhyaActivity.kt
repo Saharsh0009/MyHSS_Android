@@ -1071,6 +1071,8 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         proudha: String,
         api: String
     ) {
+        DebugLog.e("member_id => $member_id")
+        DebugLog.e("event_date => $event_date")
         val pd = CustomProgressBar(this@AddSankhyaActivity)
         pd.show()
         val call: Call<Get_Sankhya_Add_Response> = MyHssApplication.instance!!.api.get_sankhya_add(
@@ -1104,7 +1106,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                         val alertBuilder =
                             AlertDialog.Builder(this@AddSankhyaActivity) // , R.style.dialog_custom
 
-                        alertBuilder.setTitle("Message")
+//                        alertBuilder.setTitle("Message")
                         alertBuilder.setMessage(response.body()?.message)
                         alertBuilder.setPositiveButton(
                             "OK"
@@ -1118,6 +1120,8 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                         }
                         val alertDialog = alertBuilder.create()
                         alertDialog.show()
+                        alertDialog.setCancelable(false)
+                        alertDialog.setCanceledOnTouchOutside(false)
 
 //                    Functions.showAlertMessageWithOK(
 //                        this@AddSankhyaActivity,

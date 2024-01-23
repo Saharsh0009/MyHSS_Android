@@ -1,18 +1,19 @@
 package com.myhss.ui.suryanamaskar
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
@@ -29,23 +30,24 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.CustomProgressDialog
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
 import com.myhss.ui.suryanamaskar.Model.Datum_Get_SuryaNamaskar
-import com.myhss.ui.suryanamaskar.Model.Get_SuryaNamaskar_ModelResponse
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
-import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
@@ -54,12 +56,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
     lateinit var layout_pieChart_lable: LinearLayout
-    private var MEMBER_ID: String = ""
     var IDMEMBER: ArrayList<String> = ArrayList<String>()
-    var UserName: ArrayList<String> = ArrayList<String>()
-    var UserCategory: ArrayList<String> = ArrayList<String>()
-    private var USER_NAME: String = ""
-    private var USER_ID: String = ""
     lateinit var USERID: String
     lateinit var TAB: String
     lateinit var MEMBERID: String
@@ -72,11 +69,21 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var mLayoutManager: LinearLayoutManager
     lateinit var linechart_layout: LinearLayout
     private lateinit var add_more: ImageView
+    private lateinit var imgFrmDate: ImageView
+    private lateinit var imgToDate: ImageView
+    private lateinit var from_date: TextView
+    private lateinit var to_date: TextView
     lateinit var pieChart_surya: PieChart
     private var memberDataList: List<Get_Member_Listing_Datum> =
         ArrayList<Get_Member_Listing_Datum>()
     private var surya_namaskarlist: List<Datum_Get_SuryaNamaskar> =
         ArrayList<Datum_Get_SuryaNamaskar>()
+
+    private var fromDate: Date? = null
+    private var toDate: Date? = null
+    private var MEMBER_ID_temp = ""
+
+    private lateinit var chipGroup: ChipGroup
 
 
     @SuppressLint("MissingPermission")
@@ -86,12 +93,10 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         setContentView(R.layout.activity_barchart)
 
         sessionManager = SessionManager(this)
-
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("SuryaNamaskarVC")
         sessionManager.firebaseAnalytics.setUserProperty("SuryaNamaskarVC", "SuryaNamaskar")
-
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true)
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
@@ -103,50 +108,240 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         linechart_layout = findViewById(R.id.linechart_layout)
         pieChart_surya = findViewById(R.id.pieChart_surya)
         add_more = findViewById(R.id.info_tooltip)
+        imgFrmDate = findViewById(R.id.imgFrmDate)
+        imgToDate = findViewById(R.id.imgToDate)
+        from_date = findViewById(R.id.from_date)
+        to_date = findViewById(R.id.to_date)
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         layout_pieChart_lable = findViewById(R.id.layout_pieChart_lable)
         add_more.setImageResource(R.drawable.ic_plus)
+        pieChart_surya.visibility = View.GONE
+
+        toDate = Calendar.getInstance().time
+        setToDate()
+        val pastDateCalendar = Calendar.getInstance()
+        pastDateCalendar.time = toDate
+        pastDateCalendar.add(Calendar.MONTH, -3)
+        fromDate = pastDateCalendar.time
+        setFromDate()
+
+        callApis()
+
         back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@SuryaNamaskar, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
         })
-        callMemberListApi()
         add_more.visibility = View.VISIBLE
         add_more.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@SuryaNamaskar, AddSuryaNamaskarActivity::class.java)
             startActivity(i)
         })
 
-//        SwipeleftToRightBack.enableSwipeBack(this)
-//        SwipeleftToRightBack.enableSwipeBackFullView(this)
-    }
-//    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-//        return SwipeleftToRightBack.dispatchTouchEvent(this, event) || super.dispatchTouchEvent(event)
-//    }
+        from_date.setOnClickListener(DebouncedClickListener {
+            showFromDateRangePicker()
+        })
 
-    private fun callMemberListApi() {
-        if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
-            val end: Int = 100
-            val start: Int = 0
-            USERID = sessionManager.fetchUserID()!!
-            Log.d("USERID", USERID)
-            TAB = "family"
-            MEMBERID = sessionManager.fetchMEMBERID()!!
-            STATUS = "all"
-            LENGTH = end.toString()
-            START = start.toString()
-            SEARCH = ""
-            CHAPTERID = ""
-            myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
-        } else {
-            Toast.makeText(
-                this@SuryaNamaskar, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
-            ).show()
+        to_date.setOnClickListener(DebouncedClickListener {
+            showToDateRangePicker()
+        })
+        imgFrmDate.setOnClickListener(DebouncedClickListener {
+            showFromDateRangePicker()
+        })
+
+        imgToDate.setOnClickListener(DebouncedClickListener {
+            showToDateRangePicker()
+        })
+    }
+
+    private fun showFromDateRangePicker() {
+
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+
+        val defaultDate =
+            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(from_date.text.toString())
+
+        val fromDatePickerDialog = DatePickerDialog(
+            this, { _, year, month, dayOfMonth ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(year, month, dayOfMonth)
+
+                // Validate that the selected date is up to yesterday
+                if (selectedDate.timeInMillis <= getYesterday().time) {
+                    fromDate = selectedDate.time
+                    setFromDate()
+                    if (isDateRangeValid(from_date.text.toString(), to_date.text.toString())) {
+                        lifecycleScope.launch {
+                            val job2 = async {
+                                SuryanamaskarList(
+                                    MEMBER_ID_temp,
+                                    from_date.text.toString(),
+                                    to_date.text.toString(),
+                                    "true",
+                                    true
+                                )
+                            }
+                            val result2 = job2.await()
+                        }
+                    }
+                } else {
+                    // Show an error message or handle the invalid selection
+                    showToast("Please select a date up to yesterday.")
+                }
+            },
+            currentYear,
+            currentMonth,
+            currentDay
+        )
+
+        // Set the "from" date as a past day
+//        val pastDateCalendar = Calendar.getInstance()
+//        pastDateCalendar.add(Calendar.YEAR, -1) // Set one day ago
+//        fromDatePickerDialog.datePicker.minDate = pastDateCalendar.timeInMillis
+        fromDatePickerDialog.datePicker.maxDate =
+            System.currentTimeMillis() - 86400000 // Set max date to (current date - 1 day)
+
+        defaultDate?.let {
+            fromDatePickerDialog.datePicker.updateDate(
+                it.year + 1900,
+                it.month,
+                it.date
+            )
+        }
+
+        fromDatePickerDialog.show()
+
+
+    }
+
+    private fun showToDateRangePicker() {
+        if (fromDate == null) {
+            showToast("Please select 'From Date' first.")
+            return
+        }
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val toDateMinDate = fromDate?.time ?: System.currentTimeMillis()
+
+        val defaultDate =
+            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(to_date.text.toString())
+
+        val toDatePickerDialog = DatePickerDialog(
+            this, { _, year, month, dayOfMonth ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(year, month, dayOfMonth)
+                if (selectedDate.timeInMillis <= System.currentTimeMillis()) {
+                    toDate = selectedDate.time
+                    setToDate()
+                    if (isDateRangeValid(from_date.text.toString(), to_date.text.toString())) {
+                        lifecycleScope.launch {
+                            val job2 = async {
+                                SuryanamaskarList(
+                                    MEMBER_ID_temp,
+                                    from_date.text.toString(),
+                                    to_date.text.toString(),
+                                    "true",
+                                    true
+                                )
+                            }
+                            val result2 = job2.await()
+                        }
+                    }
+                } else {
+                    showToast("Please select a date up to today.")
+                }
+            },
+            currentYear,
+            currentMonth,
+            currentDay
+        )
+        toDatePickerDialog.datePicker.minDate = toDateMinDate
+        toDatePickerDialog.datePicker.maxDate = System.currentTimeMillis()
+
+        defaultDate?.let {
+            toDatePickerDialog.datePicker.updateDate(
+                it.year + 1900,
+                it.month,
+                it.date
+            )
+        }
+
+        toDatePickerDialog.show()
+    }
+
+    private fun isDateRangeValid(sfromDate: String, stoDate: String): Boolean {
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.UK)
+        try {
+            val fromDateParsed: Date? = dateFormat.parse(sfromDate)
+            val toDateParsed: Date? = dateFormat.parse(stoDate)
+            if (fromDateParsed!!.before(toDateParsed) || fromDateParsed == toDateParsed) {
+                return true
+            } else {
+                showToast("Invalid date range. 'From Date' must be less than to 'To Date'.")
+                return false
+            }
+        } catch (e: Exception) {
+            showToast("Please Select Proper From and To Date")
+            return false
         }
     }
 
-    private fun myMemberList(
+    private fun setToDate() {
+        to_date.text = UtilCommon.convertDateFormatUK(toDate)
+    }
+
+    private fun setFromDate() {
+        from_date.text = UtilCommon.convertDateFormatUK(fromDate)
+    }
+
+    private fun getYesterday(): Date {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        return calendar.time
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this@SuryaNamaskar, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun callApis() {
+        val pd = CustomProgressDialog(this@SuryaNamaskar)
+        pd.show()
+        if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
+            lifecycleScope.launch {
+                val job2 = async {
+                    USERID = sessionManager.fetchUserID()!!
+                    TAB = "family"
+                    MEMBERID = sessionManager.fetchMEMBERID()!!
+                    STATUS = "all"// all
+                    LENGTH = "100"
+                    START = "0"
+                    SEARCH = ""
+                    CHAPTERID = ""
+                    myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+                }
+                val result2 = job2.await()
+                DebugLog.d("CORO - Results await 5: $result2")
+                pd.dismiss()
+            }
+        } else {
+            Toast.makeText(
+                this@SuryaNamaskar,
+                resources.getString(R.string.no_connection),
+                Toast.LENGTH_SHORT
+            ).show()
+            pd.dismiss()
+        }
+    }
+
+    private suspend fun myMemberList(
         user_id: String,
         tab: String,
         member_id: String,
@@ -156,177 +351,117 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         search: String,
         chapter_id: String
     ) {
-        val pd = CustomProgressBar(this@SuryaNamaskar)
-        pd.show()
-        val call: Call<Get_Member_Listing_Response> =
-            MyHssApplication.instance!!.api.get_member_listing(
-                user_id, tab, member_id, status, length, start, search, chapter_id
+        val mStringListnew = mutableListOf(sessionManager.fetchMEMBERID() ?: "")
+        try {
+            val response = MyHssApplication.instance!!.api.getMemberListing(
+                user_id,
+                tab,
+                member_id,
+                status,
+                length,
+                start,
+                search,
+                chapter_id
             )
-        call.enqueue(object : Callback<Get_Member_Listing_Response> {
-            override fun onResponse(
-                call: Call<Get_Member_Listing_Response>,
-                response: Response<Get_Member_Listing_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        try {
-                            memberDataList = response.body()!!.data!!
-                            Log.d("atheletsBeans", memberDataList.toString())
-
-                            val mStringList = ArrayList<String>()
-                            mStringList.add("All")
-                            mStringList.add(sessionManager.fetchFIRSTNAME()!! + " " + sessionManager.fetchSURNAME()!!)
-                            for (i in 0 until memberDataList.size) {
-                                if (memberDataList[i].firstName.toString() + " " + memberDataList[i].lastName.toString() != sessionManager.fetchFIRSTNAME() + " " + sessionManager.fetchSURNAME()) {
-                                    mStringList.add(
-                                        memberDataList[i].firstName.toString() + " " + memberDataList[i].lastName.toString()
-                                    )
-                                }
-                            }
-
-                            val mStringListnew = ArrayList<String>()
-                            mStringListnew.add("-99")
-                            mStringListnew.add(sessionManager.fetchMEMBERID()!!)
-                            for (i in 0 until memberDataList.size) {
-                                if (memberDataList[i].memberId != sessionManager.fetchMEMBERID()) {
-                                    mStringListnew.add(
-                                        memberDataList[i].memberId.toString()
-                                    )
-                                }
-                            }
-
-                            var mStringArray = mStringList.toArray()
-                            var mStringArraynew = mStringListnew.toArray()
-
-                            mStringArray = mStringList.toArray(mStringArray)
-                            mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                            val list: java.util.ArrayList<String> = arrayListOf<String>()
-                            val listnew: java.util.ArrayList<String> = arrayListOf<String>()
-
-                            for (element in mStringArray) {
-                                list.add(element.toString())
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                    UserName = list
-                                }
-                            }
-
-                            for (element in mStringArraynew) {
-                                listnew.add(element.toString())
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                    UserCategory = listnew
-                                }
-                            }
-                            val distinct = UserCategory.toSet().toList();
-                            if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
-                                MEMBER_ID =
-                                    distinct.toString().replace("[", "").replace("]", "").trim()
-                                SuryanamaskarList(MEMBER_ID, "true")
-                            } else {
-                                Toast.makeText(
-                                    this@SuryaNamaskar,
-                                    resources.getString(R.string.no_connection),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-
-                        } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Family")
-                        }
-                    } else {
-                        USER_NAME = sessionManager.fetchUSERNAME()!!
-                        USER_ID = sessionManager.fetchMEMBERID()!!
-                        if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
-                            DebugLog.e("MEMBER_ID 3==>" + sessionManager.fetchMEMBERID()!!)
-                            SuryanamaskarList(sessionManager.fetchMEMBERID()!!, "true")
-                        } else {
-                            Toast.makeText(
-                                this@SuryaNamaskar,
-                                resources.getString(R.string.no_connection),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+            if (response.status == true) {
+                memberDataList = response.data!!
+                for (member in memberDataList) {
+                    if (member.memberId != sessionManager.fetchMEMBERID()) {
+                        mStringListnew.add(member.memberId.toString())
                     }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@SuryaNamaskar, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
                 }
-                pd.dismiss()
             }
-
-            override fun onFailure(call: Call<Get_Member_Listing_Response>, t: Throwable) {
-                Toast.makeText(this@SuryaNamaskar, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            if (Functions.isConnectingToInternet(this@SuryaNamaskar)) {
+                val listnew = mStringListnew.map { it.toString() }
+                if (listnew.size > 1) {
+                    val UserCategory = listnew.toSet().toList() as ArrayList<String>
+                    MEMBER_ID_temp = UserCategory.joinToString(",")
+                } else {
+                    MEMBER_ID_temp = listnew.firstOrNull() ?: ""
+                }
+                SuryanamaskarList(
+                    MEMBER_ID_temp,
+                    from_date.text.toString(),
+                    to_date.text.toString(),
+                    "true",
+                    false
+                )
+            } else {
+                Toast.makeText(
+                    this@SuryaNamaskar,
+                    resources.getString(R.string.no_connection),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        })
+        }
     }
 
-    private fun SuryanamaskarList(member_id: String, is_api: String) {
-        val pd = CustomProgressBar(this)
-        pd.show()
-        val call: Call<Get_SuryaNamaskar_ModelResponse> =
-            MyHssApplication.instance!!.api.get_suryanamaskar_count(member_id, is_api)
-        call.enqueue(object : Callback<Get_SuryaNamaskar_ModelResponse> {
-            @RequiresApi(Build.VERSION_CODES.N)
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onResponse(
-                call: Call<Get_SuryaNamaskar_ModelResponse>,
-                response: Response<Get_SuryaNamaskar_ModelResponse>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    DebugLog.d("status => " + response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        data_not_found_layout.visibility = View.GONE
-                        try {
-                            surya_namaskarlist = response.body()!!.data!!
-                            val memberStringList = ArrayList<String>()
-                            for (i in 0 until surya_namaskarlist.size) {
-                                memberStringList.add(
-                                    surya_namaskarlist.get(i).getmember_id().toString()
-                                )
-                            }
-                            var memberStringArray = memberStringList.toArray()
-                            memberStringArray = memberStringList.toArray(memberStringArray)
-                            val list: ArrayList<String> = arrayListOf<String>()
-                            for (element in memberStringArray) {
-                                list.add(element.toString())
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    IDMEMBER = list
-                                }
-                            }
-                            pieChart_surya.visibility = View.VISIBLE
-                            setPieChartForSuryanamaskar(surya_namaskarlist)
-                        } catch (e: ArithmeticException) {
-                            DebugLog.e(e.toString())
-                        } finally {
-                            DebugLog.e("Family")
-                        }
-                    } else {
-                        data_not_found_layout.visibility = View.VISIBLE
-                        pieChart_surya.visibility = View.GONE
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@SuryaNamaskar,
-                        "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                    pieChart_surya.visibility = View.GONE
-                }
-                pd.dismiss()
-            }
+    private suspend fun SuryanamaskarList(
+        member_id: String,
+        from_date: String,
+        to_date: String,
+        is_api: String,
+        isProgressBar: Boolean
+    ) {
 
-            override fun onFailure(call: Call<Get_SuryaNamaskar_ModelResponse>, t: Throwable) {
-                Toast.makeText(this@SuryaNamaskar, t.message, Toast.LENGTH_LONG).show()
+        var pd = CustomProgressDialog(this@SuryaNamaskar)
+        isProgressBar?.let { if (it) pd.show() }
+
+        DebugLog.d("member_id => $member_id")
+        try {
+            val response =
+                MyHssApplication.instance!!.api.get_suryanamaskar_count(
+                    member_id,
+                    UtilCommon.convertDateFormatUS(from_date)!!,
+                    UtilCommon.convertDateFormatUS(to_date)!!,
+                    is_api
+                )
+            if (response.status == true) {
+
+                data_not_found_layout.visibility = View.GONE
+                surya_namaskarlist = response.data!!
+                val memberStringList = ArrayList<String>()
+                for (i in 0 until surya_namaskarlist.size) {
+                    memberStringList.add(
+                        surya_namaskarlist.get(i).getmember_id().toString()
+                    )
+                }
+                var memberStringArray = memberStringList.toArray()
+                memberStringArray = memberStringList.toArray(memberStringArray)
+                val list: ArrayList<String> = arrayListOf<String>()
+                for (element in memberStringArray) {
+                    list.add(element.toString())
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        IDMEMBER = list
+                    }
+                }
+                pieChart_surya.visibility = View.VISIBLE
+                layout_pieChart_lable.visibility = View.VISIBLE
+                setPieChartForSuryanamaskar(surya_namaskarlist)
+            } else {
+                Functions.displayMessage(this@SuryaNamaskar, response.message)
+                data_not_found_layout.visibility = View.VISIBLE
+                data_not_found_layout.setBackgroundColor(resources.getColor(R.color.surya_namaskar_bk))
                 pieChart_surya.visibility = View.GONE
-                pd.dismiss()
+                layout_pieChart_lable.visibility = View.GONE
             }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@SuryaNamaskar,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+            data_not_found_layout.visibility = View.VISIBLE
+            data_not_found_layout.setBackgroundColor(resources.getColor(R.color.surya_namaskar_bk))
+            pieChart_surya.visibility = View.GONE
+            layout_pieChart_lable.visibility = View.GONE
+        } finally {
+            isProgressBar?.let { if (it) pd.dismiss() }
+        }
     }
 
     private fun setPieChartForSuryanamaskar(suryaNamaskarlistData: List<Datum_Get_SuryaNamaskar>) {
@@ -396,7 +531,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
     }
 
     private fun setupPieChartChipGroup(labelsList: java.util.ArrayList<String>) {
-        val chipGroup = ChipGroup(this)
+        chipGroup = ChipGroup(this)
         chipGroup.layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
@@ -413,6 +548,8 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
             t_color = if (t_color < (colorArray.length() - 1)) t_color + 1 else 0
             chip.chipBackgroundColor = ColorStateList.valueOf(chipColor)
         }
+
+        layout_pieChart_lable.removeAllViews()
         layout_pieChart_lable.addView(chipGroup)
     }
 
@@ -450,15 +587,20 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                 barchartDataModel.setValue_x(surya_namaskarlist.get(i).getcount_date())
                 barchartDataModel.setValue_y(surya_namaskarlist.get(i).getcount())
                 barchartDataModel.setValue_user(surya_namaskarlist.get(i).getmember_name())
+                barchartDataModel.setValue_ID(
+                    surya_namaskarlist.get(i).getsurya_namaskar_count_id()
+                )
                 listData_surya.add(barchartDataModel)
             }
         }
+        val reversedList: ArrayList<BarchartDataModel> = ArrayList(listData_surya.reversed())
         val intent = Intent(this@SuryaNamaskar, ViewBarchartActivity::class.java)
         intent.putExtra("case", "1")
-        intent.putExtra("list_data", listData_surya)
+        intent.putExtra("list_data", reversedList)
         startActivity(intent)
     }
 
+    @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         super.onBackPressed()
         val i = Intent(this@SuryaNamaskar, HomeActivity::class.java)

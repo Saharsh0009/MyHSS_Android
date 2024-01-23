@@ -111,6 +111,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
     private lateinit var passcode_layout: RelativeLayout
     private lateinit var line_view: View
     private var receivedNotiData = "no"
+    private var receivedNotiID = "0"
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,7 +138,15 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
 
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
         init()
+
         adjustPassCodeScreen()
+        val receivedIntent = intent
+        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
+            receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
+            receivedNotiID = receivedIntent.getStringExtra(AppParam.NOTIFIC_ID).toString()
+            DebugLog.e("Notification Value : $receivedNotiData")
+        }
+
 
 //        sh1.putString(SharedPreferences_String_Name.DEVICE_ID, getIntent().getStringExtra("m_deviceId"));
 //        sh1.putString(SharedPreferences_String_Name.DEVICE_FCM, getIntent().getStringExtra("fcm_id"));
@@ -197,29 +206,24 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     //Fingerprint API only available on from Android 6.0 (M)
                     val fingerprintManager =
-                        this.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
-                    if (!fingerprintManager.isHardwareDetected) {
-                        // Device doesn't support fingerprint authentication
-                    } else if (!fingerprintManager.hasEnrolledFingerprints()) {
-                        // User hasn't enrolled any fingerprints to authenticate with
-//                        if (sessionManager.getDEVICE_FACEID().equals("1", ignoreCase = true)) {
-//                            if (BiometricUtils.isSdkVersionSupported()) faceOpenLock()
-//                        } else
-//                            if (sessionManager!!.getDEVICE_FINGERID()
-//                                .equals("1", ignoreCase = true)
-//                        ) {
-                        if (BiometricUtils.isSdkVersionSupported()) fingerPrintLock()
-//                        }
-                    } else {
-                        // Everything is ready for fingerprint authentication
-//                        if (sessionManager.getDEVICE_FACEID().equals("1", ignoreCase = true)) {
-//                            if (BiometricUtils.isSdkVersionSupported()) faceOpenLock()
-//                        } else
-//                            if (sessionManager!!.getDEVICE_FINGERID()
-//                                .equals("1", ignoreCase = true)
-//                        ) {
-                        if (BiometricUtils.isSdkVersionSupported()) fingerPrintLock()
-//                        }
+                        this.getSystemService(Context.FINGERPRINT_SERVICE) as? FingerprintManager
+                    if (fingerprintManager != null) {
+                        if (!fingerprintManager.isHardwareDetected) {
+                            DebugLog.e("Device doesn't support fingerprint authentication")
+                            // Device doesn't support fingerprint authentication
+                        } else if (!fingerprintManager.hasEnrolledFingerprints()) {
+                            DebugLog.e("User hasn't enrolled any fingerprints to authenticate with")
+                            // User hasn't enrolled any fingerprints to authenticate with
+                            if (BiometricUtils.isSdkVersionSupported()) {
+                                fingerPrintLock()
+                                DebugLog.e("fingerPrintLock() 1")
+                            }
+                        } else {
+                            if (BiometricUtils.isSdkVersionSupported()) {
+                                fingerPrintLock()
+                                DebugLog.e("fingerPrintLock() 2")
+                            }
+                        }
                     }
                 }
                 txtusername!!.visibility = View.VISIBLE
@@ -232,13 +236,6 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             }
 //        }
         }
-
-        val receivedIntent = intent
-        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
-            receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
-            DebugLog.e("Notification Value : $receivedNotiData")
-        }
-
     }
 
     fun init() {
@@ -283,6 +280,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
             if (receivedNotiData != "no") {
                 i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
+                i.putExtra(AppParam.NOTIFIC_ID, receivedNotiID)
             }
             startActivity(i)
             finishAffinity()
@@ -505,6 +503,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                         val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
                         if (receivedNotiData != "no") {
                             i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
+                            i.putExtra(AppParam.NOTIFIC_ID, receivedNotiID)
                         }
                         startActivity(i)
                         finish()
@@ -557,6 +556,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                                 val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
                                 if (receivedNotiData != "no") {
                                     i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    i.putExtra(AppParam.NOTIFIC_ID, receivedNotiID)
                                 }
                                 startActivity(i)
                                 finish()
@@ -680,12 +680,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                     this@Passcode_Activity
                 ) && BiometricUtils.isPermissionGranted(this@Passcode_Activity)
             ) {
-//                displayBiometricPrompt();
-                val finger = Intent(this@Passcode_Activity, FingerPrintPopUp::class.java)
-//                finger.putExtra("Home", "Dashboard")
-//                finger.putExtra("m_deviceId", getIntent().getStringExtra("m_deviceId"))
-//                finger.putExtra("fcm_id", getIntent().getStringExtra("fcm_id"))
-                startActivity(finger)
+                openFingerPrintPopUp()
             }
         } else if (SsdkVendorCheck.isSamsungDevice()) {
             var isFingerprintSupported = false
@@ -694,46 +689,34 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
                 spass.initialize(this@Passcode_Activity)
                 isFingerprintSupported = spass.isFeatureEnabled(Spass.DEVICE_FINGERPRINT)
             } catch (e: SsdkUnsupportedException) {
-                // Error handling
+
             } catch (e: UnsupportedOperationException) {
             }
             if (isFingerprintSupported) {
-//                if (sessionManager!!.getDEVICE_FINGERID().equals("1", ignoreCase = true)) {
-//                if (sh.getBoolean(SharedPreferences_String_Name.Finger_Print_Access, false))
-//                    startActivity(new Intent(PasscodeActivity.this, FingerPrintPopUp.class));
-                val finger = Intent(this@Passcode_Activity, FingerPrintPopUp::class.java)
-//                    finger.putExtra("Home", "Dashboard")
-//                    finger.putExtra("m_deviceId", getIntent().getStringExtra("m_deviceId"))
-//                    finger.putExtra("fcm_id", getIntent().getStringExtra("fcm_id"))
-                startActivity(finger)
-//                }
+                openFingerPrintPopUp()
             }
         } else if (BiometricUtils.isHardwareSupported(this@Passcode_Activity) && BiometricUtils.isFingerprintAvailable(
                 this@Passcode_Activity
             ) && BiometricUtils.isPermissionGranted(this@Passcode_Activity)
         ) {
             if (BiometricUtils.isBiometricPromptEnabled()) {
-//                displayBiometricPrompt();
-                val finger = Intent(this@Passcode_Activity, FingerPrintPopUp::class.java)
-//                finger.putExtra("Home", "Dashboard")
-//                finger.putExtra("m_deviceId", getIntent().getStringExtra("m_deviceId"))
-//                finger.putExtra("fcm_id", getIntent().getStringExtra("fcm_id"))
-                startActivity(finger)
+                openFingerPrintPopUp()
             } else if (getSystemService(Context.KEYGUARD_SERVICE) != null || (getSystemService(
                     Context.KEYGUARD_SERVICE
                 ) as KeyguardManager).isKeyguardSecure
             ) {
-//                if (sh.getBoolean(SharedPreferences_String_Name.Finger_Print_Access, false))
-//                if (sessionManager!!.getDEVICE_FINGERID().equals("1", ignoreCase = true)) {
-//                    startActivity(new Intent(PasscodeActivity.this, FingerPrintPopUp.class));
-                val finger = Intent(this@Passcode_Activity, FingerPrintPopUp::class.java)
-//                    finger.putExtra("Home", "Dashboard")
-//                    finger.putExtra("m_deviceId", getIntent().getStringExtra("m_deviceId"))
-//                    finger.putExtra("fcm_id", getIntent().getStringExtra("fcm_id"))
-                startActivity(finger)
-//                }
+                openFingerPrintPopUp()
             }
         }
+    }
+
+    private fun openFingerPrintPopUp() {
+        val finger = Intent(this@Passcode_Activity, FingerPrintPopUp::class.java)
+        if (receivedNotiData != "no") {
+            finger.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
+            finger.putExtra(AppParam.NOTIFIC_ID, receivedNotiID)
+        }
+        startActivity(finger)
     }
 
     @TargetApi(Build.VERSION_CODES.P)
@@ -785,6 +768,7 @@ class Passcode_Activity : AppCompatActivity(), View.OnClickListener, BiometricCa
             val i = Intent(this@Passcode_Activity, HomeActivity::class.java)
             if (receivedNotiData != "no") {
                 i.putExtra(AppParam.NOTIFIC_KEY, receivedNotiData)
+                i.putExtra(AppParam.NOTIFIC_ID, receivedNotiID)
             }
             startActivity(i)
             finish()

@@ -76,11 +76,12 @@ class MyHssApplication private constructor() : MultiDexApplication() {
     }
 
     companion object {
-        //        var BaseURL = "https://myhss.org.uk/"    // Production URL
+//        var BaseURL = "https://myhss.org.uk/"    // Production URL
         var BaseURL = "https://stg.myhss.org.uk/"    // Staging URL
 //        var BaseURL = "https://dev.myhss.org.uk/"   // Developer
 
         var IMAGE_PDF_URL = BaseURL + "assets/qualification_file/"  //Developement Url
+        var IMAGE_URL_EVENT = BaseURL + "assets/events/"  //Developement Url
 
         @SuppressLint("StaticFieldLeak")
         private var minstance: MyHssApplication? = null

@@ -1,13 +1,17 @@
 package com.myhss.ui.suryanamaskar
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -20,18 +24,31 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.CustomProgressDialog
 import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
+import com.myhss.Utils.Functions
+import com.myhss.ui.SuchanaBoard.Adapter.SuchnaAdapter
+import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Response
 import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
+import com.myhss.ui.suryanamaskar.Model.DeleteSnCount
+import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.R
+import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.guru_dakshina.GuruDakshinaRegularDetail
 import com.uk.myhss.ui.my_family.Model.Datum_guru_dakshina
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
+class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
+    iEditOrDeleteSNDialog, View.OnClickListener {
 
     lateinit var barChart: BarChart
     lateinit var barchartData: BarData
@@ -42,12 +59,15 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
     var colorCode: String = "#ff9800"
     lateinit var header_title: TextView
     private lateinit var add_more: ImageView
-    private var isBarClickable = false
+    private var isBarClickable = 1
     var chartDigit: Int = 0
     private lateinit var sessionManager: SessionManager
     var screenName: String = "SuryaNamaskar"
     var screenNameID: String = "BarChartSuryaNamaskarVC"
+    lateinit var u_listData: ArrayList<BarchartDataModel>
 
+
+    private var selectedBarIndex = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +80,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
         add_more.setImageResource(R.drawable.ic_plus)
 
         val u_case = intent.getStringExtra("case")
-        val u_listData = intent.getSerializableExtra("list_data") as ArrayList<BarchartDataModel>
+        u_listData = intent.getSerializableExtra("list_data") as ArrayList<BarchartDataModel>
         header_title.text = u_listData.get(0).getValue_user()
         back_arrow.setOnClickListener(DebouncedClickListener {
             this.finish()
@@ -71,7 +91,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
                 add_more.setOnClickListener(DebouncedClickListener {
                     val i = Intent(this@ViewBarchartActivity, AddSuryaNamaskarActivity::class.java)
                     startActivity(i)
-                    isBarClickable = false
+                    isBarClickable = 1
                 })
                 colorCode = "#ff9800"
                 chartDigit = 0
@@ -80,12 +100,10 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
             }
 
             "2" -> {
-                isBarClickable = true
+                isBarClickable = 2
                 add_more.visibility = View.GONE
                 guruDakshinaData =
                     intent.getSerializableExtra("list_guruDakshina") as ArrayList<Datum_guru_dakshina>
-
-//                DebugLog.e("guruDakshinaData => " + guruDakshinaData.size)
                 colorCode = "#0080ff"
                 chartDigit = 2
                 screenName = "GuruDakshina"
@@ -93,8 +111,6 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
             }
         }
         setBarChartDataForSuryanamaskar(u_listData)
-//        SwipeleftToRightBack.enableSwipeBack(this)
-//        SwipeleftToRightBack.enableSwipeBackFullView(this)
 
         //Fireabse
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
@@ -105,10 +121,8 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true)
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
 
+
     }
-//    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-//        return SwipeleftToRightBack.dispatchTouchEvent(this, event) || super.dispatchTouchEvent(event)
-//    }
 
     private fun setBarChartDataForSuryanamaskar(barchartData: ArrayList<BarchartDataModel>) {
         barchartEntriesList = ArrayList()
@@ -132,6 +146,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
         barchartData.barWidth = 0.4f
         barChart.data = barchartData
         barChart.setOnChartValueSelectedListener(this)
+        barChart.setOnClickListener(this)
         barChart.isHorizontalScrollBarEnabled = true
         barChart.animateXY(1000, 1000)
         barChart.isDoubleTapToZoomEnabled = true
@@ -188,18 +203,42 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        if (isBarClickable) {
-            val xAxisLabel = barChart.xAxis.valueFormatter.getFormattedValue(e!!.x, barChart.xAxis)
-            val yAxisValue = e?.y
-            for (i in 0 until guruDakshinaData.size) {
-//                DebugLog.e("Y Axis : $yAxisValue And Value from BAr chart : ${guruDakshinaData[i].paidAmount!!}")
-//                DebugLog.e("X Axis : $xAxisLabel And Value from BAr chart : ${guruDakshinaData[i].startDate!!}")
-                if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString() && (yAxisValue.toString()).toFloat() == guruDakshinaData[i].paidAmount!!.toFloat()) {
-//                    DebugLog.e("click button ${guruDakshinaData[i].paidAmount}")
-                    openguruDakshinaDetails(guruDakshinaData[i])
-                    break
+        DebugLog.e("onValueSelected   ")
+        val xAxisLabel = barChart.xAxis.valueFormatter.getFormattedValue(e!!.x, barChart.xAxis)
+        val yAxisValue = e?.y
+
+        when (isBarClickable) {
+            1 -> { // open SN Edit or Delete Dialog
+                for (i in 0 until u_listData.size) {
+                    if (xAxisLabel.toString() == convertToDateMonthCode(
+                            u_listData[i].getValue_x().toString()
+                        ) && (yAxisValue.toString()).toFloat() == u_listData[i].getValue_y()!!
+                            .toFloat()
+                    ) {
+                        DebugLog.e("click button ${u_listData[i].getValue_ID()}")
+                        openEditOrDeleteSNDialog(u_listData[i])
+                        break
+                    }
                 }
             }
+
+            2 -> { // Open Receipt Screen
+                for (i in 0 until guruDakshinaData.size) {
+                    if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString() && (yAxisValue.toString()).toFloat() == guruDakshinaData[i].paidAmount!!.toFloat()) {
+                        openguruDakshinaDetails(guruDakshinaData[i])
+                        break
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun openEditOrDeleteSNDialog(barchartDataModel: BarchartDataModel) {
+        val fragment = supportFragmentManager.findFragmentByTag("EditOrDeleteSNDialog")
+        if (fragment == null) {
+            val edSNCountDialog = EditOrDeleteSNDialog.newInstance(this, barchartDataModel)
+            edSNCountDialog.show(supportFragmentManager, "EditOrDeleteSNDialog")
         }
     }
 
@@ -221,8 +260,141 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener {
     }
 
     override fun onNothingSelected() {
+        DebugLog.e("onNothingSelected   ")
+    }
+
+    override fun editSNCount(snID: String, snCount: String) {
+        callEditSnCountApi(snID, snCount)
+    }
+
+    override fun deleteSNCount(snID: String) {
+        val alertDialog: AlertDialog.Builder =
+            AlertDialog.Builder(this@ViewBarchartActivity)
+        alertDialog.setMessage(getString(R.string.are_you_sure_you_would_like_to_delete_the_surya_namaskar_count))
+        alertDialog.setPositiveButton(
+            "yes"
+        ) { _, _ ->
+            callDeleteSNCountApi(snID)
+        }
+        alertDialog.setNegativeButton(
+            "No"
+        ) { _, _ ->
+
+        }
+        val alert: AlertDialog = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
 
     }
 
+    private fun callEditSnCountApi(snID: String, snCount: String) {
+        val pd = CustomProgressDialog(this)
+        pd.show()
+        val call: Call<DeleteSnCount> =
+            MyHssApplication.instance!!.api.edit_suryanamasakar_count(
+                snID, snCount
+            )
+        call.enqueue(object : Callback<DeleteSnCount> {
+            override fun onResponse(
+                call: Call<DeleteSnCount>,
+                response: Response<DeleteSnCount>
+            ) {
+                if (response.code() == 200 && response.body() != null) {
+                    Log.d("status", response.body()?.status.toString())
+                    if (response.body()?.status!!) {
+                        val alertDialog: android.app.AlertDialog.Builder =
+                            android.app.AlertDialog.Builder(this@ViewBarchartActivity)
+                        alertDialog.setTitle("MyHSS")
+                        alertDialog.setMessage(response.body()?.message)
+                        alertDialog.setCancelable(false)
+                        alertDialog.setPositiveButton(
+                            "OK"
+                        ) { _, _ ->
+                            val i = Intent(this@ViewBarchartActivity, SuryaNamaskar::class.java)
+                            startActivity(i)
+                            finishAffinity()
+                        }
+                        val alert: android.app.AlertDialog = alertDialog.create()
+                        alert.setCanceledOnTouchOutside(false)
+                        alert.show()
+                    } else {
+                        Functions.showAlertMessageWithOK(
+                            this@ViewBarchartActivity, "Error",
+                            response.body()?.message,
+                        )
+                    }
+                } else {
+                    Functions.showAlertMessageWithOK(
+                        this@ViewBarchartActivity, "Error",
+                        getString(R.string.some_thing_wrong),
+                    )
+                }
+                pd.dismiss()
 
+            }
+
+            override fun onFailure(call: Call<DeleteSnCount>, t: Throwable) {
+                Toast.makeText(this@ViewBarchartActivity, t.message, Toast.LENGTH_LONG).show()
+                pd.dismiss()
+            }
+        })
+    }
+
+
+    private fun callDeleteSNCountApi(snID: String) {
+        val pd = CustomProgressDialog(this)
+        pd.show()
+        val call: Call<DeleteSnCount> =
+            MyHssApplication.instance!!.api.delete_suryanamasakar_count(
+                snID
+            )
+        call.enqueue(object : Callback<DeleteSnCount> {
+            override fun onResponse(
+                call: Call<DeleteSnCount>,
+                response: Response<DeleteSnCount>
+            ) {
+                if (response.code() == 200 && response.body() != null) {
+                    Log.d("status", response.body()?.status.toString())
+                    if (response.body()?.status!!) {
+                        val alertDialog: android.app.AlertDialog.Builder =
+                            android.app.AlertDialog.Builder(this@ViewBarchartActivity)
+                        alertDialog.setTitle("MyHSS")
+                        alertDialog.setMessage(response.body()?.message)
+                        alertDialog.setCancelable(false)
+                        alertDialog.setPositiveButton(
+                            "OK"
+                        ) { _, _ ->
+                            val i = Intent(this@ViewBarchartActivity, SuryaNamaskar::class.java)
+                            startActivity(i)
+                            finishAffinity()
+                        }
+                        val alert: android.app.AlertDialog = alertDialog.create()
+                        alert.setCanceledOnTouchOutside(false)
+                        alert.show()
+                    } else {
+                        Functions.showAlertMessageWithOK(
+                            this@ViewBarchartActivity, "Error",
+                            response.body()?.message,
+                        )
+                    }
+                } else {
+                    Functions.showAlertMessageWithOK(
+                        this@ViewBarchartActivity, "Error",
+                        getString(R.string.some_thing_wrong),
+                    )
+                }
+                pd.dismiss()
+
+            }
+
+            override fun onFailure(call: Call<DeleteSnCount>, t: Throwable) {
+                Toast.makeText(this@ViewBarchartActivity, t.message, Toast.LENGTH_LONG).show()
+                pd.dismiss()
+            }
+        })
+    }
+
+    override fun onClick(v: View?) {
+        DebugLog.e("v =>>> $v")
+    }
 }

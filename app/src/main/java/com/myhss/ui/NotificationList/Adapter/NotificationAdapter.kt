@@ -3,7 +3,6 @@ package com.myhss.ui.SuchanaBoard.Adapter
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,10 +26,14 @@ import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
 
-class NotificationAdapter(private val notificationList: List<Data>, private val tabType: String) :
+class NotificationAdapter(
+    private val notificationList: List<Data>,
+    private val tabType: String,
+    private val notificID: String,
+    private val memberID: String
+) :
     RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.suchna_adapter, parent, false)
@@ -41,7 +44,7 @@ class NotificationAdapter(private val notificationList: List<Data>, private val 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindItems(
             notificationList[position],
-            tabType
+            tabType, notificID, memberID
         )
     }
 
@@ -57,7 +60,9 @@ class NotificationAdapter(private val notificationList: List<Data>, private val 
         @SuppressLint("SetTextI18n", "ResourceAsColor")
         fun bindItems(
             noti_data: Data,
-            tab_type: String
+            tab_type: String,
+            notificID: String,
+            memberID: String
         ) {
             sessionManager = SessionManager(itemView.context)
             val suchna_title = itemView.findViewById(R.id.suchna_title) as TextView
@@ -104,6 +109,26 @@ class NotificationAdapter(private val notificationList: List<Data>, private val 
                     itemView.context.startActivity(i)
                 }
             })
+
+
+            DebugLog.e("notificID : $notificID")
+            DebugLog.e("noti_data.recipientId : ${noti_data.recipientId}")
+
+            if (notificID != "0") {
+                if (notificID == noti_data.notify_id && memberID == noti_data.member_id) {
+                    suchna_discriptionnew.setTextColor(Color.BLACK)
+                    noti_data.is_read = "1"
+
+                    val i = Intent(itemView.context, NotificationDetails::class.java)
+                    i.putExtra("Suchana_Type", tab_type)
+                    i.putExtra("Suchana_Title", noti_data.notification_title)
+                    i.putExtra("Suchana_Discription", noti_data.notific_type_name)
+                    i.putExtra("Suchana_DiscriptionNew", noti_data.notification_message)
+                    i.putExtra("Suchana_time", noti_data.created_at)
+                    i.putExtra("recipientId", noti_data.recipientId)
+                    itemView.context.startActivity(i)
+                }
+            }
         }
 
         private fun callSeenNotificationApi(

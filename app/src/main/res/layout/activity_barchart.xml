@@ -49,6 +49,106 @@
                         android:textColor="@color/blackColor"
                         android:textSize="@dimen/font_size20" />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/font_size15"
+                        android:layout_marginTop="@dimen/padding5"
+                        android:layout_marginEnd="@dimen/font_size15"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/padding5"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/imgFrmDate"
+                                android:layout_width="@dimen/font_size25"
+                                android:layout_height="@dimen/font_size25"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/calender" />
+
+                            <TextView
+                                android:id="@+id/txtLblFrmDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/padding10"
+                                android:layout_toEndOf="@+id/imgFrmDate"
+                                android:fontFamily="@font/sourcesanspro_regular"
+                                android:text="@string/from_date"
+                                android:textColor="@color/grayColorColor"
+                                android:textSize="@dimen/font_size13" />
+
+                            <TextView
+                                android:id="@+id/from_date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/txtLblFrmDate"
+                                android:layout_marginStart="@dimen/padding10"
+                                android:layout_toEndOf="@+id/imgFrmDate"
+                                android:hint="@string/from_date"
+                                android:textAlignment="center"
+                                android:textColor="@color/blackColor" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_below="@+id/imgFrmDate"
+                                android:layout_marginTop="@dimen/padding10"
+                                android:background="@color/lightOrangeColor" />
+                        </RelativeLayout>
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/padding5"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/imgToDate"
+                                android:layout_width="@dimen/font_size25"
+                                android:layout_height="@dimen/font_size25"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/calender" />
+
+                            <TextView
+                                android:id="@+id/txtLblToDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/padding10"
+                                android:layout_toEndOf="@+id/imgToDate"
+                                android:fontFamily="@font/sourcesanspro_regular"
+                                android:text="@string/to_date"
+                                android:textColor="@color/grayColorColor"
+                                android:textSize="@dimen/font_size13" />
+
+                            <TextView
+                                android:id="@+id/to_date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/txtLblToDate"
+                                android:layout_marginStart="@dimen/padding10"
+                                android:layout_toEndOf="@+id/imgToDate"
+                                android:hint="@string/to_date"
+                                android:textAlignment="center"
+                                android:textColor="@color/blackColor" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_below="@+id/imgToDate"
+                                android:layout_marginTop="@dimen/padding10"
+                                android:background="@color/lightOrangeColor" />
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
                     <com.github.mikephil.charting.charts.PieChart
                         android:id="@+id/pieChart_surya"
                         android:layout_width="350dp"

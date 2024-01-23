@@ -285,12 +285,26 @@ class WelcomeActivity : AppCompatActivity() {
                         Log.d("body", response.body().toString())
 
                         val type = response.body()!!.type
+
                         try {
-                            val member_id = response.body()!!.member_id
-                            sessionManager.saveMEMBERID(member_id!!)
+                            val responseBody = response.body()
+
+                            if (responseBody != null && responseBody.member_id != null) {
+                                sessionManager.saveMEMBERID(responseBody.member_id!!)
+                            } else {
+                                sessionManager.saveMEMBERID("")
+                            }
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
+
+//                        try {
+//                            val member_id = response.body()!!.member_id
+//                            sessionManager.saveMEMBERID(member_id!!)
+//                        } catch (e: Exception) {
+//                            e.printStackTrace()
+//                        }
+
 
                         val sharedPreferences = getSharedPreferences(
                             "production", Context.MODE_PRIVATE

@@ -368,6 +368,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 AlertDialog.Builder(this@GuruDakshinaOneTimeFourthActivity)
                             alertDialog.setTitle("Guru Dakshina Payment")
                             alertDialog.setMessage(response.body()!!.message)
+                            alertDialog.setCancelable(false)
                             alertDialog.setPositiveButton(
                                 "Okay"
                             ) { _, _ ->
@@ -379,6 +380,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 i.putExtra("orderId", response.body()!!.details.order_id)
                                 i.putExtra("status", response.body()!!.details.status)
                                 i.putExtra("giftAid", response.body()!!.details.gift_aid)
+                                i.putExtra("screen", "1")
                                 startActivity(i)
                                 finishAffinity()
                             }

@@ -16,6 +16,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -30,9 +31,15 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.appConstants.AppParam
 import com.uk.myhss.Utils.SessionManager
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -129,30 +136,6 @@ class AddMemberSecondActivity : AppCompatActivity() {
         til_edit_town_city = findViewById(R.id.til_edit_town_city)
 
         header_title.text = intent.getStringExtra("TITLENAME")
-
-//            header_title.text = getString(R.string.Add_family_member)
-
-//        Log.d(
-//            "Fetch_Data one-->",
-//            intent.getStringExtra("FIRST_NAME") + "--" + intent.getStringExtra("MIDDLE_NAME") + "--" + intent.getStringExtra(
-//                "LAST_NAME"
-//            ) + "--" + intent.getStringExtra(
-//                "USERNAME"
-//            ) + "--" + intent.getStringExtra("EMAIL") + "--" + intent.getStringExtra("PASSWORD") + "--" + intent.getStringExtra(
-//                "GENDER"
-//            ) + "--" + intent.getStringExtra("DOB") + "--" + intent.getStringExtra("RELATIONSHIP") + "--" + intent.getStringExtra(
-//                "OTHER_RELATIONSHIP"
-//            ) + "--" + intent.getStringExtra(
-//                "OCCUPATION"
-//            ) + "--" + intent.getStringExtra("OCCUPATION_NAME") + "--" + intent.getStringExtra("SHAKHA") + "--" + intent.getStringExtra(
-//                "AGE"
-//            ) + "--" + intent.getStringExtra("IS_LINKED") + "--" + intent.getStringExtra("IS_SELF") + "--" + intent.getStringExtra(
-//                "TYPE"
-//            ) + "--" + intent.getStringExtra(
-//                "PARENT_MEMBER"
-//            )
-//        )
-
         edit_primary_contact_number.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
 
@@ -167,19 +150,9 @@ class AddMemberSecondActivity : AppCompatActivity() {
                 val textLength: Int = edit_primary_contact_number.text!!.length
                 if (text.endsWith(" ") || text.endsWith(" ") || text.endsWith(" ")) return
                 if (textLength == 1) {
-//                    if (!text.contains("(")) {
-//                        edit_primary_contact_number.setText(
-//                            StringBuilder(text).insert(text.length - 1, "(").toString()
-//                        )
                     edit_primary_contact_number.setSelection(edit_primary_contact_number.text!!.length)
-//                    }
                 } else if (textLength == 4) {
-//                    if (!text.contains(")")) {
-//                        edit_primary_contact_number.setText(
-//                            StringBuilder(text).insert(text.length - 1, ")").toString()
-//                        )
                     edit_primary_contact_number.setSelection(edit_primary_contact_number.text!!.length)
-//                    }
                 } else if (textLength == 5) {
                     edit_primary_contact_number.setText(
                         StringBuilder(text).insert(
@@ -226,19 +199,10 @@ class AddMemberSecondActivity : AppCompatActivity() {
                 val textLength: Int = edit_secondary_contact_number.text!!.length
                 if (text.endsWith(" ") || text.endsWith(" ") || text.endsWith(" ")) return
                 if (textLength == 1) {
-//                    if (!text.contains("(")) {
-//                        edit_primary_contact_number.setText(
-//                            StringBuilder(text).insert(text.length - 1, "(").toString()
-//                        )
+
                     edit_secondary_contact_number.setSelection(edit_secondary_contact_number.text!!.length)
-//                    }
                 } else if (textLength == 4) {
-//                    if (!text.contains(")")) {
-//                        edit_primary_contact_number.setText(
-//                            StringBuilder(text).insert(text.length - 1, ")").toString()
-//                        )
                     edit_secondary_contact_number.setSelection(edit_secondary_contact_number.text!!.length)
-//                    }
                 } else if (textLength == 5) {
                     edit_secondary_contact_number.setText(
                         StringBuilder(text).insert(
@@ -394,22 +358,9 @@ class AddMemberSecondActivity : AppCompatActivity() {
                     i.putExtra("FIRST_NAME", intent.getStringExtra("FIRST_NAME"))
                     i.putExtra("MIDDLE_NAME", intent.getStringExtra("MIDDLE_NAME"))
                     i.putExtra("LAST_NAME", intent.getStringExtra("LAST_NAME"))
-//                i.putExtra("USERNAME", intent.getStringExtra("USERNAME"))
                     i.putExtra("EMAIL", intent.getStringExtra("EMAIL"))
-//                i.putExtra("PASSWORD", intent.getStringExtra("PASSWORD"))
                     i.putExtra("GENDER", intent.getStringExtra("GENDER"))
                     i.putExtra("DOB", intent.getStringExtra("DOB"))
-
-//                    if (intent.getStringExtra("OTHER_RELATIONSHIP") == "") {
-//                        i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
-//                    } else {
-//                        i.putExtra("RELATIONSHIP", intent.getStringExtra("RELATIONSHIP"))
-//                        i.putExtra(
-//                            "OTHER_RELATIONSHIP",
-//                            intent.getStringExtra("OTHER_RELATIONSHIP")
-//                        )
-//                    }
-
                     if (intent.getStringExtra("OCCUPATION_NAME") == "") {
                         i.putExtra("OCCUPATION", intent.getStringExtra("OCCUPATION"))
                     } else {
@@ -451,7 +402,13 @@ class AddMemberSecondActivity : AppCompatActivity() {
                 Snackbar.make(rootLayout, "Please enter pin code", Snackbar.LENGTH_SHORT).show()
             } else {
                 if (Functions.isConnectingToInternet(this@AddMemberSecondActivity)) {
-                    myPincode(edit_find_address.text.toString())
+                    lifecycleScope.launch {
+                        val pd = CustomProgressBar(this@AddMemberSecondActivity)
+                        pd.show()
+                        val job1 = async { myPincode(edit_find_address.text.toString()) }
+                        DebugLog.d("Coro : Step 1 :::: ${job1.await()}")
+                        pd.dismiss()
+                    }
                 } else {
                     Toast.makeText(
                         this@AddMemberSecondActivity,
@@ -461,8 +418,6 @@ class AddMemberSecondActivity : AppCompatActivity() {
                 }
             }
         })
-
-        val pincode = edit_find_address.text.toString()
     }
 
     private fun SearchSpinner(
@@ -483,7 +438,10 @@ class AddMemberSecondActivity : AppCompatActivity() {
                 PINCODE_ID = PincodeID[position]
 
                 if (Functions.isConnectingToInternet(this@AddMemberSecondActivity)) {
-                    myPincodeAddress(PINCODE_ID)
+                    lifecycleScope.launch {
+                        myPincodeAddress(PINCODE_ID)
+                    }
+
                 } else {
                     Toast.makeText(
                         this@AddMemberSecondActivity,
@@ -498,160 +456,62 @@ class AddMemberSecondActivity : AppCompatActivity() {
         }
 
     /*Pincode API*/
-    private fun myPincode(pincode: String) {
-        val pd = CustomProgressBar(this@AddMemberSecondActivity)
-        pd.show()
-        val call: Call<Get_Pincode_Response> = MyHssApplication.instance!!.api.get_pincode(pincode)
-        call.enqueue(object : Callback<Get_Pincode_Response> {
-            override fun onResponse(
-                call: Call<Get_Pincode_Response>, response: Response<Get_Pincode_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        full_address_view.visibility = View.VISIBLE
-                        var data_relationship: List<Summary_Address> = ArrayList<Summary_Address>()
-                        data_relationship = response.body()!!.data!!.summaries!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d("relationshipName", data_relationship[i].place.toString())
-                        }
-                        Pincode = listOf(arrayOf(data_relationship).toString())
-                        PincodeID = listOf(arrayOf(data_relationship).toString())
+    private suspend fun myPincode(pincode: String) {
+        try {
+            val response = MyHssApplication.instance?.api?.getPincode(pincode)
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringList.add(
-//                            data_relationship[i].occupationId.toString() +
-                                data_relationship[i].streetAddress.toString() + ", " + data_relationship[i].place.toString() + ", " + pincode
-                            )
-                        }
+            if (response?.status == true) {
+                val dataPinCodeList = response.data?.summaries.orEmpty()
 
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringListnew.add(
-                                data_relationship[i].id.toString()
-                            )
-                        }
+                full_address_view.visibility = View.VISIBLE
 
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
+                Log.d("atheletsBeans", dataPinCodeList.toString())
 
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
-                            list.add(element.toString())
-                            Log.d("list==>", list.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                Pincode = list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
-                            listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                PincodeID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        Log.d("Pincode==>", Pincode.toString())
-                        SearchSpinner(Pincode.toTypedArray(), edit_select_address)
-
-                    } else {
-                        full_address_view.visibility = View.VISIBLE
-//                        edit_address_line1.setText("test") // temp
-//                        edit_town_city.setText("test")// temp
-                        Functions.showAlertMessageWithOK(
-                            this@AddMemberSecondActivity, "",
-//                        "Message",
-                            response.body()?.message
-                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberSecondActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
+                Pincode = dataPinCodeList.map {
+                    "${it.streetAddress}, ${it.place}, $pincode"
                 }
-                pd.dismiss()
-            }
+                PincodeID = dataPinCodeList.map { it.id.toString() }
 
-            override fun onFailure(call: Call<Get_Pincode_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberSecondActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
+                Log.d("Pincode==>", Pincode.toString())
+
+                SearchSpinner(Pincode.toTypedArray(), edit_select_address)
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberSecondActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberSecondActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
     /*Pincode API*/
-    private fun myPincodeAddress(pincode: String) {
-        val pd = CustomProgressBar(this@AddMemberSecondActivity)
-        pd.show()
-        val call: Call<Get_PincodeAddress_Response> =
-            MyHssApplication.instance!!.api.get_pincodea_ddress(
-                pincode
+    private suspend fun myPincodeAddress(pincode: String) {
+        try {
+            val response = MyHssApplication.instance!!.api.getPincodeAddress(pincode)
+            if (response.status == true) {
+                val dataPinCodeAddress = response.data
+                edit_building_name.setText(dataPinCodeAddress?.get(0)?.buildingName.toString())
+                edit_address_line1.setText(dataPinCodeAddress?.get(0)?.line1.toString())
+                edit_address_line2.setText(dataPinCodeAddress?.get(0)?.line2.toString())
+                edit_town_city.setText(dataPinCodeAddress?.get(0)?.postTown.toString())
+                County = dataPinCodeAddress?.get(0)?.county.toString()
+            } else {
+                Functions.displayMessage(this@AddMemberSecondActivity, response.message)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberSecondActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
             )
-        call.enqueue(object : Callback<Get_PincodeAddress_Response> {
-            override fun onResponse(
-                call: Call<Get_PincodeAddress_Response>,
-                response: Response<Get_PincodeAddress_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-
-//                    var data_relationship: List<Datum_Get_PincodeAddress> = ArrayList<Datum_Get_PincodeAddress>()
-//                    data_relationship = response.body()!!.data!!
-//                    Log.d("atheletsBeans", data_relationship.toString())
-
-                        edit_building_name.setText(response.body()!!.data!![0].buildingName.toString())
-                        edit_address_line1.setText(response.body()!!.data!![0].line1.toString())
-                        edit_address_line2.setText(response.body()!!.data!![0].line2.toString())
-                        edit_town_city.setText(response.body()!!.data!![0].postTown.toString())
-
-                        County = response.body()!!.data!![0].county.toString()
-                        Log.d("county>>>", response.body()!!.data!![0].county.toString())
-
-                    } else {
-                        Functions.showAlertMessageWithOK(
-                            this@AddMemberSecondActivity, "",
-//                        "Message",
-                            response.body()?.message
-                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberSecondActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
-            }
-
-            override fun onFailure(call: Call<Get_PincodeAddress_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberSecondActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
+        }
     }
 }

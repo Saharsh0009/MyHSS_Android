@@ -20,7 +20,10 @@ import com.uk.myhss.Utils.SessionManager
 import java.util.*
 import android.graphics.Bitmap
 import com.myhss.Utils.DebugLog
+import com.myhss.Utils.UtilCommon
 import com.myhss.appConstants.AppParam
+import com.myhss.ui.SuchanaBoard.NotificationList
+import com.myhss.ui.SuchanaBoard.SuchanaBoardActivity
 import java.io.InputStream
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -35,16 +38,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         var notification_type = "0"
+        var notifc_id = "0"
         if (remoteMessage.data.isNotEmpty()) {
             if (!remoteMessage.data.isNullOrEmpty()) {
+                DebugLog.e("remoteMessage.data => ${remoteMessage.data}")
                 if (remoteMessage.data["type"] != null) {
                     notification_type = remoteMessage.data["type"].toString()
                 } else {
                     notification_type = "0"
                 }
+                notifc_id = remoteMessage.data["suchana_id"].toString()
                 val title: String = remoteMessage.data["suchana_title"].toString()
                 val msg: String = remoteMessage.data["message"].toString()
-                sendNotification(title, msg, notification_type)
+                sendNotification(title, msg, notification_type, notifc_id)
             }
         }
 
@@ -52,7 +58,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             sendNotification(
                 remoteMessage.notification?.title!!,
                 remoteMessage.notification?.body!!,
-                notification_type
+                notification_type,
+                notifc_id
             )
         }
     }
@@ -68,11 +75,38 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         DebugLog.d("sendRegistrationTokenToServer($token)")
     }
 
-    private fun sendNotification(title: String, messageBody: String, Stype: String) {
+    private fun sendNotification(
+        title: String,
+        messageBody: String,
+        Stype: String,
+        not_id: String
+    ) {
+
+        val packageName = "com.uk.myhss"
+        val isAppInForeground = UtilCommon.isAppInForeground(this, packageName)
+        val isAppRunning = UtilCommon.isAppRunning(this, packageName)
+
+        val intent: Intent
+
+        if (isAppInForeground) {
+            DebugLog.e("App is in isAppInForeground")
+            if (Stype == "0") {
+                intent = Intent(this, SuchanaBoardActivity::class.java)
+            } else {
+                intent = Intent(this, NotificationList::class.java)
+            }
+        } else if (isAppRunning) {
+            DebugLog.e("App is in isAppRunning")
+            intent = Intent(this, SplashActivity::class.java)
+        } else {
+            DebugLog.e("App is in Not running")
+            intent = Intent(this, SplashActivity::class.java)
+        }
+
         val notID = getNotificationId()
-        val intent = Intent(this, SplashActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.putExtra(AppParam.NOTIFIC_KEY, Stype)
+        intent.putExtra(AppParam.NOTIFIC_ID, not_id)
         val pendingIntent = PendingIntent.getActivity(
             this, notID /* Request code */, intent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -107,9 +141,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         notificationManager.notify(
-            notID /* ID of notification */,
+            notID,
             notificationBuilder.build()
         )
+
+//        notificationManager.cancelAll()
     }
 
     private fun getNotificationId(): Int {

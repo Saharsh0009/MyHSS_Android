@@ -96,6 +96,7 @@
     <string name="my_nagar">My Nagar</string>
     <string name="my_vibhag">My Vibhag</string>
     <string name="guru_dakshina">Guru Dakshina</string>
+
     <string name="shishu">Shishu</string>
     <string name="male_shishu">Shishu_male</string>
     <string name="female_shishu">Shishu_female</string>
@@ -112,8 +113,8 @@
     <string name="yuva">Yuva</string>
     <string name="yuvati">Yuvati</string>
     <string name="yuvati_content">30 to 60 years</string>
-    <string name="jyeshta">Jyeshta</string>
-    <string name="jyeshtaa">Jyeshtaa</string>
+    <string name="jyeshta">Jyeshtha</string>
+    <string name="jyeshtaa">Jyeshthaa</string>
     <string name="proudh">Proudh</string>
     <string name="proudha">Proudha</string>
     <string name="jyeshtaa_content">60+ years</string>
@@ -157,7 +158,7 @@
     <string name="profile">Profile</string>
     <string name="family_member">Family Member</string>
     <string name="select_family_member">Select Family Member</string>
-    <string name="suryanamaskar_graph">Surya Namaskar Graph</string>
+    <string name="suryanamaskar_graph">Surya Namaskar Statistics</string>
 
     <!--Other String-->
     <string name="edit_txt">Edit</string>
@@ -259,7 +260,7 @@
     <string name="Add_self">Add Self</string>
     <string name="Add_family_member">Add A Family Member</string>
     <string name="welocome_text_mag">You are not currently a member of MyHSS. If you are experiencing an issue, please contact your Shakha Admin.</string>
-    <string name="welcome_msg">We have recived your membership application. we will update you shortly.</string>
+    <string name="welcome_msg">We have received your membership application. we will update you shortly.</string>
     <string name="contact_information">Contact Information</string>
     <string name="primary_contact_number">Primary contact number</string>
     <string name="secondary_contact_number">Secondary contact number</string>
@@ -307,7 +308,7 @@
 
 
     <!--Error Message String-->
-    <string name="error_Please_enter_fname_text">Please enter firsr name text</string>
+    <string name="error_Please_enter_fname_text">Please enter first name text</string>
     <string name="error_Please_enter_mname_text">Please enter middle name text</string>
     <string name="error_Please_enter_sname_text">Please enter sur name text</string>
     <string name="error_Please_enter_full_name">Please enter full name text</string>
@@ -315,7 +316,7 @@
     <string name="error_Please_enter_middle_name">Please enter middle name text</string>
     <string name="error_Please_enter_sur_name">Please enter surname text</string>
     <string name="error_Please_choose_gender">Please choose gender</string>
-    <string name="error_Please_choose_date_of_birth">Plase choose date of birth</string>
+    <string name="error_Please_choose_date_of_birth">Please choose date of birth</string>
     <string name="error_Please_enter_occupation">Please enter occupation</string>
     <string name="error_Please_select_vibhag">Please select vibhag</string>
     <string name="error_Please_select_nagar">Please select nagar</string>
@@ -360,6 +361,7 @@
 
     <!--Events-->
     <string name="events">Events</string>
+    <string name="view_event">View Event</string>
     <string name="event_name">Event Name</string>
     <string name="contact">Contact</string>
     <string name="discription">Description</string>
@@ -432,9 +434,9 @@
     <string name="email_id">Please Enter Email</string>
     <string name="valid_email">Please Enter Valid Email</string>
     <string name="enter_password">Please Enter Password</string>
-    <string name="valid_password"><![CDATA[Password must have 8 or more characters with a mix of letters with upper and lower combination, numbers &amp; symbols.]]></string>
+    <string name="valid_password"><![CDATA[Password must have 8 or more characters with a mix of letters with upper and lower combination, numbers & symbols.]]></string>
     <string name="enter_confirm_password">Please Enter Confirm Password</string>
-    <string name="valid_confirm_password"><![CDATA[Confirm password must have 8 or more characters with a mix of letters with upper and lower combination, numbers &amp; symbols.]]></string>
+    <string name="valid_confirm_password"><![CDATA[Confirm password must have 8 or more characters with a mix of letters with upper and lower combination, numbers & symbols.]]></string>
     <string name="confirm_both_pass">Password and confirm password must be same</string>
     <string name="tnc"><![CDATA[Please check terms & conditions]]></string>
     <string name="can_not_add_sankhya">Can\'t add Sankhya, no members are currently listed as a part of this Shakha</string>
@@ -447,4 +449,43 @@
     <string name="under_age_18">As your age is below 18 We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="free">Free</string>
+    <string name="location">Location</string>
+    <string name="about">About</string>
+    <string name="event_registration">Event Registration</string>
+    <string name="registration_for_self_or_family">Registration for Self or Family?</string>
+    <string name="self">Self</string>
+    <string name="if_you_want_to_update_details_please_click_on_this_link_update_user_profile">If You Want To Update Details Please Click On This Link Update User Profile</string>
+    <string name="specify_medical_info_if_different_from_your_profile">Specify medical info if different from your profile.</string>
+    <string name="specify_medical_info_family">Specify medical info.</string>
+    <string name="medication_you_take">Medication you take.</string>
+    <string name="do_you_carry_an_epipen_jext_emerade">Do you carry an EpiPen/Jext/Emerade?</string>
+    <string name="summary">Summary</string>
+    <string name="title">Title</string>
+    <string name="date_and_time">Date and Time</string>
+    <string name="email">Email</string>
+    <string name="vanue">Venue</string>
+    <string name="charges">Charges</string>
+    <string name="i_will_be_responsible_for_transportation_to_and_from_the_ssv_site">I will be responsible for transportation to and from the SSV site.</string>
+    <string name="i_hereby_release_hindu_swayamsevak_sangh_uk_referred_to_as_hss_uk_and_its_officers_of_any_liability_for_any_accidents_or_injuries_or_loss_of_personal_effects_i_may_incur_while_travelling_to_and_from_ssv_and_or_while_attending_the_ssv">I hereby release Hindu Swayamsevak Sangh(UK) referred to as HSS(UK) and its officers of any liability for any accidents or injuries or loss of personal effects I may incur while travelling to and from SSV and/or while attending the SSV.</string>
+    <string name="i_understand_that_the_personal_data_collected_will_be_kept_confidential_and_will_be_used_by_hss_uk_for_it_s_activities_in_accordance_with_hss_uk_privacy_policy_i_shall_notify_hss_uk_of_any_charges_to_my_details">I understand that the personal data collected will be kept confidential and will be used by HSS(UK) for it\'s activities in accordance with[HSS (UK) Privacy Policy]. I shall notify HSS(UK) of any charges to my details.</string>
+    <string name="pay_now">Pay Now</string>
+    <string name="view_your_registration">View Your Registration</string>
+    <string name="go_to_the_list_of_events">Go To The List Of Events</string>
+    <string name="surya_namaskar_date_range">Surya Namaskar Date Range</string>
+    <string name="from_date">From Date</string>
+    <string name="to_date">To Date</string>
+    <string name="edit_sn_count">Edit Count</string>
+    <string name="delete_sn_count">Delete Count</string>
+    <string name="would_you_like_to_edit_delete_the_surya_namaskar_count">Would you like to edit or delete this Surya Namaskar count?</string>
+    <string name="count">Count</string>
+    <string name="would_you_like_to_edit_the_surya_namaskar_count">Would you like to edit the Surya Namaskar count?</string>
+    <string name="would_you_like_to_delete_the_surya_namaskar_count">Would you like to delete the Surya Namaskar count?</string>
+    <string name="are_you_sure_you_would_like_to_delete_the_surya_namaskar_count">Are you sure you would like to delete the Surya Namaskar count?</string>
+    <string name="please_fill_in_all_the_details_in_order_to_log_your_surya_namaskar_count">Please fill in all the details in order to log your Surya Namaskar count.</string>
+    <string name="please_enter_diverse_dates_in_order_to_log_your_surya_namaskar_count">Please enter diverse dates in order to log your Surya Namaskar count.</string>
+    <string name="please_enter_a_count_between_1_and_500">Please enter a count between 1 and 500.</string>
+    <string name="please_add_date_and_count_for_surya_namaskar_by_clicking_add_more">Please Add Date and Count for Surya Namaskar by clicking Add More.</string>
 </resources>

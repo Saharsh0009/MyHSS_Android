@@ -3,12 +3,15 @@ package com.uk.myhss.Main
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -16,12 +19,16 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -37,47 +44,32 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.google.zxing.integration.android.IntentIntegrator
 import com.myhss.Main.adapter.ClickListener
 import com.myhss.Main.adapter.NavigationItemModel
 import com.myhss.Main.adapter.NavigationRVAdapter
 import com.myhss.Main.adapter.RecyclerTouchListener
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
+import com.myhss.appConstants.AppParam
 import com.myhss.ui.Biomeric.ChangeBiomerticFragment
 import com.myhss.ui.SuchanaBoard.NotificationList
 import com.uk.myhss.Login_Registration.LoginActivity
-import com.uk.myhss.Main.Get_Prpfile.Datum_Get_Profile
-import com.uk.myhss.Main.Get_Prpfile.Get_Profile_Response
-import com.uk.myhss.Main.Get_Prpfile.Member_Get_Profile
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.dashboard.DashboardFragment
-import com.uk.myhss.ui.dashboard.LinkedFamilyFragment
 import com.uk.myhss.ui.policies.ChangePasswordFragment
 import com.uk.myhss.ui.policies.PolicieshowFragment
 import com.uk.myhss.ui.policies.ProfileFragment
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.google.zxing.integration.android.IntentIntegrator
-import android.content.DialogInterface
-
-import android.provider.Settings
-import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
-import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
-import com.myhss.Main.notific_type.NotificTypeModel
-import com.myhss.Utils.DebouncedClickListener
-import com.myhss.Utils.DebugLog
-import com.myhss.Utils.UtilCommon
-import com.myhss.appConstants.AppParam
 
 class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSelectedListener {
     private lateinit var sessionManager: SessionManager
@@ -99,6 +91,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     private val REQUEST_CODE_QR_SCAN = 101
     private val LOGTAG = "QRCScanner-MainActivity"
     private var receivedNotiData = "no"
+    private var receivedNotiID = "0"
 
     private lateinit var notification_img: ImageView
 
@@ -117,7 +110,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
     private var items = arrayListOf(
         NavigationItemModel(R.drawable.home_icon, "Dashboard"),
-        NavigationItemModel(R.drawable.shakha_icon, "Shakha"),
+//        NavigationItemModel(R.drawable.shakha_icon, "Shakha"),
         NavigationItemModel(R.drawable.khel_icon, "Khel App"),  // Pratiyogita
         NavigationItemModel(R.drawable.lock, "Change Password"),
         NavigationItemModel(R.drawable.fingerprint, "Change Biometric"),
@@ -140,16 +133,25 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        val toolbar: Toolbar = findViewById(R.id.activity_main_toolbar)
-        setSupportActionBar(toolbar)
 
+        val toolbar: Toolbar = findViewById(R.id.activity_main_toolbar)
         val toolbar_logo = toolbar.findViewById<ImageView>(R.id.toolbar_logo)
         val scan_qr_img = toolbar.findViewById<ImageView>(R.id.scan_qr_img)
         notification_img = toolbar.findViewById<ImageView>(R.id.notification_img)
-        val activity_main_toolbar_title =
-            toolbar.findViewById<TextView>(R.id.activity_main_toolbar_title)
+//        val activity_main_toolbar_title = toolbar.findViewById<TextView>(R.id.activity_main_toolbar_title)
+        setSupportActionBar(toolbar)
         toolbar_logo.visibility = View.VISIBLE
-        activity_main_toolbar_title.visibility = View.INVISIBLE
+//        activity_main_toolbar_title.visibility = View.INVISIBLE
+
+        drawerLayout = findViewById(R.id.drawer_layout)
+        val activity_main_toolbar: Toolbar = findViewById(R.id.activity_main_toolbar)
+        navigation_rv = findViewById(R.id.navigation_rv)
+
+        val profile_view = findViewById<LinearLayout>(R.id.profile_view)
+        val user_name = findViewById<TextView>(R.id.user_name)
+        val user_name_txt = findViewById<TextView>(R.id.user_name_txt)
+        val user_role = findViewById<TextView>(R.id.user_role)
+        val app_version = findViewById<TextView>(R.id.app_version)
 
         toolbar.title = ""
         sessionManager = SessionManager(this)
@@ -190,37 +192,18 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             startActivity(i)
         })
 
-        if (Functions.isConnectingToInternet(this@HomeActivity)) {
-            val user_id = sessionManager.fetchUserID()
-            val member_id = sessionManager.fetchMEMBERID()
-            val devicetype = "A"
-            val device_token = sessionManager.fetchFCMDEVICE_TOKEN()
-            DebugLog.e("device_token => " + device_token!!)
-//            myPrivileges("1", "approve")
-//            if (sessionManager.fetchMEMBERID() != "") {
-            myProfile(user_id!!, member_id!!, devicetype, device_token)
-//            }
-        } else {
-            Toast.makeText(
-                this@HomeActivity, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
-            ).show()
+
+        val receivedIntent = intent
+        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
+            receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
+            receivedNotiID = receivedIntent.getStringExtra(AppParam.NOTIFIC_ID).toString()
+//            DebugLog.e("Notification Value : $receivedNotiData")
         }
 
-        if (Functions.isConnectingToInternet(this@HomeActivity)) {
-            callNotificationTypeApi()
-        } else {
-            Toast.makeText(
-                this@HomeActivity, resources.getString(R.string.no_connection), Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        drawerLayout = findViewById(R.id.drawer_layout)
-
-        val activity_main_toolbar: Toolbar = findViewById(R.id.activity_main_toolbar)
+        callApis()
         // Set the toolbar
         setSupportActionBar(activity_main_toolbar)
 
-        navigation_rv = findViewById(R.id.navigation_rv)
         // Setup Recyclerview's Layout
         navigation_rv.layoutManager = LinearLayoutManager(this)
         navigation_rv.setHasFixedSize(true)
@@ -241,22 +224,24 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                                     val args = Bundle()
                                     args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    args.putString(AppParam.NOTIFIC_ID, receivedNotiID)
                                     dashboardFragment.arguments = args
                                     receivedNotiData = "no"
+                                    receivedNotiID = "0"
                                 }
                                 supportFragmentManager.beginTransaction()
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
                                     .commit()
                             }
 
-                            1 -> {
-                                val i = Intent(this@HomeActivity, LinkedFamilyFragment::class.java)
-                                i.putExtra("DashBoard", "SHAKHAVIEW")
-                                i.putExtra("headerName", getString(R.string.my_shakha))
-                                startActivity(i)
-                            }
+//                            1 -> {
+//                                val i = Intent(this@HomeActivity, LinkedFamilyFragment::class.java)
+//                                i.putExtra("DashBoard", "SHAKHAVIEW")
+//                                i.putExtra("headerName", getString(R.string.my_shakha))
+//                                startActivity(i)
+//                            }
 
-                            2 -> {
+                            1 -> {
                                 // Use package name which we want to check
                                 val isAppInstalled: Boolean =
                                     appInstalledOrNot("market://details?id=com.hss.khelappandroid")
@@ -280,7 +265,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 }
                             }
 
-                            3 -> {
+                            2 -> {
                                 toolbar.title = "Change Password"
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
@@ -292,7 +277,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 ).commit()
                             }
 
-                            4 -> {
+                            3 -> {
                                 toolbar.title = "Change Biometric"
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
@@ -304,7 +289,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 ).commit()
                             }
 
-                            5 -> {
+                            4 -> {
                                 toolbar.title = "Policies"
                                 toolbar_logo.visibility = View.GONE
                                 scan_qr_img.visibility = View.GONE
@@ -316,7 +301,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 ).commit()
                             }
 
-                            6 -> {
+                            5 -> {
                                 val alertDialog: AlertDialog.Builder =
                                     AlertDialog.Builder(this@HomeActivity)
                                 alertDialog.setMessage("Are you sure you would like to logout?")
@@ -414,8 +399,10 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                 if (UtilCommon.isNotificationTrue(receivedNotiData)) {
                                     val args = Bundle()
                                     args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                                    args.putString(AppParam.NOTIFIC_ID, receivedNotiID)
                                     dashboardFragment.arguments = args
                                     receivedNotiData = "no"
+                                    receivedNotiID = "0"
                                 }
                                 supportFragmentManager.beginTransaction()
                                     .replace(R.id.activity_main_content_id, dashboardFragment)
@@ -624,19 +611,12 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             }
         }
         drawerLayout.addDrawerListener(toggle)
-
         toggle.syncState()
 
         // Set Header Image
 //        navigation_header_img.setImageResource(R.drawable.logo)
         // Set background of Drawer
 //        navigation_layout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
-
-        val profile_view = findViewById<LinearLayout>(R.id.profile_view)
-        val user_name = findViewById<TextView>(R.id.user_name)
-        val user_name_txt = findViewById<TextView>(R.id.user_name_txt)
-        val user_role = findViewById<TextView>(R.id.user_role)
-        val app_version = findViewById<TextView>(R.id.app_version)
 
         try {
             val currentVersion = packageManager.getPackageInfo(packageName, 0).versionName
@@ -677,14 +657,75 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
         val sharedNameValue = sessionManager.fetchUSERNAME()
         Log.d("NAME-->", "default name: ${sharedNameValue}")
-
         checkNotificationPermission()
+    }
 
-        val receivedIntent = intent
-        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
-            receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
-            DebugLog.e("Notification Value : $receivedNotiData")
+    private fun callApis() {
+
+        DebugLog.d("CORO - Starting the API CALL with lifecycleScope 3")
+        val pd = CustomProgressBar(this@HomeActivity)
+        pd.show()
+        if (Functions.isConnectingToInternet(this@HomeActivity)) {
+            val user_id = sessionManager.fetchUserID()
+            val member_id = sessionManager.fetchMEMBERID()
+            val devicetype = "A"
+            val device_token = sessionManager.fetchFCMDEVICE_TOKEN()
+
+
+            // Wait for both jobs to complete
+            lifecycleScope.launch {
+
+                val job1 = async { myProfile(user_id!!, member_id!!, devicetype, device_token!!) }
+                val job2 = async { callNotificationTypeApi() }
+
+
+                val result1 = job1.await()
+                val result2 = job2.await()
+
+                // Update the UI with the results
+                DebugLog.d("CORO - Results await 5: $result1, $result2")
+
+                if (sessionManager.fetchSHAKHA_TAB() == "yes") {
+                    updateAdapter(0)
+                    // Set 'Home' as the default fragment when the app starts
+                    val dashboardFragment = DashboardFragment()
+                    if (UtilCommon.isNotificationTrue(receivedNotiData)) {
+                        val args = Bundle()
+                        args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                        args.putString(AppParam.NOTIFIC_ID, receivedNotiID)
+                        dashboardFragment.arguments = args
+                        receivedNotiData = "no"
+                        receivedNotiID = "0"
+                    }
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.activity_main_content_id, dashboardFragment)
+                        .commit()
+                } else {
+                    updateAdapter(0)
+                    val dashboardFragment = DashboardFragment()
+                    if (UtilCommon.isNotificationTrue(receivedNotiData)) {
+                        val args = Bundle()
+                        args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
+                        args.putString(AppParam.NOTIFIC_ID, receivedNotiID)
+                        dashboardFragment.arguments = args
+                        receivedNotiData = "no"
+                        receivedNotiID = "0"
+                    }
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.activity_main_content_id, dashboardFragment)
+                        .commit()
+                }
+                pd.dismiss()
+            }
+        } else {
+            pd.dismiss()
+            Toast.makeText(
+                this@HomeActivity,
+                resources.getString(R.string.no_connection),
+                Toast.LENGTH_SHORT
+            ).show()
         }
+        DebugLog.d("CORO - Afer the  API CALL, end of async 4")
     }
 
     private val googleSignInClient: GoogleSignInClient by lazy {
@@ -794,217 +835,149 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         }
     }
 
-    private fun myProfile(
+    private suspend fun myProfile(
         user_id: String,
         member_id: String,
         deviceType: String,
         device_token: String
     ) {
-        val pd = CustomProgressBar(this@HomeActivity)
-        pd.show()
-        val call: Call<Get_Profile_Response> = MyHssApplication.instance!!.api.get_profile(
-            user_id,
-            member_id,
-            deviceType,
-            device_token
-        )
-        call.enqueue(object : Callback<Get_Profile_Response> {
-            override fun onResponse(
-                call: Call<Get_Profile_Response>, response: Response<Get_Profile_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
+        try {
+            val response = MyHssApplication.instance!!.api.get_profile(
+                user_id,
+                member_id,
+                deviceType,
+                device_token
+            )
 
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        try {
-                            var data_getprofile: List<Datum_Get_Profile> =
-                                ArrayList<Datum_Get_Profile>()
-                            data_getprofile = response.body()!!.data!!
+            if (response.status == true) {
+                // Process the response and update your sessionManager
+                val dataGetProfile = response.data
+                val dataGetMember = response.member
+                DebugLog.e("dataGetProfile.FirstName : " + dataGetProfile!![0].firstName)
 
-                            var data_getmember: List<Member_Get_Profile> =
-                                ArrayList<Member_Get_Profile>()
-                            data_getmember = response.body()!!.member!!
-//                    data_getmember = response.body()!!.data!![0].member!!
+                val sharedPreferences = getSharedPreferences(
+                    "production", Context.MODE_PRIVATE
+                )
 
-                            val sharedPreferences = getSharedPreferences(
-                                "production", Context.MODE_PRIVATE
-                            )
+                sharedPreferences.edit().apply {
+                    putString("FIRSTNAME", dataGetMember!![0].firstName)
+                    putString("SURNAME", dataGetMember!![0].lastName)
+                    putString("USERNAME", dataGetProfile!![0].username)
+                    putString("USERID", dataGetMember!![0].userId)
+                    putString("USEREMAIL", dataGetMember!![0].email)
+                    putString("USERROLE", dataGetProfile!![0].role)
+                    putString("MEMBERID", dataGetMember!![0].memberId)
+                }.apply()
 
-                            sharedPreferences.edit().apply {
-                                putString("FIRSTNAME", data_getmember[0].firstName)
-                                putString("SURNAME", data_getmember[0].lastName)
-                                putString("USERNAME", data_getprofile[0].username)
-                                putString("USERID", data_getmember[0].userId)
-                                putString("USEREMAIL", data_getmember[0].email)
-                                putString("USERROLE", data_getprofile[0].role)
-                                putString("MEMBERID", data_getmember[0].memberId)
-                            }.apply()
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                editor.putString("FIRSTNAME", dataGetMember!![0].firstName)
+                editor.putString("SURNAME", dataGetMember!![0].lastName)
+                editor.putString("USERNAME", dataGetProfile!![0].username)
+                editor.putString("USERID", dataGetMember!![0].userId)
+                editor.putString("USEREMAIL", dataGetMember!![0].email)
+                editor.putString("USERROLE", dataGetProfile!![0].role)
+                editor.putString("MEMBERID", dataGetMember!![0].memberId)
+                editor.apply()
+                editor.commit()
 
-                            val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                            editor.putString("FIRSTNAME", data_getmember[0].firstName)
-                            editor.putString("SURNAME", data_getmember[0].lastName)
-                            editor.putString("USERNAME", data_getprofile[0].username)
-                            editor.putString("USERID", data_getmember[0].userId)
-                            editor.putString("USEREMAIL", data_getmember[0].email)
-                            editor.putString("USERROLE", data_getprofile[0].role)
-                            editor.putString("MEMBERID", data_getmember[0].memberId)
-                            editor.apply()
-                            editor.commit()
 
-                            sessionManager.saveFIRSTNAME(data_getmember[0].firstName.toString())
-                            sessionManager.saveMIDDLENAME(data_getmember[0].middleName.toString())
-                            sessionManager.saveSURNAME(data_getmember[0].lastName.toString())
-                            sessionManager.saveUSERNAME(data_getprofile[0].username.toString())
-                            sessionManager.saveUSEREMAIL(data_getprofile[0].email.toString())
-                            sessionManager.saveUSERROLE(data_getprofile[0].role.toString())
-                            sessionManager.saveDOB(data_getmember[0].dob.toString())
-                            sessionManager.saveSHAKHANAME(data_getmember[0].shakha.toString())
-                            sessionManager.saveSHAKHAID(data_getmember[0].shakhaId.toString())
-                            sessionManager.saveNAGARID(data_getmember[0].nagarId.toString())
-                            sessionManager.saveVIBHAGID(data_getmember[0].vibhagId.toString())
-                            sessionManager.saveNAGARNAME(data_getmember[0].nagar.toString())
-                            sessionManager.saveVIBHAGNAME(data_getmember[0].vibhag.toString())
-                            sessionManager.saveADDRESS(
-                                data_getmember[0].buildingName.toString() + " " + data_getmember[0].addressLine1.toString() + " " + data_getmember[0].addressLine2.toString()
-                            )
-                            sessionManager.saveLineOne(data_getmember[0].addressLine1.toString())
-                            sessionManager.saveRELATIONSHIPNAME(data_getmember[0].relationship.toString())
-                            sessionManager.saveRELATIONSHIPNAME_OTHER(data_getmember[0].otherRelationship.toString())
-                            sessionManager.saveOCCUPATIONNAME(data_getmember[0].occupation.toString())
-                            sessionManager.saveSPOKKENLANGUAGE(data_getmember[0].rootLanguage.toString())
-                            sessionManager.saveSPOKKENLANGUAGEID(data_getmember[0].root_language_id.toString())
-                            sessionManager.saveMOBILENO(data_getmember[0].mobile.toString())
-                            if (!data_getmember[0].landLine.toString().equals("null")) {
-                                sessionManager.saveSECMOBILENO(data_getmember[0].landLine.toString())
-                            }
-                            if (!data_getmember[0].secondaryEmail.toString().equals("null")) {
-                                sessionManager.saveSECEMAIL(data_getmember[0].secondaryEmail.toString())
-                            }
-                            DebugLog.e("First Aid : " + data_getmember[0].isQualifiedInFirstAid.toString())
-                            sessionManager.saveGUAEMRNAME(data_getmember[0].emergencyName.toString())
-                            sessionManager.saveGUAEMRPHONE(data_getmember[0].emergencyPhone.toString())
-                            sessionManager.saveGUAEMREMAIL(data_getmember[0].emergencyEmail.toString())
-                            sessionManager.saveGUAEMRRELATIONSHIP(data_getmember[0].emergencyRelatioship.toString())
-                            sessionManager.saveGUAEMRRELATIONSHIP_OTHER(data_getmember[0].otherEmergencyRelationship.toString())
-                            sessionManager.saveDOHAVEMEDICAL(data_getmember[0].medicalInformationDeclare.toString())
-
-                            sessionManager.saveAGE(data_getmember[0].memberAge.toString())
-                            sessionManager.saveGENDER(data_getmember[0].gender.toString())
-                            sessionManager.saveCITY(data_getmember[0].city.toString())
-                            sessionManager.saveCOUNTRY(data_getmember[0].country.toString())
-                            sessionManager.savePOSTCODE(data_getmember[0].postalCode.toString())
-                            sessionManager.saveSHAKHA_TAB(data_getmember[0].shakha_tab.toString())
-                            var s_count = data_getmember[0].shakha_sankhya_avg.toString()
-                            if (s_count.length == 0) {
-                                s_count = "0"
-                            }
-                            sessionManager.saveSHAKHA_SANKHYA_AVG(s_count)
-                            sessionManager.saveMEDICAL_OTHER_INFO(data_getmember[0].medicalDetails.toString())
-                            sessionManager.saveQUALIFICATIONAID(data_getmember[0].isQualifiedInFirstAid.toString())
-                            sessionManager.saveQUALIFICATION_VALUE(data_getmember[0].first_aid_qualification_val.toString())
-                            sessionManager.saveQUALIFICATION_VALUE_NAME(data_getmember[0].first_aid_qualification_name.toString())// value name
-                            sessionManager.saveQUALIFICATION_IS_DOC(data_getmember[0].first_aid_qualification_is_doc.toString())
-                            sessionManager.saveQUALIFICATION_DATE(data_getmember[0].dateOfFirstAidQualification.toString())
-                            sessionManager.saveQUALIFICATION_FILE(data_getmember[0].firstAidQualificationFile.toString())
-                            sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO(data_getmember[0].professional_body_registartion_number.toString())
-                            sessionManager.saveDIETARY(data_getmember[0].specialMedDietryInfo.toString())
-                            sessionManager.saveDIETARYID(data_getmember[0].special_med_dietry_info_id.toString())
-                            sessionManager.saveSTATE_IN_INDIA(data_getmember[0].indianConnectionState.toString())
-
-                            Log.d("Address", sessionManager.fetchADDRESS()!!)
-                            Log.d("Username", sessionManager.fetchUSERNAME()!!)
-                            Log.d("Shakha_tab", sessionManager.fetchSHAKHA_TAB()!!)
-
-                            if (sessionManager.fetchSHAKHA_TAB() == "yes") {
-                                updateAdapter(0)
-                                // Set 'Home' as the default fragment when the app starts
-                                val dashboardFragment = DashboardFragment()
-                                if (UtilCommon.isNotificationTrue(receivedNotiData)) {
-                                    val args = Bundle()
-                                    args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
-                                    dashboardFragment.arguments = args
-                                    receivedNotiData = "no"
-                                }
-                                supportFragmentManager.beginTransaction()
-                                    .replace(R.id.activity_main_content_id, dashboardFragment)
-                                    .commit()
-                            } else {
-                                updateAdapter(0)
-                                val dashboardFragment = DashboardFragment()
-                                if (UtilCommon.isNotificationTrue(receivedNotiData)) {
-                                    val args = Bundle()
-                                    args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
-                                    dashboardFragment.arguments = args
-                                    receivedNotiData = "no"
-                                }
-                                supportFragmentManager.beginTransaction()
-                                    .replace(R.id.activity_main_content_id, dashboardFragment)
-                                    .commit()
-                            }
-
-                        } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Profile")
-                        }
-
-                    } else {
-                        Functions.displayMessage(this@HomeActivity, response.body()?.message)
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@HomeActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
+                sessionManager.saveFIRSTNAME(dataGetMember!![0].firstName.toString())
+                sessionManager.saveMIDDLENAME(dataGetMember!![0].middleName.toString())
+                sessionManager.saveSURNAME(dataGetMember!![0].lastName.toString())
+                sessionManager.saveUSERNAME(dataGetProfile!![0].username.toString())
+                sessionManager.saveUSEREMAIL(dataGetProfile!![0].email.toString())
+                sessionManager.saveUSERROLE(dataGetProfile!![0].role.toString())
+                sessionManager.saveDOB(dataGetMember!![0].dob.toString())
+                sessionManager.saveSHAKHANAME(dataGetMember!![0].shakha.toString())
+                sessionManager.saveSHAKHAID(dataGetMember!![0].shakhaId.toString())
+                sessionManager.saveNAGARID(dataGetMember!![0].nagarId.toString())
+                sessionManager.saveVIBHAGID(dataGetMember!![0].vibhagId.toString())
+                sessionManager.saveNAGARNAME(dataGetMember!![0].nagar.toString())
+                sessionManager.saveVIBHAGNAME(dataGetMember!![0].vibhag.toString())
+                sessionManager.saveADDRESS(
+                    dataGetMember!![0].buildingName.toString() + " " + dataGetMember!![0].addressLine1.toString() + " " + dataGetMember!![0].addressLine2.toString()
+                )
+                sessionManager.saveLineOne(dataGetMember!![0].addressLine1.toString())
+                sessionManager.saveRELATIONSHIPNAME(dataGetMember!![0].relationship.toString())
+                sessionManager.saveRELATIONSHIPNAME_OTHER(dataGetMember!![0].otherRelationship.toString())
+                sessionManager.saveOCCUPATIONNAME(dataGetMember!![0].occupation.toString())
+                sessionManager.saveSPOKKENLANGUAGE(dataGetMember!![0].rootLanguage.toString())
+                sessionManager.saveSPOKKENLANGUAGEID(dataGetMember!![0].root_language_id.toString())
+                sessionManager.saveMOBILENO(dataGetMember!![0].mobile.toString())
+                if (!dataGetMember!![0].landLine.toString().equals("null")) {
+                    sessionManager.saveSECMOBILENO(dataGetMember!![0].landLine.toString())
                 }
-                pd.dismiss()
-            }
+                if (!dataGetMember!![0].secondaryEmail.toString().equals("null")) {
+                    sessionManager.saveSECEMAIL(dataGetMember!![0].secondaryEmail.toString())
+                }
+                DebugLog.e("First Aid : " + dataGetMember!![0].isQualifiedInFirstAid.toString())
+                sessionManager.saveGUAEMRNAME(dataGetMember!![0].emergencyName.toString())
+                sessionManager.saveGUAEMRPHONE(dataGetMember!![0].emergencyPhone.toString())
+                sessionManager.saveGUAEMREMAIL(dataGetMember!![0].emergencyEmail.toString())
+                sessionManager.saveGUAEMRRELATIONSHIP(dataGetMember!![0].emergencyRelatioship.toString())
+                sessionManager.saveGUAEMRRELATIONSHIP_OTHER(dataGetMember!![0].otherEmergencyRelationship.toString())
+                sessionManager.saveDOHAVEMEDICAL(dataGetMember!![0].medicalInformationDeclare.toString())
 
-            override fun onFailure(call: Call<Get_Profile_Response>, t: Throwable) {
-                Toast.makeText(this@HomeActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
+                sessionManager.saveAGE(dataGetMember!![0].memberAge.toString())
+                sessionManager.saveGENDER(dataGetMember!![0].gender.toString())
+                sessionManager.saveCITY(dataGetMember!![0].city.toString())
+                sessionManager.saveCOUNTRY(dataGetMember!![0].country.toString())
+                sessionManager.savePOSTCODE(dataGetMember!![0].postalCode.toString())
+                sessionManager.saveSHAKHA_TAB(dataGetMember!![0].shakha_tab.toString())
+                var s_count = dataGetMember!![0].shakha_sankhya_avg.toString()
+                if (s_count.length == 0) {
+                    s_count = "0"
+                }
+                sessionManager.saveSHAKHA_SANKHYA_AVG(s_count)
+                sessionManager.saveMEDICAL_OTHER_INFO(dataGetMember!![0].medicalDetails.toString())
+                sessionManager.saveQUALIFICATIONAID(dataGetMember!![0].isQualifiedInFirstAid.toString())
+                sessionManager.saveQUALIFICATION_VALUE(dataGetMember!![0].first_aid_qualification_val.toString())
+                sessionManager.saveQUALIFICATION_VALUE_NAME(dataGetMember!![0].first_aid_qualification_name.toString())// value name
+                sessionManager.saveQUALIFICATION_IS_DOC(dataGetMember!![0].first_aid_qualification_is_doc.toString())
+                sessionManager.saveQUALIFICATION_DATE(dataGetMember!![0].dateOfFirstAidQualification.toString())
+                sessionManager.saveQUALIFICATION_FILE(dataGetMember!![0].firstAidQualificationFile.toString())
+                sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO(dataGetMember!![0].professional_body_registartion_number.toString())
+                sessionManager.saveDIETARY(dataGetMember!![0].specialMedDietryInfo.toString())
+                sessionManager.saveDIETARYID(dataGetMember!![0].special_med_dietry_info_id.toString())
+                sessionManager.saveSTATE_IN_INDIA(dataGetMember!![0].indianConnectionState.toString())
+
+                Log.d("Address", sessionManager.fetchADDRESS()!!)
+                Log.d("Username", sessionManager.fetchUSERNAME()!!)
+                Log.d("Shakha_tab", sessionManager.fetchSHAKHA_TAB()!!)
+            } else {
+                Functions.displayMessage(this@HomeActivity, response.message)
             }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@HomeActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
-    private fun callNotificationTypeApi() {
-
-        val pd = CustomProgressBar(this@HomeActivity)
-        pd.show()
-        val call: Call<NotificTypeModel> = MyHssApplication.instance!!.api.getNotificationType()
-        call.enqueue(object : Callback<NotificTypeModel> {
-            override fun onResponse(
-                call: Call<NotificTypeModel>, response: Response<NotificTypeModel>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    DebugLog.e("Status : " + response.body()?.status.toString())
-
-                    if (response.body()?.status!!) {
-                        DebugLog.e("Type : " + response.body()!!.data)
-                        AppParam.notificTypeData = response.body()!!.data
-                    } else {
-                        Functions.displayMessage(
-                            this@HomeActivity, response.body()?.message
-                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@HomeActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
+    private suspend fun callNotificationTypeApi() {
+        try {
+            val response = MyHssApplication.instance!!.api.getNotificationType()
+            if (response.status == true) {
+                val dataNotificType = response.data
+                AppParam.notificTypeData = dataNotificType
+            } else {
+                Functions.displayMessage(this@HomeActivity, response.message)
             }
-
-            override fun onFailure(call: Call<NotificTypeModel>, t: Throwable) {
-                Toast.makeText(this@HomeActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
-
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@HomeActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
 
+    @SuppressLint("MissingSuperCall")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {

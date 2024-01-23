@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import android.window.OnBackInvokedDispatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.appConstants.AppParam
 import com.myhss.ui.NotificationList.Adapter.NotificationItemAdapter
 import com.myhss.ui.NotificationList.Model.Data
 import com.myhss.ui.NotificationList.Model.NotificationDatum
@@ -46,6 +48,7 @@ class NotificationList : AppCompatActivity() {
     private var notificationAdapter: NotificationAdapter? = null
     lateinit var mLayoutManager: LinearLayoutManager
     private lateinit var notificationTypeDialog: BottomSheetDialog
+    var receivedNotiID = "0"
 
     @SuppressLint("SetTextI18n", "CutPasteId", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,9 +74,13 @@ class NotificationList : AppCompatActivity() {
         img_filter.setImageResource(R.drawable.ic_filter)
         img_filter.visibility = View.GONE
         back_arrow.setOnClickListener(DebouncedClickListener {
-            val i = Intent(this, HomeActivity::class.java)
-            startActivity(i)
-            finishAffinity()
+//            val i = Intent(this, HomeActivity::class.java)
+//            startActivity(i)
+//            finishAffinity()
+
+
+            onBackPressed()
+
         })
 
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
@@ -97,6 +104,16 @@ class NotificationList : AppCompatActivity() {
         img_filter.setOnClickListener(DebouncedClickListener {
             openNotificationTypeDialog()
         })
+
+
+        val receivedIntent = intent
+        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_ID)) {
+            receivedNotiID = receivedIntent.getStringExtra(AppParam.NOTIFIC_ID).toString()
+        } else {
+            receivedNotiID = "0"
+        }
+
+
     }
 
     private fun callNotificationListData(member_id: String, sType: String) {
@@ -156,7 +173,9 @@ class NotificationList : AppCompatActivity() {
     }
 
     private fun setNotificationRv(notificData: List<Data>) {
-        notificationAdapter = NotificationAdapter(notificData, "Notification Detail")
+        DebugLog.e("receivedNotiID : $receivedNotiID")
+        notificationAdapter =
+            NotificationAdapter(notificData, "Notification Detail", receivedNotiID, MEMBERID)
         notification_list.adapter = notificationAdapter
         notificationAdapter!!.notifyDataSetChanged()
     }
@@ -192,5 +211,11 @@ class NotificationList : AppCompatActivity() {
             }
             setNotificationRv(notificFilterData)
         }
+    }
+
+
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }

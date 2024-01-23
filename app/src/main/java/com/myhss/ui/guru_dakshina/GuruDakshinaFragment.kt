@@ -36,6 +36,7 @@ import retrofit2.Response
 import kotlin.collections.ArrayList
 import android.widget.RelativeLayout
 import android.widget.LinearLayout
+import androidx.cardview.widget.CardView
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -45,20 +46,17 @@ import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.utils.MPPointF
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
+import com.myhss.Utils.UtilCommon
 
 
 class GuruDakshinaFragment : Fragment() {
     private lateinit var sessionManager: SessionManager
-    lateinit var guru_dakshina_list: RecyclerView
     lateinit var one_time_layout: LinearLayout
     lateinit var regular_layout: LinearLayout
     lateinit var guru_dakshina_layout: RelativeLayout
-    lateinit var guru_dakshinasearch_fields: AppCompatEditText
     lateinit var USERID: String
     lateinit var mLayoutManager: LinearLayoutManager
     private var guruDakshinaDataList: List<Datum_guru_dakshina> = ArrayList<Datum_guru_dakshina>()
-    private var mAdapterGuru: GuruCustomAdapter? = null
-    lateinit var First_name: String
     lateinit var pieChart_guru: PieChart
     var end: Int = 100
     var start: Int = 0
@@ -86,89 +84,24 @@ class GuruDakshinaFragment : Fragment() {
         one_time_layout = root.findViewById(R.id.one_time_layout)
         regular_layout = root.findViewById(R.id.regular_layout)
         guru_dakshina_layout = root.findViewById(R.id.guru_dakshina_layout)
-        guru_dakshinasearch_fields = root.findViewById(R.id.guru_dakshinasearch_fields)
         pieChart_guru = root.findViewById(R.id.pieChart_guru)
-        guru_dakshina_list = root.findViewById(R.id.guru_dakshina_list)
 
-        /*guru_dakshina_list.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayout.VERTICAL,
-            false
-        )*/
-
-//        mLayoutManager = LinearLayoutManager(context)
-//        guru_dakshina_list.layoutManager = mLayoutManager
+        if (UtilCommon.isUserUnder18(sessionManager.fetchDOB().toString())) {
+            one_time_layout.visibility = View.GONE
+            regular_layout.visibility = View.GONE
+        } else {
+            one_time_layout.visibility = View.VISIBLE
+            regular_layout.visibility = View.VISIBLE
+        }
 
         CallAPI(start)
-        DebugLog.e("Gur Dakshina fragment open here")
-
-        /*guru_dakshina_list.setOnScrollListener(object : EndLessScroll(mLayoutManager) {
-            override fun loadMore(current_page: Int) {
-                start = end + 1
-                end += 100
-                Functions.printLog("start", start.toString())
-                Functions.printLog("end", end.toString())
-                CallAPI(start)
-            }
-        })*/
-
-//        val bestCities =
-//            listOf("Lahore", "Berlin", "Lisbon", "Tokyo", "Toronto", "Sydney", "Osaka", "Istanbul")
-//        val adapter = ArrayAdapter(
-//            requireContext(),
-//            android.R.layout.simple_list_item_1,
-//            bestCities
-//        )
-
-        guru_dakshinasearch_fields.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-
-                var end: Int = 100
-                var start: Int = 0
-
-                if (Functions.isConnectingToInternet(context)) {
-                    USERID = sessionManager.fetchUserID()!!
-                    Log.d("USERID", USERID)
-                    val LENGTH: String = end.toString()
-                    val START: String = start.toString()
-                    val SEARCH: String = s.toString()
-                    val CHAPTER_ID: String = sessionManager.fetchSHAKHAID()!!   // "227"
-//                    mySearchGuruDakshina(USERID, LENGTH, START, SEARCH, CHAPTER_ID)
-                } else {
-                    Toast.makeText(
-                        context,
-                        resources.getString(R.string.no_connection),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-        })
-
         one_time_layout.setOnClickListener(DebouncedClickListener {
-//            Snackbar.make(rootview, "One-Time Dakshina", Snackbar.LENGTH_SHORT).show()
             startActivity(Intent(context, GuruDakshinaOneTimeFirstActivity::class.java))
-//            val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
-//            i.putExtra("TYPE_SELF", "family");
-//            startActivity(i)
         })
 
         regular_layout.setOnClickListener(DebouncedClickListener {
-//            Snackbar.make(rootview, "Regular Dakshina", Snackbar.LENGTH_SHORT).show()
             startActivity(Intent(context, GuruDakshinaRegularFirstActivity::class.java))
         })
-
-        /*membership_view.setOnClickListener {
-            showPopup()
-        }*/
-
         return root
     }
 
@@ -217,11 +150,7 @@ class GuruDakshinaFragment : Fragment() {
 
                         try {
                             guruDakshinaDataList = response.body()!!.data!!
-                            Log.d("atheletsBeans", guruDakshinaDataList.toString())
                             pieChart_guru.visibility = View.VISIBLE
-//                            mAdapterGuru = GuruCustomAdapter(atheletsBeans)
-//                            guru_dakshina_list.adapter = mAdapterGuru
-//                            mAdapterGuru!!.notifyDataSetChanged()
                             setPieChartForGuruDakshina(guruDakshinaDataList)
 
                         } catch (e: ArithmeticException) {
@@ -231,11 +160,6 @@ class GuruDakshinaFragment : Fragment() {
                         }
                     } else {
                         Functions.displayMessage(context, response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            context, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -251,64 +175,6 @@ class GuruDakshinaFragment : Fragment() {
                 Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
                 pieChart_guru.visibility = View.GONE
                 pd.dismiss()
-            }
-        })
-    }
-
-    private fun mySearchGuruDakshina(
-        user_id: String,
-        length: String,
-        start: String,
-        search: String,
-        chapter_id: String
-    ) {
-//        val pd = CustomProgressBar(context)
-//        pd.show()
-        val call: Call<guru_dakshina_response> = MyHssApplication.instance!!.api.get_guru_dakshina(
-            user_id, length, start, search, chapter_id
-        )
-        call.enqueue(object : Callback<guru_dakshina_response> {
-            override fun onResponse(
-                call: Call<guru_dakshina_response>,
-                response: Response<guru_dakshina_response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-
-                        try {
-                            guruDakshinaDataList = response.body()!!.data!!
-                            Log.d("atheletsBeans", guruDakshinaDataList.toString())
-//                            mAdapterGuru = GuruCustomAdapter(atheletsBeans)
-//
-//                            guru_dakshina_list.adapter = mAdapterGuru
-//                            mAdapterGuru!!.notifyDataSetChanged()
-
-                        } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Family")
-                        }
-                    } else {
-                        Functions.displayMessage(context, response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            context, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        requireContext(), "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-//                pd.dismiss()
-            }
-
-            override fun onFailure(call: Call<guru_dakshina_response>, t: Throwable) {
-                Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
-//                pd.dismiss()
             }
         })
     }
@@ -349,11 +215,11 @@ class GuruDakshinaFragment : Fragment() {
             var s_name = ""
             for (j in 0 until guruDakshinaDataList.size) {
                 if (member_list.elementAt(i) == guruDakshinaDataList.get(j).memberId) {
-                    s_count = s_count + guruDakshinaDataList.get(j).paidAmount!!.toInt()
+                    s_count += guruDakshinaDataList.get(j).paidAmount!!.toInt()
                     s_name = guruDakshinaDataList.get(j).firstName.toString()
                 }
             }
-            t_count = t_count + s_count
+            t_count += s_count
             pieEntries.add(PieEntry(s_count.toFloat(), s_name))
         }
         val pieDataSet = PieDataSet(pieEntries, "")

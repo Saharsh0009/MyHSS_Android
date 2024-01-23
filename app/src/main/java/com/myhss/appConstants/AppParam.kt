@@ -9,6 +9,7 @@ interface AppParam {
 
     companion object {
         val NOTIFIC_KEY = "notification"
+        val NOTIFIC_ID = "notification_id"
         var notificTypeData: List<NotificTypeData>? = null
     }
 

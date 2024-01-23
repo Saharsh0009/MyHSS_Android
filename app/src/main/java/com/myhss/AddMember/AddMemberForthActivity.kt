@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.indices
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -47,6 +48,7 @@ import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.appConstants.AppParam
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.AddMember.Get_Dietaries.Datum_Get_Dietaries
 import com.uk.myhss.AddMember.Get_Dietaries.Get_Dietaries_Response
@@ -59,6 +61,8 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.Welcome.WelcomeActivity
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -247,19 +251,7 @@ class AddMemberForthActivity : AppCompatActivity() {
         chipGroup_state.isSingleSelection = false
         chipGroup_state.isSingleLine = false
 
-
-        if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
-            myDietaryRequirements()
-            mySpokenLanguage()
-            OriginatingState()
-            firstAidInforApi()
-        } else {
-            Toast.makeText(
-                this@AddMemberForthActivity,
-                resources.getString(R.string.no_connection),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        callApis()
 
         back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
@@ -269,7 +261,7 @@ class AddMemberForthActivity : AppCompatActivity() {
             finish()
         })
 
-        qualification_file.setOnClickListener(DebouncedClickListener {
+        edit_qualification_file.setOnClickListener(DebouncedClickListener {
             if (!checkPermission()) {
                 requestPermission()
             } else {
@@ -631,6 +623,30 @@ class AddMemberForthActivity : AppCompatActivity() {
 
     }
 
+    private fun callApis() {
+        val pd = CustomProgressBar(this@AddMemberForthActivity)
+        pd.show()
+        if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
+
+            lifecycleScope.launch {
+                val dietJob = async { myDietaryRequirements() }
+                val spokenJob = async { mySpokenLanguage() }
+                val originJob = async { OriginatingState() }
+                val aidJob = async { firstAidInforApi() }
+                DebugLog.e("Coro API : ${dietJob.await()} , ${spokenJob.await()} , ${originJob.await()} , ${aidJob.await()}")
+                pd.dismiss()
+            }
+        } else {
+            pd.dismiss()
+            Toast.makeText(
+                this@AddMemberForthActivity,
+                resources.getString(R.string.no_connection),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+    }
+
     private fun SearchSpinner(
         spinner_search: Array<String>, edit_txt: SearchableSpinner
     ) {
@@ -773,361 +789,116 @@ class AddMemberForthActivity : AppCompatActivity() {
 
 
     /*Relationship API*/
-    private fun myDietaryRequirements() {
-        val pd = CustomProgressBar(this@AddMemberForthActivity)
-        pd.show()
-        val call: Call<Get_Dietaries_Response> = MyHssApplication.instance!!.api.get_dietaries()
-        call.enqueue(object : Callback<Get_Dietaries_Response> {
-            override fun onResponse(
-                call: Call<Get_Dietaries_Response>, response: Response<Get_Dietaries_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    DebugLog.d("Dietary status : " + response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        dietaryDataList = ArrayList<Datum_Get_Dietaries>()
-                        dietaryDataList = response.body()!!.data!!
-                        dietaryName = listOf(arrayOf(dietaryDataList).toString())
-                        dietaryID = listOf(arrayOf(dietaryDataList).toString())
+    private suspend fun myDietaryRequirements() {
+        try {
+            val response = MyHssApplication.instance?.api?.getDietaries()
+            if (response?.status == true) {
+                dietaryDataList = response.data ?: emptyList()
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until dietaryDataList.size) {
-                            mStringList.add(
-//                            data_relationship[i].memberRelationshipId.toString() +
-                                dietaryDataList[i].dietaryRequirementsName.toString()
-                            )
-                        }
+                dietaryName = dietaryDataList.map { it.dietaryRequirementsName.toString() }
+                dietaryID = dietaryDataList.map { it.dietaryRequirementsId.toString() }
 
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until dietaryDataList.size) {
-                            mStringListnew.add(
-                                dietaryDataList[i].dietaryRequirementsId.toString()
-                            )
-                        }
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-                            list.add(element.toString())
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                dietaryName =
-                                    list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-                        for (element in mStringArraynew) {
-                            listnew.add(element.toString())
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                dietaryID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-                        SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
-                    } else {
-                        Functions.displayMessage(
-                            this@AddMemberForthActivity, response.body()?.message
-                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberForthActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
+                SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberForthActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
-
-            override fun onFailure(call: Call<Get_Dietaries_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberForthActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
     /*Relationship API*/
-    private fun mySpokenLanguage() {
-        val pd = CustomProgressBar(this@AddMemberForthActivity)
-        pd.show()
-        val call: Call<Get_Language_Response> = MyHssApplication.instance!!.api.get_languages()
-        call.enqueue(object : Callback<Get_Language_Response> {
-            override fun onResponse(
-                call: Call<Get_Language_Response>, response: Response<Get_Language_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
+    private suspend fun mySpokenLanguage() {
+        try {
+            val response = MyHssApplication.instance?.api?.getLanguages()
 
-                        spokenLanguageDataList =
-                            ArrayList<Datum_Get_Language>()
-                        spokenLanguageDataList = response.body()!!.data!!
+            if (response?.status == true) {
+                spokenLanguageDataList = response.data ?: emptyList()
 
-                        spokenName = listOf(arrayOf(spokenLanguageDataList).toString())
-                        spokenID = listOf(arrayOf(spokenLanguageDataList).toString())
+                spokenName = spokenLanguageDataList.map { it.languageName.toString() }
+                spokenID = spokenLanguageDataList.map { it.languageId.toString() }
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until spokenLanguageDataList.size) {
-                            mStringList.add(
-//                            data_relationship[i].memberRelationshipId.toString() +
-                                spokenLanguageDataList[i].languageName.toString()
-                            )
-                        }
-
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until spokenLanguageDataList.size) {
-                            mStringListnew.add(
-                                spokenLanguageDataList[i].languageId.toString()
-                            )
-                        }
-
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-                            list.add(element.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                spokenName =
-                                    list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-                            listnew.add(element.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                spokenID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-                        SearchSpinner(spokenName.toTypedArray(), edit_spoken_language)
-
-                    } else {
-                        Functions.displayMessage(
-                            this@AddMemberForthActivity, response.body()?.message
-                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberForthActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
+                SearchSpinner(spokenName.toTypedArray(), edit_spoken_language)
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberForthActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
-
-            override fun onFailure(call: Call<Get_Language_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberForthActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
     /*OriginatingState API*/
-    private fun OriginatingState() {
-        val pd = CustomProgressBar(this@AddMemberForthActivity)
-        pd.show()
-        val call: Call<Get_Indianstates_Response> =
-            MyHssApplication.instance!!.api.get_indianstates()
-        call.enqueue(object : Callback<Get_Indianstates_Response> {
-            override fun onResponse(
-                call: Call<Get_Indianstates_Response>, response: Response<Get_Indianstates_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
+    private suspend fun OriginatingState() {
+        try {
+            val response = MyHssApplication.instance?.api?.getIndianStates()
+            if (response?.status == true) {
+                stateDataList = response.data ?: emptyList()
 
-                        stateDataList = ArrayList<Datum_Get_Indianstates>()
-                        stateDataList = response.body()!!.data!!
-                        originName = listOf(arrayOf(stateDataList).toString())
-                        originID = listOf(arrayOf(stateDataList).toString())
+                originName = stateDataList.map { it.stateName.toString() }
+                originID = stateDataList.map { it.indianStateListId.toString() }
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until stateDataList.size) {
-                            mStringList.add(
-//                            data_relationship[i].memberRelationshipId.toString() +
-                                stateDataList[i].stateName.toString()
-                            )
-                        }
-
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until stateDataList.size) {
-                            mStringListnew.add(
-                                stateDataList[i].indianStateListId.toString()
-                            )
-                        }
-
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringList.toArray()
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-                            list.add(element.toString())
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                originName =
-                                    list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-                            listnew.add(element.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                originID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-                        SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
-                    } else {
-                        Functions.displayMessage(
-                            this@AddMemberForthActivity, response.body()?.message
-                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberForthActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
+                SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberForthActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
-
-            override fun onFailure(call: Call<Get_Indianstates_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberForthActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
-    private fun firstAidInforApi() {
-        val pd = CustomProgressBar(this@AddMemberForthActivity)
-        pd.show()
-        val call: Call<FirstAidInfo> = MyHssApplication.instance!!.api.getFirstAidInfor()
-        call.enqueue(object : Callback<FirstAidInfo> {
-            override fun onResponse(
-                call: Call<FirstAidInfo>, response: Response<FirstAidInfo>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    DebugLog.e("Status : " + response.body()?.status.toString())
+    private suspend fun firstAidInforApi() {
+        try {
+            val response = MyHssApplication.instance?.api?.getFirstAidInfor()
+            if (response?.status == true) {
+                data_firstaidInfo = response.data ?: emptyList()
 
-                    if (response.body()?.status!!) {
-                        data_firstaidInfo = ArrayList<DataFirstAidInfo>()
-                        data_firstaidInfo = response.body()!!.data!!
-                        DebugLog.e("atheletsBeans " + data_firstaidInfo.toString())
-                        for (i in 1 until data_firstaidInfo.size) {
-                            DebugLog.e("First aid info " + data_firstaidInfo[i].name.toString())
-                        }
-                        firstAidInfoName = listOf(arrayOf(data_firstaidInfo).toString())
-                        firstAidInfoID = listOf(arrayOf(data_firstaidInfo).toString())
-
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until data_firstaidInfo.size) {
-                            mStringList.add(
-                                data_firstaidInfo[i].name.toString()
-                            )
-                        }
-
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_firstaidInfo.size) {
-                            mStringListnew.add(
-                                data_firstaidInfo[i].id.toString()
-                            )
-                        }
-
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringList.toArray()
-
-                        for (i in mStringArray.indices) {
-                            DebugLog.e("string is " + mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            DebugLog.e("mStringArraynew is " + mStringArraynew[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-                            DebugLog.e("LIST==> " + element.toString())
-                            list.add(element.toString())
-                            DebugLog.e("list==> " + list.toString())
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                firstAidInfoName =
-                                    list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-                            DebugLog.e("LIST==> " + element.toString())
-                            listnew.add(element.toString())
-                            DebugLog.e("list==>" + listnew.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                firstAidInfoID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        DebugLog.e("firstAidInfoName==> " + firstAidInfoName.toString())
-                        SearchSpinner(firstAidInfoName.toTypedArray(), edit_aid_type)
-
-
-                        if (intent.getStringExtra("TYPE_SELF") != "self") {
-                            if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra(
-                                    "TITLENAME"
-                                ) == "Profile"
-                            ) {
-                                setFirstAidInfo(
-                                    sessionManager.fetchQUALIFICATION_VALUE().toString()
-                                )
-                            }
-                        }
-
-
-                    } else {
-                        Functions.displayMessage(
-                            this@AddMemberForthActivity, response.body()?.message
-                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberForthActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
+                firstAidInfoName = data_firstaidInfo.map { it.name.toString() }
+                firstAidInfoID = data_firstaidInfo.map { it.id.toString() }
+                SearchSpinner(firstAidInfoName.toTypedArray(), edit_aid_type)
+                if (intent.getStringExtra("TYPE_SELF") != "self" && intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra(
+                        "TITLENAME"
+                    ) == "Profile"
+                ) {
+                    setFirstAidInfo(sessionManager.fetchQUALIFICATION_VALUE().toString())
                 }
-                pd.dismiss()
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberForthActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
-
-            override fun onFailure(call: Call<FirstAidInfo>, t: Throwable) {
-                Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberForthActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -1288,6 +1059,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                         val status = jsonObject.get("status")
                         val message = jsonObject.get("message")
                         if (status == true) {
+
                             when (sType) {
                                 "family" -> {
                                     val i = Intent(
@@ -1306,9 +1078,24 @@ class AddMemberForthActivity : AppCompatActivity() {
                                     finishAffinity()
                                 }
                             }
+
                         } else {
+                            var errorMsg = ""
+                            val errorObject = jsonObject.getJSONObject("error")
+                            // Iterate through the keys of the error object
+                            val keys = errorObject.keys()
+                            while (keys.hasNext()) {
+                                val key = keys.next() as String
+                                val value = errorObject.getString(key)
+                                if (errorMsg.isEmpty()) {
+                                    errorMsg = value
+                                } else {
+                                    errorMsg = errorMsg + "\n\n" + value
+                                }
+                            }
                             Functions.showAlertMessageWithOK(
-                                this@AddMemberForthActivity, "", message.toString()
+                                this@AddMemberForthActivity, "Error",
+                                errorMsg
                             )
                         }
                     }
@@ -1484,8 +1271,22 @@ class AddMemberForthActivity : AppCompatActivity() {
                             finishAffinity()
 
                         } else {
+                            var errorMsg = ""
+                            val errorObject = jsonObject.getJSONObject("error")
+                            // Iterate through the keys of the error object
+                            val keys = errorObject.keys()
+                            while (keys.hasNext()) {
+                                val key = keys.next() as String
+                                val value = errorObject.getString(key)
+                                if (errorMsg.isEmpty()) {
+                                    errorMsg = value
+                                } else {
+                                    errorMsg = errorMsg + "\n\n" + value
+                                }
+                            }
                             Functions.showAlertMessageWithOK(
-                                this@AddMemberForthActivity, "", message.toString()
+                                this@AddMemberForthActivity, "Error",
+                                errorMsg
                             )
                         }
                     }
@@ -1574,6 +1375,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                         this@AddMemberForthActivity, "File Upload Error",
                         "Please select file size less than 2MB.",
                     )
+                    edit_qualification_file.text = ""
                 } else {
                     mediaFileDoc = File(pdfPath)
                 }
@@ -1593,6 +1395,8 @@ class AddMemberForthActivity : AppCompatActivity() {
                     this@AddMemberForthActivity, "File Upload Error",
                     "Please select file size less than 2MB.",
                 )
+                edit_qualification_file.text = ""
+
             } else {
                 mediaFileDoc = pathA
                 Upload_file = pathA.toString()
