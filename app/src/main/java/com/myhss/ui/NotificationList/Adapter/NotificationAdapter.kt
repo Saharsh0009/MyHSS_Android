@@ -1,26 +1,40 @@
 package com.myhss.ui.SuchanaBoard.Adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.SharedPreferences
-import android.graphics.Typeface
+import android.content.Intent
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
+import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
+import com.myhss.ui.NotificationList.Model.Data
+import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Seen_Response
+import com.myhss.ui.SuchanaBoard.NotificationDetails
 import com.uk.myhss.R
+import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
-import java.util.*
+import okhttp3.MultipartBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
-class NotificationAdapter(val userList: List<String>, val tab_type: String) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
-
-    val suchna_discriptio = ArrayList<String>()
-
-    //this method is returning the view for each item in the list
+class NotificationAdapter(
+    private val notificationList: List<Data>,
+    private val tabType: String,
+    private val notificID: String,
+    private val memberID: String
+) :
+    RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.suchna_adapter, parent, false)
         return ViewHolder(v)
@@ -28,144 +42,146 @@ class NotificationAdapter(val userList: List<String>, val tab_type: String) : Re
 
     //this method is binding the data on the list
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-        suchna_discriptio.add("New membership application added successfully in Test Shakha.")
-        suchna_discriptio.add("Membership successfully updated.")
-        suchna_discriptio.add("One-Time Dakshina successfully done by user.")
-        suchna_discriptio.add("Added Sankhya successfully.")
-
-        holder.bindItems(userList[position], suchna_discriptio[position], tab_type) // listener
+        holder.bindItems(
+            notificationList[position],
+            tabType, notificID, memberID
+        )
     }
 
     //this method is giving the size of the list
     override fun getItemCount(): Int {
-        return 4
-//        return userList.size
+        return notificationList.size
     }
 
-    //the class is hodling the list view
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         private lateinit var sessionManager: SessionManager
-        private var eventsIsVisible = true
-        var b: Boolean = true
+//        private var eventsIsVisible = true
 
         @SuppressLint("SetTextI18n", "ResourceAsColor")
-        fun bindItems(my_family_DatumGurudakshina: String, suchna_discriptio: String, tab_type: String) { // listener: OnItemClickListener
-
+        fun bindItems(
+            noti_data: Data,
+            tab_type: String,
+            notificID: String,
+            memberID: String
+        ) {
             sessionManager = SessionManager(itemView.context)
-
-            val sharedPreferences = itemView.context.getSharedPreferences(
-                "production",
-                Context.MODE_PRIVATE
-            )
-
             val suchna_title = itemView.findViewById(R.id.suchna_title) as TextView
-            val suchna_discription  = itemView.findViewById(R.id.suchna_discription) as TextView
+            val suchna_time = itemView.findViewById(R.id.suchna_time) as TextView
+            val suchna_discription = itemView.findViewById(R.id.suchna_discription) as TextView
+            val suchna_discriptionnew =
+                itemView.findViewById(R.id.suchna_discriptionnew) as TextView
+            val suchna_adapter_view =
+                itemView.findViewById(R.id.suchna_adapter_view) as LinearLayout
+            val redLayout = itemView.findViewById(R.id.redLayout) as LinearLayout
 
-            val suchna_discriptionnew  = itemView.findViewById(R.id.suchna_discriptionnew) as TextView
+            redLayout.visibility = View.VISIBLE
+            suchna_title.text = noti_data.notification_title
+            suchna_time.text = UtilCommon.dateAndTimeformat(noti_data.created_at)
+            suchna_discription.text = noti_data.notific_type_name
+            suchna_discriptionnew.text = noti_data.notification_message
+            val notReadNoti = ContextCompat.getColor(itemView.context, R.color.darkfiroziColor)
 
-            val suchna_adapter_view  = itemView.findViewById(R.id.suchna_adapter_view) as LinearLayout
-            val redLayout  = itemView.findViewById(R.id.redLayout) as LinearLayout
-
-//            sessionManager.saveNOTIFICATION_READ(false)
-
-            /*if (sharedPreferences.getString("READ", "") != "") {
-                if (sharedPreferences.getString("READ", "true") == "") {
-                    suchna_discription.typeface = Typeface.DEFAULT_BOLD
-                } else {
-                    suchna_discription.typeface = Typeface.DEFAULT
-                }
-            }*/
-
-            /*if (b == true) {
-                suchna_discription.typeface = Typeface.DEFAULT_BOLD
-            } else{
-                suchna_discription.typeface = Typeface.DEFAULT
-            }*/
-//            if (sessionManager.fetchNOTIFICATION_READ() != "") {
-//                if (sessionManager.fetchNOTIFICATION_READ() == "1") {
-//                    suchna_discription.typeface = Typeface.DEFAULT_BOLD
-//                } /*else if (sessionManager.fetchNOTIFICATION_READ() == true) {
-//                suchna_discription.typeface = Typeface.DEFAULT
-//            }*/
-//            }
-
-            suchna_title.text = my_family_DatumGurudakshina.capitalize(Locale.ROOT)
-            /*if (my_family_DatumGurudakshina.middleName != "") {
-                suchna_title.text = my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.middleName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
+//            DebugLog.e("IS READ : " + noti_data.is_read)
+            if (noti_data.is_read != "1") {
+                suchna_discriptionnew.setTextColor(notReadNoti)
             } else {
-                suchna_title.text = my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
-            }*/
-            suchna_discription.text = suchna_discriptio
-//                "Kotlin is a cross-platform, statically typed, general-purpose programming language with type inference. Kotlin is designed to interoperate fully with Java, and the JVM version of Kotlin's standard library depends on the Java Class Library, but type inference allows its syntax to be more concise"
-
-            suchna_discriptionnew.text = suchna_discriptio
-//                "Kotlin is a cross-platform, statically typed, general-purpose programming language with type inference. Kotlin is designed to interoperate fully with Java, and the JVM version of Kotlin's standard library depends on the Java Class Library, but type inference allows its syntax to be more concise. Kotlin is a cross-platform, statically typed, general-purpose programming language with type inference. Kotlin is designed to interoperate fully with Java, and the JVM version of Kotlin's standard library depends on the Java Class Library, but type inference allows its syntax to be more concise."
-
-            suchna_adapter_view.setOnClickListener {
-//                Toast.makeText(itemView.context, "Suchana", Toast.LENGTH_SHORT).show()
-                /*val i = Intent(itemView.context, SuchanaDetails::class.java)
-                i.putExtra("Suchana_Type", tab_type)
-                i.putExtra("Suchana_Title", suchna_title.text.toString())
-                i.putExtra("Suchana_Discription", suchna_discription.text.toString())
-                itemView.context.startActivity(i)*/
-
-                if (eventsIsVisible) {
-//                    sessionManager.saveNOTIFICATION_READ("1")
-                    suchna_discription.visibility = View.GONE
-                    redLayout.visibility = View.VISIBLE
-//                    slideUp(redLayout)
-                    eventsIsVisible = false
-//                    b = true
-
-                    sharedPreferences.edit().apply {
-                        putString("READ", "true")
-                    }.apply()
-
-                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                    editor.putString("READ", "true")
-                    editor.apply()
-                    editor.commit()
+                suchna_discriptionnew.setTextColor(Color.BLACK)
+            }
+            suchna_adapter_view.setOnClickListener(DebouncedClickListener {
+                if (noti_data.is_read != "1") {
+                    if (Functions.isConnectingToInternet(itemView.context)) {
+                        callSeenNotificationApi(noti_data, suchna_discriptionnew, tab_type)
+                    } else {
+                        Toast.makeText(
+                            itemView.context,
+                            itemView.context.resources.getString(R.string.no_connection),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 } else {
-//                    sessionManager.saveNOTIFICATION_READ("0")
-                    suchna_discription.visibility = View.VISIBLE
-                    redLayout.visibility = View.GONE
-//                    slideDown(redLayout)
-                    eventsIsVisible = true
+                    val i = Intent(itemView.context, NotificationDetails::class.java)
+                    i.putExtra("Suchana_Type", tab_type)
+                    i.putExtra("Suchana_Title", noti_data.notification_title)
+                    i.putExtra("Suchana_Discription", noti_data.notific_type_name)
+                    i.putExtra("Suchana_DiscriptionNew", noti_data.notification_message)
+                    i.putExtra("Suchana_time", noti_data.created_at)
+                    i.putExtra("recipientId", noti_data.recipientId)
+                    itemView.context.startActivity(i)
+                }
+            })
+
+
+            DebugLog.e("notificID : $notificID")
+            DebugLog.e("noti_data.recipientId : ${noti_data.recipientId}")
+
+            if (notificID != "0") {
+                if (notificID == noti_data.notify_id && memberID == noti_data.member_id) {
+                    suchna_discriptionnew.setTextColor(Color.BLACK)
+                    noti_data.is_read = "1"
+
+                    val i = Intent(itemView.context, NotificationDetails::class.java)
+                    i.putExtra("Suchana_Type", tab_type)
+                    i.putExtra("Suchana_Title", noti_data.notification_title)
+                    i.putExtra("Suchana_Discription", noti_data.notific_type_name)
+                    i.putExtra("Suchana_DiscriptionNew", noti_data.notification_message)
+                    i.putExtra("Suchana_time", noti_data.created_at)
+                    i.putExtra("recipientId", noti_data.recipientId)
+                    itemView.context.startActivity(i)
                 }
             }
         }
 
-        // slide the view from below itself to the current position
-        fun slideUp(view: View) {
-            view.visibility = View.VISIBLE
-            val animate = TranslateAnimation(
-                0F,  // fromXDelta
-                0F,  // toXDelta
-                view.height.toFloat(),  // fromYDelta
-                0F
-            ) // toYDelta
-            animate.duration = 500
-            animate.fillAfter = true
-            view.startAnimation(animate)
-        }
+        private fun callSeenNotificationApi(
+            noti_data: Data,
+            suchna_discriptionnew: TextView,
+            tab_type: String
+        ) {
+            val pd = CustomProgressBar(itemView.context)
+            pd.show()
+            val builderData: MultipartBody.Builder =
+                MultipartBody.Builder().setType(MultipartBody.FORM)
+            builderData.addFormDataPart("recipient_id", noti_data.recipientId)
+            val requestBody: MultipartBody = builderData.build()
+            val call: Call<Get_Suchana_Seen_Response> =
+                MyHssApplication.instance!!.api.postSeenNotification(requestBody)
+            call.enqueue(object : Callback<Get_Suchana_Seen_Response> {
+                override fun onResponse(
+                    call: Call<Get_Suchana_Seen_Response>,
+                    response: Response<Get_Suchana_Seen_Response>
+                ) {
+                    if (response.code() == 200 && response.body() != null) {
+//                        DebugLog.e("status : " + response.body()?.status.toString())
+                        if (response.body()?.status!!) {
+                            val readNoti =
+                                ContextCompat.getColor(itemView.context, R.color.blackColor)
+                            noti_data.is_read = "1"
+                            suchna_discriptionnew.setTextColor(readNoti)
 
-        // slide the view from its current position to below itself
-        fun slideDown(view: View) {
-            view.visibility = View.GONE
-            val animate = TranslateAnimation(
-                0F,  // fromXDelta
-                0F,  // toXDelta
-                0F,  // fromYDelta
-                view.height.toFloat()
-            ) // toYDelta
-            animate.duration = 500
-            animate.fillAfter = true
-            view.startAnimation(animate)
+                            val i = Intent(itemView.context, NotificationDetails::class.java)
+                            i.putExtra("Suchana_Type", tab_type)
+                            i.putExtra("Suchana_Title", noti_data.notification_title)
+                            i.putExtra("Suchana_Discription", noti_data.notific_type_name)
+                            i.putExtra("Suchana_DiscriptionNew", noti_data.notification_message)
+                            i.putExtra("Suchana_time", noti_data.created_at)
+                            i.putExtra("recipientId", noti_data.recipientId)
+                            itemView.context.startActivity(i)
+                        } else {
+                            Functions.displayMessage(itemView.context, response.body()?.message)
+                        }
+                    } else {
+                        Functions.showAlertMessageWithOK(
+                            itemView.context, "Message",
+                            itemView.context.getString(R.string.some_thing_wrong),
+                        )
+                    }
+                    pd.dismiss()
+                }
+
+                override fun onFailure(call: Call<Get_Suchana_Seen_Response>, t: Throwable) {
+                    Toast.makeText(itemView.context, t.message, Toast.LENGTH_LONG).show()
+                    pd.dismiss()
+                }
+            })
         }
     }
 }

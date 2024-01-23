@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.KeyguardManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
@@ -48,6 +49,9 @@ public class FingerPrintPopUp extends Activity {
     private Cipher cipher;
     private FingerprintHandler helper;
 
+    private String receivedNotiData = "no";
+    private String receivedNotiID = "0";
+
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,14 +64,21 @@ public class FingerPrintPopUp extends Activity {
         Window window = getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.gravity = Gravity.CENTER;
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
         findViewById(R.id.txtCancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+
+        Intent receivedIntent = getIntent();
+        if (receivedIntent != null && receivedIntent.hasExtra("notification")) {
+            receivedNotiData = receivedIntent.getStringExtra("notification").toString();
+            receivedNotiID = receivedIntent.getStringExtra("notification_id").toString();
+        }
+
+
     }
 
     @Override
@@ -93,9 +104,8 @@ public class FingerPrintPopUp extends Activity {
                 textView.setText(null);
                 generateKey();
                 if (cipherInit()) {
-                    FingerprintManager.CryptoObject cryptoObject =
-                            new FingerprintManager.CryptoObject(cipher);
-                    helper = new FingerprintHandler(this);
+                    FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
+                    helper = new FingerprintHandler(this, receivedNotiData, receivedNotiID);
                     helper.startAuth(fingerprintManager, cryptoObject);
                 }
             }
@@ -146,8 +156,8 @@ public class FingerPrintPopUp extends Activity {
                     .build());
             keyGenerator.generateKey();
         } catch (NoSuchAlgorithmException |
-                InvalidAlgorithmParameterException
-                | CertificateException | IOException e) {
+                 InvalidAlgorithmParameterException
+                 | CertificateException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -170,7 +180,7 @@ public class FingerPrintPopUp extends Activity {
         } catch (KeyPermanentlyInvalidatedException e) {
             return false;
         } catch (KeyStoreException | CertificateException | UnrecoverableKeyException
-                | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+                 | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new RuntimeException("Failed to init Cipher", e);
         }
     }

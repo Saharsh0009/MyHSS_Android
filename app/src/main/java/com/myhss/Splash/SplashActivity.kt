@@ -33,7 +33,9 @@ import com.myhss.MyApplication
 import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Splash.Model.Biometric.Latest_Update.latest_update_response
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.appConstants.AppParam
 import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -55,6 +57,8 @@ class SplashActivity : AppCompatActivity() {
     val STATUS_INSTALLED = "installed"
     val STATUS_INSTANT = "instant"
     val ANALYTICS_USER_PROP = "app_type"
+    private var receivedNotiData = "no"
+    private var receivedNotiID = "0"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +113,15 @@ class SplashActivity : AppCompatActivity() {
                 "Allow_biometric", ""
             ).toString()
         )
+
+        val receivedIntent = intent
+        if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
+            receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
+            receivedNotiID = receivedIntent.getStringExtra(AppParam.NOTIFIC_ID).toString()
+//            DebugLog.e("Notification Value : $receivedNotiData")
+        }
+
+
         Handler().postDelayed({
             Log.e("TAG-SharedPref", "" + sharedPreferences.getString("USERID", ""))
             if (Functions.isConnectingToInternet(this@SplashActivity)) {
@@ -150,6 +163,17 @@ class SplashActivity : AppCompatActivity() {
                                                     Passcode_Activity::class.java
                                                 )
                                                 i.putExtra("CHANGE_BIOMETRIC", "")
+                                                if (receivedNotiData != "no") {
+                                                    i.putExtra(
+                                                        AppParam.NOTIFIC_KEY,
+                                                        receivedNotiData
+                                                    )
+                                                    i.putExtra(
+                                                        AppParam.NOTIFIC_ID,
+                                                        receivedNotiID
+                                                    )
+                                                }
+
                                                 startActivity(i)
                                                 finish()
                                             } else {
@@ -178,7 +202,7 @@ class SplashActivity : AppCompatActivity() {
                                 val alertDialog: AlertDialog.Builder =
                                     AlertDialog.Builder(this@SplashActivity)
                                 alertDialog.setTitle(getString(R.string.app_name))
-                                alertDialog.setMessage("Update available app is needed to force update")
+                                alertDialog.setMessage("Update available, app is needed to force update")
                                 alertDialog.setPositiveButton(
                                     "yes"
                                 ) { _, _ ->
@@ -187,41 +211,9 @@ class SplashActivity : AppCompatActivity() {
                                 alertDialog.setNegativeButton(
                                     "No"
                                 ) { _, _ ->
-                                    Handler().postDelayed({
-                                        if (sharedPreferences.getString("USERID", "") != "") {
-                                            try {
-                                                if (sharedPreferences.getString(
-                                                        "MEMBERID", ""
-                                                    ) != ""
-                                                ) {
-                                                    val i = Intent(
-                                                        this@SplashActivity,
-                                                        Passcode_Activity::class.java
-                                                    )
-                                                    i.putExtra("CHANGE_BIOMETRIC", "")
-                                                    startActivity(i)
-                                                    finish()
-                                                } else {
-                                                    startActivity(
-                                                        Intent(
-                                                            this@SplashActivity,
-                                                            WelcomeActivity::class.java
-                                                        )
-                                                    )
-                                                    finish()
-                                                }
-                                            } catch (e: Exception) {
-                                                e.printStackTrace()
-                                            }
-                                        } else {
-                                            startActivity(
-                                                Intent(
-                                                    this@SplashActivity, LoginActivity::class.java
-                                                )
-                                            )
-                                            finish()
-                                        }
-                                    }, 500)
+
+                                    finishAffinity()
+
                                 }
                                 val alert: AlertDialog = alertDialog.create()
                                 alert.setCanceledOnTouchOutside(false)

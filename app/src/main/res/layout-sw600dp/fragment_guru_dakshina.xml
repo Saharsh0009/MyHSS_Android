@@ -5,47 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/search_fields_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding10"
-        android:layout_marginTop="@dimen/padding10"
-        android:layout_marginEnd="@dimen/padding10"
-        android:background="@drawable/edittext_round"
-        android:padding="@dimen/padding5"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="@dimen/padding20"
-            android:layout_height="@dimen/padding20"
-            android:layout_centerVertical="true"
-            android:src="@drawable/search_icon"
-            app:tint="@color/grayColorColor" />
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/guru_dakshinasearch_fields"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/padding30"
-            android:background="@color/white"
-            android:hint="Search..."
-            android:imeOptions="actionDone"
-            android:padding="@dimen/padding10"
-            android:textColor="@color/black"
-            android:textColorHint="@color/grayColorColor" />
-
-    </RelativeLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/guru_dakshina_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/view_view"
-        android:layout_below="@+id/search_fields_layout"
-        android:visibility="gone" />
-
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart_guru"
         android:layout_width="350dp"

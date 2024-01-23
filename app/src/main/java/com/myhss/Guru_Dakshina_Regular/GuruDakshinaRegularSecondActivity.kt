@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -20,7 +21,9 @@ import com.uk.myhss.Main.Family_Member.Family_Member_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
+import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.Utils.SessionManager
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import retrofit2.Call
@@ -44,10 +47,10 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
     var FamilyName: List<String> = ArrayList<String>()
     var FamilyID: List<String> = ArrayList<String>()
 
-//    private lateinit var gift_aid_select_txt: SearchableSpinner
+    //    private lateinit var gift_aid_select_txt: SearchableSpinner
 //    private lateinit var gift_aid_select_view: RelativeLayout
-    var gift_aid_select_txt : Spinner ?= null
-    var how_often_like_to_donate_txt : Spinner ?= null
+    var gift_aid_select_txt: Spinner? = null
+    var how_often_like_to_donate_txt: Spinner? = null
 
     private var donating_dakshina: String = ""
     private var GIFTAID_ID: String = ""
@@ -68,6 +71,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
     private lateinit var donating_individual_family_no_txt: TextView
     private lateinit var donating_individual_family_yes_icon: ImageView
     private lateinit var donating_individual_family_no_img: ImageView
+    private lateinit var edit_payment: ImageView
 
     private lateinit var donate_amount_txt: TextView
     private lateinit var edit_dateofbirth: TextView
@@ -77,6 +81,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
     private var day = 0
     private lateinit var calendar: Calendar
     val sdf: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    private var AMOUNT_PAID: String = ""
 
     @SuppressLint("NewApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +93,10 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("RegularGuruDakshinaStep2VC")
-        sessionManager.firebaseAnalytics.setUserProperty("RegularGuruDakshinaStep2VC", "GuruDakshinaRegularSecondActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "RegularGuruDakshinaStep2VC",
+            "GuruDakshinaRegularSecondActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -114,10 +122,11 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
 //        gift_aid_select_view = findViewById(R.id.gift_aid_select_view)
 
         tooltip_view = findViewById(R.id.tooltip_view)
+        edit_payment = findViewById(R.id.edit_payment)
 
         if (intent.getStringExtra("Amount") != "") {
-            donate_amount_txt.text = /*getString(R.string.donate_amount) +
-                    " "+ */getString(R.string.pound_icon) + " " + intent.getStringExtra("Amount")
+            AMOUNT_PAID = intent.getStringExtra("Amount")!!
+            donate_amount_txt.text = getString(R.string.pound_icon) + " " + AMOUNT_PAID
         }
 
 //        gift_aid_select_txt.onItemSelectedListener = mOnItemSelectedListener_gift_aid
@@ -125,13 +134,19 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
         gift_aid_select_txt = findViewById(R.id.gift_aid_select_txt)
         how_often_like_to_donate_txt = findViewById(R.id.how_often_like_to_donate_txt)
 
-        val spinnerArrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, gift_aid)
+        val spinnerArrayAdapter =
+            ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, gift_aid)
         //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         gift_aid_select_txt!!.adapter = spinnerArrayAdapter
 
         gift_aid_select_txt!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
                 val selectedItem = parent.getItemAtPosition(position).toString()
                 Log.d("selectedItem", selectedItem)
                 if (position == 0) {
@@ -150,35 +165,42 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
             }
         }
 
-        val spinnerArrayAdapternew = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, donate_aid)
+        val spinnerArrayAdapternew =
+            ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, donate_aid)
         //selected item will look like a spinner set from XML
         spinnerArrayAdapternew.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         how_often_like_to_donate_txt!!.adapter = spinnerArrayAdapternew
 
-        how_often_like_to_donate_txt!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                Log.d("selectedItem", selectedItem)
-                DONATE_ID = selectedItem
-                /*if (position == 0) {
-                    DONATE_ID = "yes"
-                } else {
-                    DONATE_ID = "no"
-                }*/
-                Log.d("DONATE_ID", DONATE_ID)
-                if (selectedItem == "Add new category") {
-                    // do your stuff
+        how_often_like_to_donate_txt!!.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedItem = parent.getItemAtPosition(position).toString()
+                    Log.d("selectedItem", selectedItem)
+                    DONATE_ID = selectedItem
+                    /*if (position == 0) {
+                        DONATE_ID = "yes"
+                    } else {
+                        DONATE_ID = "no"
+                    }*/
+                    Log.d("DONATE_ID", DONATE_ID)
+                    if (selectedItem == "Add new category") {
+                        // do your stuff
+                    }
+                } // to close the onItemSelected
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+
                 }
-            } // to close the onItemSelected
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
             }
-        }
 
-        edit_dateofbirth.setOnClickListener {
+        edit_dateofbirth.setOnClickListener(DebouncedClickListener {
             calendar = Calendar.getInstance()
-            calendar.add(Calendar.YEAR, +1)
+//            calendar.add(Calendar.YEAR, +1)
             year = calendar.get(Calendar.YEAR)
             month = calendar.get(Calendar.MONTH)
             day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -213,7 +235,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
 //            dialog.datePicker.minDate = calendar.set(day, month, year)
 //            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
-        }
+        })
 
         /*For Selection Dasgina drop down*/
         /*SearchSpinner(gift_aid, gift_aid_select_txt)
@@ -222,7 +244,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
             SearchSpinner(gift_aid, gift_aid_select_txt)
         }*/
 
-        donating_individual_family_yes_view.setOnClickListener {
+        donating_individual_family_yes_view.setOnClickListener(DebouncedClickListener {
             donating_individual_family_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             donating_individual_family_no_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -237,9 +259,9 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
 //            medical_information_details_view.visibility = View.VISIBLE
 
             donating_dakshina = "Individual"
-        }
+        })
 
-        donating_individual_family_no_view.setOnClickListener {
+        donating_individual_family_no_view.setOnClickListener(DebouncedClickListener {
             donating_individual_family_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
             donating_individual_family_yes_view.setBackgroundResource(R.drawable.edittext_round)
 
@@ -266,11 +288,12 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
+        })
 
-        tooltip_view.setOnClickListener {
-            MESSAGE = "Gift Aid Declaration: I want the above charity to treat the entered sum as a Gift Aid donation. \n\nI have paid sufficient UK Income Tax and/or capital gains tax to cover all my charitable donations equal to the tax that the charity will claim from HMRC and I am aware that other taxes such as council tax and VAT do not qualify. \n\n\nI understand that I am liable for the difference if the income tax or the capital gains tax payable by me for the tax year, is less than the amount of tax that all the charities and CASCs that I donate to will reclaim on my gifts made or deemed to be made in that year."
-            depositDialog(MESSAGE)
+        tooltip_view.setOnClickListener(DebouncedClickListener {
+            MESSAGE =
+                "Gift Aid Declaration: I want the above charity to treat the entered sum as a Gift Aid donation. \n\nI have paid sufficient UK Income Tax and/or capital gains tax to cover all my charitable donations equal to the tax that the charity will claim from HMRC and I am aware that other taxes such as council tax and VAT do not qualify. \n\n\nI understand that I am liable for the difference if the income tax or the capital gains tax payable by me for the tax year, is less than the amount of tax that all the charities and CASCs that I donate to will reclaim on my gifts made or deemed to be made in that year."
+            depositDialogTooltip(MESSAGE)
             /*Tooltip.on(tooltip_view)
                 .text(R.string.ageTipText)
 //                .iconStart(android.R.drawable.ic_dialog_info)
@@ -286,31 +309,39 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                 .position(Position.BOTTOM)
                 .clickToHide(true)
                 .show()*/
-        }
+        })
 
         back_layout = findViewById(R.id.back_layout)
         next_layout = findViewById(R.id.next_layout)
         rootLayout = findViewById(R.id.rootLayout)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (GIFTAID_ID == "") {
                 Snackbar.make(rootLayout, "Please select gift aid", Snackbar.LENGTH_SHORT).show()
             } else if (edit_dateofbirth.text.toString() == "") {
-                Snackbar.make(rootLayout, "Please select start payment date", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(rootLayout, "Please select start payment date", Snackbar.LENGTH_SHORT)
+                    .show()
             } else if (donating_dakshina == "") {
-                Snackbar.make(rootLayout, "Please donate dakshina", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    rootLayout,
+                    "Please select the field donating dakshina as Individual or as Family",
+                    Snackbar.LENGTH_SHORT
+                ).show()
             } else if (intent.getStringExtra("Amount") != "") {
                 val i =
-                    Intent(this@GuruDakshinaRegularSecondActivity, GuruDakshinaRegularThirdActivity::class.java)
-                i.putExtra("Amount", intent.getStringExtra("Amount"))
+                    Intent(
+                        this@GuruDakshinaRegularSecondActivity,
+                        GuruDakshinaRegularThirdActivity::class.java
+                    )
+                i.putExtra("Amount", AMOUNT_PAID)
                 i.putExtra("GIFTAID_ID", GIFTAID_ID)
                 i.putExtra("DONATE_ID", DONATE_ID)
 //                i.putExtra("AGE", AGE)
@@ -318,7 +349,11 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                 i.putExtra("donating_dakshina", donating_dakshina)
                 startActivity(i)
             }
-        }
+        })
+
+        edit_payment.setOnClickListener(DebouncedClickListener {
+            depositDialog()
+        })
     }
 
     private fun SearchSpinner(
@@ -353,7 +388,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
         }
     }
 
-    fun depositDialog(message: String) {
+    fun depositDialogTooltip(message: String) {
         // Deposit Dialog
         if (dialog == null) {
             dialog = Dialog(this, R.style.StyleCommonDialog)
@@ -367,13 +402,53 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
 
         tvTitle.text = message
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             dialog?.dismiss()
+        })
+    }
+
+    fun depositDialog() {
+        // Deposit Dialog
+        if (dialog == null) {
+            dialog = Dialog(this, R.style.StyleCommonDialog)
         }
+        dialog?.setContentView(R.layout.edit_dialog_diposit_money)
+        dialog?.setCanceledOnTouchOutside(true)
+        dialog?.show()
+
+        val edit_amount = dialog!!.findViewById(R.id.edit_amount) as TextView
+        val btnOk = dialog!!.findViewById(R.id.btnOk) as TextView
+
+        if (intent.getStringExtra("Amount") != "") {
+            edit_amount.text = AMOUNT_PAID // intent.getStringExtra("Amount")
+        }
+
+        btnOk.setOnClickListener(DebouncedClickListener {
+            if (edit_amount.text.toString().isNotEmpty()) {
+                edit_amount.filters = arrayOf<InputFilter>(
+                    InputFilterMinMax(
+                        "1",
+                        "10000"
+                    )
+                )
+                if (Integer.valueOf(edit_amount.text.toString()) > 0 && Integer.valueOf(edit_amount.text.toString()) <= 1000) {
+                    donate_amount_txt.text =
+                        getString(R.string.pound_icon) + " " + edit_amount.text.toString()
+                    AMOUNT_PAID = edit_amount.text.toString()
+                    dialog?.dismiss()
+                } else {
+                    Snackbar.make(edit_amount, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
+                        .show()
+                }
+
+            } else {
+                Snackbar.make(edit_amount, "Please enter amount", Snackbar.LENGTH_SHORT).show()
+            }
+        })
     }
 
     /*FamilyList API*/
-    private fun myFamilyList(user_id:String, member_id: String) {
+    private fun myFamilyList(user_id: String, member_id: String) {
         val pd =
             CustomProgressBar(this@GuruDakshinaRegularSecondActivity)
         pd.show()
@@ -385,14 +460,15 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
                 response: Response<Family_Member_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                Log.d("status", response.body()?.status.toString())
-                if (response.body()?.status!!) {
+                    Log.d("status", response.body()?.status.toString())
+                    if (response.body()?.status!!) {
 
-                    if (response.body()!!.data!!.isEmpty()) {
+                        if (response.body()!!.data!!.isEmpty()) {
 
                             Functions.showAlertMessageWithOK(
-                                this@GuruDakshinaRegularSecondActivity, "Message",
-                                "You have not Active Family Members please contact your Shakha",
+                                this@GuruDakshinaRegularSecondActivity,
+                                getString(R.string.payment_error_title),
+                                getString(R.string.payment_error_message)
                             )
 
                             donating_individual_family_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)
@@ -420,100 +496,101 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
 
                         } else {
 
-                        var data_relationship: List<Datum_Family_Member> =
-                            ArrayList<Datum_Family_Member>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
+                            var data_relationship: List<Datum_Family_Member> =
+                                ArrayList<Datum_Family_Member>()
+                            data_relationship = response.body()!!.data!!
+                            Log.d("atheletsBeans", data_relationship.toString())
 
-                        FamilyName = listOf(arrayOf(data_relationship).toString())
-                        FamilyID = listOf(arrayOf(data_relationship).toString())
+                            FamilyName = listOf(arrayOf(data_relationship).toString())
+                            FamilyID = listOf(arrayOf(data_relationship).toString())
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringList.add(
-                                data_relationship[i].firstName.toString().capitalize(Locale.ROOT)
-                                        + " " + data_relationship[i].lastName.toString()
-                                    .capitalize(Locale.ROOT)
+                            val mStringList = ArrayList<String>()
+                            for (i in 0 until data_relationship.size) {
+                                mStringList.add(
+                                    data_relationship[i].firstName.toString()
+                                        .capitalize(Locale.ROOT)
+                                            + " " + data_relationship[i].lastName.toString()
+                                        .capitalize(Locale.ROOT)
 //                                    + " " + data_relationship[i].firstName.toString().capitalize(Locale.ROOT)
-                            )
-                        }
-
-                        var mStringArray = mStringList.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
-                            list.add(element.toString())
-                            Log.d("list==>", list.toString())
-
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                FamilyName = list
+                                )
                             }
-                        }
 
-                        if (dialog == null) {
-                            dialog = Dialog(
+                            var mStringArray = mStringList.toArray()
+
+                            for (i in mStringArray.indices) {
+                                Log.d("string is", mStringArray[i] as String)
+                            }
+
+                            mStringArray = mStringList.toArray(mStringArray)
+
+                            val list: ArrayList<String> = arrayListOf<String>()
+
+                            for (element in mStringArray) {
+                                Log.d("LIST==>", element.toString())
+                                list.add(element.toString())
+                                Log.d("list==>", list.toString())
+
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                    FamilyName = list
+                                }
+                            }
+
+                            if (dialog == null) {
+                                dialog = Dialog(
+                                    this@GuruDakshinaRegularSecondActivity,
+                                    R.style.StyleCommonDialog
+                                )
+                            }
+                            dialog?.setContentView(R.layout.dialog_family_list)
+                            dialog?.setCanceledOnTouchOutside(false)
+                            dialog?.show()
+
+                            val btnOk = dialog!!.findViewById(R.id.btnOk) as TextView
+                            val family_list_view =
+                                dialog!!.findViewById(R.id.family_list_view) as ListView
+
+                            val adapter = ArrayAdapter(
                                 this@GuruDakshinaRegularSecondActivity,
-                                R.style.StyleCommonDialog
+                                android.R.layout.simple_list_item_1,
+                                FamilyName
                             )
+                            family_list_view.adapter = adapter
+
+                            btnOk.setOnClickListener(DebouncedClickListener {
+                                dialog?.dismiss()
+                            })
                         }
-                        dialog?.setContentView(R.layout.dialog_family_list)
-                        dialog?.setCanceledOnTouchOutside(false)
-                        dialog?.show()
 
-                        val btnOk = dialog!!.findViewById(R.id.btnOk) as TextView
-                        val family_list_view =
-                            dialog!!.findViewById(R.id.family_list_view) as ListView
-
-                        val adapter = ArrayAdapter(
+                    } else {
+                        Functions.showAlertMessageWithOK(
                             this@GuruDakshinaRegularSecondActivity,
-                            android.R.layout.simple_list_item_1,
-                            FamilyName
+                            getString(R.string.payment_error_title),
+                            getString(R.string.payment_error_message)
                         )
-                        family_list_view.adapter = adapter
 
-                        btnOk.setOnClickListener {
-                            dialog?.dismiss()
+                        donating_individual_family_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)
+                        donating_individual_family_no_view.setBackgroundResource(R.drawable.edittext_round)
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            donating_individual_family_yes_txt.setTextColor(
+                                this@GuruDakshinaRegularSecondActivity.getColor(
+                                    R.color.primaryColor
+                                )
+                            )
                         }
-                    }
+                        donating_individual_family_yes_icon.setImageResource(R.drawable.righttikmark)
 
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@GuruDakshinaRegularSecondActivity,
-                        "Message",
-                        response.body()?.message + "\n\nYou have not Active Family Members please contact your Shakha"
-                    )
-
-                    donating_individual_family_yes_view.setBackgroundResource(R.drawable.edit_primery_color_round)
-                    donating_individual_family_no_view.setBackgroundResource(R.drawable.edittext_round)
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        donating_individual_family_yes_txt.setTextColor(
-                            this@GuruDakshinaRegularSecondActivity.getColor(
-                                R.color.primaryColor
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            donating_individual_family_no_txt.setTextColor(
+                                this@GuruDakshinaRegularSecondActivity.getColor(
+                                    R.color.grayColorColor
+                                )
                             )
-                        )
-                    }
-                    donating_individual_family_yes_icon.setImageResource(R.drawable.righttikmark)
+                        }
+                        donating_individual_family_no_img.setImageResource(R.drawable.righttikmark_gray_icon)
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        donating_individual_family_no_txt.setTextColor(
-                            this@GuruDakshinaRegularSecondActivity.getColor(
-                                R.color.grayColorColor
-                            )
-                        )
+                        donating_dakshina = "Individual"
                     }
-                    donating_individual_family_no_img.setImageResource(R.drawable.righttikmark_gray_icon)
-
-                    donating_dakshina = "Individual"
-                }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@GuruDakshinaRegularSecondActivity, "Message",
@@ -524,7 +601,8 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<Family_Member_Response>, t: Throwable) {
-                Toast.makeText(this@GuruDakshinaRegularSecondActivity, t.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(this@GuruDakshinaRegularSecondActivity, t.message, Toast.LENGTH_LONG)
+                    .show()
                 pd.dismiss()
             }
         })

@@ -11,12 +11,12 @@ import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,12 +37,12 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.Utils.SwipeleftToRightBack
 import com.myhss.Utils.UtilCommon
-import com.myhss.ui.Barchat.Model.BarchartDataModel
-import com.myhss.ui.Barchat.ViewBarchartActivity
+import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
+import com.myhss.ui.suryanamaskar.ViewBarchartActivity
 import com.uk.myhss.AddMember.AddMemberFirstActivity
 import com.uk.myhss.Guru_Dakshina_OneTime.GuruDakshinaOneTimeFirstActivity
 import com.uk.myhss.Guru_Dakshina_Regular.GuruDakshinaRegularFirstActivity
@@ -55,11 +55,9 @@ import com.uk.myhss.ui.linked_family.MemberShipActivity
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
 import com.uk.myhss.ui.my_family.Adapter.CustomAdapter
-import com.uk.myhss.ui.my_family.Adapter.GuruCustomAdapter
 import com.uk.myhss.ui.my_family.Model.Datum_guru_dakshina
 import com.uk.myhss.ui.my_family.Model.guru_dakshina_response
 import com.uk.myhss.ui.policies.SankhyaActivity
-import okhttp3.internal.notify
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -69,7 +67,6 @@ import kotlin.collections.ArrayList
 
 class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
     private lateinit var sessionManager: SessionManager
-    lateinit var total_count: TextView
     lateinit var home_layout: RelativeLayout
 
     lateinit var myfamily_layout: LinearLayout
@@ -127,23 +124,11 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var root_view: LinearLayout
     lateinit var shakha_layout: RelativeLayout/*End My Shakha*/
 
-    /*Start Guru Dakshina*/
-//    lateinit var guru_dakshina_list: RecyclerView
-
     lateinit var one_time_layout: LinearLayout
     lateinit var regular_layout: LinearLayout
     lateinit var guru_dakshina_layout: RelativeLayout
-//    lateinit var guru_dakshinasearch_fields: AppCompatEditText
-//    lateinit var USERID: String
 
     private var guru_dakshinaBeans: List<Datum_guru_dakshina> = ArrayList<Datum_guru_dakshina>()
-//    private var mAdapterGuruDakshina: GuruCustomAdapter? = null
-    /*End Guru Dakshina*/
-
-    private var loading = true
-    var pastVisiblesItems = 0
-    var visibleItemCount: Int = 0
-    var totalItemCount: Int = 0
     lateinit var chipGroup: ChipGroup
     lateinit var pieChart_guru: PieChart
 
@@ -166,11 +151,12 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         header_title = findViewById(R.id.header_title)
         header_title.text = intent.getStringExtra("headerName")
 //        DebugLog.e("Linked Family fragment")
-        back_arrow.setOnClickListener {
-            val i = Intent(this@LinkedFamilyFragment, HomeActivity::class.java)
-            startActivity(i)
-            finishAffinity()
-        }
+        back_arrow.setOnClickListener(
+            DebouncedClickListener {
+                val i = Intent(this@LinkedFamilyFragment, HomeActivity::class.java)
+                startActivity(i)
+                finishAffinity()
+            })
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         shakha_count_layout = findViewById(R.id.shakha_count_layout)
         shakha_count_txt = findViewById(R.id.shakha_count_txt)
@@ -188,13 +174,13 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         member_count = findViewById(R.id.member_count)
         pieChart_guru = findViewById(R.id.pieChart_guru)
         layout_pieChart_lable = findViewById(R.id.layout_pieChart_lable)
-        shakha_count_layout.setOnClickListener {
+        shakha_count_layout.setOnClickListener(DebouncedClickListener {
             val shakha_count = sessionManager.fetchSHAKHA_SANKHYA_AVG()!!
             val shakha_name = sessionManager.fetchSHAKHANAME()!!
             val nagar_name = sessionManager.fetchNAGARNAME()!!
             val vibhag_name = sessionManager.fetchVIBHAGNAME()!!
             ShakhaCountDialog(shakha_count, shakha_name, nagar_name, vibhag_name)
-        }
+        })
 
         /*My Family*/
         add_family_layout = findViewById(R.id.add_family_layout)
@@ -211,14 +197,16 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         DebugLog.d("Dashboard => " + intent.getStringExtra("DashBoard").toString())
         if (intent.getStringExtra("DashBoard") == "SHAKHAVIEW") {
             Handler().postDelayed({ myshakha_view.callOnClick() }, 100)
-            val end: Int = 100
-            val start: Int = 0
-            CallAPI(start, end, true)
+//            val end: Int = 100
+//            val start: Int = 0
+//            CallAPI(start, end, true)
         } else {
             val end: Int = 100
             val start: Int = 0
             CallAPI(start, end, false)
         }
+
+
         search_fields.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val end: Int = 100
@@ -256,12 +244,12 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
 
 //        add_family_layout.visibility = View.GONE
 
-        add_family_layout.setOnClickListener {
+        add_family_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@LinkedFamilyFragment, AddMemberFirstActivity::class.java)
             i.putExtra("TYPE_SELF", "family")
 //                i.putExtra("FAMILY", "FAMILY")
             startActivity(i)
-        }/*End*/
+        })/*End*/
 
         /*My Shakha*/
         membership_view = findViewById(R.id.membership_view)
@@ -274,111 +262,65 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
 
         rejected_member.visibility = View.VISIBLE
 
-        membership_view.setOnClickListener {
+        membership_view.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(root_view, "Member Ship", Snackbar.LENGTH_SHORT).show()
             val i = Intent(this@LinkedFamilyFragment, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "ALL_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        active_membership_view.setOnClickListener {
+        active_membership_view.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(root_view, "Active Member", Snackbar.LENGTH_SHORT).show()
             val i = Intent(this@LinkedFamilyFragment, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "ACTIVE_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        inactive_member.setOnClickListener {
+        inactive_member.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@LinkedFamilyFragment, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "INACTIVE_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        rejected_member.setOnClickListener {
+        rejected_member.setOnClickListener(DebouncedClickListener {
 //            Snackbar.make(root_view, "Rejected Member", Snackbar.LENGTH_SHORT).show()
             val i = Intent(this@LinkedFamilyFragment, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "REJECTED_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        sankhya_layout.setOnClickListener {
+        sankhya_layout.setOnClickListener(DebouncedClickListener {
             startActivity(Intent(this@LinkedFamilyFragment, SankhyaActivity::class.java))
-        }/*End My Shakha*/
+        })/*End My Shakha*/
 
         /*Guru Dakshina*/
         one_time_layout = findViewById(R.id.one_time_layout)
         regular_layout = findViewById(R.id.regular_layout)
         guru_dakshina_layout = findViewById(R.id.guru_dakshina_layout)
-//        guru_dakshinasearch_fields = findViewById(R.id.guru_dakshinasearch_fields)
-//        guru_dakshina_list = findViewById(R.id.guru_dakshina_list)
-//        mLayoutManager = LinearLayoutManager(this@LinkedFamilyFragment)
-//        guru_dakshina_list.layoutManager = mLayoutManager
 
-        /*guru_dakshina_list.setOnScrollListener(object : EndLessScroll(mLayoutManager) {
-            override fun loadMore(current_page: Int) {
-                var end:Int = 100
-                var start:Int = 0
+        if (UtilCommon.isUserUnder18(sessionManager.fetchDOB().toString())) {
+            one_time_layout.visibility = View.GONE
+            regular_layout.visibility = View.GONE
+        } else {
+            one_time_layout.visibility = View.VISIBLE
+            regular_layout.visibility = View.VISIBLE
+        }
 
-                start = end + 1
-                end += 10
-                Functions.printLog("start", start.toString())
-                Functions.printLog("end", end.toString())
-                CallGuruDakshinaAPI(start, end)
-            }
-        })*/
-
-//        guru_dakshinasearch_fields.addTextChangedListener(object : TextWatcher {
-//            override fun afterTextChanged(s: Editable?) {
-//
-//                val end: Int = 100
-//                val start: Int = 0
-//
-//                if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
-//                    USERID = sessionManager.fetchUserID()!!
-//                    Log.d("USERID", USERID)
-//                    val LENGTH: String = end.toString()
-//                    val START: String = start.toString()
-//                    val SEARCH: String = s.toString()
-//                    val CHAPTER_ID: String = sessionManager.fetchSHAKHAID()!!   // "227"
-//                    mySearchGuruDakshina(USERID, LENGTH, START, SEARCH, CHAPTER_ID)
-//                } else {
-//                    Toast.makeText(
-//                        this@LinkedFamilyFragment,
-//                        resources.getString(R.string.no_connection),
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//            }
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//
-//            }
-//
-//        })
-
-        one_time_layout.setOnClickListener {
-//            Snackbar.make(rootview, "One-Time Dakshina", Snackbar.LENGTH_SHORT).show()
+        one_time_layout.setOnClickListener(DebouncedClickListener {
             startActivity(
                 Intent(
                     this@LinkedFamilyFragment, GuruDakshinaOneTimeFirstActivity::class.java
                 )
             )
-//            val i = Intent(requireContext(), AddMemberFirstActivity::class.java)
-//            i.putExtra("TYPE_SELF", "family");
-//            startActivity(i)
-        }
+        })
 
-        regular_layout.setOnClickListener {
-//            Snackbar.make(rootview, "Regular Dakshina", Snackbar.LENGTH_SHORT).show()
+        regular_layout.setOnClickListener(DebouncedClickListener {
             startActivity(
                 Intent(
                     this@LinkedFamilyFragment, GuruDakshinaRegularFirstActivity::class.java
                 )
             )
-        }/*End*/
+        })/*End*/
 
         if (sessionManager.fetchSHAKHA_TAB() == "yes") {
             myshakha_layout.visibility = View.VISIBLE
@@ -391,9 +333,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         } else {
             myshakha_layout.visibility = View.GONE
         }
-
-//        shakha_count_layout.visibility = View.INVISIBLE
-
         myfamily_line.visibility = View.VISIBLE
         myshakha_line.visibility = View.INVISIBLE
         gurudakshina_line.visibility = View.INVISIBLE
@@ -418,7 +357,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         shakha_layout.visibility = View.INVISIBLE
         guru_dakshina_layout.visibility = View.INVISIBLE
 
-        myfamily_view.setOnClickListener {
+        myfamily_view.setOnClickListener(DebouncedClickListener {
             myfamily_line.visibility = View.VISIBLE
             myshakha_line.visibility = View.INVISIBLE
             gurudakshina_line.visibility = View.INVISIBLE
@@ -426,8 +365,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
             family_layout.visibility = View.VISIBLE
             shakha_layout.visibility = View.INVISIBLE
             guru_dakshina_layout.visibility = View.INVISIBLE
-
-//            shakha_count_layout.visibility = View.INVISIBLE
 
             myfamily_view.setTextColor(
                 ContextCompat.getColor(
@@ -444,12 +381,15 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                     this@LinkedFamilyFragment, R.color.grayColorColor
                 )
             )
+
             val end: Int = 100
             val start: Int = 0
             CallAPI(start, end, false)
-        }
 
-        myshakha_view.setOnClickListener {
+
+        })
+
+        myshakha_view.setOnClickListener(DebouncedClickListener {
             data_not_found_layout.visibility = View.GONE
 
             myfamily_line.visibility = View.INVISIBLE
@@ -478,13 +418,15 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 )
             )
 
+
             val end: Int = 100
             val start: Int = 0
             CallAPI(start, end, true)
 
-        }
 
-        gurudakshina_view.setOnClickListener {
+        })
+
+        gurudakshina_view.setOnClickListener(DebouncedClickListener {
             myfamily_line.visibility = View.INVISIBLE
             myshakha_line.visibility = View.INVISIBLE
             gurudakshina_line.visibility = View.VISIBLE
@@ -515,30 +457,10 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 val end: Int = 100
                 val start: Int = 0
 
-                CallGuruDakshinaAPI(start, end)/*if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
-                    USERID = sessionManager.fetchUserID()!!
-                    Log.d("USERID", USERID)
-                    val LENGTH: String = "10"
-                    val START: String = "0"
-                    val SEARCH: String = ""
-                    val CHAPTER_ID: String = sessionManager.fetchSHAKHAID()!!   // "227"
-                    myGuruDakshina(USERID, LENGTH, START, SEARCH, CHAPTER_ID)
-                } else {
-                    Toast.makeText(
-                        this@LinkedFamilyFragment,
-                        resources.getString(R.string.no_connection),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }*/
+                CallGuruDakshinaAPI(start, end)
             }
-        }
-
-//        SwipeleftToRightBack.enableSwipeBack(this)
-//        SwipeleftToRightBack.enableSwipeBackFullView(this)
+        })
     }
-//    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-//        return SwipeleftToRightBack.dispatchTouchEvent(this, event) || super.dispatchTouchEvent(event)
-//    }
 
     private fun CallGuruDakshinaAPI(start: Int, end: Int) {
         if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
@@ -573,7 +495,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 USERID = sessionManager.fetchUserID()!!
                 TAB = "family"
                 MEMBERID = sessionManager.fetchMEMBERID()!!
-                STATUS = "1"
+                STATUS = "all"
                 LENGTH = END.toString()
                 START = PAGE.toString()
                 SEARCH = ""
@@ -675,9 +597,9 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         my_nagar_name.text = nagar_name.capitalize(Locale.ROOT)
         my_vibhag_name.text = vibhag_name.capitalize(Locale.ROOT)
 
-        close_button.setOnClickListener {
+        close_button.setOnClickListener(DebouncedClickListener {
             dialog?.dismiss()
-        }
+        })
     }
 
     private fun myMemberList(
@@ -707,16 +629,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                         data_not_found_layout.visibility = View.GONE
                         try {
                             atheletsBeans = response.body()!!.data!!
-//                            Log.d("atheletsBeans", atheletsBeans.toString())
-//                            for (i in 1 until atheletsBeans.size) {
-//                                Log.d("firstName", atheletsBeans[i].firstName.toString())
-//                            }
-//                            Log.d("count=>", atheletsBeans.size.toString())
-
-//                            if (atheletsBeans.isNotEmpty()) {
-//                                member_count_layout.visibility = View.VISIBLE // nik
-//                                member_count.text = atheletsBeans.size.toString()
-//                            }
                             mAdapterGuru = CustomAdapter(atheletsBeans)
                             my_family_list.adapter = mAdapterGuru
                             mAdapterGuru!!.notifyDataSetChanged()
@@ -728,12 +640,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                         }
                     } else {
                         data_not_found_layout.visibility = View.VISIBLE
-//                        Functions.displayMessage(this@LinkedFamilyFragment,response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            this@LinkedFamilyFragment, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -761,8 +667,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         search: String,
         chapter_id: String
     ) {
-//        val pd = CustomProgressBar(context)
-//        pd.show()
         val call: Call<Get_Member_Listing_Response> =
             MyHssApplication.instance!!.api.get_member_listing(
                 user_id, tab, member_id, status, length, start, search, chapter_id
@@ -794,15 +698,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                             println("Family")
                         }
                     } else {
-//                        data_not_found_layout.visibility = View.VISIBLE
-                        Functions.displayMessage(
-                            this@LinkedFamilyFragment, response.body()?.message
-                        )
-//                        Functions.showAlertMessageWithOK(
-//                            this@LinkedFamilyFragment, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -810,12 +705,10 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                         getString(R.string.some_thing_wrong),
                     )
                 }
-//                pd.dismiss()
             }
 
             override fun onFailure(call: Call<Get_Member_Listing_Response>, t: Throwable) {
                 Toast.makeText(this@LinkedFamilyFragment, t.message, Toast.LENGTH_LONG).show()
-//                pd.dismiss()
             }
         })
     }
@@ -840,9 +733,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                         try {
                             guru_dakshinaBeans = response.body()!!.data!!
                             Log.d("guru_dakshinaBeans", guru_dakshinaBeans.toString())
-//                            mAdapterGuruDakshina = GuruCustomAdapter(guru_dakshinaBeans)
-//                            guru_dakshina_list.adapter = mAdapterGuruDakshina
-//                            mAdapterGuruDakshina!!.notifyDataSetChanged()
                             setPieChartForGuruDakshina(guru_dakshinaBeans)
 
                         } catch (e: ArithmeticException) {
@@ -852,12 +742,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                         }
                     } else {
                         data_not_found_layout.visibility = View.VISIBLE
-//                        Functions.displayMessage(this@LinkedFamilyFragment,response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            this@LinkedFamilyFragment, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -871,62 +755,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
             override fun onFailure(call: Call<guru_dakshina_response>, t: Throwable) {
                 Toast.makeText(this@LinkedFamilyFragment, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
-            }
-        })
-    }
-
-    private fun mySearchGuruDakshina(
-        user_id: String, length: String, start: String, search: String, chapter_id: String
-    ) {
-//        val pd = CustomProgressBar(context)
-//        pd.show()
-        val call: Call<guru_dakshina_response> = MyHssApplication.instance!!.api.get_guru_dakshina(
-            user_id, length, start, search, chapter_id
-        )
-        call.enqueue(object : Callback<guru_dakshina_response> {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onResponse(
-                call: Call<guru_dakshina_response>, response: Response<guru_dakshina_response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        data_not_found_layout.visibility = View.GONE
-                        try {
-                            guru_dakshinaBeans = response.body()!!.data!!
-                            Log.d("guru_dakshinaBeans", guru_dakshinaBeans.toString())
-//                            mAdapterGuruDakshina = GuruCustomAdapter(guru_dakshinaBeans)
-//                            guru_dakshina_list.adapter = mAdapterGuruDakshina
-//                            mAdapterGuruDakshina!!.notifyDataSetChanged()
-
-                        } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Family")
-                        }
-                    } else {
-//                        data_not_found_layout.visibility = View.VISIBLE
-                        Functions.displayMessage(
-                            this@LinkedFamilyFragment, response.body()?.message
-                        )
-//                        Functions.showAlertMessageWithOK(
-//                            this@LinkedFamilyFragment, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@LinkedFamilyFragment, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-//                pd.dismiss()
-            }
-
-            override fun onFailure(call: Call<guru_dakshina_response>, t: Throwable) {
-                Toast.makeText(this@LinkedFamilyFragment, t.message, Toast.LENGTH_LONG).show()
-//                pd.dismiss()
             }
         })
     }
@@ -1037,7 +865,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         chip.isCheckable = false
         chip.isClickable = true
         chip.setTextColor(Color.WHITE)
-        chip.setOnClickListener { openBarChart(label.toString()) }
+        chip.setOnClickListener(DebouncedClickListener { openBarChart(label.toString()) })
         return chip
     }
 
@@ -1059,6 +887,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 barchartDataModel.setValue_x(guru_dakshinaBeans[i].startDate)
                 barchartDataModel.setValue_y(guru_dakshinaBeans[i].paidAmount)
                 barchartDataModel.setValue_user(guru_dakshinaBeans[i].firstName)
+                barchartDataModel.setValue_user(guru_dakshinaBeans[i].id)
                 listData_guru.add(barchartDataModel)
                 listData_guruDakshina.add(guru_dakshinaBeans[i])
             }

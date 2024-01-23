@@ -18,10 +18,11 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/img_payment_step_one"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/font_size30"
                 android:layout_margin="@dimen/font_size15"
-                android:src="@drawable/payment_first_top" />
+                android:src="@drawable/ic_regular_gd_one" />
 
             <TextView
                 android:layout_width="wrap_content"

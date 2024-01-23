@@ -53,14 +53,15 @@
                         android:layout_width="@dimen/padding30"
                         android:layout_height="@dimen/padding30"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/email_img" />
+                        android:src="@drawable/user_img" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_userName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp">
+                        android:layout_marginBottom="10dp"
+                        app:errorIconDrawable="@null">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_username"
@@ -101,6 +102,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
+                            app:errorIconDrawable="@null"
                             app:passwordToggleEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -119,7 +121,7 @@
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
-                        
+
                     </RelativeLayout>
 
                 </LinearLayout>
@@ -226,7 +228,7 @@
         <TextView
             android:id="@+id/forgot_btn"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/padding50"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/padding20"
             android:fontFamily="@font/sourcesanspro_regular"

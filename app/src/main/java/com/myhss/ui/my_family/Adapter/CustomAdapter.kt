@@ -6,18 +6,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.view.*
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 
 import java.util.*
 
 
-class CustomAdapter(val userList: List<Get_Member_Listing_Datum>) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+class CustomAdapter(val userList: List<Get_Member_Listing_Datum>) :
+    RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
 
     lateinit var adapter_view: LinearLayout
     private val context: Context? = null
@@ -43,25 +46,28 @@ class CustomAdapter(val userList: List<Get_Member_Listing_Datum>) : RecyclerView
 
         @SuppressLint("SetTextI18n")
         fun bindItems(my_family_DatumGurudakshina: Get_Member_Listing_Datum) {
-            val active_inactive_view = itemView.findViewById(R.id.active_inactive_view) as RelativeLayout
+            val active_inactive_view =
+                itemView.findViewById(R.id.active_inactive_view) as RelativeLayout
             val family_name = itemView.findViewById(R.id.family_name) as TextView
-            val family_address  = itemView.findViewById(R.id.family_address) as TextView
-            val active_inactive_txt  = itemView.findViewById(R.id.active_inactive_txt) as TextView
-            val active_inactive  = itemView.findViewById(R.id.active_inactive) as TextView
-            val email_txt  = itemView.findViewById(R.id.email_txt) as TextView
-            val call_txt  = itemView.findViewById(R.id.call_txt) as TextView
-            val email_img  = itemView.findViewById(R.id.email_img) as ImageView
-            val call_img  = itemView.findViewById(R.id.call_img) as ImageView
-            val active_inactive_img  = itemView.findViewById(R.id.active_inactive_img) as ImageView
-            val righr_menu  = itemView.findViewById(R.id.righr_menu) as ImageView
-            val adapter_view  = itemView.findViewById(R.id.adapter_view) as LinearLayout
+            val family_address = itemView.findViewById(R.id.family_address) as TextView
+            val active_inactive_txt = itemView.findViewById(R.id.active_inactive_txt) as TextView
+            val active_inactive = itemView.findViewById(R.id.active_inactive) as TextView
+            val email_txt = itemView.findViewById(R.id.email_txt) as TextView
+            val call_txt = itemView.findViewById(R.id.call_txt) as TextView
+            val email_img = itemView.findViewById(R.id.email_img) as ImageView
+            val call_img = itemView.findViewById(R.id.call_img) as ImageView
+            val active_inactive_img = itemView.findViewById(R.id.active_inactive_img) as ImageView
+            val righr_menu = itemView.findViewById(R.id.righr_menu) as ImageView
+            val adapter_view = itemView.findViewById(R.id.adapter_view) as LinearLayout
             if (my_family_DatumGurudakshina.middleName != "") {
-                family_name.text = my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.middleName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
+                family_name.text =
+                    my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
+                            my_family_DatumGurudakshina.middleName!!.capitalize(Locale.ROOT) + " " +
+                            my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
             } else {
-                family_name.text = my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
-                        my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
+                family_name.text =
+                    my_family_DatumGurudakshina.firstName!!.capitalize(Locale.ROOT) + " " +
+                            my_family_DatumGurudakshina.lastName!!.capitalize(Locale.ROOT)
             }
             family_address.text = my_family_DatumGurudakshina.chapterName!!.capitalize(Locale.ROOT)
             email_txt.text = my_family_DatumGurudakshina.email!!
@@ -70,11 +76,21 @@ class CustomAdapter(val userList: List<Get_Member_Listing_Datum>) : RecyclerView
 
             if (my_family_DatumGurudakshina.status == "1") {
                 active_inactive_txt.text = itemView.context.getString(R.string.active_txt)
-                active_inactive_txt.setTextColor(ContextCompat.getColor(itemView.context, R.color.greenColor))
+                active_inactive_txt.setTextColor(
+                    ContextCompat.getColor(
+                        itemView.context,
+                        R.color.greenColor
+                    )
+                )
                 active_inactive_img.setImageResource(R.drawable.active_icon)
             } else {//if (my_family_DatumGurudakshina.status == "1") {
                 active_inactive_txt.text = itemView.context.getString(R.string.inactive_txt)
-                active_inactive_txt.setTextColor(ContextCompat.getColor(itemView.context, R.color.redColor))
+                active_inactive_txt.setTextColor(
+                    ContextCompat.getColor(
+                        itemView.context,
+                        R.color.redColor
+                    )
+                )
                 active_inactive_img.setImageResource(R.drawable.inactive_icon)
             } /*else {
                 active_inactive_txt.text = itemView.context.getString(R.string.pending_txt)
@@ -83,29 +99,33 @@ class CustomAdapter(val userList: List<Get_Member_Listing_Datum>) : RecyclerView
                 active_inactive_img.setColorFilter(ContextCompat.getColor(itemView.context, R.color.redColor), android.graphics.PorterDuff.Mode.MULTIPLY)
             }*/
 
-            if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.baal)) {
+            if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.baal), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.baal_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.baalika)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.baalika), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.baalika_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.male_shishu)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.male_shishu), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.male_shishu_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.female_shishu)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.female_shishu), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.female_shishu_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.kishore)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.kishore), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.kishor_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.kishori)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.kishori), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.kishori_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.tarun)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.tarun), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.tarun_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.taruni)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.taruni), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.taruni_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.yuva)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.yuva), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.yuva_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.yuvati)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.yuvati), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.yuvati_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.proudh)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.jyeshta), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.proudh_background)
-            } else if (my_family_DatumGurudakshina.ageCategories == itemView.context.getString(R.string.proudha)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.jyeshtaa), true)) {
+                active_inactive_view.setBackgroundResource(R.drawable.proudha_background)
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.proudh), true)) {
+                active_inactive_view.setBackgroundResource(R.drawable.proudh_background)
+            } else if (my_family_DatumGurudakshina.ageCategories.equals( itemView.context.getString(R.string.proudha), true)) {
                 active_inactive_view.setBackgroundResource(R.drawable.proudha_background)
             }
 
@@ -113,12 +133,12 @@ class CustomAdapter(val userList: List<Get_Member_Listing_Datum>) : RecyclerView
 
             righr_menu.visibility = View.GONE
 
-            righr_menu.setOnClickListener {
+            righr_menu.setOnClickListener(DebouncedClickListener {
                 val popup = PopupMenu(itemView.context, itemView, Gravity.RIGHT)
                 popup.inflate(R.menu.header_menu)
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     popup.gravity = Gravity.END
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         popup.setForceShowIcon(true)
                     }
                 }
@@ -127,6 +147,7 @@ class CustomAdapter(val userList: List<Get_Member_Listing_Datum>) : RecyclerView
                         R.id.edit -> {
                             Toast.makeText(itemView.context, item.title, Toast.LENGTH_SHORT).show()
                         }
+
                         R.id.delete -> {
                             Toast.makeText(itemView.context, item.title, Toast.LENGTH_SHORT).show()
                         }
@@ -134,20 +155,24 @@ class CustomAdapter(val userList: List<Get_Member_Listing_Datum>) : RecyclerView
                     true
                 })
                 popup.show()
-            }
+            })
 
-            adapter_view.setOnClickListener {
-//                Toast.makeText(itemView.context, "Adapter", Toast.LENGTH_SHORT).show()
-            }
+//            adapter_view.setOnClickListener {
+////                Toast.makeText(itemView.context, "Adapter", Toast.LENGTH_SHORT).show()
+//            }
 
-            call_img.setOnClickListener {
+            call_img.setOnClickListener(DebouncedClickListener {
                 val call: Uri = Uri.parse("tel:" + call_txt.text.toString())
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = call
-                if (ActivityCompat.checkSelfPermission(itemView.context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(
+                        itemView.context,
+                        Manifest.permission.CALL_PHONE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
                     itemView.context.startActivity(intent)
                 }
-            }
+            })
         }
     }
 }

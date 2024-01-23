@@ -20,7 +20,9 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.myhss.ui.ChangePassword.Model.ChangePasswordResponse
 import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.Main.HomeActivity
@@ -35,16 +37,17 @@ class ChangePasswordFragment : Fragment() {
 
     private lateinit var sessionManager: SessionManager
     private lateinit var rootLayout: RelativeLayout
-//    private lateinit var dashboard_layout: RelativeLayout
+
+    //    private lateinit var dashboard_layout: RelativeLayout
     private lateinit var edit_old_password: TextInputEditText
     private lateinit var edit_new_password: TextInputEditText
     private lateinit var edit_confirm_password: TextInputEditText
     private lateinit var change_btn: TextView
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_password, container, false)
         sessionManager = SessionManager(requireContext())
@@ -52,7 +55,10 @@ class ChangePasswordFragment : Fragment() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         sessionManager.firebaseAnalytics.setUserId("ChangePasswordVC")
-        sessionManager.firebaseAnalytics.setUserProperty("ChangePasswordVC", "ChangePasswordFragment")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "ChangePasswordVC",
+            "ChangePasswordFragment"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -66,37 +72,45 @@ class ChangePasswordFragment : Fragment() {
         edit_confirm_password = root.findViewById(R.id.edit_confirm_password)
         change_btn = root.findViewById(R.id.change_btn)
 
-        change_btn.setOnClickListener {
-            val reg = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!-_?&])(?=S+$).{8,}".toRegex()
+        change_btn.setOnClickListener(DebouncedClickListener {
             if (edit_old_password.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Old Password", Snackbar.LENGTH_SHORT).show()
-                edit_old_password.error = "old password required"
+//                edit_old_password.error = "old password required"
                 edit_old_password.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (edit_new_password.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter New Password", Snackbar.LENGTH_SHORT).show()
-                edit_new_password.error = "new password required"
+//                edit_new_password.error = "new password required"
                 edit_new_password.requestFocus()
-                return@setOnClickListener
-            } else if (edit_new_password.text.toString().length < 8 && reg.matches(edit_new_password.text.toString())) {
-                Snackbar.make(rootLayout, "Please Enter 8 characters.", Snackbar.LENGTH_SHORT)
+                return@DebouncedClickListener
+//            } else if (edit_new_password.text.toString().length < 8 && reg.matches(edit_new_password.text.toString())) {
+            } else if (!UtilCommon.isValidPassword(edit_new_password.text.toString())) {
+                Snackbar.make(rootLayout, getString(R.string.valid_password), Snackbar.LENGTH_SHORT)
                     .show()
-                edit_new_password.error = "Password 8 characters required"
+//                edit_new_password.error = "Password 8 characters required"
                 edit_new_password.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
             } else if (edit_confirm_password.text.toString().isEmpty()) {
-                Snackbar.make(rootLayout, "Please Enter Confirm Password", Snackbar.LENGTH_SHORT).show()
-                edit_confirm_password.error = "confirm password required"
-                edit_confirm_password.requestFocus()
-                return@setOnClickListener
-            } else if (edit_confirm_password.text.toString().length < 8 && reg.matches(edit_confirm_password.text.toString())) {
-                Snackbar.make(rootLayout, "Please Enter Confirm Password 8 characters.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(rootLayout, "Please Enter Confirm Password", Snackbar.LENGTH_SHORT)
                     .show()
-                edit_confirm_password.error = "Password 8 characters required"
+//                edit_confirm_password.error = "confirm password required"
                 edit_confirm_password.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
+            } else if (!UtilCommon.isValidPassword(edit_confirm_password.text.toString())) {
+                Snackbar.make(
+                    rootLayout,
+                    getString(R.string.valid_confirm_password),
+                    Snackbar.LENGTH_SHORT
+                ).show()
+//                edit_confirm_password.error = "Password 8 characters required"
+                edit_confirm_password.requestFocus()
+                return@DebouncedClickListener
             } else if (edit_new_password.text.toString() != edit_confirm_password.text.toString()) {
-                Snackbar.make(rootLayout, "Password Not matching", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    rootLayout,
+                    getString(R.string.confirm_both_pass),
+                    Snackbar.LENGTH_SHORT
+                ).show()
             } else {
 //                Snackbar.make(rootLayout, "Changed Password", Snackbar.LENGTH_SHORT).show()
                 if (Functions.isConnectingToInternet(requireContext())) {
@@ -109,18 +123,7 @@ class ChangePasswordFragment : Fragment() {
                     ).show()
                 }
             }
-        }
-
-        /*dashboard_layout.setOnClickListener {
-            startActivity(
-                Intent(
-                    requireContext(),
-                    HomeActivity::class.java
-                )
-            )
-            (context as Activity).finishAffinity()
-        }*/
-
+        })
         return root
     }
 
@@ -128,11 +131,16 @@ class ChangePasswordFragment : Fragment() {
         val pd = CustomProgressBar(requireContext())
         pd.show()
         val call: Call<ChangePasswordResponse> =
-            MyHssApplication.instance!!.api.userChangePassword(sessionManager.fetchUserID()!!,
-                edit_old_password.text.toString(), edit_new_password.text.toString())
+            MyHssApplication.instance!!.api.userChangePassword(
+                sessionManager.fetchUserID()!!,
+                edit_old_password.text.toString(), edit_new_password.text.toString()
+            )
         call.enqueue(object : Callback<ChangePasswordResponse> {
             @RequiresApi(Build.VERSION_CODES.M)
-            override fun onResponse(call: Call<ChangePasswordResponse>, response: Response<ChangePasswordResponse>) {
+            override fun onResponse(
+                call: Call<ChangePasswordResponse>,
+                response: Response<ChangePasswordResponse>
+            ) {
 
                 if (response.code() == 200 && response.body() != null) {
                     if (response.body()?.status!!) {
@@ -201,8 +209,8 @@ class ChangePasswordFragment : Fragment() {
                             putString("USERTOKEN", "")
                         }.apply()
 
-                    val i = Intent(requireContext(), LoginActivity::class.java)
-                    startActivity(i)
+                        val i = Intent(requireContext(), LoginActivity::class.java)
+                        startActivity(i)
                         (context as Activity).finishAffinity()
 
                     } else {

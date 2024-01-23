@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.myhss.ui.Barchat.ViewBarchartActivity">
+    tools:context="com.myhss.ui.suryanamaskar.ViewBarchartActivity">
 
     <include layout="@layout/action_bar" />
     <com.github.mikephil.charting.charts.BarChart

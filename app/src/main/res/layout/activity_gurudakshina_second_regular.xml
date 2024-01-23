@@ -52,13 +52,21 @@
                     android:textSize="@dimen/font_size18"
                     android:theme="@style/StyleTextView" />
 
+                <ImageView
+                    android:id="@+id/edit_payment"
+                    android:layout_width="@dimen/padding20"
+                    android:layout_height="@dimen/padding20"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/padding10"
+                    android:src="@drawable/payment_edit" />
+
             </LinearLayout>
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/font_size30"
                 android:layout_margin="@dimen/font_size15"
-                android:src="@drawable/payment_second_top" />
+                android:src="@drawable/ic_regular_gd_two" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

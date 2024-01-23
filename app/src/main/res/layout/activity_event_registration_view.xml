@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.myhss.ui.events.EventRegistrationViewActivity">
+
+    <include
+        android:id="@+id/topbar"
+        layout="@layout/action_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/payment_complete_image"
+                android:layout_width="@dimen/padding150"
+                android:layout_height="@dimen/padding150"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/padding25"
+                android:src="@drawable/qr_code" />
+
+            <TextView
+                android:id="@+id/txtOrderNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/padding15"
+                android:fontFamily="@font/sourcesanspro_semibold"
+                android:paddingStart="@dimen/padding15"
+                android:paddingEnd="@dimen/padding15"
+                android:text="ORDER ID : ODS0000464"
+                android:textColor="@color/primaryColor"
+                android:textSize="@dimen/font_size18"
+                android:theme="@style/StyleTextView" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/padding30"
+                android:background="@color/lightGrayColor" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/font_size15"
+                android:layout_marginTop="@dimen/padding20"
+                android:layout_marginEnd="@dimen/font_size15"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding20"
+                    android:text="@string/name_txt"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15" />
+
+                <TextView
+                    android:id="@+id/txtName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:text="Rahul Desmukh"
+                    android:textColor="@color/blackColor"
+                    android:textSize="@dimen/font_size18"
+                    android:theme="@style/StyleTextView" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding20"
+                    android:text="@string/date"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15" />
+
+                <TextView
+                    android:id="@+id/txtDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:text="Wed, March 03 2023, 09:00:00 PM to\nWed, March 04 2023, 09:00:00 PM"
+                    android:textColor="@color/blackColor"
+                    android:textSize="@dimen/font_size18"
+                    android:theme="@style/StyleTextView" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding20"
+                    android:text="@string/location"
+                    android:textColor="@color/grayColorColor"
+                    android:textSize="@dimen/font_size15" />
+
+                <TextView
+                    android:id="@+id/txtLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding5"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:text="34 West Street\nLondon\nSW65 0HP"
+                    android:textColor="@color/blackColor"
+                    android:textSize="@dimen/font_size18"
+                    android:theme="@style/StyleTextView" />
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/padding15"
+                android:layout_marginTop="@dimen/padding35"
+                android:layout_marginEnd="@dimen/padding15"
+                android:layout_marginBottom="@dimen/padding35"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/next_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="@drawable/button_round"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/padding35"
+                    android:paddingEnd="@dimen/padding35">
+
+                    <TextView
+                        android:id="@+id/txt_next_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sourcesanspro_regular"
+                        android:gravity="center"
+                        android:padding="12dp"
+                        android:text="@string/go_to_the_list_of_events"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

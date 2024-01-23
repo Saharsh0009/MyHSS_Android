@@ -106,9 +106,11 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:inputType="text"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:textSize="@dimen/font_size25"
                                     android:theme="@style/StyleEditTextView" />
 
@@ -163,9 +165,11 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:inputType="text"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:textSize="@dimen/font_size25"
                                     android:theme="@style/StyleEditTextView" />
 
@@ -242,9 +246,11 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@android:color/transparent"
+                                    android:cursorVisible="true"
                                     android:inputType="text"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
+                                    android:textCursorDrawable="@null"
                                     android:textSize="@dimen/font_size25"
                                     android:theme="@style/StyleEditTextView" />
 
@@ -335,10 +341,12 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:background="@android:color/transparent"
+                                        android:cursorVisible="true"
                                         android:imeOptions="actionDone"
                                         android:inputType="text"
                                         android:textColor="@color/blackColor"
                                         android:textColorHint="@color/grayColorColor"
+                                        android:textCursorDrawable="@null"
                                         android:textSize="@dimen/font_size25"
                                         android:theme="@style/StyleEditTextView" />
 
@@ -425,9 +433,11 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:background="@android:color/transparent"
+                                        android:cursorVisible="true"
                                         android:inputType="text"
                                         android:textColor="@color/blackColor"
                                         android:textColorHint="@color/grayColorColor"
+                                        android:textCursorDrawable="@null"
                                         android:textSize="@dimen/font_size25"
                                         android:theme="@style/StyleEditTextView" />
 
@@ -496,30 +506,33 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
-                                    app:boxStrokeColor="@color/primaryColor">
+                                    app:boxStrokeColor="@color/primaryColor"
+                                    app:passwordToggleEnabled="true">
 
                                     <com.google.android.material.textfield.TextInputEditText
                                         android:id="@+id/edit_password"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:background="@android:color/transparent"
+                                        android:cursorVisible="true"
                                         android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^_+\|"
                                         android:inputType="textPassword"
                                         android:textColor="@color/blackColor"
                                         android:textColorHint="@color/grayColorColor"
+                                        android:textCursorDrawable="@null"
                                         android:textSize="@dimen/font_size25"
                                         android:theme="@style/StyleEditTextView" />
 
                                 </com.google.android.material.textfield.TextInputLayout>
 
-                                <ImageView
-                                    android:layout_width="@dimen/padding30"
-                                    android:layout_height="@dimen/padding30"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_marginEnd="@dimen/padding10"
-                                    android:src="@drawable/lock_dark"
-                                    app:tint="@color/primaryColor" />
+                                <!--                                <ImageView-->
+                                <!--                                    android:layout_width="@dimen/padding30"-->
+                                <!--                                    android:layout_height="@dimen/padding30"-->
+                                <!--                                    android:layout_alignParentEnd="true"-->
+                                <!--                                    android:layout_centerVertical="true"-->
+                                <!--                                    android:layout_marginEnd="@dimen/padding10"-->
+                                <!--                                    android:src="@drawable/lock_dark"-->
+                                <!--                                    app:tint="@color/primaryColor" />-->
 
                             </RelativeLayout>
 
@@ -575,30 +588,32 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
-                                    app:boxStrokeColor="@color/primaryColor">
+                                    app:boxStrokeColor="@color/primaryColor"
+                                    app:passwordToggleEnabled="true">
 
                                     <com.google.android.material.textfield.TextInputEditText
                                         android:id="@+id/edit_confirm_password"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-
                                         android:background="@android:color/transparent"
-                                        android:inputType="text"
+                                        android:cursorVisible="true"
+                                        android:inputType="textPassword"
                                         android:textColor="@color/blackColor"
                                         android:textColorHint="@color/grayColorColor"
+                                        android:textCursorDrawable="@null"
                                         android:textSize="@dimen/font_size25"
                                         android:theme="@style/StyleEditTextView" />
 
                                 </com.google.android.material.textfield.TextInputLayout>
 
-                                <ImageView
-                                    android:layout_width="@dimen/padding30"
-                                    android:layout_height="@dimen/padding30"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_marginEnd="@dimen/padding10"
-                                    android:src="@drawable/lock_dark"
-                                    app:tint="@color/primaryColor" />
+                                <!--                                <ImageView-->
+                                <!--                                    android:layout_width="@dimen/padding30"-->
+                                <!--                                    android:layout_height="@dimen/padding30"-->
+                                <!--                                    android:layout_alignParentEnd="true"-->
+                                <!--                                    android:layout_centerVertical="true"-->
+                                <!--                                    android:layout_marginEnd="@dimen/padding10"-->
+                                <!--                                    android:src="@drawable/lock_dark"-->
+                                <!--                                    app:tint="@color/primaryColor" />-->
 
                             </RelativeLayout>
 
@@ -628,106 +643,6 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/padding10"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/padding15"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/dateofbirth"
-                                android:textColor="@color/grayColorColor"
-                                android:textSize="@dimen/font_size25"
-                                android:theme="@style/StyleTextView" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginStart="@dimen/padding10"
-                                android:gravity="center_vertical"
-                                android:text="*"
-                                android:textAlignment="center"
-                                android:textColor="@color/redColor"
-                                android:textSize="@dimen/font_size25"
-                                android:theme="@style/StyleTextView"
-                                tools:ignore="RtlCompat" />
-
-                        </LinearLayout>
-
-                        <ImageView
-                            android:id="@+id/tooltip_view"
-                            android:layout_width="@dimen/padding30"
-                            android:layout_height="@dimen/padding30"
-                            android:layout_marginStart="@dimen/padding10"
-                            android:src="@drawable/infoyellow" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/font_size15"
-                        android:layout_marginTop="@dimen/padding10"
-                        android:layout_marginEnd="@dimen/font_size15"
-                        android:background="@drawable/edittext_round"
-                        android:orientation="horizontal">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/til_dob"
-                                style="@style/EditText.OutlinedBox"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:focusable="false"
-                                android:focusableInTouchMode="false"
-                                android:gravity="center_vertical"
-                                android:paddingStart="@dimen/font_size15"
-                                app:boxStrokeColor="@color/primaryColor"
-                                tools:ignore="RtlSymmetry">
-
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/edit_dateofbirth"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@android:color/transparent"
-                                    android:focusable="false"
-                                    android:focusableInTouchMode="false"
-                                    android:hint="@string/dd_mm_yyyy"
-                                    android:imeOptions="actionDone"
-                                    android:inputType="date"
-                                    android:maxLength="10"
-                                    android:textColor="@color/blackColor"
-                                    android:textColorHint="@color/grayColorColor"
-                                    android:textSize="@dimen/font_size25"
-                                    android:theme="@style/StyleEditTextView" />
-
-                            </com.google.android.material.textfield.TextInputLayout>
-
-                            <ImageView
-                                android:id="@+id/dateofbirth_img"
-                                android:layout_width="@dimen/padding30"
-                                android:layout_height="@dimen/padding30"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerVertical="true"
-                                android:layout_marginEnd="@dimen/padding10"
-                                android:src="@drawable/calender"
-                                app:tint="@color/primaryColor" />
-
-                        </RelativeLayout>
-
-                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -871,6 +786,107 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding10"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/padding15"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/dateofbirth"
+                                android:textColor="@color/grayColorColor"
+                                android:textSize="@dimen/font_size25"
+                                android:theme="@style/StyleTextView" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="@dimen/padding10"
+                                android:gravity="center_vertical"
+                                android:text="*"
+                                android:textAlignment="center"
+                                android:textColor="@color/redColor"
+                                android:textSize="@dimen/font_size25"
+                                android:theme="@style/StyleTextView"
+                                tools:ignore="RtlCompat" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/tooltip_view"
+                            android:layout_width="@dimen/padding30"
+                            android:layout_height="@dimen/padding30"
+                            android:layout_marginStart="@dimen/padding10"
+                            android:src="@drawable/infoyellow" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/font_size15"
+                        android:layout_marginTop="@dimen/padding10"
+                        android:layout_marginEnd="@dimen/font_size15"
+                        android:background="@drawable/edittext_round"
+                        android:orientation="horizontal">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_dob"
+                                style="@style/EditText.OutlinedBox"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:focusable="false"
+                                android:focusableInTouchMode="false"
+                                android:gravity="center_vertical"
+                                android:paddingStart="@dimen/font_size15"
+                                app:boxStrokeColor="@color/primaryColor"
+                                tools:ignore="RtlSymmetry">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/edit_dateofbirth"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@android:color/transparent"
+                                    android:focusable="false"
+                                    android:focusableInTouchMode="false"
+                                    android:hint="@string/dd_mm_yyyy"
+                                    android:imeOptions="actionDone"
+                                    android:inputType="date"
+                                    android:maxLength="10"
+                                    android:textColor="@color/blackColor"
+                                    android:textColorHint="@color/grayColorColor"
+                                    android:textSize="@dimen/font_size25"
+                                    android:theme="@style/StyleEditTextView" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <ImageView
+                                android:id="@+id/dateofbirth_img"
+                                android:layout_width="@dimen/padding30"
+                                android:layout_height="@dimen/padding30"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="@dimen/padding10"
+                                android:src="@drawable/calender"
+                                app:tint="@color/primaryColor" />
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:id="@+id/primary_member_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1006,11 +1022,13 @@
                                     android:layout_height="wrap_content">
 
                                     <com.google.android.material.textfield.TextInputLayout
+                                        android:id="@+id/til_relatioship_other_name"
                                         style="@style/EditText.OutlinedBox"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:gravity="center_vertical"
                                         app:boxStrokeColor="@color/primaryColor"
+                                        app:errorIconDrawable="@null"
                                         tools:ignore="RtlSymmetry">
 
                                         <com.google.android.material.textfield.TextInputEditText
@@ -1018,9 +1036,11 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:background="@android:color/transparent"
+                                            android:cursorVisible="true"
                                             android:inputType="text"
                                             android:textColor="@color/blackColor"
                                             android:textColorHint="@color/grayColorColor"
+                                            android:textCursorDrawable="@null"
                                             android:textSize="@dimen/font_size25"
                                             android:theme="@style/StyleEditTextView" />
 

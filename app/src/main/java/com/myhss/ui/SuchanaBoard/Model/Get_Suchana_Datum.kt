@@ -22,5 +22,5 @@ class Get_Suchana_Datum {
 
     @SerializedName("is_read")
     @Expose
-    val is_read: String? = null
+    var is_read: String? = null
 }

@@ -37,6 +37,7 @@ import com.myhss.Fingerprint.BiometricUtils
 import com.myhss.Fingerprint.FingerPrintPopUp
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.samsung.android.sdk.SsdkUnsupportedException
 import com.samsung.android.sdk.SsdkVendorCheck
@@ -176,7 +177,7 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
             passcode_logout!!.setVisibility(View.VISIBLE)
         }
         tv_forgot_password = root.findViewById(R.id.tv_forgot_password) as TextView
-        tv_forgot_password!!.setOnClickListener(View.OnClickListener { v: View? ->
+        tv_forgot_password!!.setOnClickListener(DebouncedClickListener {
             startActivity(
                 Intent(
                     requireContext(),
@@ -184,13 +185,17 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 )
             )
         })
+
+
+
         imgPass1 = root.findViewById(R.id.img1) as ImageView?
         imgPass2 = root.findViewById(R.id.img2) as ImageView
         imgPass3 = root.findViewById(R.id.img3) as ImageView
         imgPass4 = root.findViewById(R.id.img4) as ImageView
         imgBackDelete = root.findViewById(R.id.imgBackDelete) as ImageView
-        setListener()
 
+        passcode_logout!!.visibility = View.GONE
+        setListener()
         adjustPassCodeScreen()
 
         Log.d("FIRSTNAME", sharedPreferences.getString("FIRSTNAME", "").toString())
@@ -255,7 +260,6 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 txtusername!!.text = Html.fromHtml("$othertext <b>$FUsername $LUsername</b>")
             }
         }
-
         return root
     }
 
@@ -289,13 +293,7 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
         btnZero!!.setOnClickListener(this)
         btnDalet!!.setOnClickListener(this)
         imgBackDelete!!.setOnClickListener(this)
-        passcode_logout!!.setOnClickListener(this)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//            if (checkPermission()) {
-//            } else {
-//                requestPermission()
-//            }
-//        }
+//        passcode_logout!!.setOnClickListener(this)
     }
 
     fun adjustPassCodeScreen() {
@@ -632,160 +630,51 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 strPasslock = strPasslock + btnOne!!.text.toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnOne!!.text.toString()
-//                    setPointView()
-//                }
-//            }
+
             R.id.btnTwo -> if (strPasslock.length < 4) {
                 strPasslock = strPasslock + btnTwo!!.getText().toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnTwo!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnThree -> if (strPasslock.length < 4) {
                 strPasslock = strPasslock + btnThree!!.getText().toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnThree!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnFour -> if (strPasslock.length < 4) {
                 strPasslock = strPasslock + btnFour!!.getText().toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnFour!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnFive -> if (strPasslock.length < 4) {
                 strPasslock = strPasslock + btnFive!!.getText().toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnFive!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnSix -> if (strPasslock.length < 4) {
                 strPasslock = strPasslock + btnSix!!.getText().toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnSix!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnSeven -> if (strPasslock.length < 4) {
                 strPasslock = strPasslock + btnSeven!!.getText().toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnSeven!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnEight -> if (strPasslock.length < 4) {
                 strPasslock = strPasslock + btnEight!!.getText().toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnEight!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnNine -> if (strPasslock.length < 4) {
                 strPasslock = strPasslock + btnNine!!.getText().toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnNine!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnZero -> if (strPasslock.length < 4) {
                 strPasslock = strPasslock + btnZero!!.getText().toString()
                 setPointView()
             }
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
-//                Functions.showAlertMessageWithOK(
-//                    requireContext(), "",
-//                    "Permission allows us to access Dashboard. \nPlease allow in App Settings for additional functionality."
-//                )
-//            } else {
-//                if (strPasslock.length < 4) {
-//                    strPasslock = strPasslock + btnZero!!.getText().toString()
-//                    setPointView()
-//                }
-//            }
 
             R.id.btnDalet -> if (strPasslock.length > 0) {
                 strPasslock = strPasslock.substring(0, strPasslock.length - 1)
@@ -796,98 +685,7 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 strPasslock = strPasslock.substring(0, strPasslock.length - 1)
                 setPointView()
             }
-
-            R.id.passcode_logout -> {
-                val alertDialog: AlertDialog.Builder =
-                    AlertDialog.Builder(requireContext())
-                alertDialog.setMessage("Are you sure you would like to logout?")
-                alertDialog.setPositiveButton(
-                    "yes"
-                ) { _, _ ->
-                    val sharedPreferences = requireContext().getSharedPreferences(
-                        "production",
-                        Context.MODE_PRIVATE
-                    )
-                    sessionManager.saveFIRSTNAME("")
-                    sessionManager.saveSURNAME("")
-                    sessionManager.saveUSERNAME("")
-                    sessionManager.saveUserID("")
-                    sessionManager.saveUSEREMAIL("")
-                    sessionManager.saveUSERROLE("")
-                    sessionManager.saveMEMBERID("")
-                    sessionManager.saveSECURITYKEY("")
-                    sessionManager.saveAuthToken("")
-                    sessionManager.saveMIDDLENAME("")
-                    sessionManager.saveSHAKHA_SANKHYA_AVG("")
-                    sessionManager.saveSHAKHA_TAB("")
-                    sessionManager.saveSHAKHANAME("")
-                    sessionManager.savePOSTCODE("")
-                    sessionManager.saveCOUNTRY("")
-                    sessionManager.saveCITY("")
-                    sessionManager.saveLineOne("")
-                    sessionManager.saveGENDER("")
-                    sessionManager.saveAGE("")
-                    sessionManager.saveQUALIFICATIONAID("")
-                    sessionManager.saveQUALIFICATION_VALUE("")
-                    sessionManager.saveQUALIFICATION_VALUE_NAME("")
-                    sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
-                    sessionManager.saveQUALIFICATION_DATE("")
-                    sessionManager.saveQUALIFICATION_FILE("")
-                    sessionManager.saveQUALIFICATION_IS_DOC("")
-                    sessionManager.saveDOB("")
-                    sessionManager.saveVIBHAGNAME("")
-                    sessionManager.saveSPOKKENLANGUAGE("")
-                    sessionManager.saveMOBILENO("")
-                    sessionManager.saveSECMOBILENO("")
-                    sessionManager.saveOCCUPATIONNAME("")
-                    sessionManager.saveADDRESS("")
-                    sessionManager.saveGUAEMREMAIL("")
-                    sessionManager.saveGUAEMRNAME("")
-                    sessionManager.saveGUAEMRPHONE("")
-                    sessionManager.saveGUAEMRRELATIONSHIP("")
-                    sessionManager.saveSPOKKENLANGUAGEID("")
-                    sessionManager.saveSPOKKENLANGUAGE("")
-                    sessionManager.saveRELATIONSHIPNAME("")
-                    sessionManager.saveRELATIONSHIPNAME_OTHER("")
-                    sessionManager.saveNAGARID("")
-                    sessionManager.saveDIETARY("")
-                    sessionManager.saveDIETARYID("")
-                    sessionManager.saveVIBHAGID("")
-                    sessionManager.saveSTATE_IN_INDIA("")
-                    sessionManager.saveSHAKHAID("")
-
-                    sharedPreferences.edit().apply {
-                        putString("FIRSTNAME", "")
-                        putString("SURNAME", "")
-                        putString("USERNAME", "")
-                        putString("USERID", "")
-                        putString("USEREMAIL", "")
-                        putString("USERROLE", "")
-                        putString("MEMBERID", "")
-                        putString("SECURITYKEY", "")
-                        putString("USERTOKEN", "")
-                    }.apply()
-
-                    val i = Intent(requireContext(), LoginActivity::class.java)
-                    startActivity(i)
-                    (context as Activity).finishAffinity()
-                }
-                alertDialog.setNegativeButton(
-                    "No"
-                ) { _, _ ->
-                    val i = Intent(requireContext(), HomeActivity::class.java)
-                    startActivity(i)
-                    (context as Activity).finishAffinity()
-                }
-                val alert: AlertDialog = alertDialog.create()
-                alert.setCanceledOnTouchOutside(false)
-                alert.show()
-            }
-
-            else -> {
-            }
         }
-        Functions.printLog("strpassCode", strPasslock)
     }
 
 }

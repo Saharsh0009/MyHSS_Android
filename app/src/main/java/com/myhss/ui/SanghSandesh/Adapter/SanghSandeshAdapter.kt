@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Datum
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Seen_Response
@@ -140,7 +141,7 @@ class SanghSandeshAdapter(val suchana_data: List<Get_Suchana_Datum>, val userLis
                 suchna_discriptionnew.setTextColor(Color.BLACK)
             }
 
-            suchna_adapter_view.setOnClickListener {
+            suchna_adapter_view.setOnClickListener(DebouncedClickListener {
                 if (eventsIsVisible) {
                     suchna_discription.visibility = View.GONE
                     redLayout.visibility = View.VISIBLE
@@ -169,7 +170,7 @@ class SanghSandeshAdapter(val suchana_data: List<Get_Suchana_Datum>, val userLis
 //                    slideDown(redLayout)
                     eventsIsVisible = true
                 }
-            }
+            })
         }
 
         open fun getColoredSpanned(text: String, color: String): String? {

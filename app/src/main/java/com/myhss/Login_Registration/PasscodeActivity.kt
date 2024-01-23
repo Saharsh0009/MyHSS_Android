@@ -36,6 +36,7 @@ import com.myhss.Fingerprint.BiometricUtils
 import com.myhss.Fingerprint.FingerPrintPopUp
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.SharedPreferences_String_Name
 import com.samsung.android.sdk.SsdkUnsupportedException
@@ -267,7 +268,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
             passcode_logout!!.setVisibility(View.VISIBLE)
         }
         tv_forgot_password = findViewById<View>(R.id.tv_forgot_password) as TextView
-        tv_forgot_password!!.setOnClickListener(View.OnClickListener { v: View? ->
+        tv_forgot_password!!.setOnClickListener(DebouncedClickListener {
             startActivity(
                 Intent(
                     this@PasscodeActivity,
@@ -281,6 +282,10 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
         imgPass4 = findViewById<View>(R.id.img4) as ImageView
         imgBackDelete = findViewById<View>(R.id.imgBackDelete) as ImageView
         setListener()
+
+        passcode_logout!!.setOnClickListener(DebouncedClickListener {
+            buttonClickLogout()
+        })
     }
 
     open fun getColoredSpanned(text: String, color: String): String? {
@@ -313,13 +318,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
         btnZero!!.setOnClickListener(this)
         btnDalet!!.setOnClickListener(this)
         imgBackDelete!!.setOnClickListener(this)
-        passcode_logout!!.setOnClickListener(this)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if (checkPermission()) {
-            } else {
-                requestPermission()
-            }
-        }
+
     }
 
     fun adjustPassCodeScreen() {
@@ -735,6 +734,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnTwo -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
                     this@PasscodeActivity, "",
@@ -746,6 +746,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnThree -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
                     this@PasscodeActivity, "",
@@ -757,6 +758,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnFour -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
                     this@PasscodeActivity, "",
@@ -768,6 +770,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnFive -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
                     this@PasscodeActivity, "",
@@ -779,6 +782,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnSix -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
                     this@PasscodeActivity, "",
@@ -790,6 +794,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnSeven -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
                     this@PasscodeActivity, "",
@@ -801,6 +806,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnEight -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
                     this@PasscodeActivity, "",
@@ -812,6 +818,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnNine -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
                     this@PasscodeActivity, "",
@@ -823,6 +830,7 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnZero -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !checkPermission()) {
                 Functions.showAlertMessageWithOK(
                     this@PasscodeActivity, "",
@@ -834,106 +842,102 @@ class PasscodeActivity : AppCompatActivity(), View.OnClickListener, BiometricCal
                     setPointView()
                 }
             }
+
             R.id.btnDalet -> if (strPasslock.length > 0) {
                 strPasslock = strPasslock.substring(0, strPasslock.length - 1)
                 setPointView()
             }
+
             R.id.imgBackDelete -> if (strPasslock.length > 0) {
                 strPasslock = strPasslock.substring(0, strPasslock.length - 1)
                 setPointView()
             }
-            R.id.passcode_logout -> {
-                val alertDialog: AlertDialog.Builder =
-                    AlertDialog.Builder(this@PasscodeActivity)
-//            alertDialog.setTitle("Logout")
-                alertDialog.setMessage("Are you sure you would like to logout?")
-                alertDialog.setPositiveButton(
-                    "yes"
-                ) { _, _ ->
-
-                    val sharedPreferences = this@PasscodeActivity.getSharedPreferences(
-                        "production",
-                        Context.MODE_PRIVATE
-                    )
-                    sessionManager.saveFIRSTNAME("")
-                    sessionManager.saveSURNAME("")
-                    sessionManager.saveUSERNAME("")
-                    sessionManager.saveUserID("")
-                    sessionManager.saveUSEREMAIL("")
-                    sessionManager.saveUSERROLE("")
-                    sessionManager.saveMEMBERID("")
-                    sessionManager.saveSECURITYKEY("")
-                    sessionManager.saveAuthToken("")
-                    sessionManager.saveMIDDLENAME("")
-                    sessionManager.saveSHAKHA_SANKHYA_AVG("")
-                    sessionManager.saveSHAKHA_TAB("")
-                    sessionManager.saveSHAKHANAME("")
-                    sessionManager.savePOSTCODE("")
-                    sessionManager.saveCOUNTRY("")
-                    sessionManager.saveCITY("")
-                    sessionManager.saveLineOne("")
-                    sessionManager.saveGENDER("")
-                    sessionManager.saveAGE("")
-                    sessionManager.saveQUALIFICATIONAID("")
-                    sessionManager.saveQUALIFICATION_VALUE("")
-                    sessionManager.saveQUALIFICATION_VALUE_NAME("")
-                    sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
-                    sessionManager.saveQUALIFICATION_DATE("")
-                    sessionManager.saveQUALIFICATION_FILE("")
-                    sessionManager.saveQUALIFICATION_IS_DOC("")
-                    sessionManager.saveDOB("")
-                    sessionManager.saveVIBHAGNAME("")
-                    sessionManager.saveSPOKKENLANGUAGE("")
-                    sessionManager.saveMOBILENO("")
-                    sessionManager.saveSECMOBILENO("")
-                    sessionManager.saveOCCUPATIONNAME("")
-                    sessionManager.saveADDRESS("")
-                    sessionManager.saveGUAEMREMAIL("")
-                    sessionManager.saveGUAEMRNAME("")
-                    sessionManager.saveGUAEMRPHONE("")
-                    sessionManager.saveGUAEMRRELATIONSHIP("")
-                    sessionManager.saveSPOKKENLANGUAGEID("")
-                    sessionManager.saveSPOKKENLANGUAGE("")
-                    sessionManager.saveRELATIONSHIPNAME("")
-                    sessionManager.saveRELATIONSHIPNAME_OTHER("")
-                    sessionManager.saveNAGARID("")
-                    sessionManager.saveDIETARY("")
-                    sessionManager.saveDIETARYID("")
-                    sessionManager.saveVIBHAGID("")
-                    sessionManager.saveSTATE_IN_INDIA("")
-                    sessionManager.saveSHAKHAID("")
-
-                    sharedPreferences.edit().apply {
-                        putString("FIRSTNAME", "")
-                        putString("SURNAME", "")
-                        putString("USERNAME", "")
-                        putString("USERID", "")
-                        putString("USEREMAIL", "")
-                        putString("USERROLE", "")
-                        putString("MEMBERID", "")
-                        putString("SECURITYKEY", "")
-                        putString("USERTOKEN", "")
-                    }.apply()
-
-                    val i = Intent(this@PasscodeActivity, LoginActivity::class.java)
-                    startActivity(i)
-                    finishAffinity()
-                }
-                alertDialog.setNegativeButton(
-                    "No"
-                ) { _, _ ->
-                    val i = Intent(this@PasscodeActivity, PasscodeActivity::class.java)
-                    startActivity(i)
-                    finishAffinity()
-                }
-                val alert: AlertDialog = alertDialog.create()
-                alert.setCanceledOnTouchOutside(false)
-                alert.show()
-            }
-            else -> {
-            }
         }
-        Functions.printLog("strpassCode", strPasslock)
     }
 
+    fun buttonClickLogout() {
+        val alertDialog: AlertDialog.Builder =
+            AlertDialog.Builder(this@PasscodeActivity)
+//            alertDialog.setTitle("Logout")
+        alertDialog.setMessage("Are you sure you would like to logout?")
+        alertDialog.setPositiveButton(
+            "yes"
+        ) { _, _ ->
+
+            val sharedPreferences = this@PasscodeActivity.getSharedPreferences(
+                "production",
+                Context.MODE_PRIVATE
+            )
+            sessionManager.saveFIRSTNAME("")
+            sessionManager.saveSURNAME("")
+            sessionManager.saveUSERNAME("")
+            sessionManager.saveUserID("")
+            sessionManager.saveUSEREMAIL("")
+            sessionManager.saveUSERROLE("")
+            sessionManager.saveMEMBERID("")
+            sessionManager.saveSECURITYKEY("")
+            sessionManager.saveAuthToken("")
+            sessionManager.saveMIDDLENAME("")
+            sessionManager.saveSHAKHA_SANKHYA_AVG("")
+            sessionManager.saveSHAKHA_TAB("")
+            sessionManager.saveSHAKHANAME("")
+            sessionManager.savePOSTCODE("")
+            sessionManager.saveCOUNTRY("")
+            sessionManager.saveCITY("")
+            sessionManager.saveLineOne("")
+            sessionManager.saveGENDER("")
+            sessionManager.saveAGE("")
+            sessionManager.saveQUALIFICATIONAID("")
+            sessionManager.saveQUALIFICATION_VALUE("")
+            sessionManager.saveQUALIFICATION_VALUE_NAME("")
+            sessionManager.saveQUALIFICATION_PRO_BODY_RED_NO("")
+            sessionManager.saveQUALIFICATION_DATE("")
+            sessionManager.saveQUALIFICATION_FILE("")
+            sessionManager.saveQUALIFICATION_IS_DOC("")
+            sessionManager.saveDOB("")
+            sessionManager.saveVIBHAGNAME("")
+            sessionManager.saveSPOKKENLANGUAGE("")
+            sessionManager.saveMOBILENO("")
+            sessionManager.saveSECMOBILENO("")
+            sessionManager.saveOCCUPATIONNAME("")
+            sessionManager.saveADDRESS("")
+            sessionManager.saveGUAEMREMAIL("")
+            sessionManager.saveGUAEMRNAME("")
+            sessionManager.saveGUAEMRPHONE("")
+            sessionManager.saveGUAEMRRELATIONSHIP("")
+            sessionManager.saveSPOKKENLANGUAGEID("")
+            sessionManager.saveSPOKKENLANGUAGE("")
+            sessionManager.saveRELATIONSHIPNAME("")
+            sessionManager.saveRELATIONSHIPNAME_OTHER("")
+            sessionManager.saveNAGARID("")
+            sessionManager.saveDIETARY("")
+            sessionManager.saveDIETARYID("")
+            sessionManager.saveVIBHAGID("")
+            sessionManager.saveSTATE_IN_INDIA("")
+            sessionManager.saveSHAKHAID("")
+
+            sharedPreferences.edit().apply {
+                putString("FIRSTNAME", "")
+                putString("SURNAME", "")
+                putString("USERNAME", "")
+                putString("USERID", "")
+                putString("USEREMAIL", "")
+                putString("USERROLE", "")
+                putString("MEMBERID", "")
+                putString("SECURITYKEY", "")
+                putString("USERTOKEN", "")
+            }.apply()
+
+            val i = Intent(this@PasscodeActivity, LoginActivity::class.java)
+            startActivity(i)
+            finishAffinity()
+        }
+        alertDialog.setNegativeButton(
+            "No"
+        ) { _, _ ->
+        }
+        val alert: AlertDialog = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.show()
+    }
 }

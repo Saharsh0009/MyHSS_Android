@@ -7,11 +7,13 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.window.OnBackInvokedDispatcher
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
@@ -46,7 +48,10 @@ class GuruDakshinaRegularCompleteActivity() : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("RegularGuruDakshinaSuccessVC")
-        sessionManager.firebaseAnalytics.setUserProperty("RegularGuruDakshinaSuccessVC", "GuruDakshinaRegularCompleteActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "RegularGuruDakshinaSuccessVC",
+            "GuruDakshinaRegularCompleteActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -74,7 +79,8 @@ class GuruDakshinaRegularCompleteActivity() : AppCompatActivity() {
         message_txt = findViewById(R.id.message_txt)
 
 //        donate_amount_txt.text = getString(R.string.pound_icon) + " " + intent.getStringExtra("paidAmount")
-        donate_amount_txt.text = getString(R.string.pound_icon) + " " + intent.getStringExtra("paidAmount")  // intent.getStringExtra("Amount")
+        donate_amount_txt.text =
+            getString(R.string.pound_icon) + " " + intent.getStringExtra("paidAmount")  // intent.getStringExtra("Amount")
         reference_number_txt.text = intent.getStringExtra("referenceNo")
         frequency_txt.text = intent.getStringExtra("frequency")
         sort_code_txt.text = intent.getStringExtra("sortCode")
@@ -82,21 +88,23 @@ class GuruDakshinaRegularCompleteActivity() : AppCompatActivity() {
         account_number_txt.text = intent.getStringExtra("accountNumber")
         message_txt.text = intent.getStringExtra("giftAid")
 
-        next_layout.setOnClickListener {
-            val i =
-                Intent(this@GuruDakshinaRegularCompleteActivity, HomeActivity::class.java)
-//                    MainActivity::class.java)
+        next_layout.setOnClickListener(DebouncedClickListener {
+            val i = Intent(this@GuruDakshinaRegularCompleteActivity, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
+        })
 
         if (intent.getStringExtra("Amount") != "") {
-            donate_amount_txt.text = intent.getStringExtra("Amount")
+            donate_amount_txt.text =
+                getString(R.string.pound_icon) + " " + intent.getStringExtra("Amount")
         }
     }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-//        super.onBackPressed()
+        super.onBackPressed()
+        val i = Intent(this@GuruDakshinaRegularCompleteActivity, HomeActivity::class.java)
+        startActivity(i)
+        finishAffinity()
     }
 }

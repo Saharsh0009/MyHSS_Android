@@ -21,6 +21,7 @@ import com.uk.myhss.Guru_Dakshina_OneTime.GuruDakshinaOneTimeFourthActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.uk.myhss.Utils.SessionManager
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -105,9 +106,9 @@ class SupportFragment : Fragment() {
 
         occupation_select_txt.setTitle("Select Occupation")
 
-        occupation_select_other_view.setOnClickListener {
+        occupation_select_other_view.setOnClickListener(DebouncedClickListener {
             SearchSpinner(relationshipName.toTypedArray(), occupation_select_txt)
-        }
+        })
 
         /*For Selection Dasgina drop down*/
 //        SearchSpinner(dakshina, dashina_select_txt)
@@ -116,14 +117,14 @@ class SupportFragment : Fragment() {
 //            SearchSpinner(dakshina, dashina_select_txt)
 //        }
 
-        support_view.setOnClickListener {
+        support_view.setOnClickListener(DebouncedClickListener {
             Snackbar.make(rootview, "Support", Snackbar.LENGTH_SHORT).show()
-        }
+        })
 
-        clear_view.setOnClickListener {
+        clear_view.setOnClickListener(DebouncedClickListener {
             Snackbar.make(rootview, "Clear", Snackbar.LENGTH_SHORT).show()
             startActivity(Intent(requireContext(), GuruDakshinaOneTimeFourthActivity::class.java))
-        }
+        })
 
         return root
     }
