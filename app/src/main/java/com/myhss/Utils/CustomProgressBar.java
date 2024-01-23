@@ -7,6 +7,8 @@ import android.view.Window;
 
 import com.uk.myhss.R;
 
+import java.util.Objects;
+
 public class CustomProgressBar extends Dialog {
 
     public Context c;
@@ -24,7 +26,7 @@ public class CustomProgressBar extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setBackgroundDrawableResource(R.color.transparent_Color);
+        Objects.requireNonNull(getWindow()).setBackgroundDrawableResource(R.color.transparent_Color);
         setContentView(R.layout.view_custom_progress_bar);
         setCancelable(false);
     }

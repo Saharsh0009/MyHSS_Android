@@ -1,33 +1,10 @@
 package com.uk.myhss.Guru_Dakshina_Regular
 
 import android.annotation.SuppressLint
-import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.InputFilter
-import android.text.TextWatcher
-import android.util.Log
-import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.ktx.Firebase
-import com.uk.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime.Get_Create_Onetime
 import com.uk.myhss.R
-import com.uk.myhss.Restful.MyHssApplication
-import com.myhss.Utils.CustomProgressBar
-import com.myhss.Utils.Functions
-import com.myhss.Utils.InputFilterMinMax
-import com.uk.myhss.Utils.SessionManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 
 

@@ -6,10 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.view.*
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.ui.sankhya_report.Model.Sankhya_Datum
 import com.uk.myhss.ui.sankhya_report.SankhyaDetail
@@ -17,7 +19,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class SankhyaCustomAdapter(var userList: List<Sankhya_Datum>) : RecyclerView.Adapter<SankhyaCustomAdapter.ViewHolder>(), Filterable {
+class SankhyaCustomAdapter(var userList: List<Sankhya_Datum>) :
+    RecyclerView.Adapter<SankhyaCustomAdapter.ViewHolder>(), Filterable {
 
     lateinit var adapter_view: LinearLayout
     private val context: Context? = null
@@ -44,17 +47,18 @@ class SankhyaCustomAdapter(var userList: List<Sankhya_Datum>) : RecyclerView.Ada
 
         @SuppressLint("SetTextI18n")
         fun bindItems(my_family_DatumGurudakshina: Sankhya_Datum) {
-            val active_inactive_view = itemView.findViewById(R.id.active_inactive_view) as RelativeLayout
+            val active_inactive_view =
+                itemView.findViewById(R.id.active_inactive_view) as RelativeLayout
             val family_name = itemView.findViewById(R.id.family_name) as TextView
-            val family_address  = itemView.findViewById(R.id.family_address) as TextView
+            val family_address = itemView.findViewById(R.id.family_address) as TextView
 //            val active_inactive_txt  = itemView.findViewById(R.id.active_inactive_txt) as TextView
-            val email_txt  = itemView.findViewById(R.id.email_txt) as TextView
-            val call_txt  = itemView.findViewById(R.id.call_txt) as TextView
-            val email_img  = itemView.findViewById(R.id.email_img) as ImageView
-            val call_img  = itemView.findViewById(R.id.call_img) as ImageView
+            val email_txt = itemView.findViewById(R.id.email_txt) as TextView
+            val call_txt = itemView.findViewById(R.id.call_txt) as TextView
+            val email_img = itemView.findViewById(R.id.email_img) as ImageView
+            val call_img = itemView.findViewById(R.id.call_img) as ImageView
 //            val active_inactive_img  = itemView.findViewById(R.id.active_inactive_img) as ImageView
-            val righr_menu  = itemView.findViewById(R.id.righr_menu) as ImageView
-            val adapter_view  = itemView.findViewById(R.id.adapter_view) as LinearLayout
+            val righr_menu = itemView.findViewById(R.id.righr_menu) as ImageView
+            val adapter_view = itemView.findViewById(R.id.adapter_view) as LinearLayout
 
             family_name.text = my_family_DatumGurudakshina.chapterName!!.capitalize(Locale.ROOT)
             family_address.text = my_family_DatumGurudakshina.eventDate!!.capitalize(Locale.ROOT)
@@ -65,12 +69,12 @@ class SankhyaCustomAdapter(var userList: List<Sankhya_Datum>) : RecyclerView.Ada
 
             righr_menu.visibility = View.GONE
 
-            righr_menu.setOnClickListener {
+            righr_menu.setOnClickListener(DebouncedClickListener {
                 val popup = PopupMenu(itemView.context, itemView, Gravity.RIGHT)
                 popup.inflate(R.menu.header_menu)
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     popup.gravity = Gravity.END
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         popup.setForceShowIcon(true)
                     }
                 }
@@ -79,6 +83,7 @@ class SankhyaCustomAdapter(var userList: List<Sankhya_Datum>) : RecyclerView.Ada
                         R.id.edit -> {
                             Toast.makeText(itemView.context, item.title, Toast.LENGTH_SHORT).show()
                         }
+
                         R.id.delete -> {
                             Toast.makeText(itemView.context, item.title, Toast.LENGTH_SHORT).show()
                         }
@@ -86,25 +91,29 @@ class SankhyaCustomAdapter(var userList: List<Sankhya_Datum>) : RecyclerView.Ada
                     true
                 })
                 popup.show()
-            }
+            })
 
-            adapter_view.setOnClickListener {
+            adapter_view.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Adapter", Toast.LENGTH_SHORT).show()
 //                itemView.context.startActivity(Intent(itemView.context, SankhyaDetail::class.java))
                 val i = Intent(itemView.context, SankhyaDetail::class.java)
                 i.putExtra("SANKHYA", "SANKHYA")
                 i.putExtra("SANKHYA_ID", my_family_DatumGurudakshina.id)
                 itemView.context.startActivity(i)
-            }
+            })
 
-            call_img.setOnClickListener {
+            call_img.setOnClickListener(DebouncedClickListener {
                 val call: Uri = Uri.parse("tel:" + call_txt.text.toString())
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = call
-                if (ActivityCompat.checkSelfPermission(itemView.context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(
+                        itemView.context,
+                        Manifest.permission.CALL_PHONE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
                     itemView.context.startActivity(intent)
                 }
-            }
+            })
         }
 
         /*private fun showPopup() {
@@ -138,13 +147,21 @@ class SankhyaCustomAdapter(var userList: List<Sankhya_Datum>) : RecyclerView.Ada
                 } else {
                     val resultList = ArrayList<Sankhya_Datum>()
                     for (row in userList) {
-                        if (row.chapterName!!.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        if (row.chapterName!!.toLowerCase()
+                                .contains(constraint.toString().toLowerCase())
+                        ) {
                             resultList.add(row)
-                        } else if (row.email!!.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        } else if (row.email!!.toLowerCase()
+                                .contains(constraint.toString().toLowerCase())
+                        ) {
                             resultList.add(row)
-                        } else if (row.phone!!.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        } else if (row.phone!!.toLowerCase()
+                                .contains(constraint.toString().toLowerCase())
+                        ) {
                             resultList.add(row)
-                        } else if (row.utsav!!.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        } else if (row.utsav!!.toLowerCase()
+                                .contains(constraint.toString().toLowerCase())
+                        ) {
                             resultList.add(row)
                         }
                     }

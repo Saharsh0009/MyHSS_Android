@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:fitsSystemWindows="true"
     tools:context="com.uk.myhss.Login_Registration.LoginActivity">
 
     <ScrollView
@@ -64,14 +65,15 @@
                         android:layout_width="@dimen/padding20"
                         android:layout_height="@dimen/padding20"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/email_img" />
+                        android:src="@drawable/user_img" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_userName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp">
+                        android:layout_marginBottom="10dp"
+                        app:errorIconDrawable="@null">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_username"
@@ -111,6 +113,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
+                            app:errorIconDrawable="@null"
                             app:passwordToggleEnabled="true">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -255,6 +258,7 @@
             android:id="@+id/dont_have_account_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_toStartOf="@+id/registration_btn"
             android:layout_toLeftOf="@+id/registration_btn"
             android:fontFamily="@font/sourcesanspro_regular"
@@ -270,6 +274,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/padding5"
             android:paddingTop="@dimen/padding10"
             android:paddingBottom="@dimen/padding5"

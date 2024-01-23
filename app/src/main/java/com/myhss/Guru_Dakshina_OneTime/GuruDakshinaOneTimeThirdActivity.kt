@@ -13,6 +13,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.R
@@ -48,7 +49,10 @@ class GuruDakshinaOneTimeThirdActivity() : AppCompatActivity() {
         // Obtain the FirebaseAnalytics instance.
         sessionManager.firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         sessionManager.firebaseAnalytics.setUserId("OneTimeDakshinaStep3VC")
-        sessionManager.firebaseAnalytics.setUserProperty("OneTimeDakshinaStep3VC", "GuruDakshinaOneTimeThirdActivity")
+        sessionManager.firebaseAnalytics.setUserProperty(
+            "OneTimeDakshinaStep3VC",
+            "GuruDakshinaOneTimeThirdActivity"
+        )
 
         sessionManager.firebaseAnalytics = Firebase.analytics
         sessionManager.firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -85,21 +89,21 @@ class GuruDakshinaOneTimeThirdActivity() : AppCompatActivity() {
 
 
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        back_layout.setOnClickListener {
+        back_layout.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        edit_payment.setOnClickListener {
+        edit_payment.setOnClickListener(DebouncedClickListener {
             depositDialog()
-        }
+        })
 
 
 
-        next_layout.setOnClickListener {
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (edit_address.text.toString() == "") {
                 Snackbar.make(rootLayout, "Please enter address", Snackbar.LENGTH_SHORT).show()
             } else if (edit_city.text.toString() == "") {
@@ -110,15 +114,19 @@ class GuruDakshinaOneTimeThirdActivity() : AppCompatActivity() {
                 Snackbar.make(rootLayout, "Please enter post code", Snackbar.LENGTH_SHORT).show()
             } else if (intent.getStringExtra("Amount") != "") {
                 val i =
-                    Intent(this@GuruDakshinaOneTimeThirdActivity, GuruDakshinaOneTimeFourthActivity::class.java)
+                    Intent(
+                        this@GuruDakshinaOneTimeThirdActivity,
+                        GuruDakshinaOneTimeFourthActivity::class.java
+                    )
                 i.putExtra("Amount", donate_amount_txt.text.toString())
                 i.putExtra("GIFTAID_ID", intent.getStringExtra("GIFTAID_ID"))
                 i.putExtra("giving_dakshina", intent.getStringExtra("giving_dakshina"))
                 i.putExtra("donating_dakshina", intent.getStringExtra("donating_dakshina"))
                 startActivity(i)
             }
-        }
+        })
     }
+
     fun depositDialog() {
         // Deposit Dialog
         if (dialog == null) {
@@ -132,10 +140,10 @@ class GuruDakshinaOneTimeThirdActivity() : AppCompatActivity() {
         val btnOk = dialog!!.findViewById(R.id.btnOk) as TextView
 
         if (intent.getStringExtra("Amount") != "") {
-            edit_amount.text = intent.getStringExtra("Amount")
+            edit_amount.text = donate_amount_txt.text
         }
 
-        btnOk.setOnClickListener {
+        btnOk.setOnClickListener(DebouncedClickListener {
             if (edit_amount.text.toString().isNotEmpty()) {
                 edit_amount.filters = arrayOf<InputFilter>(
                     InputFilterMinMax(
@@ -148,14 +156,14 @@ class GuruDakshinaOneTimeThirdActivity() : AppCompatActivity() {
                         edit_amount.text.toString()
                     dialog?.dismiss()
                 } else {
-                    Snackbar.make(rootLayout, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(edit_amount, "Please enter amount 1-10000", Snackbar.LENGTH_SHORT)
                         .show()
                 }
 
             } else {
-                Snackbar.make(rootLayout, "Please enter amount", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(edit_amount, "Please enter amount", Snackbar.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 
 }

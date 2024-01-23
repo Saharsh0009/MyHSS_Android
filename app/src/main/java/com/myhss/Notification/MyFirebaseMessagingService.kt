@@ -1,5 +1,6 @@
 package com.myhss.Notification
 
+import android.app.ActivityManager
 import android.app.Notification.DEFAULT_VIBRATE
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,7 +11,6 @@ import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -19,6 +19,11 @@ import com.uk.myhss.Splash.SplashActivity
 import com.uk.myhss.Utils.SessionManager
 import java.util.*
 import android.graphics.Bitmap
+import com.myhss.Utils.DebugLog
+import com.myhss.Utils.UtilCommon
+import com.myhss.appConstants.AppParam
+import com.myhss.ui.SuchanaBoard.NotificationList
+import com.myhss.ui.SuchanaBoard.SuchanaBoardActivity
 import java.io.InputStream
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -31,145 +36,120 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     lateinit var sharedPreferences: SharedPreferences
     private lateinit var sessionManager: SessionManager
 
-    // [START receive_message]
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // [START_EXCLUDE]
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: ${remoteMessage.from}")
-
-        // Check if message contains a data payload.
+        var notification_type = "0"
+        var notifc_id = "0"
         if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Message data payload: ${remoteMessage.data}")
-
-            // Compose and show notification
             if (!remoteMessage.data.isNullOrEmpty()) {
+                DebugLog.e("remoteMessage.data => ${remoteMessage.data}")
+                if (remoteMessage.data["type"] != null) {
+                    notification_type = remoteMessage.data["type"].toString()
+                } else {
+                    notification_type = "0"
+                }
+                notifc_id = remoteMessage.data["suchana_id"].toString()
                 val title: String = remoteMessage.data["suchana_title"].toString()
                 val msg: String = remoteMessage.data["message"].toString()
-                sendNotification(title, msg)
-            }
-
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use WorkManager.
-//                scheduleJob()
-            } else {
-                // Handle message within 10 seconds
-//                handleNow()
+                sendNotification(title, msg, notification_type, notifc_id)
             }
         }
 
-        // Check if message contains a notification payload.
         remoteMessage.notification?.let {
-            Log.d(TAG, "Message Notification Body: ${it.body}")
-            sendNotification(remoteMessage.notification?.title!!, remoteMessage.notification?.body!!)
+            sendNotification(
+                remoteMessage.notification?.title!!,
+                remoteMessage.notification?.body!!,
+                notification_type,
+                notifc_id
+            )
         }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
-    // [END receive_message]
 
-    // [START on_new_token]
     override fun onNewToken(token: String) {
         sessionManager = SessionManager(this)
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
-
-        Log.d(TAG, "Refreshed token: $token")
         sessionManager.saveFCMDEVICE_TOKEN(token)
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // FCM registration token to your app server.
         sendRegistrationToServer(token)
-    }
-    // [END on_new_token]
-
-    /**
-     * Schedule async work using WorkManager.
-     */
-    private fun scheduleJob() {
-        // [START dispatch_job]
-//        val work = OneTimeWorkRequest.Builder(MyWorker::class.java).build()
-//        WorkManager.getInstance().beginWith(work).enqueue()
-        // [END dispatch_job]
-    }
-
-    /**
-     * Handle time allotted to BroadcastReceivers.
-     */
-    private fun handleNow() {
-        Log.d(TAG, "Short lived task is done.")
     }
 
     private fun sendRegistrationToServer(token: String?) {
-        // TODO: Implement this method to send token to your app server.
-        Log.d(TAG, "sendRegistrationTokenToServer($token)")
+        DebugLog.d("sendRegistrationTokenToServer($token)")
     }
 
-    /**
-     * Create and show a simple notification containing the received FCM message.
-     *
-     * @param messageBody FCM message body received.
-     */
-    private fun sendNotification(title: String, messageBody: String) {
-        val intent = Intent(this, SplashActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, getNotificationId() /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT)
+    private fun sendNotification(
+        title: String,
+        messageBody: String,
+        Stype: String,
+        not_id: String
+    ) {
 
+        val packageName = "com.uk.myhss"
+        val isAppInForeground = UtilCommon.isAppInForeground(this, packageName)
+        val isAppRunning = UtilCommon.isAppRunning(this, packageName)
+
+        val intent: Intent
+
+        if (isAppInForeground) {
+            DebugLog.e("App is in isAppInForeground")
+            if (Stype == "0") {
+                intent = Intent(this, SuchanaBoardActivity::class.java)
+            } else {
+                intent = Intent(this, NotificationList::class.java)
+            }
+        } else if (isAppRunning) {
+            DebugLog.e("App is in isAppRunning")
+            intent = Intent(this, SplashActivity::class.java)
+        } else {
+            DebugLog.e("App is in Not running")
+            intent = Intent(this, SplashActivity::class.java)
+        }
+
+        val notID = getNotificationId()
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra(AppParam.NOTIFIC_KEY, Stype)
+        intent.putExtra(AppParam.NOTIFIC_ID, not_id)
+        val pendingIntent = PendingIntent.getActivity(
+            this, notID /* Request code */, intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        // code change test
         val channelId = getString(R.string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.app_logo)
-                .setContentTitle(title)  // getString(R.string.app_name)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.splash))
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent)
-                .setDefaults(DEFAULT_VIBRATE)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setContentTitle(title)  // getString(R.string.app_name)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.app_logo))
+            .setContentText(messageBody)
+            .setAutoCancel(true)
+            .setSound(defaultSoundUri)
+            .setContentIntent(pendingIntent)
+            .setDefaults(DEFAULT_VIBRATE)
 //                .setStyle(NotificationCompat.BigPictureStyle().
 //                 bigPicture(BitmapFactory.decodeResource(resources, R.drawable.splash)))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId,
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(
+                channelId,
+                "Channel human readable title",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(getNotificationId() /* ID of notification */, notificationBuilder.build())
-    }
+        notificationManager.notify(
+            notID,
+            notificationBuilder.build()
+        )
 
-    /*
-    *To get a Bitmap image from the URL received
-    * */
-    fun getBitmapfromUrl(imageUrl: String?): Bitmap? {
-        return try {
-            val url = URL(imageUrl)
-            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-            connection.setDoInput(true)
-            connection.connect()
-            val input: InputStream = connection.getInputStream()
-            BitmapFactory.decodeStream(input)
-        } catch (e: Exception) {
-            // TODO Auto-generated catch block
-            e.printStackTrace()
-            null
-        }
+//        notificationManager.cancelAll()
     }
 
     private fun getNotificationId(): Int {
         val rnd = Random()
-        return 100 + rnd.nextInt(9000)
+        return rnd.nextInt(9000) + 100
     }
-    /*companion object {
-
-        private const val TAG = "MyFirebaseMsgService"
-    }*/
 }

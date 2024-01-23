@@ -12,6 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.linked_family.MemberShipActivity
@@ -28,9 +29,9 @@ class ShakhaFragment : Fragment() {
     lateinit var shakha_layout: RelativeLayout
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_shakha, container, false)
 
@@ -56,36 +57,33 @@ class ShakhaFragment : Fragment() {
 
         rejected_member.visibility = View.VISIBLE
 
-        membership_view.setOnClickListener {
-//            Snackbar.make(root_view, "Member Ship", Snackbar.LENGTH_SHORT).show()
+        membership_view.setOnClickListener(DebouncedClickListener {
             val i = Intent(context, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "ALL_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        active_membership_view.setOnClickListener {
-//            Snackbar.make(root_view, "Active Member", Snackbar.LENGTH_SHORT).show()
+        active_membership_view.setOnClickListener(DebouncedClickListener {
             val i = Intent(context, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "ACTIVE_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        inactive_member.setOnClickListener {
+        inactive_member.setOnClickListener(DebouncedClickListener {
             val i = Intent(context, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "INACTIVE_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        rejected_member.setOnClickListener {
-//            Snackbar.make(root_view, "Rejected Member", Snackbar.LENGTH_SHORT).show()
+        rejected_member.setOnClickListener(DebouncedClickListener {
             val i = Intent(context, MemberShipActivity::class.java)
             i.putExtra("MEMBERS", "REJECTED_MEMBERS")
             startActivity(i)
-        }
+        })
 
-        sankhya_layout.setOnClickListener {
+        sankhya_layout.setOnClickListener(DebouncedClickListener {
             startActivity(Intent(context, SankhyaActivity::class.java))
-        }
+        })
 
         return root
     }

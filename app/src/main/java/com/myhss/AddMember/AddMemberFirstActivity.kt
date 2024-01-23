@@ -3,9 +3,12 @@ package com.uk.myhss.AddMember
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -17,6 +20,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import cl.jesualex.stooltip.Position
 import cl.jesualex.stooltip.Tooltip
 import com.google.android.material.snackbar.Snackbar
@@ -27,35 +31,24 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
-import com.uk.myhss.AddMember.GetNagar.Datum_Get_Nagar
-import com.uk.myhss.AddMember.GetNagar.Get_Nagar_Response
-import com.uk.myhss.AddMember.Get_Occupation.Datum_Get_Occupation
-import com.uk.myhss.AddMember.Get_Occupation.Get_Occupation_Response
-import com.uk.myhss.AddMember.Get_Relationship.Datum_Relationship
-import com.uk.myhss.AddMember.Get_Relationship.Get_Relationship_Response
-import com.uk.myhss.AddMember.Get_Shakha.Datum_Get_Shakha
-import com.uk.myhss.AddMember.Get_Shakha.Get_Shakha_Response
-import com.uk.myhss.AddMember.Get_Vibhag.Datum_Get_Vibhag
-import com.uk.myhss.AddMember.Get_Vibhag.Get_Vibhag_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Check_Username_Exist_Response
 import com.uk.myhss.ui.linked_family.Model.Get_Single_Member_Record_Datum
 import com.uk.myhss.ui.linked_family.Model.Get_Single_Member_Record_Response
-import okhttp3.internal.notify
-import okhttp3.internal.wait
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 
 class AddMemberFirstActivity() : AppCompatActivity() {
@@ -131,6 +124,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
     private lateinit var til_password: TextInputLayout
     private lateinit var til_confirm_password: TextInputLayout
     private lateinit var til_dob: TextInputLayout
+    private lateinit var til_relatioship_other_name: TextInputLayout
 
 
     private lateinit var male_view: LinearLayout
@@ -149,6 +143,10 @@ class AddMemberFirstActivity() : AppCompatActivity() {
     private lateinit var nagar_select_default: TextView
     private lateinit var shakha_select_default: TextView
 
+    private val apiHandler = Handler(Looper.getMainLooper())
+    private var lastTypedText: String = ""
+    private var isUserNameValid = false
+    private lateinit var userNameValidError: String
 
     @SuppressLint("NewApi", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -223,21 +221,11 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         til_password = findViewById(R.id.til_password)
         til_confirm_password = findViewById(R.id.til_confirm_password)
         til_dob = findViewById(R.id.til_dob)
+        til_relatioship_other_name = findViewById(R.id.til_relatioship_other_name)
 
         Log.d("TYPE_SELF", intent.getStringExtra("TYPE_SELF")!!)
 
-        if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-            myRelationship()
-            myOccupation()
-            myVibhag()
-        } else {
-            Toast.makeText(
-                this@AddMemberFirstActivity,
-                resources.getString(R.string.no_connection),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
+        callApis()
 
         var calendar = Calendar.getInstance(Locale.getDefault())
         val simpledateFormat = SimpleDateFormat("dd/MM/yyyy")
@@ -300,44 +288,22 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     GENDER = "F"
                 }
 
-//                edit_realationship_txt.setSelection(relationshipName.indexOf(sessionManager.fetchRELATIONSHIPNAME()))
-
-//                        edit_realationship_txt.setPositiveButton(data_getprofile[0].relationship)
                 if (sessionManager.fetchRELATIONSHIPNAME_OTHER() != "") {
                     edit_realationship_name.visibility = View.VISIBLE
                     edit_realationship_name.setText(sessionManager.fetchRELATIONSHIPNAME_OTHER())
                 }
-
-                /*edit_occupation_select_other.setSelection(OccupationName.indexOf("2"))
-//                        edit_occupation_name.setText(data_getprofile[0].o)   sessionManager.fetchOCCUPATIONNAME()
-                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGID()))
-                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARID()))
-                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHAID()))*/
 
                 edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
                 edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
                 edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
                 edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
 
-                DebugLog.e("VIBHAG " + sessionManager.fetchVIBHAGNAME())
-                DebugLog.e("NAGAR " + sessionManager.fetchNAGARNAME())
-                DebugLog.e("SHAKHA " + sessionManager.fetchSHAKHANAME())
-                DebugLog.e("RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME())
-                DebugLog.e("OTHER_RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME_OTHER())
-                DebugLog.e("OCCUPATION " + sessionManager.fetchOCCUPATIONNAME())
-
-
-                if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-                    val USER_ID = sessionManager.fetchUserID()!!
-                    val MEMBER_ID = sessionManager.fetchMEMBERID()!!
-//                    myMemberView(USER_ID, MEMBER_ID)
-                } else {
-                    Toast.makeText(
-                        this@AddMemberFirstActivity,
-                        resources.getString(R.string.no_connection),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+//                DebugLog.e("VIBHAG " + sessionManager.fetchVIBHAGNAME())
+//                DebugLog.e("NAGAR " + sessionManager.fetchNAGARNAME())
+//                DebugLog.e("SHAKHA " + sessionManager.fetchSHAKHANAME())
+//                DebugLog.e("RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME())
+//                DebugLog.e("OTHER_RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME_OTHER())
+//                DebugLog.e("OCCUPATION " + sessionManager.fetchOCCUPATIONNAME())
 
             } else if (intent.getStringExtra("FAMILY") == "FAMILY") {
                 header_title.text = getString(R.string.family_member)
@@ -359,18 +325,14 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     ).show()
                 }
             }
-        } /*else if (intent.getStringExtra("FAMILY") == "MEMBER") {
-            header_title.text = getString(R.string.Add_self)
-            family_view.visibility = View.GONE
-        } */
-        else {
+        } else {
             header_title.text = getString(R.string.Add_self)
             family_view.visibility = View.GONE
             primary_member_layout.visibility = View.GONE
             setSelfInfoFromSession()
         }
 
-        male_view.setOnClickListener {
+        male_view.setOnClickListener(DebouncedClickListener {
             male_right_img.visibility = View.VISIBLE
 
             male_view.setBackgroundResource(R.drawable.edit_primery_color_round)
@@ -380,20 +342,20 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             male_right_img.setImageResource(R.drawable.righttikmark)
             male_icon.setColorFilter(
                 ContextCompat.getColor(this, R.color.primaryColor),
-                android.graphics.PorterDuff.Mode.MULTIPLY
+                PorterDuff.Mode.MULTIPLY
             )
 
             female_txt.setTextColor(getColor(R.color.grayColorColor))
             female_right.visibility = View.INVISIBLE
             female_img.setColorFilter(
                 ContextCompat.getColor(this, R.color.grayColorColor),
-                android.graphics.PorterDuff.Mode.MULTIPLY
+                PorterDuff.Mode.MULTIPLY
             )
 
             GENDER = "M"
-        }
+        })
 
-        female_view.setOnClickListener {
+        female_view.setOnClickListener(DebouncedClickListener {
             female_right.visibility = View.VISIBLE
 
             female_view.setBackgroundResource(R.drawable.edit_pink_color_round)
@@ -414,20 +376,35 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             )
 
             GENDER = "F"
-        }
+        })
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
-        edit_username.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // Call your code here
-                CallUserNameMethod()
-                true
+        edit_username.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
-            false
-        }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val currentText = s.toString().trim()
+                if (currentText.length >= 5 && currentText != lastTypedText) {
+                    apiHandler.removeCallbacksAndMessages(null)
+                    apiHandler.postDelayed(
+                        { CallUserNameMethod(currentText) },
+                        1000
+                    )
+                } else if (currentText.length < 5 && currentText != lastTypedText) {
+                    apiHandler.removeCallbacksAndMessages(null)
+                }
+                lastTypedText = currentText
+
+            }
+        })
+
 
         edit_email.setText(sessionManager.fetchUSEREMAIL())
 
@@ -455,142 +432,164 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         edit_dateofbirth.doOnTextChanged { text, start, before, count ->
             til_dob.isErrorEnabled = false
         }
+        edit_realationship_name.doOnTextChanged { text, start, before, count ->
+            til_relatioship_other_name.isErrorEnabled = false
+        }
 
         //Validation Start here
-        next_layout.setOnClickListener {
-
-            var TYPE_LINKED: String = ""
-            var TYPE_SELF: String = ""
-
-            if (TYPE_LINKED == "") {
-                TYPE_LINKED = ""
-            } else {
-                TYPE_LINKED = intent.getStringExtra("TYPE_LINKED").toString()
-            }
-
-            if (TYPE_SELF == "") {
-                TYPE_SELF = ""
-            } else {
-                TYPE_SELF = intent.getStringExtra("TYPE_SELF").toString()
-            }
-
+        next_layout.setOnClickListener(DebouncedClickListener {
             if (intent.getStringExtra("TYPE_SELF") != "self") { // profile or Family member
                 if (intent.getStringExtra("FAMILY") != "PROFILE") {// Add family
                     if (edit_firstname.text.toString().isEmpty()) {
                         til_firstName.error = getString(R.string.first_name)
                         til_firstName.isErrorEnabled = true
+                        til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
                         til_firstName.error = getString(R.string.valid_first_name)
                         til_firstName.isErrorEnabled = true
+                        til_firstName.setErrorIconDrawable(null)
                         edit_firstname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!edit_middlename.text.toString()
                             .isEmpty() && !UtilCommon.isOnlyLetters(edit_middlename.text.toString())
                     ) {
                         til_middleName.error = getString(R.string.valid_middle_name)
                         til_middleName.isErrorEnabled = true
+                        til_middleName.setErrorIconDrawable(null)
                         edit_middlename.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_surname.text.toString().isEmpty()) {
                         til_surname.error = getString(R.string.sur_name)
                         til_surname.isErrorEnabled = true
+                        til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
                         til_surname.error = getString(R.string.valid_surname)
                         til_surname.isErrorEnabled = true
+                        til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_username.text.toString().isEmpty()) {
                         til_username.error = getString(R.string.user_name)
                         til_username.isErrorEnabled = true
+                        til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
+                    } else if (!isUserNameValid) {
+                        til_username.error = userNameValidError
+                        til_username.isErrorEnabled = true
+                        til_username.setErrorIconDrawable(null)
+                        edit_username.requestFocus()
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isValidUserName(edit_username.text.toString())) {
                         til_username.error = getString(R.string.valid_user_name)
                         til_username.isErrorEnabled = true
+                        til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_email.text.toString().isEmpty()) {
                         til_email.error = getString(R.string.email_id)
                         til_email.isErrorEnabled = true
+                        til_email.setErrorIconDrawable(null)
                         edit_email.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString())
                             .matches()
                     ) {
                         til_email.error = getString(R.string.valid_email)
                         til_email.isErrorEnabled = true
+                        til_email.setErrorIconDrawable(null)
                         edit_email.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_password.text.toString().isEmpty()) {
                         til_password.error = getString(R.string.enter_password)
                         til_password.isErrorEnabled = true
+                        til_password.setErrorIconDrawable(null)
                         edit_password.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isValidPassword(edit_password.text.toString())) {
                         til_password.error = getString(R.string.valid_password)
                         til_password.isErrorEnabled = true
+                        til_password.setErrorIconDrawable(null)
                         edit_password.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_confirm_password.text.toString().isEmpty()) {
                         til_confirm_password.error = getString(R.string.enter_confirm_password)
                         til_confirm_password.isErrorEnabled = true
+                        til_confirm_password.setErrorIconDrawable(null)
                         edit_confirm_password.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (!UtilCommon.isValidPassword(edit_confirm_password.text.toString())) {
                         til_confirm_password.error = getString(R.string.valid_confirm_password)
                         til_confirm_password.isErrorEnabled = true
+                        til_confirm_password.setErrorIconDrawable(null)
                         edit_confirm_password.requestFocus()
-                        return@setOnClickListener
+                        return@DebouncedClickListener
                     } else if (edit_password.text.toString() != edit_confirm_password.text.toString()) {
                         til_confirm_password.error = getString(R.string.confirm_both_pass)
                         til_confirm_password.isErrorEnabled = true
+                        til_confirm_password.setErrorIconDrawable(null)
                         edit_confirm_password.requestFocus()
                     } else if (edit_dateofbirth.text.toString().isEmpty()) {
                         til_dob.error = getString(R.string.enter_dob)
                         til_dob.isErrorEnabled = true
+                        til_dob.setErrorIconDrawable(null)
                         edit_dateofbirth.requestFocus()
                     } else if (GENDER == "") {
                         Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT)
                             .show()
+                    } else if (RELATIONSHIP_ID == "5" && edit_realationship_name.text.toString()
+                            .isEmpty()
+                    ) {
+                        til_relatioship_other_name.error =
+                            "Please enter the other relationship name"
+                        til_relatioship_other_name.isErrorEnabled = true
+                        til_relatioship_other_name.setErrorIconDrawable(null)
+                        edit_realationship_name.requestFocus()
                     } else {
                         CallNextMethod()
                     }
-                }
-
-                // Edit profile
-                if (edit_firstname.text.toString().isEmpty()) {
-                    til_firstName.error = getString(R.string.first_name)
-                    til_firstName.isErrorEnabled = true
-                    edit_firstname.requestFocus()
-                    return@setOnClickListener
-                } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
-                    til_firstName.error = getString(R.string.valid_first_name)
-                    til_firstName.isErrorEnabled = true
-                    edit_firstname.requestFocus()
-                    return@setOnClickListener
-                } else if (!edit_middlename.text.toString().isEmpty() && !UtilCommon.isOnlyLetters(
-                        edit_middlename.text.toString()
-                    )
-                ) {
-                    til_middleName.error = getString(R.string.valid_middle_name)
-                    til_middleName.isErrorEnabled = true
-                    edit_middlename.requestFocus()
-                    return@setOnClickListener
-                } else if (edit_surname.text.toString().isEmpty()) {
-                    til_surname.error = getString(R.string.sur_name)
-                    til_surname.isErrorEnabled = true
-                    edit_surname.requestFocus()
-                    return@setOnClickListener
-                } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
-                    til_surname.error = getString(R.string.valid_surname)
-                    til_surname.isErrorEnabled = true
-                    edit_surname.requestFocus()
-                    return@setOnClickListener
-                }/* else if (edit_username.text.toString().isEmpty()) {
+                } else {
+                    // Edit profile
+                    if (edit_firstname.text.toString().isEmpty()) {
+                        til_firstName.error = getString(R.string.first_name)
+                        til_firstName.isErrorEnabled = true
+                        til_firstName.setErrorIconDrawable(null)
+                        edit_firstname.requestFocus()
+                        return@DebouncedClickListener
+                    } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
+                        til_firstName.error = getString(R.string.valid_first_name)
+                        til_firstName.isErrorEnabled = true
+                        til_firstName.setErrorIconDrawable(null)
+                        edit_firstname.requestFocus()
+                        return@DebouncedClickListener
+                    } else if (!edit_middlename.text.toString()
+                            .isEmpty() && !UtilCommon.isOnlyLetters(
+                            edit_middlename.text.toString()
+                        )
+                    ) {
+                        til_middleName.error = getString(R.string.valid_middle_name)
+                        til_middleName.isErrorEnabled = true
+                        til_middleName.setErrorIconDrawable(null)
+                        edit_middlename.requestFocus()
+                        return@DebouncedClickListener
+                    } else if (edit_surname.text.toString().isEmpty()) {
+                        til_surname.error = getString(R.string.sur_name)
+                        til_surname.isErrorEnabled = true
+                        til_surname.setErrorIconDrawable(null)
+                        edit_surname.requestFocus()
+                        return@DebouncedClickListener
+                    } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
+                        til_surname.error = getString(R.string.valid_surname)
+                        til_surname.isErrorEnabled = true
+                        til_surname.setErrorIconDrawable(null)
+                        edit_surname.requestFocus()
+                        return@DebouncedClickListener
+                    }
+                    /* else if (edit_username.text.toString().isEmpty()) {
                     til_username.error = getString(R.string.user_name)
                     til_username.isErrorEnabled = true
                     return@setOnClickListener
@@ -607,52 +606,61 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     til_email.isErrorEnabled = true
                     return@setOnClickListener
                 }*/ else if (GENDER == "") {
-                    Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
-                } else if (edit_dateofbirth.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
-                } else {
-                    CallNextMethod()
+                        Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } else if (edit_dateofbirth.text.toString().isEmpty()) {
+                        Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
+                    } else {
+                        CallNextMethod()
+                    }
                 }
             } else {
                 // Add Self
                 if (edit_firstname.text.toString().isEmpty()) {
                     til_firstName.error = getString(R.string.first_name)
                     til_firstName.isErrorEnabled = true
+                    til_firstName.setErrorIconDrawable(null)
                     edit_firstname.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!UtilCommon.isOnlyLetters(edit_firstname.text.toString())) {
                     til_firstName.error = getString(R.string.valid_first_name)
                     til_firstName.isErrorEnabled = true
+                    til_firstName.setErrorIconDrawable(null)
                     edit_firstname.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!edit_middlename.text.toString().isEmpty() && !UtilCommon.isOnlyLetters(
                         edit_middlename.text.toString()
                     )
                 ) {
                     til_middleName.error = getString(R.string.valid_middle_name)
                     til_middleName.isErrorEnabled = true
+                    til_middleName.setErrorIconDrawable(null)
                     edit_middlename.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_surname.text.toString().isEmpty()) {
                     til_surname.error = getString(R.string.sur_name)
                     til_surname.isErrorEnabled = true
+                    til_surname.setErrorIconDrawable(null)
                     edit_surname.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!UtilCommon.isOnlyLetters(edit_surname.text.toString())) {
                     til_surname.error = getString(R.string.valid_surname)
                     til_surname.isErrorEnabled = true
+                    til_surname.setErrorIconDrawable(null)
                     edit_surname.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (edit_email.text.toString().isEmpty()) {
                     til_email.error = getString(R.string.email_id)
                     til_email.isErrorEnabled = true
+                    til_email.setErrorIconDrawable(null)
                     edit_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString()).matches()) {
                     til_email.error = getString(R.string.valid_email)
                     til_email.isErrorEnabled = true
+                    til_email.setErrorIconDrawable(null)
                     edit_email.requestFocus()
-                    return@setOnClickListener
+                    return@DebouncedClickListener
                 } else if (GENDER == "") {
                     Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
                 } else if (edit_dateofbirth.text.toString().isEmpty()) {
@@ -661,16 +669,14 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     CallNextMethod()
                 }
             }
-        }
+        })
         //Validation End here
 
         edit_dateofbirth.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // TODO Auto-generated method stub
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // TODO Auto-generated method stub
             }
 
             override fun afterTextChanged(s: Editable) {
@@ -732,8 +738,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 val strCurrentDatenew = simpledateFormat.format(calendar.time)
                 Functions.printLog("strCurrentDatenew", strCurrentDatenew)
                 Functions.printLog("edit_dateofbirth", edit_dateofbirth.text.toString())
-//                Functions.printLog("strCurrentDate", strCurrentDate)
-
                 if (edit_dateofbirth.text.toString() >= strCurrentDatenew) {
                     Functions.printLog("Date", "Current else Future Date")
                     Functions.showAlertMessageWithOK(
@@ -753,11 +757,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     age_layout.visibility = View.VISIBLE
                     age_text.text =
                         "As your age is below 18 We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//            Functions.showAlertMessageWithOK(
-//                this@AddMemberFirstActivity,
-//                "As your age is below 18",
-//                "We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//            )
                     AGE = "1"
                 } else if (edit_dateofbirth.text.toString() <= strCurrentDatenew) {
                     age_layout.visibility = View.GONE
@@ -770,21 +769,11 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         }
 
 
-        edit_dateofbirth.setOnClickListener {
+        edit_dateofbirth.setOnClickListener(DebouncedClickListener {
             openDatePickerForDOB()
-        }
-        occupation_other_view.visibility = View.GONE
-//        if (edit_occupation_select_other.equals("Other")) {
-//            occupation_other_view.visibility = View.VISIBLE
-//        } else {
-//            occupation_other_view.visibility = View.GONE
-//        }
+        })
 
-//        edit_realationship_txt.onItemSelectedListener = mOnItemSelectedListener_realationship
-//        edit_occupation_select_other.onItemSelectedListener = mOnItemSelectedListener_occupation
-//        edit_vibhag_region.onItemSelectedListener = mOnItemSelectedListener_vibhag
-//        edit_nagar_town.onItemSelectedListener = mOnItemSelectedListener_nagar
-//        edit_shakha_branch.onItemSelectedListener = mOnItemSelectedListener_shakha
+        occupation_other_view.visibility = View.GONE
 
         edit_realationship_txt.setTitle("Select Relationship")
         edit_occupation_select_other.setTitle("Select Occupation")
@@ -796,86 +785,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         nagar_select_default = findViewById(R.id.nagar_select_default)
         shakha_select_default = findViewById(R.id.shakha_select_default)
 
-        /*if (intent.getStringExtra("TYPE_SELF") != "self") {
-            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-//                                edit_vibhag_region.visibility = View.GONE
-                vibhag_select_default.visibility = View.VISIBLE
-                nagar_select_default.visibility = View.VISIBLE
-                shakha_select_default.visibility = View.VISIBLE
-                vibhag_select_default.text = sessionManager.fetchVIBHAGNAME()
-                nagar_select_default.text = sessionManager.fetchNAGARNAME()
-                shakha_select_default.text = sessionManager.fetchSHAKHANAME()
-
-//                edit_vibhag_region.visibility = View.GONE
-//                edit_nagar_town.visibility = View.GONE
-//                edit_shakha_branch.visibility = View.GONE
-            }
-        }*/
-
-        /*vibhag_select_default.setOnClickListener {
-            vibhag_select_default.visibility = View.GONE
-            nagar_select_default.visibility = View.GONE
-            shakha_select_default.visibility = View.GONE
-            if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-                myVibhag()
-        } else {
-            Toast.makeText(
-                this@AddMemberFirstActivity,
-                resources.getString(R.string.no_connection),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-        }
-
-        nagar_select_default.setOnClickListener {
-            nagar_select_default.visibility = View.GONE
-            if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-                myNagar(VIBHAG_ID)
-            } else {
-                Toast.makeText(
-                    this@AddMemberFirstActivity,
-                    resources.getString(R.string.no_connection),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-
-        shakha_select_default.setOnClickListener {
-            shakha_select_default.visibility = View.GONE
-            if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-                myShakha(NAGAR_ID)
-            } else {
-                Toast.makeText(
-                    this@AddMemberFirstActivity,
-                    resources.getString(R.string.no_connection),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }*/
-
-        /*realationship_txt.setOnClickListener {
-            SearchSpinner(relationshipName.toTypedArray(), edit_realationship_txt)
-        }
-
-        occupation_select_other.setOnClickListener {
-            SearchSpinner(OccupationName.toTypedArray(), edit_occupation_select_other)
-        }
-
-        vibhag_region.setOnClickListener {
-            SearchSpinner(VibhagName.toTypedArray(), edit_vibhag_region)
-        }
-
-        nagar_town.setOnClickListener {
-            SearchSpinner(NagarName.toTypedArray(), edit_nagar_town)
-        }
-
-        shakha_branch.setOnClickListener {
-            SearchSpinner(ShakhaName.toTypedArray(), edit_shakha_branch)
-        }*/
-
-        tooltip_view.setOnClickListener {
-            /*ProfileBalloonFactory(true)
-            createBalloon(this)*/
+        tooltip_view.setOnClickListener(DebouncedClickListener {
 
             Tooltip.on(tooltip_view).text(R.string.ageTipText)
 //                .iconStart(android.R.drawable.ic_dialog_info)
@@ -886,6 +796,34 @@ class AddMemberFirstActivity() : AppCompatActivity() {
 //                .iconEndSize(30, 30)
                 .border(resources.getColor(R.color.orangeColor), 5f).clickToHide(true).corner(10)
                 .shadowPadding(10f).position(Position.BOTTOM).clickToHide(true).show(4000)
+        })
+    }
+
+    private fun callApis() {
+        val pd = CustomProgressBar(this@AddMemberFirstActivity)
+        pd.show()
+        if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
+
+            lifecycleScope.launch {
+                val job1 = async { myRelationship() }
+                val job2 = async { myOccupation() }
+                val job3 = async { myVibhag() }
+
+                val result1 = job1.await()
+                val result2 = job2.await()
+                val result3 = job3.await()
+                // Update the UI with the results
+                DebugLog.d("CORO - Results await 5: $result1, $result2, $result3")
+                pd.dismiss()
+            }
+
+        } else {
+            Toast.makeText(
+                this@AddMemberFirstActivity,
+                resources.getString(R.string.no_connection),
+                Toast.LENGTH_SHORT
+            ).show()
+            pd.dismiss()
         }
     }
 
@@ -920,12 +858,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 //do something
                 age_layout.visibility = View.VISIBLE
                 age_text.text =
-                    "As your age is below 18 We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//                    Functions.showAlertMessageWithOK(
-//                        this@AddMemberFirstActivity,
-//                        "As your age is below 18",
-//                        "We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//                    )
+                    getString(R.string.under_age_18)
                 AGE = "1"
             } else {
                 age_layout.visibility = View.GONE
@@ -933,10 +866,10 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 AGE = "0"
             }
 
-        }, year, month, day)
-//            dialog.datePicker.minDate = calendar.timeInMillis
-//            calendar.add(Calendar.YEAR, 0)
-        dialog.datePicker.maxDate = calendar.timeInMillis
+        }, (year), month, day)
+        val maxDate = Calendar.getInstance()
+        maxDate.add(Calendar.YEAR, -3)
+        dialog.datePicker.maxDate = maxDate.timeInMillis
         dialog.show()
     }
 
@@ -948,211 +881,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         edit_email.setText(sessionManager.fetchUSEREMAIL())
         edit_dateofbirth.setText(sessionManager.fetchDOB())
     }
-
-    private val mDateEntryWatcher: TextWatcher = object : TextWatcher {
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            var working = s.toString()
-            var isValid = true
-            if (working.length == 2 && before == 0) {
-                if (working.toInt() < 1 || working.toInt() > 31) {
-                    isValid = false
-                } else {
-                    working += "/"
-                    edit_dateofbirth.setText(working)
-                    edit_dateofbirth.setSelection(working.length)
-                }
-            } else if (working.length == 5 && before == 0) {
-                val enteredMonth = working.substring(6)
-                if (enteredMonth.toInt() < 1 || enteredMonth.toInt() > 12) {
-                    isValid = false
-                } else {
-                    working += "/"
-                    edit_dateofbirth.setText(working)
-                    edit_dateofbirth.setSelection(working.length)
-                }
-            } else if (working.length == 10 && before == 0) {
-                val enteredYear = working.substring(7)
-                val currentYear = Calendar.getInstance()[Calendar.YEAR]
-                if (enteredYear.toInt() < currentYear) {
-                    isValid = false
-                }
-            } else if (working.length != 10) {
-                isValid = false
-            }
-            if (!isValid) {
-                edit_dateofbirth.setError("Enter a valid date: DD/MM/YYYY")
-            } else {
-                edit_dateofbirth.setError(null)
-            }
-        }
-
-        override fun afterTextChanged(s: Editable) {}
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-    }
-
-    private fun SearchSpinnerold(
-        spinner_search: Array<String>, edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-        Log.d("SearchSpinner", edit_txt.toString())
-
-        if (intent.getStringExtra("TYPE_SELF") != "self") {
-            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-//                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
-//                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-//                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-//                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-            }
-        }
-    }
-
-
-    private fun SearchSpinner(
-        spinner_search: Array<String>, edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-        Log.d("SearchSpinner", edit_txt.toString())
-
-        if (intent.getStringExtra("TYPE_SELF") != "self") {
-            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
-                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-            }
-        }
-    }
-
-    private val mOnItemSelectedListener_realationship: OnItemSelectedListener =
-        object : OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-//            TODO("Not yet implemented")
-                Log.d("Name", relationshipName[position])
-                Log.d("Postion", relationshipID[position])
-                RELATIONSHIP_ID = relationshipID[position]
-
-                if (RELATIONSHIP_ID == "5") {
-                    realationship_other_view.visibility = View.VISIBLE
-                    OTHER_RELATIONSHIP = edit_realationship_name.text.toString()
-                } else {
-                    realationship_other_view.visibility = View.GONE
-                    OTHER_RELATIONSHIP = ""
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-            }
-        }
-
-//    private val mOnItemSelectedListener_occupation: OnItemSelectedListener =
-//        object : OnItemSelectedListener {
-//            override fun onItemSelected(
-//                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-//            ) {
-////            TODO("Not yet implemented")
-//                Log.d("Name", OccupationName[position])
-//                Log.d("Postion", OccupationID[position])
-//                OCCUPATION_ID = OccupationID[position]
-//
-//
-//                if (OccupationName[position] == "Other") {
-//                    occupation_other_view.visibility = View.VISIBLE
-//                    OCCUPATION_NAME = edit_occupation_name.text.toString()
-//                } else {
-//                    occupation_other_view.visibility = View.GONE
-//                    OCCUPATION_NAME = OccupationName[position]
-//                }
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>?) {
-////            TODO("Not yet implemented")
-//            }
-//        }
-
-//    private val mOnItemSelectedListener_vibhag: OnItemSelectedListener =
-//        object : OnItemSelectedListener {
-//            override fun onItemSelected(
-//                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-//            ) {
-////            TODO("Not yet implemented")
-//                Log.d("Name", VibhagName[position])
-//                Log.d("Postion", VibhagID[position])
-//                VIBHAG_ID = VibhagID[position]
-//
-////                edit_vibhag_region.setSelection(VibhagName.indexOf(VIBHAG_ID))
-//
-//                if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-//                    myNagar(VIBHAG_ID)
-//                } else {
-//                    Toast.makeText(
-//                        this@AddMemberFirstActivity,
-//                        resources.getString(R.string.no_connection),
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>?) {
-////            TODO("Not yet implemented")
-//            }
-//        }
-
-//    private val mOnItemSelectedListener_nagar: OnItemSelectedListener =
-//        object : OnItemSelectedListener {
-//            override fun onItemSelected(
-//                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-//            ) {
-////            TODO("Not yet implemented")
-//                Log.d("Name", NagarName[position])
-//                Log.d("Postion", NagarID[position])
-//                NAGAR_ID = NagarID[position]
-//
-////                edit_nagar_town.setSelection(NagarName.indexOf(NAGAR_ID))
-//
-//                if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-//                    myShakha(NAGAR_ID)
-//                } else {
-//                    Toast.makeText(
-//                        this@AddMemberFirstActivity,
-//                        resources.getString(R.string.no_connection),
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>?) {
-////            TODO("Not yet implemented")
-//            }
-//        }
-
-//    private val mOnItemSelectedListener_shakha: OnItemSelectedListener =
-//        object : OnItemSelectedListener {
-//            override fun onItemSelected(
-//                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-//            ) {
-////            TODO("Not yet implemented")
-//                Log.d("Name", ShakhaName[position])
-//                Log.d("Postion", ShakhaID[position])
-//                SHAKHA_ID = ShakhaID[position]
-//
-////                edit_shakha_branch.setSelection(ShakhaName.indexOf(SHAKHA_ID))
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>?) {
-////            TODO("Not yet implemented")
-//            }
-//        }
 
     /*Member Information View API*/
     private fun myMemberView(user_id: String, member_id: String) {
@@ -1314,11 +1042,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         Functions.displayMessage(
                             this@AddMemberFirstActivity, response.body()?.message
                         )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberFirstActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -1337,815 +1060,351 @@ class AddMemberFirstActivity() : AppCompatActivity() {
     }
 
     /*Relationship API*/
-    private fun myRelationship() {
-        val pd = CustomProgressBar(this@AddMemberFirstActivity)
-        pd.show()
-        val call: Call<Get_Relationship_Response> =
-            MyHssApplication.instance!!.api.get_relationship()
-        call.enqueue(object : Callback<Get_Relationship_Response> {
-            override fun onResponse(
-                call: Call<Get_Relationship_Response>, response: Response<Get_Relationship_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
+    private suspend fun myRelationship() {
+        try {
+            val response = MyHssApplication.instance?.api?.getRelationship()
 
-                        var data_relationship: List<Datum_Relationship> =
-                            ArrayList<Datum_Relationship>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d(
-                                "relationshipName", data_relationship[i].relationshipName.toString()
-                            )
-                        }
-                        relationshipName = listOf(arrayOf(data_relationship).toString())
-                        relationshipID = listOf(arrayOf(data_relationship).toString())
+            if (response?.status == true) {
+                val data_relationship = response.data.orEmpty()
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringList.add(
-//                            data_relationship[i].memberRelationshipId.toString() +
-                                data_relationship[i].relationshipName.toString()
-                            )
-                        }
+                relationshipName = data_relationship.map { it.relationshipName.toString() }
+                relationshipID = data_relationship.map { it.memberRelationshipId.toString() }
 
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringListnew.add(
-                                data_relationship[i].memberRelationshipId.toString()
-                            )
-                        }
+                val adapter = ArrayAdapter(
+                    this@AddMemberFirstActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    relationshipName
+                )
+                edit_realationship_txt.adapter = adapter
+                edit_realationship_txt.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            adapter: AdapterView<*>,
+                            v: View,
+                            position: Int,
+                            id: Long
+                        ) {
+                            (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
+                            RELATIONSHIP_ID = relationshipID[position]
 
-//                    getCountry(relationshipName.toTypedArray())
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-//                            Log.d("LIST==>", element.toString())
-                            list.add(element.toString())
-//                            Log.d("list==>", list.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                relationshipName =
-                                    list//listOf(listn.toCollection(ArrayList()).toString())
+                            if (RELATIONSHIP_ID == "5") {
+                                realationship_other_view.visibility = View.VISIBLE
+                                OTHER_RELATIONSHIP = edit_realationship_name.text.toString()
+                            } else {
+                                realationship_other_view.visibility = View.GONE
+                                OTHER_RELATIONSHIP = ""
                             }
                         }
 
-                        for (element in mStringArraynew) {
-//                            Log.d("LIST==>", element.toString())
-                            listnew.add(element.toString())
-//                            Log.d("list==>", listnew.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                relationshipID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        Log.d("relationshipName==>", relationshipName.toString())
-
-//                        SearchSpinner(relationshipName.toTypedArray(), edit_realationship_txt)
-
-                        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
-                            this@AddMemberFirstActivity,
-                            android.R.layout.simple_spinner_dropdown_item,
-                            relationshipName
-                        )
-                        edit_realationship_txt.adapter = adapter
-                        edit_realationship_txt.onItemSelectedListener =
-                            object : OnItemSelectedListener {
-                                override fun onItemSelected(
-                                    adapter: AdapterView<*>, v: View, position: Int, id: Long
-                                ) {
-                                    // On selecting a spinner item
-                                    (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-
-                                    Log.d("Name", relationshipName[position])
-                                    Log.d("Postion", relationshipID[position])
-                                    RELATIONSHIP_ID = relationshipID[position]
-
-                                    if (RELATIONSHIP_ID == "5") {
-                                        realationship_other_view.visibility = View.VISIBLE
-                                        OTHER_RELATIONSHIP = edit_realationship_name.text.toString()
-                                    } else {
-                                        realationship_other_view.visibility = View.GONE
-                                        OTHER_RELATIONSHIP = ""
-                                    }
-                                }
-
-                                override fun onNothingSelected(arg0: AdapterView<*>?) {
-                                    // TODO Auto-generated method stub
-                                }
-                            }
-
-                    } else {
-                        Functions.displayMessage(
-                            this@AddMemberFirstActivity, response.body()?.message
-                        )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberFirstActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
+                        override fun onNothingSelected(arg0: AdapterView<*>?) {}
                     }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberFirstActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberFirstActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
-
-            override fun onFailure(call: Call<Get_Relationship_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberFirstActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberFirstActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
     /*Occupation API*/
-    private fun myOccupation() {
-        val pd = CustomProgressBar(this@AddMemberFirstActivity)
-        pd.show()
-        val call: Call<Get_Occupation_Response> = MyHssApplication.instance!!.api.get_occupation()
-        call.enqueue(object : Callback<Get_Occupation_Response> {
-            override fun onResponse(
-                call: Call<Get_Occupation_Response>, response: Response<Get_Occupation_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
+    private suspend fun myOccupation() {
+        try {
+            val response = MyHssApplication.instance?.api?.get_occupation()
+            if (response?.status == true) {
+                val dataOccupationList = response.data.orEmpty()
 
-                        var data_relationship: List<Datum_Get_Occupation> =
-                            ArrayList<Datum_Get_Occupation>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d(
-                                "relationshipName", data_relationship[i].occupationName.toString()
-                            )
-                        }
-                        OccupationName = listOf(arrayOf(data_relationship).toString())
-                        OccupationID = listOf(arrayOf(data_relationship).toString())
-
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringList.add(
-//                            data_relationship[i].occupationId.toString() +
-                                data_relationship[i].occupationName.toString()
-                            )
-                        }
-                        mStringList.add("Other")
-
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringListnew.add(
-                                data_relationship[i].occupationId.toString()
-                            )
-                        }
-                        mStringListnew.add("-99")
-
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-//                            Log.d("LIST==>", element.toString())
-                            list.add(element.toString())
-//                            Log.d("list==>", list.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                OccupationName =
-                                    list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-//                            Log.d("LIST==>", element.toString())
-                            listnew.add(element.toString())
-//                            Log.d("list==>", listnew.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                OccupationID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        Log.d("OccupationName==>", OccupationName.toString())
-//                        SearchSpinner(OccupationName.toTypedArray(), edit_occupation_select_other)
-
-                        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
-                            this@AddMemberFirstActivity,
-                            android.R.layout.simple_spinner_dropdown_item,
-                            OccupationName
-                        )
-                        edit_occupation_select_other.adapter = adapter
-
-                        if (intent.getStringExtra("TYPE_SELF") != "self") {
-                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-                                edit_occupation_select_other.setSelection(
-                                    OccupationName.indexOf(
-                                        sessionManager.fetchOCCUPATIONNAME()
-                                    )
-                                )
-//                                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-//                                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-//                                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-                            }
-                        }
-
-                        edit_occupation_select_other.onItemSelectedListener =
-                            object : OnItemSelectedListener {
-                                override fun onItemSelected(
-                                    adapter: AdapterView<*>, v: View, position: Int, id: Long
-                                ) {
-                                    // On selecting a spinner item
-                                    (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-
-                                    Log.d("Name", OccupationName[position])
-                                    Log.d("Postion", OccupationID[position])
-                                    OCCUPATION_ID = OccupationID[position]
-                                    OCCUPATION_NAME = OccupationName[position]
-                                    occupation_other_view.visibility = View.GONE
-//
-//
-//                                    if (OccupationName[position] == "Other") {
-//
-//                                        OCCUPATION_NAME = OccupationName[position]
-//                                    } else {
-//                                        occupation_other_view.visibility = View.GONE
-//                                        OCCUPATION_NAME = OccupationName[position]
-//                                    }
-                                }
-
-                                override fun onNothingSelected(arg0: AdapterView<*>?) {
-                                    // TODO Auto-generated method stub
-                                }
-                            }
-
-                    } else {
-                        Functions.displayMessage(
-                            this@AddMemberFirstActivity, response.body()?.message
-                        )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberFirstActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
+                OccupationName = dataOccupationList.map { it.occupationName.toString() }
+                OccupationID = dataOccupationList.map { it.occupationId.toString() }
+                OccupationName += "Other"
+                OccupationID += "-99"
+                val adapter = ArrayAdapter(
+                    this@AddMemberFirstActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    OccupationName
+                )
+                edit_occupation_select_other.adapter = adapter
+                if (intent.getStringExtra("TYPE_SELF") != "self" && intent.getStringExtra("FAMILY") == "PROFILE") {
+                    val selectedOccupation = sessionManager.fetchOCCUPATIONNAME()
+                    val selectedOccupationIndex = OccupationName.indexOf(selectedOccupation)
+                    if (selectedOccupationIndex != -1) {
+                        edit_occupation_select_other.setSelection(selectedOccupationIndex)
                     }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberFirstActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
                 }
-                pd.dismiss()
+                edit_occupation_select_other.onItemSelectedListener =
+                    object : OnItemSelectedListener {
+                        override fun onItemSelected(
+                            adapter: AdapterView<*>,
+                            v: View,
+                            position: Int,
+                            id: Long
+                        ) {
+                            (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
+                            Log.d("Name", OccupationName[position])
+                            Log.d("Postion", OccupationID[position])
+                            OCCUPATION_ID = OccupationID[position]
+                            OCCUPATION_NAME = OccupationName[position]
+                            occupation_other_view.visibility = View.GONE
+                        }
+
+                        override fun onNothingSelected(arg0: AdapterView<*>?) {
+                        }
+                    }
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberFirstActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
 
-            override fun onFailure(call: Call<Get_Occupation_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberFirstActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberFirstActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
     /*Vibhag API*/
-    private fun myVibhag() {
-        val pd = CustomProgressBar(this@AddMemberFirstActivity)
-        pd.show()
-        val call: Call<Get_Vibhag_Response> = MyHssApplication.instance!!.api.get_vibhag()
-        call.enqueue(object : Callback<Get_Vibhag_Response> {
-            override fun onResponse(
-                call: Call<Get_Vibhag_Response>, response: Response<Get_Vibhag_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
+    private suspend fun myVibhag() {
+        try {
+            val response = MyHssApplication.instance?.api?.get_vibhag()
+            if (response?.status == true) {
+                val dataVibhagList = response.data.orEmpty()
 
-                        var data_relationship: List<Datum_Get_Vibhag> =
-                            ArrayList<Datum_Get_Vibhag>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d("relationshipName", data_relationship[i].chapterName.toString())
-                        }
-                        VibhagName = listOf(arrayOf(data_relationship).toString())
-                        VibhagID = listOf(arrayOf(data_relationship).toString())
+                VibhagName = dataVibhagList.map { it.chapterName.toString() }
+                VibhagID = dataVibhagList.map { it.orgChapterId.toString() }
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringList.add(
-//                            data_relationship[i].orgChapterId.toString() +
-                                data_relationship[i].chapterName.toString()
-                            )
-                        }
+                val adapter = ArrayAdapter(
+                    this@AddMemberFirstActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    VibhagName
+                )
+                edit_vibhag_region.adapter = adapter
 
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringListnew.add(
-                                data_relationship[i].orgChapterId.toString()
-                            )
-                        }
-
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-//                            Log.d("LIST==>", element.toString())
-                            list.add(element.toString())
-//                            Log.d("list==>", list.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                VibhagName =
-                                    list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-//                            Log.d("LIST==>", element.toString())
-                            listnew.add(element.toString())
-//                            Log.d("list==>", listnew.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                VibhagID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        Log.d("VibhagName==>", VibhagName.toString())
-//                        SearchSpinner(VibhagName.toTypedArray(), edit_vibhag_region)
-
-                        val Vibhagadapter: ArrayAdapter<String> = ArrayAdapter<String>(
-                            this@AddMemberFirstActivity,
-                            android.R.layout.simple_spinner_dropdown_item,
-                            VibhagName
-                        )
-                        edit_vibhag_region.adapter = Vibhagadapter
-
-                        if (intent.getStringExtra("TYPE_SELF") != "self") {
-                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-//                                edit_vibhag_region.visibility = View.GONE
-                                vibhag_select_default.visibility = View.VISIBLE
-                                vibhag_select_default.text = sessionManager.fetchVIBHAGNAME()
-//                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
-                                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-//                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-//                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-                            }
-                        }
-//                        Handler().postDelayed({
-//                        edit_vibhag_region.callOnClick()
-//                        }, 500)
-
-//                        edit_vibhag_region.setSelection(0, true)
-
-                        edit_vibhag_region.onItemSelectedListener =
-                            object : OnItemSelectedListener {
-                                override fun onItemSelected(
-                                    adapter: AdapterView<*>, v: View, position: Int, id: Long
-                                ) {
-                                    // On selecting a spinner item
-                                    (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-
-                                    Log.d("Name", VibhagName[position])
-                                    Log.d("Postion", VibhagID[position])
-                                    VIBHAG_ID = VibhagID[position]
-
-                                    if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-                                        myNagar(VIBHAG_ID)
-                                    } else {
-                                        Toast.makeText(
-                                            this@AddMemberFirstActivity,
-                                            resources.getString(R.string.no_connection),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-
-                                override fun onNothingSelected(arg0: AdapterView<*>?) {
-                                    // TODO Auto-generated method stub
-                                }
-                            }
-
-//                        Vibhagadapter.notifyDataSetChanged()
-
-                    } else {
-                        Functions.displayMessage(
-                            this@AddMemberFirstActivity, response.body()?.message
-                        )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberFirstActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
+                if (intent.getStringExtra("TYPE_SELF") != "self") {
+                    val selectedVibhagName = sessionManager.fetchVIBHAGNAME()
+                    val selectedVibhagIndex = VibhagName.indexOf(selectedVibhagName)
+                    if (selectedVibhagIndex != -1) {
+                        vibhag_select_default.visibility = View.VISIBLE
+                        vibhag_select_default.text = selectedVibhagName
+                        edit_vibhag_region.setSelection(selectedVibhagIndex)
                     }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberFirstActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
                 }
-                pd.dismiss()
-            }
 
-            override fun onFailure(call: Call<Get_Vibhag_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberFirstActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
+                edit_vibhag_region.onItemSelectedListener = object : OnItemSelectedListener {
+                    override fun onItemSelected(
+                        adapter: AdapterView<*>,
+                        v: View,
+                        position: Int,
+                        id: Long
+                    ) {
+                        (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
+                        VIBHAG_ID = VibhagID[position]
+
+                        if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
+                            lifecycleScope.launch {
+                                val job4 = async { myNagar(VIBHAG_ID) }
+                                DebugLog.d("Coro for myVibhag: ${job4.await()}")
+
+                            }
+                        } else {
+                            Toast.makeText(
+                                this@AddMemberFirstActivity,
+                                resources.getString(R.string.no_connection),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+
+                    override fun onNothingSelected(arg0: AdapterView<*>?) {
+                    }
+                }
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberFirstActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberFirstActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
     /*Nagar API*/
-    private fun myNagar(VIBHAG_ID: String) {
-        val pd = CustomProgressBar(this@AddMemberFirstActivity)
-        pd.show()
-        val call: Call<Get_Nagar_Response> = MyHssApplication.instance!!.api.get_nagar(
-            VIBHAG_ID, sessionManager.fetchUserID()!!
-        )
-        call.enqueue(object : Callback<Get_Nagar_Response> {
-            override fun onResponse(
-                call: Call<Get_Nagar_Response>, response: Response<Get_Nagar_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
+    private suspend fun myNagar(VIBHAG_ID: String) {
+        try {
+            val response =
+                MyHssApplication.instance?.api?.get_nagar(VIBHAG_ID, sessionManager.fetchUserID()!!)
 
-                        var data_relationship: List<Datum_Get_Nagar> = ArrayList<Datum_Get_Nagar>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d("relationshipName", data_relationship[i].chapterName.toString())
-                        }
-                        NagarName = listOf(arrayOf(data_relationship).toString())
-                        NagarID = listOf(arrayOf(data_relationship).toString())
+            if (response?.status == true) {
+                val dataNagarList = response.data.orEmpty()
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringList.add(
-//                            data_relationship[i].occupationId.toString() +
-                                data_relationship[i].chapterName.toString()
-                            )
-                        }
+                NagarName = dataNagarList.map { it.chapterName.toString() }
+                NagarID = dataNagarList.map { it.orgChapterId.toString() }
 
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringListnew.add(
-                                data_relationship[i].orgChapterId.toString()
-                            )
-                        }
+                val adapter = ArrayAdapter(
+                    this@AddMemberFirstActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    NagarName
+                )
+                edit_nagar_town.adapter = adapter
 
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-//                            Log.d("LIST==>", element.toString())
-                            list.add(element.toString())
-//                            Log.d("list==>", list.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                NagarName = list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-//                            Log.d("LIST==>", element.toString())
-                            listnew.add(element.toString())
-//                            Log.d("list==>", listnew.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                NagarID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        Log.d("NagarName==>", NagarName.toString())
-//                        SearchSpinner(NagarName.toTypedArray(), edit_nagar_town)
-
-                        val Nagaradapter: ArrayAdapter<String> = ArrayAdapter<String>(
-                            this@AddMemberFirstActivity,
-                            android.R.layout.simple_spinner_dropdown_item,
-                            NagarName
-                        )
-                        edit_nagar_town.adapter = Nagaradapter
-
-                        if (intent.getStringExtra("TYPE_SELF") != "self") {
-                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-//                                edit_nagar_town.visibility = View.GONE
-                                nagar_select_default.visibility = View.VISIBLE
-                                nagar_select_default.text = sessionManager.fetchNAGARNAME()
-//                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
-//                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-                                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-//                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-                            }
-                        }
-//                        edit_nagar_town.setSelection(0, true)
-
-                        edit_nagar_town.onItemSelectedListener = object : OnItemSelectedListener {
-                            override fun onItemSelected(
-                                adapter: AdapterView<*>, v: View, position: Int, id: Long
-                            ) {
-                                // On selecting a spinner item
-                                (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-
-                                Log.d("Name", NagarName[position])
-                                Log.d("Postion", NagarID[position])
-                                NAGAR_ID = NagarID[position]
-
-                                if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-                                    myShakha(NAGAR_ID)
-                                } else {
-                                    Toast.makeText(
-                                        this@AddMemberFirstActivity,
-                                        resources.getString(R.string.no_connection),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-
-                            override fun onNothingSelected(arg0: AdapterView<*>?) {
-                                // TODO Auto-generated method stub
-                            }
-                        }
-
-//                        Nagaradapter.notifyDataSetChanged()
-
-                    } else {
-                        Functions.displayMessage(
-                            this@AddMemberFirstActivity, response.body()?.message
-                        )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberFirstActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
+                if (intent.getStringExtra("TYPE_SELF") != "self") {
+                    val selectedNagarName = sessionManager.fetchNAGARNAME()
+                    val selectedNagarIndex = NagarName.indexOf(selectedNagarName)
+                    if (selectedNagarIndex != -1) {
+                        nagar_select_default.visibility = View.VISIBLE
+                        nagar_select_default.text = selectedNagarName
+                        edit_nagar_town.setSelection(selectedNagarIndex)
                     }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberFirstActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
                 }
-                pd.dismiss()
-            }
 
-            override fun onFailure(call: Call<Get_Nagar_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberFirstActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
+                edit_nagar_town.onItemSelectedListener = object : OnItemSelectedListener {
+                    override fun onItemSelected(
+                        adapter: AdapterView<*>,
+                        v: View,
+                        position: Int,
+                        id: Long
+                    ) {
+                        (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
+                        NAGAR_ID = NagarID[position]
+
+                        if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
+                            lifecycleScope.launch {
+//                                val job5 = async { myShakha(NAGAR_ID) }
+//                                DebugLog.d("Coro myNagar ==>>  ${job5.await()}")
+                                myShakha(NAGAR_ID)
+                            }
+                        } else {
+                            Toast.makeText(
+                                this@AddMemberFirstActivity,
+                                resources.getString(R.string.no_connection),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                    }
+                }
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberFirstActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
-        })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberFirstActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
+
+
     }
 
     /*Shakha API*/
-    private fun myShakha(NAGAR_ID: String) {
-        val pd = CustomProgressBar(this@AddMemberFirstActivity)
-        pd.show()
-        val call: Call<Get_Shakha_Response> = MyHssApplication.instance!!.api.get_shakha(
-            NAGAR_ID, sessionManager.fetchUserID()!!
-        )
-        call.enqueue(object : Callback<Get_Shakha_Response> {
-            override fun onResponse(
-                call: Call<Get_Shakha_Response>, response: Response<Get_Shakha_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
+    private suspend fun myShakha(NAGAR_ID: String) {
+        try {
+            val response =
+                MyHssApplication.instance?.api?.get_shakha(NAGAR_ID, sessionManager.fetchUserID()!!)
+            if (response?.status == true) {
+                val dataShakhaList = response.data.orEmpty()
 
-                        var data_relationship: List<Datum_Get_Shakha> =
-                            ArrayList<Datum_Get_Shakha>()
-                        data_relationship = response.body()!!.data!!
-                        Log.d("atheletsBeans", data_relationship.toString())
-                        for (i in 1 until data_relationship.size) {
-                            Log.d(
-                                "relationshipName", data_relationship[i].getChapterName().toString()
-                            )
-                        }
-                        ShakhaName = listOf(arrayOf(data_relationship).toString())
-                        ShakhaID = listOf(arrayOf(data_relationship).toString())
+                ShakhaName = dataShakhaList.map { it.getChapterName().toString() }
+                ShakhaID = dataShakhaList.map { it.getOrgChapterId().toString() }
 
-                        val mStringList = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringList.add(
-//                            data_relationship[i].occupationId.toString() +
-                                data_relationship[i].getChapterName().toString()
-                            )
-                        }
+                val adapter = ArrayAdapter(
+                    this@AddMemberFirstActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    ShakhaName
+                )
+                edit_shakha_branch.adapter = adapter
 
-                        val mStringListnew = ArrayList<String>()
-                        for (i in 0 until data_relationship.size) {
-                            mStringListnew.add(
-                                data_relationship[i].getOrgChapterId().toString()
-                            )
-                        }
-
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: ArrayList<String> = arrayListOf<String>()
-                        val listnew: ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-//                            Log.d("LIST==>", element.toString())
-                            list.add(element.toString())
-//                            Log.d("list==>", list.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                ShakhaName =
-                                    list//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-//                            Log.d("LIST==>", element.toString())
-                            listnew.add(element.toString())
-//                            Log.d("list==>", listnew.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                ShakhaID =
-                                    listnew//listOf(listn.toCollection(ArrayList()).toString())
-                            }
-                        }
-
-                        Log.d("ShakhaName==>", ShakhaName.toString())
-//                        SearchSpinner(ShakhaName.toTypedArray(), edit_shakha_branch)
-
-                        val Shakhaadapter: ArrayAdapter<String> = ArrayAdapter<String>(
-                            this@AddMemberFirstActivity,
-                            android.R.layout.simple_spinner_dropdown_item,
-                            ShakhaName
-                        )
-                        edit_shakha_branch.adapter = Shakhaadapter
-
-                        if (intent.getStringExtra("TYPE_SELF") != "self") {
-                            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-//                                edit_shakha_branch.visibility = View.GONE
-                                shakha_select_default.visibility = View.VISIBLE
-                                shakha_select_default.text = sessionManager.fetchSHAKHANAME()
-                                SHAKHA_ID = sessionManager.fetchSHAKHAID()!!
-//                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
-//                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-//                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-                                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-                            }
-                        }
-
-//                        edit_shakha_branch.setSelection(0, true)
-
-                        edit_shakha_branch.onItemSelectedListener =
-                            object : OnItemSelectedListener {
-                                override fun onItemSelected(
-                                    adapter: AdapterView<*>, v: View, position: Int, id: Long
-                                ) {
-                                    // On selecting a spinner item
-                                    (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-
-                                    Log.d("Name", ShakhaName[position])
-                                    Log.d("Postion", ShakhaID[position])
-                                    SHAKHA_ID = ShakhaID[position]
-                                }
-
-                                override fun onNothingSelected(arg0: AdapterView<*>?) {
-                                    // TODO Auto-generated method stub
-                                }
-                            }
-
-//                        Shakhaadapter.notifyDataSetChanged()
-
-                    } else {
-                        Functions.displayMessage(
-                            this@AddMemberFirstActivity, response.body()?.message
-                        )
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberFirstActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
+                if (intent.getStringExtra("TYPE_SELF") != "self") {
+                    val selectedShakhaName = sessionManager.fetchSHAKHANAME()
+                    val selectedShakhaIndex = ShakhaName.indexOf(selectedShakhaName)
+                    if (selectedShakhaIndex != -1) {
+                        shakha_select_default.visibility = View.VISIBLE
+                        shakha_select_default.text = selectedShakhaName
+                        SHAKHA_ID = sessionManager.fetchSHAKHAID()!!
+                        edit_shakha_branch.setSelection(selectedShakhaIndex)
                     }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddMemberFirstActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
                 }
-                pd.dismiss()
+
+                edit_shakha_branch.onItemSelectedListener = object : OnItemSelectedListener {
+                    override fun onItemSelected(
+                        adapter: AdapterView<*>,
+                        v: View,
+                        position: Int,
+                        id: Long
+                    ) {
+                        (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
+                        SHAKHA_ID = ShakhaID[position]
+                    }
+
+                    override fun onNothingSelected(arg0: AdapterView<*>?) {
+                    }
+                }
+            } else {
+                Functions.displayMessage(
+                    this@AddMemberFirstActivity,
+                    response?.message ?: "Unknown error"
+                )
             }
 
-            override fun onFailure(call: Call<Get_Shakha_Response>, t: Throwable) {
-                Toast.makeText(this@AddMemberFirstActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Functions.showAlertMessageWithOK(
+                this@AddMemberFirstActivity,
+                "Message",
+                getString(R.string.some_thing_wrong)
+            )
+        }
     }
 
-    private fun UserNameCheck(user_id: String, username: String, id: String) {
-        val pd = CustomProgressBar(this@AddMemberFirstActivity)
-        pd.show()
+    private fun UserNameCheck(username: String) {
         val call: Call<Get_Member_Check_Username_Exist_Response> =
-            MyHssApplication.instance!!.api.get_member_check_username_exist(
-                user_id, username, id
-            )
+            MyHssApplication.instance!!.api.get_member_check_username_exist(username)
         call.enqueue(object : Callback<Get_Member_Check_Username_Exist_Response> {
             override fun onResponse(
                 call: Call<Get_Member_Check_Username_Exist_Response>,
                 response: Response<Get_Member_Check_Username_Exist_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
-//                    Functions.showAlertMessageWithOK(
-//                        this@AddMemberFirstActivity,
-//                        "Message",
-//                        response.body()?.message
-//                    )
-//                    Handler().postDelayed({
-//                        CallNextMethod()
-//                    }, 500)
-//                    CallDateValidation()
+//                        til_username.isErrorEnabled = true
+//                        til_username.error = response.body()?.message.toString()
+//                        userNameValidError = response.body()?.message.toString()
+//                        til_username.setErrorTextColor(ColorStateList.valueOf(Color.GREEN))
+//                        til_username.setErrorIconDrawable(null)
+                        isUserNameValid = true
                     } else {
-//                        Functions.displayMessage(this@MemberShipActivity,response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddMemberFirstActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
+                        til_username.error = response.body()?.message.toString()
+                        userNameValidError = response.body()?.message.toString()
+                        til_username.setErrorTextColor(ColorStateList.valueOf(Color.RED))
+                        til_username.isErrorEnabled = true
+                        til_username.setErrorIconDrawable(null)
+                        edit_username.requestFocus()
+                        isUserNameValid = false
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -2153,82 +1412,18 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         getString(R.string.some_thing_wrong),
                     )
                 }
-                pd.dismiss()
             }
 
             override fun onFailure(
                 call: Call<Get_Member_Check_Username_Exist_Response>, t: Throwable
             ) {
                 Toast.makeText(this@AddMemberFirstActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
             }
         })
     }
 
-    fun CallDateValidation() {
-        calendar = Calendar.getInstance()
-        calendar.add(Calendar.YEAR, -3)
-        year = calendar.get(Calendar.YEAR)
-        month = calendar.get(Calendar.MONTH)
-        day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val simpledateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val strCurrentDatenew = simpledateFormat.format(calendar.time)
-        Functions.printLog("strCurrentDatenew", strCurrentDatenew)
-
-        if (edit_dateofbirth.text.toString() >= strCurrentDate) {
-            Functions.printLog("Date", "Current else Future Date")
-            Functions.showAlertMessageWithOK(
-                this@AddMemberFirstActivity, "As your age is not 18 years", "Please enter vaild DOB"
-            )
-        } else if (edit_dateofbirth.text.toString() > strCurrentDatenew) {
-            Functions.printLog("Date", "Current else Future Date")
-            Functions.showAlertMessageWithOK(
-                this@AddMemberFirstActivity, "As your age is under 3 year", "Please enter vaild DOB"
-            )
-        } else if (edit_dateofbirth.text.toString() == strCurrentDatenew) {
-            Functions.printLog("Date", "Under 18")
-            age_layout.visibility = View.VISIBLE
-            age_text.text =
-                "As your age is below 18 We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//            Functions.showAlertMessageWithOK(
-//                this@AddMemberFirstActivity,
-//                "As your age is below 18",
-//                "We will send an email to your guardian to allow your HSS (UK) membership to be recorded on MyHSS. If you are below 13, it is our policy to use the parent/guardian`s email address only for all communications."
-//            )
-            AGE = "1"
-//            if (intent.getStringExtra("TYPE_SELF") != "self") {
-//                CallUserNameMethod()
-//            } else {
-//                Handler().postDelayed({
-//                    CallNextMethod()
-//                }, 500)
-//            }
-        } else if (edit_dateofbirth.text.toString() <= strCurrentDatenew) {
-            Functions.printLog("Date", "Above 18")
-            AGE = "0"
-//            if (intent.getStringExtra("TYPE_SELF") != "self") {
-//                CallUserNameMethod()
-//            } else {
-//                Handler().postDelayed({
-//                    CallNextMethod()
-//                }, 500)
-//            }
-        }
-    }
-
-    fun CallUserNameMethod() {
-        if (sessionManager.fetchMEMBERID() != "") {
-            UserNameCheck(
-                sessionManager.fetchUserID()!!,
-                edit_username.text.toString(),
-                sessionManager.fetchMEMBERID()!!
-            )
-        } else {
-            UserNameCheck(
-                sessionManager.fetchUserID()!!, edit_username.text.toString(), ""
-            )
-        }
+    fun CallUserNameMethod(userNameS: String) {
+        UserNameCheck(userNameS)
     }
 
     fun CallNextMethod() {
@@ -2254,15 +1449,8 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             } else {
                 i.putExtra("RELATIONSHIP", RELATIONSHIP_ID)
             }
-
             i.putExtra("OCCUPATION", OCCUPATION_ID)
             i.putExtra("OCCUPATION_NAME", OCCUPATION_NAME)
-//            if (OCCUPATION_ID == "-99") {
-//
-//            } else {
-//                i.putExtra("OCCUPATION", OCCUPATION_ID)
-//            }
-
             i.putExtra("SHAKHA", SHAKHA_ID)
             i.putExtra("AGE", AGE)
             i.putExtra("IS_LINKED", "")
@@ -2279,32 +1467,12 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             i.putExtra("FIRST_NAME", edit_firstname.text.toString())
             i.putExtra("MIDDLE_NAME", edit_middlename.text.toString())
             i.putExtra("LAST_NAME", edit_surname.text.toString())
-//                i.putExtra("USERNAME", edit_username.text.toString())
             i.putExtra("EMAIL", edit_email.text.toString())
-//                i.putExtra("PASSWORD", edit_password.text.toString())
             i.putExtra("GENDER", GENDER)
             i.putExtra("DOB", edit_dateofbirth.text.toString())
             i.putExtra("RELATIONSHIP", RELATIONSHIP_ID)
-
-//            if (RELATIONSHIP_ID == "5") {
-//                i.putExtra("RELATIONSHIP", RELATIONSHIP_ID)
-//                i.putExtra(
-//                    "OTHER_RELATIONSHIP", OTHER_RELATIONSHIP
-////                                edit_realationship_name.text.toString()
-//                )
-//            } else {
-//                i.putExtra("RELATIONSHIP", RELATIONSHIP_ID)
-//            }
-
             i.putExtra("OCCUPATION", OCCUPATION_ID)
             i.putExtra("OCCUPATION_NAME", OCCUPATION_NAME)
-//            if (OCCUPATION_ID == "-99") {
-//
-////                                edit_occupation_name.text.toString())
-//            } else {
-//                i.putExtra("OCCUPATION", OCCUPATION_ID)
-//            }
-
             i.putExtra("SHAKHA", SHAKHA_ID)
             i.putExtra("AGE", AGE)
             i.putExtra("IS_LINKED", "")
@@ -2313,38 +1481,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             i.putExtra("PARENT_MEMBER", sessionManager.fetchMEMBERID())
             i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
             startActivity(i)
-        }
-    }
-
-    fun isValidPassword(password: String?): Boolean {
-        val pattern: Pattern
-        val matcher: Matcher
-        val PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
-        pattern = Pattern.compile(PASSWORD_PATTERN)
-        matcher = pattern.matcher(password)
-        DebugLog.e("password result : " + matcher.matches())
-        return matcher.matches()
-    }
-
-    fun isOnlyLetters(password: String?): Boolean {
-        val pattern: Pattern
-        val matcher: Matcher
-        val PASSWORD_PATTERN = "^[A-Za-z]*\$"
-        pattern = Pattern.compile(PASSWORD_PATTERN)
-        matcher = pattern.matcher(password)
-        return matcher.matches()
-    }
-
-    fun EditText.onDone(callback: () -> Unit) {
-        // These lines optional if you don't want to set in Xml
-        imeOptions = EditorInfo.IME_ACTION_DONE
-        maxLines = 1
-        setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                callback.invoke()
-                true
-            }
-            false
         }
     }
 }

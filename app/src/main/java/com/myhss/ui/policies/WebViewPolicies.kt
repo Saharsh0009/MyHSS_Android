@@ -16,6 +16,8 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -31,11 +33,11 @@ class WebViewPolicies : AppCompatActivity() {
     private lateinit var rootView: LinearLayout
     private lateinit var pd: CustomProgressBar
 
-    private var CODE_CONTENT: String = MyHssApplication.BaseURL+"page/code-of-conduct/6"
-    private var DATA_PROTECTION: String = MyHssApplication.BaseURL+"page/data-protection-policy/4"
-    private var MEMBERSHIP: String = MyHssApplication.BaseURL+"page/hss-uk-membership-agreement/7"
-    private var TERMS_CONDITION: String = MyHssApplication.BaseURL+"page/myhss-terms-conditions/2"
-    private var PRIVACY_POLICY: String = MyHssApplication.BaseURL+"page/privacy-policy/1"
+    private var CODE_CONTENT: String = MyHssApplication.BaseURL + "page/code-of-conduct/6"
+    private var DATA_PROTECTION: String = MyHssApplication.BaseURL + "page/data-protection-policy/4"
+    private var MEMBERSHIP: String = MyHssApplication.BaseURL + "page/hss-uk-membership-agreement/7"
+    private var TERMS_CONDITION: String = MyHssApplication.BaseURL + "page/myhss-terms-conditions/2"
+    private var PRIVACY_POLICY: String = MyHssApplication.BaseURL + "page/privacy-policy/1"
 
     @SuppressLint("SetJavaScriptEnabled", "MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,9 +75,9 @@ class WebViewPolicies : AppCompatActivity() {
             webURL = PRIVACY_POLICY
         }
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
-        }
+        })
 
         webView = findViewById(R.id.webView)
         rootView = findViewById(R.id.rootView)
@@ -104,7 +106,10 @@ class WebViewPolicies : AppCompatActivity() {
 //        pd.show()
         webView.loadUrl(webURL)
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): Boolean {
                 val url = request?.url.toString()
                 view?.loadUrl(url)
                 return super.shouldOverrideUrlLoading(view, request)
@@ -121,7 +126,11 @@ class WebViewPolicies : AppCompatActivity() {
                 super.onPageFinished(view, url)
             }
 
-            override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+            override fun onReceivedError(
+                view: WebView,
+                request: WebResourceRequest,
+                error: WebResourceError
+            ) {
                 isLoaded = false
                 val errorMessage = "Got Error! $error"
                 pd.dismiss()
@@ -136,7 +145,7 @@ class WebViewPolicies : AppCompatActivity() {
                 if (webView.canGoBack()) {
                     webView.goBack()
                 } else {
-//                    showToastToExit()
+                    finish()
                 }
                 return true
             }
@@ -150,5 +159,10 @@ class WebViewPolicies : AppCompatActivity() {
         if (this@WebViewPolicies != null && !this@WebViewPolicies.isFinishing && pd != null && pd.isShowing) {
             pd.cancel()
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }

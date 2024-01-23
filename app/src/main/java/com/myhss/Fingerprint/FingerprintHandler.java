@@ -28,10 +28,14 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     private CancellationSignal cancellationSignal;
     private SharedPreferences sh;
     private SharedPreferences.Editor sh1;
+    private String receivedNotiData = "no";
+    private String receivedNotiID = "0";
 
     // Constructor
-    FingerprintHandler(Context mContext) {
+    FingerprintHandler(Context mContext, String receiNoData, String receinoId) {
         context = mContext;
+        receivedNotiData = receiNoData;
+        receivedNotiID = receinoId;
     }
 
     public void startAuth(FingerprintManager manager, FingerprintManager.CryptoObject cryptoObject) {
@@ -73,10 +77,9 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
             Functions.inBackground = false;
         } else {
             Intent i = new Intent(context, HomeActivity.class);
-//                    MainActivity.class);
 //            i.putExtra("Dashboard", "Dashboard");
-//            i.putExtra("m_deviceId", sh.getString(SharedPreferences_String_Name.API_KEY, ""));
-//            i.putExtra("fcm_id", sh.getString(SharedPreferences_String_Name.API_KEY, ""));
+            i.putExtra("notification", receivedNotiData);
+            i.putExtra("notification_id", receivedNotiID);
             context.startActivity(i);
         }
         ((Activity) context).finish();

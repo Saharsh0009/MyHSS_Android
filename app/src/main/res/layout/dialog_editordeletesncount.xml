@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:padding="@dimen/padding10">
+
+
+    <ImageView
+        android:id="@+id/close_layout"
+        android:layout_width="@dimen/padding20"
+        android:layout_height="@dimen/padding20"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/padding10"
+        android:layout_marginEnd="@dimen/padding10"
+        android:src="@drawable/close_img" />
+
+    <TextView
+        android:id="@+id/txtLable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/close_layout"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/sourcesanspro_bold"
+        android:paddingStart="@dimen/padding15"
+        android:paddingEnd="@dimen/padding15"
+        android:text="@string/would_you_like_to_edit_delete_the_surya_namaskar_count"
+        android:textAlignment="center"
+        android:textColor="@color/blueColor"
+        android:textSize="@dimen/font_size15" />
+
+
+    <LinearLayout
+        android:id="@+id/user_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtLable"
+        android:layout_marginTop="@dimen/padding5"
+        android:orientation="vertical">
+
+
+        <RadioGroup
+            android:id="@+id/rbgEditDelete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/font_size15"
+            android:layout_marginEnd="@dimen/font_size15"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <RadioButton
+                android:id="@+id/rbEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding5"
+                android:layout_weight="1"
+                android:background="@drawable/drawable_edit_delete_selection"
+                android:button="@android:color/transparent"
+                android:checked="true"
+                android:gravity="center"
+                android:text="@string/edit_sn_count"
+                android:textColor="@drawable/drawable_selector_text"
+                android:textSize="@dimen/font_size15" />
+
+            <RadioButton
+                android:id="@+id/rbDelete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding5"
+                android:layout_weight="1"
+                android:background="@drawable/drawable_edit_delete_selection"
+                android:button="@android:color/transparent"
+                android:gravity="center"
+                android:text="@string/delete_sn_count"
+                android:textColor="@drawable/drawable_selector_text"
+                android:textSize="@dimen/font_size15" />
+        </RadioGroup>
+
+
+        <LinearLayout
+            android:id="@+id/llEditSN"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding10"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/icl_sn_dynamic_view"
+                layout="@layout/include_suryanamaskar_dynamic_view" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnOk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/padding20"
+                android:background="@drawable/button_orange_round"
+                android:text="@string/submit"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size15" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,17 +1,21 @@
 package com.uk.myhss.Restful
 
 import com.google.gson.JsonObject
-import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
 import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.AllShakha.Model.Get_Shakha_Details_Response
+import com.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime.OneTimeSuccess
 import com.myhss.Guru_Dakshina_OneTime.Model.StripeDataModel
+import com.myhss.Main.notific_type.NotificTypeModel
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Splash.Model.Biometric.Latest_Update.latest_update_response
-import com.myhss.ui.Barchat.Model.Get_SuryaNamaskar_ModelResponse
-import com.myhss.ui.Barchat.Model.save_suryanamaskarResponse
+import com.myhss.ui.suryanamaskar.Model.Get_SuryaNamaskar_ModelResponse
+import com.myhss.ui.suryanamaskar.Model.save_suryanamaskarResponse
 import com.myhss.ui.ChangePassword.Model.ChangePasswordResponse
+import com.myhss.ui.NotificationList.Model.NotificationDatum
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Response
 import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Seen_Response
+import com.myhss.ui.events.model.EventListModel
+import com.myhss.ui.suryanamaskar.Model.DeleteSnCount
 import com.uk.myhss.AddMember.Address_Model.Find_Address_By_Pincode
 import com.uk.myhss.AddMember.Dietaries_Model.Find_Address_dietaries
 import com.uk.myhss.AddMember.GetNagar.Get_Nagar_Response
@@ -25,7 +29,6 @@ import com.uk.myhss.AddMember.Get_Shakha.Get_Shakha_Response
 import com.uk.myhss.AddMember.Get_Vibhag.Get_Vibhag_Response
 import com.uk.myhss.AddMember.Pincode.Get_Pincode_Response
 import com.uk.myhss.AddMember.PincodeAddress.Get_PincodeAddress_Response
-import com.uk.myhss.Guru_Dakshina_OneTime.Model.Get_Onetime.Get_Create_Onetime
 import com.uk.myhss.Guru_Dakshina_OneTime.Model.Get_Regular.Get_Create_Regular
 import com.uk.myhss.Login_Registration.Model.ForgotPasswordResponse
 import com.uk.myhss.Login_Registration.Model.LoginResponse
@@ -42,10 +45,9 @@ import com.uk.myhss.ui.sankhya_report.Model.Get_Sankhya_Utsav_Response
 import com.uk.myhss.ui.sankhya_report.Model.Sankhya_List_Response
 import com.uk.myhss.ui.sankhya_report.Model.Sankhya_details_Response
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
-import java.util.HashMap
 
 
 interface ApiInterface {
@@ -165,51 +167,51 @@ interface ApiInterface {
 
     /*Get Occupation*/
     @GET("api/v1/member/get_occupations")
-    fun get_occupation(): Call<Get_Occupation_Response>
+    suspend fun get_occupation(): Get_Occupation_Response
 
     /*Get Vibhag*/
     @GET("api/v1/member/get_vibhag")
-    fun get_vibhag(): Call<Get_Vibhag_Response>
+    suspend fun get_vibhag(): Get_Vibhag_Response
 
     /*Get Nagar*/
     @FormUrlEncoded
     @POST("api/v1/member/get_nagar_by_vibhag")
-    fun get_nagar(
-        @Field("vibhag_id") vibhag_id: String, @Field("user_id") user_id: String
-    ): Call<Get_Nagar_Response>
+    suspend fun get_nagar(
+        @Field("vibhag_id") vibhag_id: String,
+        @Field("user_id") user_id: String
+    ): Get_Nagar_Response
 
     /*Get Shakha*/
     @FormUrlEncoded
     @POST("api/v1/member/get_shakha_by_nagar")
-    fun get_shakha(
-        @Field("nagar_id") nagar_id: String, @Field("user_id") user_id: String
-    ): Call<Get_Shakha_Response>
+    suspend fun get_shakha(
+        @Field("nagar_id") nagar_id: String,
+        @Field("user_id") user_id: String
+    ): Get_Shakha_Response
 
     /*Get Pincode*/
     @FormUrlEncoded
     @POST("api/v1/member/find_address_by_pincode")
-    fun get_pincode(
-        @Field("pincode") pincode: String
-    ): Call<Get_Pincode_Response>
+    suspend fun getPincode(@Field("pincode") pincode: String): Get_Pincode_Response
 
     /*Get find_address_info_by_id*/
     @FormUrlEncoded
     @POST("api/v1/member/find_address_info_by_id")
-    fun get_pincodea_ddress(
+    suspend fun getPincodeAddress(
         @Field("id") pincode: String
-    ): Call<Get_PincodeAddress_Response>
+    ): Get_PincodeAddress_Response
 
     /*Get Dietaries*/
     @GET("api/v1/member/get_dietaries")
-    fun get_dietaries(): Call<Get_Dietaries_Response>
+    suspend fun getDietaries(): Get_Dietaries_Response
 
     /*Get Language*/
     @GET("api/v1/member/get_languages")
-    fun get_languages(): Call<Get_Language_Response>
+    suspend fun getLanguages(): Get_Language_Response
 
     /*Get Indianstates*/
     @GET("api/v1/member/get_indianstates")
-    fun get_indianstates(): Call<Get_Indianstates_Response>
+    suspend fun getIndianStates(): Get_Indianstates_Response
 
     /*Get create_membership*/
     @FormUrlEncoded
@@ -309,12 +311,12 @@ interface ApiInterface {
     /*Get profile*/
     @FormUrlEncoded
     @POST("api/v1/member/profile")
-    fun get_profile(
+    suspend fun get_profile(
         @Field("user_id") user_id: String,
         @Field("member_id") member_id: String,
         @Field("device") device: String,
         @Field("device_token") device_token: String
-    ): Call<Get_Profile_Response>
+    ): Get_Profile_Response
 
     /*Get privileges*/
     @FormUrlEncoded
@@ -325,26 +327,26 @@ interface ApiInterface {
         @Field("action") action: String
     ): Call<Get_Privileges_Response>
 
-    /*Post create_onetime*/
-    @FormUrlEncoded
-    @POST("api/v1/guru_dakshina/create_onetime")
-    fun get_create_onetime(
-        @Field("user_id") user_id: String,
-        @Field("member_id") member_id: String,
-        @Field("amount") amount: String,
-        @Field("is_linked_member") is_linked_member: String,
-        @Field("gift_aid") gift_aid: String,
-        @Field("is_purnima_dakshina") is_purnima_dakshina: String,
-        @Field("line1") line1: String,
-        @Field("city") city: String,
-        @Field("country") country: String,
-        @Field("postal_code") postal_code: String,
-        @Field("dakshina") dakshina: String,
-        @Field("card_number") card_number: String,
-        @Field("name") name: String,
-        @Field("card_expiry") card_expiry: String,
-        @Field("card_cvv") card_cvv: String
-    ): Call<Get_Create_Onetime>
+//    /*Post create_onetime*/
+//    @FormUrlEncoded
+//    @POST("api/v1/guru_dakshina/create_onetime")
+//    fun get_create_onetime(
+//        @Field("user_id") user_id: String,
+//        @Field("member_id") member_id: String,
+//        @Field("amount") amount: String,
+//        @Field("is_linked_member") is_linked_member: String,
+//        @Field("gift_aid") gift_aid: String,
+//        @Field("is_purnima_dakshina") is_purnima_dakshina: String,
+//        @Field("line1") line1: String,
+//        @Field("city") city: String,
+//        @Field("country") country: String,
+//        @Field("postal_code") postal_code: String,
+//        @Field("dakshina") dakshina: String,
+//        @Field("card_number") card_number: String,
+//        @Field("name") name: String,
+//        @Field("card_expiry") card_expiry: String,
+//        @Field("card_cvv") card_cvv: String
+//    ): Call<Get_Create_Onetime>
 
     /*Post create_regular*/
     @FormUrlEncoded
@@ -537,9 +539,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/member/check_username_exist")
     fun get_member_check_username_exist(
-        @Field("user_id") user_id: String,
-        @Field("username") username: String,
-        @Field("id") id: String
+        @Field("username") username: String
     ): Call<Get_Member_Check_Username_Exist_Response>
 
     /*Post sankhya utsav*/
@@ -576,36 +576,24 @@ interface ApiInterface {
         @Field("suchana_id") suchana_id: String, @Field("member_id") member_id: String
     ): Call<Get_Suchana_Seen_Response>
 
-    /*Post SuryaNamasakar Add*/
+    /*Post SuryaNamaskar Add*/
     @FormUrlEncoded
-//    @Headers("Content-Type: application/x-www-form-urlencoded; charset=UTF-8")
-//    @Headers("Content-Type: application/json; charset=UTF-8")
     @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
     fun save_suryanamasakar_count(
-//        @Body body: String
         @Field("member_id") member_id: String,
-//        @Body() surynamaskar: JsonObject
-        @Field("surynamaskar") surynamaskar: String,
         @Field("date") date: String,
         @Field("count") count: String
-//        @Field("surynamaskar") surynamaskar: ArrayList<String>
     ): Call<save_suryanamaskarResponse>
-
-    //    @Headers("Content-Type: application/json;charset=UTF-8")
-    @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
-    fun postsuryanamasakar_count(@Body logs: String): Call<save_suryanamaskarResponse>
-
-//    @FormUrlEncoded
-//    @POST("api/v1/suryanamaskar/save_suryanamaskar_count")
-//    fun save_suryanamasakar_count(@Body save_suryanamaskarResponse: HashMap<String, String>): Call<save_suryanamaskarResponse>
-//    fun save_suryanamasakar_count(@Body MultipartTypedOutput multipartTypedOutput)//: Call<save_suryanamaskarResponse>
 
     /*Post SuryaNamasakar List*/
     @FormUrlEncoded
     @POST("api/v1/suryanamaskar/get_suryanamaskar_count")
-    fun get_suryanamaskar_count(
-        @Field("member_id") member_id: String, @Field("is_api") is_api: String
-    ): Call<Get_SuryaNamaskar_ModelResponse>
+    suspend fun get_suryanamaskar_count(
+        @Field("member_id") member_id: String,
+        @Field("from_date") from_date: String,
+        @Field("to_date") to_date: String,
+        @Field("is_api") is_api: String
+    ): Get_SuryaNamaskar_ModelResponse
 
     //Nikunj
     @POST("api/v1/member/create_membership")
@@ -617,12 +605,55 @@ interface ApiInterface {
 
     /*Get First Aid Info*/
     @GET("api/v1/member/firstaidinfo")
-    fun getFirstAidInfor(): Call<FirstAidInfo>
+    suspend fun getFirstAidInfor(): FirstAidInfo
 
     @POST("api/v1/guru_dakshina/onetime_dakshina")
     fun postOneTimeDakshinaStripe(@Body body: MultipartBody): Call<StripeDataModel>
 
     @POST("api/v1/guru_dakshina/payment_response")
-    fun postSaveStripePaymentData(@Body body: MultipartBody): Call<JsonObject>
+    fun postSaveStripePaymentData(@Body body: MultipartBody): Call<OneTimeSuccess>
+
+    @POST("api/v1/notification/notificationlist")
+    fun postNotificationListData(@Body body: MultipartBody): Call<NotificationDatum>
+
+    @POST("api/v1/notification/seen_notification")
+    fun postSeenNotification(@Body body: MultipartBody): Call<Get_Suchana_Seen_Response>
+
+    @GET("api/v1/notification/notificationtype")
+    suspend fun getNotificationType(): NotificTypeModel
+
+    @POST("api/v1/events/eventlist")
+    fun postEventListData(@Body body: MultipartBody): Call<EventListModel>
+
+    @FormUrlEncoded
+    @POST("api/v1/member/listing")
+    suspend fun getMemberListing(
+        @Field("user_id") user_id: String,
+        @Field("tab") tab: String,
+        @Field("member_id") member_id: String,
+        @Field("status") status: String,
+        @Field("length") length: String,
+        @Field("start") start: String,
+        @Field("search") search: String,
+        @Field("chapter_id") chapter_id: String
+    ): Get_Member_Listing_Response
+
+    /*Get Relationship*/
+    @GET("api/v1/member/get_relationship")
+    suspend fun getRelationship(): Get_Relationship_Response
+
+    @FormUrlEncoded
+    @POST("api/v1/suryanamaskar/delete_sn_count")
+    fun delete_suryanamasakar_count(
+        @Field("surya_namaskar_count_id") sn_id: String,
+    ): Call<DeleteSnCount>
+
+    @FormUrlEncoded
+    @POST("api/v1/suryanamaskar/edit_sn_count")
+    fun edit_suryanamasakar_count(
+        @Field("surya_namaskar_count_id") sn_id: String,
+        @Field("count") sn_count: String
+    ): Call<DeleteSnCount>
+
 
 }

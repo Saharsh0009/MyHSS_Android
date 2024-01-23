@@ -1,6 +1,5 @@
 package com.uk.myhss.Login_Registration
 
-//import com.uk.myhss.Login_Registration.Model.RetrofitClient
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -12,7 +11,8 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.view.inputmethod.EditorInfo
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -35,10 +35,15 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
+import com.myhss.Login_Registration.ForgotPasswordDialog
 import com.myhss.Login_Registration.Passcode_Activity
 import com.myhss.Login_Registration.RegistrationActivity
+import com.myhss.Login_Registration.iForgotPasswordDialog
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.Utils.UtilCommon
 import com.myhss.Welcome.BiometricDialogV23
 import com.uk.myhss.Login_Registration.Model.ForgotPasswordResponse
 import com.uk.myhss.Login_Registration.Model.LoginResponse
@@ -52,10 +57,9 @@ import pro.devapp.biometric.BiometricManager
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
     lateinit var sharedPreferences: SharedPreferences
     private lateinit var sessionManager: SessionManager
     var m_deviceId: String = ""
@@ -88,9 +92,7 @@ class LoginActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
 
-        m_deviceId = Settings.Secure.getString(
-            contentResolver, Settings.Secure.ANDROID_ID
-        )
+        m_deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
         Log.d("m_deviceId", m_deviceId)
 
@@ -100,18 +102,14 @@ class LoginActivity : AppCompatActivity() {
         val registration_layout = findViewById<RelativeLayout>(R.id.registration_layout)
         val forgot_btn = findViewById<TextView>(R.id.forgot_btn)
         val rootLayout = findViewById<RelativeLayout>(R.id.rootLayout)
-        val gmail_login = findViewById<ImageView>(R.id.gmail_login)
-//        val facebook_login = findViewById<ImageView>(R.id.facebook_login)
-        /*val sharedPreferences: SharedPreferences = this.getSharedPreferences(
-            sharedPrefFile,
-            Context.MODE_PRIVATE
-        )*/
+//        val gmail_login = findViewById<ImageView>(R.id.gmail_login)
+
         val loginButton = findViewById<LoginButton>(R.id.login_button)
         val til_userName = findViewById<TextInputLayout>(R.id.til_userName)
         val til_password = findViewById<TextInputLayout>(R.id.til_password)
 
 
-        loginButton.setOnClickListener {
+        loginButton.setOnClickListener(DebouncedClickListener {
             loginButton.setReadPermissions(listOf(EMAIL))
             callbackManager = CallbackManager.Factory.create()
             // If you are using in a fragment, call loginButton.setFragment(this);
@@ -146,7 +144,7 @@ class LoginActivity : AppCompatActivity() {
                     override fun onError(exception: FacebookException) { // App code
                     }
                 })
-        }
+        })
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("780977723182-n1l2dbg5k9h8trm1nfeditcje078s9kj.apps.googleusercontent.com")
@@ -154,9 +152,9 @@ class LoginActivity : AppCompatActivity() {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        gmail_login.setOnClickListener {
-            signIn()
-        }
+//        gmail_login.setOnClickListener(DebouncedClickListener {
+//            signIn()
+//        })
 
         edit_username.doOnTextChanged { text, start, before, count ->
             til_userName.isErrorEnabled = false
@@ -167,7 +165,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         // Button click listener
-        login_btn.setOnClickListener {
+        login_btn.setOnClickListener(DebouncedClickListener {
             val user = edit_username.text.toString()
             val password = edit_password.text.toString()
             if (user.isEmpty() && password.isEmpty()) {
@@ -176,17 +174,22 @@ class LoginActivity : AppCompatActivity() {
                 til_userName.isErrorEnabled = true
                 til_password.isErrorEnabled = true
                 edit_username.requestFocus()
-                return@setOnClickListener
-            } else if (user.isEmpty()) {
+                return@DebouncedClickListener
+            } else if (user.isEmpty() || user.isBlank()) {
                 til_userName.error = getString(R.string.username_required)
                 til_userName.isErrorEnabled = true
                 edit_username.requestFocus()
-                return@setOnClickListener
-            } else if (password.isEmpty()) {
+                return@DebouncedClickListener
+            } else if (password.isEmpty() || password.isBlank()) {
                 til_password.error = getString(R.string.password_required)
                 til_password.isErrorEnabled = true
                 edit_password.requestFocus()
-                return@setOnClickListener
+                return@DebouncedClickListener
+            } else if (!UtilCommon.isValidPassword(password)) {
+                til_password.error = getString(R.string.valid_password)
+                til_password.isErrorEnabled = true
+                edit_password.requestFocus()
+                return@DebouncedClickListener
             } else {
                 if (Functions.isConnectingToInternet(this@LoginActivity)) {
                     sessionManager.saveDEVICE_TOKEN(m_deviceId)
@@ -200,69 +203,36 @@ class LoginActivity : AppCompatActivity() {
                     ).show()
                 }
             }
-        }
+        })
 
-        registration_layout.setOnClickListener {
+        registration_layout.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@LoginActivity, RegistrationActivity::class.java)
             i.putExtra("m_deviceId", m_deviceId)
             startActivity(i)
             finish()
-        }
+        })
 
-        forgot_btn.setOnClickListener {
-            val dialog = BottomSheetDialog(this, R.style.BottomSheetDialogTheme)
-            val view_d = layoutInflater.inflate(R.layout.dialog_forgotpassword, null)
-            val btnClose = view_d.findViewById<ImageView>(R.id.close_layout)
-            val edit_forgotusername =
-                view_d.findViewById<TextInputEditText>(R.id.edit_forgotusername)
-            val forgot_passwordbtn = view_d.findViewById<TextView>(R.id.forgot_passwordbtn)
-            btnClose.setOnClickListener {
-                dialog.dismiss()
+        forgot_btn.setOnClickListener(DebouncedClickListener {
+            val fragment = supportFragmentManager.findFragmentByTag("ExitDialogFragment")
+            if (fragment == null) {
+                val exitFragment = ForgotPasswordDialog.newInstance(this)
+                exitFragment.show(supportFragmentManager, "ExitDialogFragment")
             }
-
-            forgot_passwordbtn.setOnClickListener {
-                val forgotuser = edit_forgotusername.text.toString()
-                if (forgotuser.isEmpty()) {
-                    dialog?.window?.decorView?.let { it1 ->
-                        Snackbar.make(
-                            it1, "Please Enter Username", Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
-                    edit_forgotusername.error = "   Username required"
-                    edit_forgotusername.requestFocus()
-                    return@setOnClickListener
-                } else {
-                    dialog.dismiss()
-                    if (Functions.isConnectingToInternet(this@LoginActivity)) {
-                        forgot(forgotuser)
-                    } else {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            resources.getString(R.string.no_connection),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-
-            dialog.setCancelable(true)
-            dialog.setContentView(view_d)
-            dialog.show()
-        }
+        })
     }
 
-    private fun signIn() {
-        val signInIntent = mGoogleSignInClient.signInIntent
-        startActivityForResult(
-            signInIntent, RC_SIGN_IN
-        )
-    }
+//    private fun signIn() {
+//        val signInIntent = mGoogleSignInClient.signInIntent
+//        startActivityForResult(
+//            signInIntent, RC_SIGN_IN
+//        )
+//    }
 
-    private fun revokeAccess() {
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this) {
-            // Update your UI here
-        }
-    }
+//    private fun revokeAccess() {
+//        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this) {
+//            // Update your UI here
+//        }
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -274,12 +244,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun login(user: String, password: String, m_deviceId: String, device_type: String) {
         val pd = CustomProgressBar(this@LoginActivity)
-        pd.show()/*val `object` = JsonObject()
-        `object`.addProperty("email", user_email)
-        `object`.addProperty("password", user_password)
-        `object`.addProperty("device_id", m_deviceId)
-        `object`.addProperty("fcm_id", LoginActivity.DeviceId)
-        `object`.addProperty("device_type", "1")*/
+        pd.show()
+
         val call: Call<LoginResponse> =
             MyHssApplication.instance!!.api.userLogin(user, password, m_deviceId, device_type)
         call.enqueue(object : Callback<LoginResponse> {
@@ -287,11 +253,6 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
 
                 if (response.code() == 200 && response.body() != null) {
-//                    Functions.showAlertMessageWithOK(
-//                        this@LoginActivity,
-//                        "Message",
-//                        response.body()?.message
-//                    )
                     if (response.body()!!.status == true) {
                         val sharedPreferences = getSharedPreferences(
                             "production", Context.MODE_PRIVATE
@@ -340,33 +301,6 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(i)
                             finish()
                         } else if (response.body()!!.memberId != "" && response.body()!!.memberStatus == "1") {
-
-//                            showDialog(this@LoginActivity)
-
-                            /*val alertBuilder = AlertDialog.Builder(this@LoginActivity, R.style.BottomSheetDialogTheme)
-                            alertBuilder.setIcon(R.drawable.ic_fingerprint)
-                            alertBuilder.setTitle(getString(R.string.app_name))
-                            alertBuilder.setMessage("Do you want to allow "+getString(R.string.app_name)+" to use TouchId or FaceId")
-                            alertBuilder.setPositiveButton(
-                                "Allow"
-                            ) { dialog, which ->
-
-                                sharedPreferences.edit().apply {
-                                    putString("Allow_biometric", "ALLOW")
-                                }.apply()
-                                val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                                editor.putString("Allow_biometric", "ALLOW")
-
-                                checkBiometric() }
-                            alertBuilder.setNegativeButton(
-                                getString(R.string.cancel)
-                            ) { dialog, which ->
-                                dialog?.dismiss()
-                                finishAffinity()
-                            }
-                            val alertDialog = alertBuilder.create()
-                            alertDialog.show()*/
-
                             val i = Intent(this@LoginActivity, Passcode_Activity::class.java)
                             i.putExtra("CHANGE_BIOMETRIC", "")
                             startActivity(i)
@@ -378,16 +312,10 @@ class LoginActivity : AppCompatActivity() {
                         }
                     } else {
                         Functions.displayMessage(this@LoginActivity, response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            this@LoginActivity, "",
-////                            "Message"+true,
-//                            response.body()?.message
-//                        )
                     }
                 } else if (response.code() == 404) {
                     Functions.showAlertMessageWithOK(
                         this@LoginActivity, "",
-//                        "Message",
                         response.body()?.message
                     )
                 } else {
@@ -408,12 +336,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun forgot(forgotuser: String) {
         val pd = CustomProgressBar(this@LoginActivity)
-        pd.show()/*val `object` = JsonObject()
-        `object`.addProperty("email", user_email)
-        `object`.addProperty("password", user_password)
-        `object`.addProperty("device_id", m_deviceId)
-        `object`.addProperty("fcm_id", LoginActivity.DeviceId)
-        `object`.addProperty("device_type", "1")*/
+        pd.show()
         val call: Call<ForgotPasswordResponse> =
             MyHssApplication.instance!!.api.userForgot(forgotuser)
         call.enqueue(object : Callback<ForgotPasswordResponse> {
@@ -660,14 +583,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun CallDashboard() {
-//        TODO("Not yet implemented")
         if (sharedPreferences.getString("MEMBERID", "") != "") {
             startActivity(
                 Intent(
                     this@LoginActivity, HomeActivity::class.java
                 )
             )
-//                                MainActivity::class.java))
             finish()
         } else {
             startActivity(
@@ -676,6 +597,19 @@ class LoginActivity : AppCompatActivity() {
                 )
             )
             finish()
+        }
+    }
+
+    override fun forgotPasswordDialog(forgotUserID: String) {
+        DebugLog.e("forgotuser name : $forgotUserID")
+        if (Functions.isConnectingToInternet(this@LoginActivity)) {
+            forgot(forgotUserID)
+        } else {
+            Toast.makeText(
+                this@LoginActivity,
+                resources.getString(R.string.no_connection),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

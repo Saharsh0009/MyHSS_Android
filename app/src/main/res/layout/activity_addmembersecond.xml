@@ -82,17 +82,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        app:boxStrokeColor="@color/primaryColor">
+                        app:boxStrokeColor="@color/primaryColor"
+                        app:errorIconDrawable="@null">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_primary_contact_number"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:inputType="number"
                             android:maxLength="13"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -129,17 +132,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        app:boxStrokeColor="@color/primaryColor">
+                        app:boxStrokeColor="@color/primaryColor"
+                        app:errorIconDrawable="@null">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_secondary_contact_number"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:inputType="number"
                             android:maxLength="13"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -175,7 +181,8 @@
                         style="@style/EditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor">
+                        app:boxStrokeColor="@color/primaryColor"
+                        app:errorIconDrawable="@null">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_secondary_email"
@@ -183,9 +190,11 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:inputType="textEmailAddress"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -266,16 +275,19 @@
                         android:layout_marginStart="@dimen/padding55"
                         android:layout_marginEnd="@dimen/padding55"
                         android:gravity="center_vertical"
-                        app:boxStrokeColor="@color/primaryColor">
+                        app:boxStrokeColor="@color/primaryColor"
+                        app:errorIconDrawable="@null">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edit_find_address"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
+                            android:cursorVisible="true"
                             android:inputType="text"
                             android:textColor="@color/blackColor"
                             android:textColorHint="@color/grayColorColor"
+                            android:textCursorDrawable="@null"
                             android:theme="@style/StyleEditTextView" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -307,7 +319,7 @@
                 android:paddingTop="@dimen/padding20"
                 android:paddingEnd="@dimen/padding10"
                 android:paddingBottom="@dimen/padding20"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -390,11 +402,13 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_edit_building_name"
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor"
+                            app:errorIconDrawable="@null"
                             tools:ignore="RtlSymmetry">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -402,9 +416,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:inputType="textPostalAddress"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
@@ -457,11 +473,13 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_edit_address_line1"
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor"
+                            app:errorIconDrawable="@null"
                             tools:ignore="RtlSymmetry">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -469,9 +487,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:inputType="textPostalAddress"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
@@ -505,11 +525,13 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_edit_address_line2"
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor"
+                            app:errorIconDrawable="@null"
                             tools:ignore="RtlSymmetry">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -517,9 +539,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:inputType="textPostalAddress"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
@@ -572,11 +596,13 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_edit_town_city"
                             style="@style/EditText.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             app:boxStrokeColor="@color/primaryColor"
+                            app:errorIconDrawable="@null"
                             tools:ignore="RtlSymmetry">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -584,9 +610,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@android:color/transparent"
+                                android:cursorVisible="true"
                                 android:inputType="text"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
+                                android:textCursorDrawable="@null"
                                 android:theme="@style/StyleEditTextView" />
 
                         </com.google.android.material.textfield.TextInputLayout>
@@ -643,7 +671,7 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_gravity="center"
                     android:layout_marginStart="@dimen/padding30"
                     android:layout_marginTop="20dp"

@@ -1,89 +1,73 @@
 package com.uk.myhss.ui.dashboard
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.myhss.Utils.CustomProgressBar
+import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-
-import com.uk.myhss.AddMember.AddMemberFirstActivity
+import com.myhss.ui.events.model.Data
+import com.myhss.ui.events.model.EventListModel
+import com.myhss.ui.events.model.Eventdata
+import com.myhss.ui.events.model.Past
+import com.myhss.ui.events.model.Upcoming
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
-import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
-import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
 import com.uk.myhss.ui.my_family.Adapter.EventsAdapter
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
-import kotlin.collections.ArrayList
 
 
-class EventsFragment : AppCompatActivity() { //Fragment() {
+class EventsFragment : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
-    var tabLayout: TabLayout? = null
-    var viewPager: ViewPager? = null
-    lateinit var total_count: TextView
     lateinit var home_layout: RelativeLayout
-
-    lateinit var allevents_layout: LinearLayout
     lateinit var upcoming_events_layout: LinearLayout
     lateinit var completed_events_layout: LinearLayout
     lateinit var events_list_layout: LinearLayout
-
     lateinit var mLayoutManager: LinearLayoutManager
     lateinit var data_not_found_layout: RelativeLayout
-
-    var dialog: Dialog? = null
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
-
-    lateinit var allevents_view: TextView
-    lateinit var allevents_line: ImageView
     lateinit var upcoming_events_view: TextView
     lateinit var upcoming_events_line: ImageView
     lateinit var completed_events_view: TextView
     lateinit var completed_events_line: ImageView
+    lateinit var rcv_events_list: RecyclerView
+    lateinit var search_fields: AppCompatEditText
 
-    lateinit var events_list: RecyclerView
-
-    lateinit var USERID: String
-    lateinit var TAB: String
-    lateinit var MEMBERID: String
-    lateinit var STATUS: String
-    lateinit var LENGTH: String
-    lateinit var START: String
-    lateinit var SEARCH: String
-    lateinit var CHAPTERID: String
-
-    /*Start All Events*/
-    private var atheletsBeans: List<Get_Member_Listing_Datum> =
-        ArrayList<Get_Member_Listing_Datum>()
     private var mAdapterEvents: EventsAdapter? = null
-    /*End All Events*/
+    lateinit var upComingEventData: Upcoming
+    lateinit var pastEventData: Past
+    var pg_tot_page = 0
+    var pg_next_page = 1
+    var isLoading = false
+    var eventType = "1"
+    var isSerch = false
+    var pg_next_up = 1
+    var pg_next_past = 1
 
-
-    private var loading = true
-    var pastVisiblesItems = 0
-    var visibleItemCount:Int = 0
-    var totalItemCount:Int = 0
-
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_events)
@@ -105,50 +89,34 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
 
         header_title.text = getString(R.string.events)
 
-        back_arrow.setOnClickListener {
+        back_arrow.setOnClickListener(DebouncedClickListener {
             val i = Intent(this@EventsFragment, HomeActivity::class.java)
             startActivity(i)
             finishAffinity()
-        }
+        })
 
-        events_list = findViewById(R.id.events_list)
+        rcv_events_list = findViewById(R.id.events_list)
         data_not_found_layout = findViewById(R.id.data_not_found_layout)
         events_list_layout = findViewById(R.id.events_list_layout)
-
-        allevents_view = findViewById(R.id.allevents_view)
-        allevents_line = findViewById(R.id.allevents_line)
         upcoming_events_view = findViewById(R.id.upcoming_events_view)
         upcoming_events_line = findViewById(R.id.upcoming_events_line)
         completed_events_view = findViewById(R.id.completed_events_view)
         completed_events_line = findViewById(R.id.completed_events_line)
-
-        allevents_layout = findViewById(R.id.allevents_layout)
         upcoming_events_layout = findViewById(R.id.upcoming_events_layout)
         completed_events_layout = findViewById(R.id.completed_events_layout)
+        search_fields = findViewById(R.id.search_fields)
 
-//        if (intent.getStringExtra("DashBoard") == "SHAKHAVIEW") {
-//            Handler().postDelayed({
-//                myshakha_view.callOnClick()
-//            }, 100)
-//        } else {
-        val end: Int = 100
-        val start: Int = 0
-
-        CallAPI(start, end)
 
         mLayoutManager = LinearLayoutManager(this@EventsFragment)
-        events_list.layoutManager = mLayoutManager
-
-        allevents_line.visibility = View.VISIBLE
-        upcoming_events_line.visibility = View.INVISIBLE
+        rcv_events_list.layoutManager = mLayoutManager
+        upcoming_events_line.visibility = View.VISIBLE
         completed_events_line.visibility = View.INVISIBLE
 
-        allevents_view.setTextColor(
-            ContextCompat.getColor(
-                this@EventsFragment,
-                R.color.primaryColor
-            )
-        )
+        mAdapterEvents = EventsAdapter(ArrayList(), eventType)
+        rcv_events_list.adapter = mAdapterEvents
+        pg_next_page = pg_next_up
+        CallAPI("", pg_next_page.toString(), false)
+
         upcoming_events_view.setTextColor(
             ContextCompat.getColor(
                 this@EventsFragment,
@@ -161,48 +129,16 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                 R.color.grayColorColor
             )
         )
-
-        allevents_view.setOnClickListener {
-            allevents_line.visibility = View.VISIBLE
-            upcoming_events_line.visibility = View.INVISIBLE
-            completed_events_line.visibility = View.INVISIBLE
-
-            allevents_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.primaryColor
-                )
-            )
-            upcoming_events_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.grayColorColor
-                )
-            )
-            completed_events_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.grayColorColor
-                )
-            )
-
-            val end: Int = 100
-            val start: Int = 0
-
-            CallAPI(start, end)
-        }
-
-        upcoming_events_view.setOnClickListener {
-            allevents_line.visibility = View.INVISIBLE
+        upcoming_events_view.setOnClickListener(DebouncedClickListener {
+            eventType = "1"
+            pg_tot_page = upComingEventData.paginate.total_pages
+            pg_next_page = pg_next_up
+            search_fields.setText("")
+            isSerch = false
+            isLoading = false
             upcoming_events_line.visibility = View.VISIBLE
             completed_events_line.visibility = View.INVISIBLE
 
-            allevents_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.grayColorColor
-                )
-            )
             upcoming_events_view.setTextColor(
                 ContextCompat.getColor(
                     this@EventsFragment,
@@ -215,24 +151,18 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                     R.color.grayColorColor
                 )
             )
+            mAdapterEvents?.setData(upComingEventData.eventdata.toMutableList(), eventType)
+        })
 
-            val end: Int = 100
-            val start: Int = 0
-
-            CallAPI(start, end)
-        }
-
-        completed_events_view.setOnClickListener {
-            allevents_line.visibility = View.INVISIBLE
+        completed_events_view.setOnClickListener(DebouncedClickListener {
+            eventType = "2"
+            pg_tot_page = pastEventData.paginate.total_pages
+            pg_next_page = pg_next_past
+            search_fields.setText("")
+            isSerch = false
+            isLoading = false
             upcoming_events_line.visibility = View.INVISIBLE
             completed_events_line.visibility = View.VISIBLE
-
-            allevents_view.setTextColor(
-                ContextCompat.getColor(
-                    this@EventsFragment,
-                    R.color.grayColorColor
-                )
-            )
             upcoming_events_view.setTextColor(
                 ContextCompat.getColor(
                     this@EventsFragment,
@@ -245,32 +175,70 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                     R.color.primaryColor
                 )
             )
-
-            val end: Int = 100
-            val start: Int = 0
-
-            CallAPI(start, end)
-        }
+            mAdapterEvents?.setData(pastEventData.eventdata.toMutableList(), eventType)
+        })
         events_list_layout.visibility = View.GONE
-        events_list_layout.setOnClickListener {
-//            val i = Intent(this@EventsFragment, AddMemberFirstActivity::class.java)
-//            startActivity(i)
-        }
 
+        rcv_events_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (!isLoading) {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                    ) {
+                        if (pg_next_page < pg_tot_page && !isSerch) {
+                            pg_next_page += 1
+                            if (eventType == "1") {
+                                pg_next_up = pg_next_page
+                            } else {
+                                pg_next_past = pg_next_page
+                            }
+                            isLoading = true
+                            DebugLog.e("SCROLL : pg_tot_page : $pg_tot_page  == pg_next_page : $pg_next_page")
+                            CallAPI(eventType, pg_next_page.toString(), true)
+                        }
+                    }
+                }
+            }
+        })
+
+        search_fields.doOnTextChanged { text, start, before, count ->
+            if (eventType == "1") {
+                var eventList = upComingEventData.eventdata
+                if (count > 0) {
+                    isSerch = true
+                    val filteredList = eventList.filter { item ->
+                        item.event_title.contains(text!!, ignoreCase = true)
+                    }
+                    mAdapterEvents!!.setData(filteredList, eventType)
+                } else {
+                    isSerch = false
+                    mAdapterEvents!!.setData(upComingEventData.eventdata, eventType)
+                }
+            } else {
+                var eventList = pastEventData.eventdata
+                if (count > 0) {
+                    isSerch = true
+                    val filteredList = eventList.filter { item ->
+                        item.event_title.contains(text!!, ignoreCase = true)
+                    }
+                    mAdapterEvents!!.setData(filteredList, eventType)
+                } else {
+                    isSerch = false
+                    mAdapterEvents!!.setData(pastEventData.eventdata, eventType)
+                }
+            }
+        }
     }
 
-    fun CallAPI(PAGE: Int, END: Int) {
+    fun CallAPI(timeLine: String, cuurentPage: String, bFlag: Boolean) {
         if (Functions.isConnectingToInternet(this@EventsFragment)) {
-            USERID = sessionManager.fetchUserID()!!
-            Log.d("USERID", USERID)
-            TAB = "family"
-            MEMBERID = sessionManager.fetchMEMBERID()!!
-            STATUS = "all"
-            LENGTH = END.toString()
-            START = PAGE.toString()
-            SEARCH = ""
-            CHAPTERID = ""
-            myMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+            callEventListApi(timeLine, cuurentPage, bFlag)
         } else {
             Toast.makeText(
                 this@EventsFragment,
@@ -280,53 +248,89 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
         }
     }
 
-    private fun myMemberList(
-        user_id: String, tab: String, member_id: String, status: String,
-        length: String, start: String, search: String, chapter_id: String
-    ) {
+    private fun callEventListApi(timeLine: String, curentPage: String, bFlag: Boolean) {
+        DebugLog.e("timeLine => $timeLine :: pg_next_page => $curentPage  :: bFlag => $bFlag")
         val pd = CustomProgressBar(this@EventsFragment)
         pd.show()
-        val call: Call<Get_Member_Listing_Response> =
-            MyHssApplication.instance!!.api.get_member_listing(
-                user_id, tab, member_id,
-                status, length, start, search, chapter_id
-            )
-        call.enqueue(object : Callback<Get_Member_Listing_Response> {
+        val builderData: MultipartBody.Builder =
+            MultipartBody.Builder().setType(MultipartBody.FORM)
+        builderData.addFormDataPart("timeline", timeLine)
+        builderData.addFormDataPart("current_page", curentPage)
+        val requestBody: MultipartBody = builderData.build()
+
+        val call: Call<EventListModel> =
+            MyHssApplication.instance!!.api.postEventListData(requestBody)
+        call.enqueue(object : Callback<EventListModel> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(
-                call: Call<Get_Member_Listing_Response>,
-                response: Response<Get_Member_Listing_Response>
+                call: Call<EventListModel>,
+                response: Response<EventListModel>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
                         data_not_found_layout.visibility = View.GONE
                         try {
-                            atheletsBeans = response.body()!!.data!!
-                            Log.d("atheletsBeans", atheletsBeans.toString())
-                            for (i in 1 until atheletsBeans.size) {
-                                Log.d("firstName", atheletsBeans[i].firstName.toString())
+                            var eventListApiData = response.body()!!.data!!
+
+                            when (timeLine) {
+                                "" -> {
+                                    upComingEventData = eventListApiData.upcoming
+                                    pastEventData = eventListApiData.past
+
+                                    if (bFlag) {
+                                        mAdapterEvents?.addData(
+                                            eventListApiData.upcoming.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    } else {
+                                        mAdapterEvents?.setData(
+                                            eventListApiData.upcoming.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    }
+                                    pg_tot_page = eventListApiData.upcoming.paginate.total_pages
+                                }
+
+                                "1" -> {
+                                    upComingEventData.eventdata += eventListApiData.upcoming.eventdata
+
+                                    if (bFlag) {
+                                        mAdapterEvents?.addData(
+                                            eventListApiData.upcoming.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    } else {
+                                        mAdapterEvents?.setData(
+                                            eventListApiData.upcoming.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    }
+                                    pg_tot_page = eventListApiData.upcoming.paginate.total_pages
+                                }
+                                "2" -> {
+                                    pastEventData.eventdata += eventListApiData.past.eventdata
+
+                                    if (bFlag) {
+                                        mAdapterEvents?.addData(
+                                            eventListApiData.past.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    } else {
+                                        mAdapterEvents?.setData(
+                                            eventListApiData.past.eventdata.toMutableList(),
+                                            eventType
+                                        )
+                                    }
+                                    pg_tot_page = eventListApiData.past.paginate.total_pages
+                                }
                             }
-                            Log.d("count=>", atheletsBeans.size.toString())
-
-                            mAdapterEvents = EventsAdapter(atheletsBeans)
-
-                            events_list.adapter = mAdapterEvents
-                            mAdapterEvents!!.notifyDataSetChanged()
-
+                            isLoading = false
                         } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Family")
+                            DebugLog.e("Error : $e")
                         }
                     } else {
                         data_not_found_layout.visibility = View.VISIBLE
-//                        Functions.displayMessage(this@LinkedFamilyFragment,response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            this@LinkedFamilyFragment, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -337,7 +341,7 @@ class EventsFragment : AppCompatActivity() { //Fragment() {
                 pd.dismiss()
             }
 
-            override fun onFailure(call: Call<Get_Member_Listing_Response>, t: Throwable) {
+            override fun onFailure(call: Call<EventListModel>, t: Throwable) {
                 Toast.makeText(this@EventsFragment, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
             }
