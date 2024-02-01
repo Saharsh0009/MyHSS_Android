@@ -23,13 +23,14 @@ import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.ui.sankhya_report.Adapter.ApproveRecyclerView
+import com.myhss.ui.sankhya_report.Model.sankhya.ActiveMember
+import com.myhss.ui.sankhya_report.Model.sankhya.SankhyaList
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.guru_dakshina.Model.Get_Sankhya_Add_Response
 import com.uk.myhss.ui.my_family.Model.Datum
-import com.uk.myhss.ui.my_family.Model.my_family_response
 import com.uk.myhss.ui.policies.SankhyaActivity
 import com.uk.myhss.ui.sankhya_report.Adapter.SankhyaAdapter
 import com.uk.myhss.ui.sankhya_report.Model.Get_Sankhya_Utsav_Datum
@@ -91,7 +92,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     private var IsVisiblenew = true
 
     private var atheletsBeans: List<Sankhya_Datum> = ArrayList<Sankhya_Datum>()
-    private var athelets_Beans: List<Datum> = ArrayList<Datum>()
+    private var athelets_Beans: List<ActiveMember> = ArrayList<ActiveMember>()
     private var currentSelectedItems: List<Datum> = ArrayList<Datum>()
     private var selected_user: ArrayList<String> = ArrayList<String>()
     private var selected_userName: ArrayList<String> = ArrayList<String>()
@@ -310,7 +311,8 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 
             Log.d("USERID", USERID)
             Log.d("MEMBERID", MEMBERID)
-            myFamily(USERID)
+//            mySankhyaMemberList("151")
+            mySankhyaMemberList(sessionManager.fetchSHAKHAID().toString())
 //            mySankhyaList(USERID, MEMBERID, LENGTH, START, SEARCH, START_DATE, END_DATE)
 
             myRelationship()
@@ -629,19 +631,19 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         }
         })
 
-        attended_list.setOnItemClickListener(object : SankhyaAdapter.ClickListener {
-            override fun onItemClick(v: View, position: Int) {
-
-                Log.v("Bhanu", "onItemClick ${position}")
-
-                Toast.makeText(
-                    this@AddSankhyaActivity, "Clicked: ${approveRecyclerView!!.mItems[position]}",
-//                    "Clicked: ${mAdapterGuru!!.mItems[position]}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-        })
+//        attended_list.setOnItemClickListener(object : SankhyaAdapter.ClickListener {
+//            override fun onItemClick(v: View, position: Int) {
+//
+//                Log.v("Bhanu", "onItemClick ${position}")
+//
+//                Toast.makeText(
+//                    this@AddSankhyaActivity, "Clicked: ${approveRecyclerView!!.mItems[position]}",
+////                    "Clicked: ${mAdapterGuru!!.mItems[position]}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//
+//        })
     }
 
     private fun SearchSpinner(
@@ -842,20 +844,20 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         })
     }
 
-    private fun myFamily(user_id: String) {
+    private fun mySankhyaMemberList(user_id: String) {
         val pd = CustomProgressBar(this@AddSankhyaActivity)
         pd.show()
-        val call: Call<my_family_response> = MyHssApplication.instance!!.api.get_members(user_id)
-        call.enqueue(object : Callback<my_family_response> {
+        val call: Call<SankhyaList> = MyHssApplication.instance!!.api.get_sankhyaList(user_id)
+        call.enqueue(object : Callback<SankhyaList> {
             override fun onResponse(
-                call: Call<my_family_response>, response: Response<my_family_response>
+                call: Call<SankhyaList>, response: Response<SankhyaList>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
 
                         try {
-                            athelets_Beans = response.body()!!.data!!
+                            athelets_Beans = response.body()!!.active_member!!
                             Log.d("atheletsBeans", athelets_Beans.toString())
 
 //                        UserName = listOf(arrayOf(athelets_Beans).toString())
@@ -864,14 +866,14 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                             val mStringList = java.util.ArrayList<String>()
                             for (i in 0 until athelets_Beans.size) {
                                 mStringList.add(
-                                    athelets_Beans[i].firstName.toString() + " " + athelets_Beans[i].lastName.toString()
+                                    athelets_Beans[i].first_name.toString() + " " + athelets_Beans[i].last_name.toString()
                                 )
                             }
 
                             val mStringListnew = java.util.ArrayList<String>()
                             for (i in 0 until athelets_Beans.size) {
                                 mStringListnew.add(
-                                    athelets_Beans[i].memberId.toString()
+                                    athelets_Beans[i].member_id.toString()
                                 )
                             }
 
@@ -1008,7 +1010,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 pd.dismiss()
             }
 
-            override fun onFailure(call: Call<my_family_response>, t: Throwable) {
+            override fun onFailure(call: Call<SankhyaList>, t: Throwable) {
                 Toast.makeText(this@AddSankhyaActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
             }
@@ -1163,6 +1165,3 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 
 }
 
-private fun RecyclerView.setOnItemClickListener(clickListener: SankhyaAdapter.ClickListener) {
-//    TODO("Not yet implemented")
-}
