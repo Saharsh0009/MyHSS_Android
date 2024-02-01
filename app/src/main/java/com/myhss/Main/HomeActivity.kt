@@ -95,6 +95,10 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
     private lateinit var notification_img: ImageView
 
+    private lateinit var user_name: TextView
+    private lateinit var user_name_txt: TextView
+    private lateinit var user_role: TextView
+
     companion object {
         private val SCOPES = setOf<Scope>(Drive.SCOPE_FILE, Drive.SCOPE_APPFOLDER)
         val documentMimeTypes = arrayListOf(
@@ -148,9 +152,9 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         navigation_rv = findViewById(R.id.navigation_rv)
 
         val profile_view = findViewById<LinearLayout>(R.id.profile_view)
-        val user_name = findViewById<TextView>(R.id.user_name)
-        val user_name_txt = findViewById<TextView>(R.id.user_name_txt)
-        val user_role = findViewById<TextView>(R.id.user_role)
+        user_name = findViewById(R.id.user_name)
+        user_name_txt = findViewById(R.id.user_name_txt)
+        user_role = findViewById(R.id.user_role)
         val app_version = findViewById<TextView>(R.id.app_version)
 
         toolbar.title = ""
@@ -558,10 +562,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                         }
                     }
 
-                    // Don't highlight the 'Profile' and 'Like us on Facebook' item row
-//                if (position != 6 && position != 4) {
-//                    updateAdapter(position)
-//                }
                     Handler().postDelayed({
                         drawerLayout.closeDrawer(GravityCompat.START)
                     }, 200)
@@ -612,11 +612,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // Set Header Image
-//        navigation_header_img.setImageResource(R.drawable.logo)
-        // Set background of Drawer
-//        navigation_layout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
-
         try {
             val currentVersion = packageManager.getPackageInfo(packageName, 0).versionName
             app_version.text = "App Version: $currentVersion"
@@ -624,43 +619,16 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             e.printStackTrace()
         }
 
-        user_name_txt.text = sessionManager.fetchFIRSTNAME()!!
-            .capitalize(Locale.ROOT) + " " + sessionManager.fetchSURNAME()!!.capitalize(Locale.ROOT)
-        user_role.text = sessionManager.fetchUSERROLE()!!.capitalize(Locale.ROOT)
-
-        if (sessionManager.fetchSURNAME() != "" && sessionManager.fetchSURNAME() != "") {
-            val first: String = sessionManager.fetchFIRSTNAME()!!.substring(0, 1)
-                .uppercase(Locale.getDefault()) + sessionManager.fetchFIRSTNAME()!!.substring(
-                1
-            )
-            val getfirst = first
-            First_name = getfirst.substring(0, 1)
-
-            val second: String = sessionManager.fetchSURNAME()!!.substring(0, 1)
-                .toUpperCase(Locale.getDefault()) + sessionManager.fetchSURNAME()!!.substring(
-                1
-            )
-            val getsecond = second
-            Last_name = getsecond.substring(0, 1)
-
-            user_name.text = First_name + Last_name
-        }
-
         profile_view.setOnClickListener(DebouncedClickListener {
-            Log.d("Hi", "Profile")
             openCloseNavigationDrawer()
             val i = Intent(this@HomeActivity, ProfileFragment::class.java)
             i.putExtra("FAMILY", i.getStringExtra("PROFILE"))
             startActivity(i)
         })
-
-        val sharedNameValue = sessionManager.fetchUSERNAME()
-        Log.d("NAME-->", "default name: ${sharedNameValue}")
         checkNotificationPermission()
     }
 
     private fun callApis() {
-
         DebugLog.d("CORO - Starting the API CALL with lifecycleScope 3")
         val pd = CustomProgressBar(this@HomeActivity)
         pd.show()
@@ -923,7 +891,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                 if (!dataGetMember!![0].secondaryEmail.toString().equals("null")) {
                     sessionManager.saveSECEMAIL(dataGetMember!![0].secondaryEmail.toString())
                 }
-                DebugLog.e("First Aid : " + dataGetMember!![0].isQualifiedInFirstAid.toString())
                 sessionManager.saveGUAEMRNAME(dataGetMember!![0].emergencyName.toString())
                 sessionManager.saveGUAEMRPHONE(dataGetMember!![0].emergencyPhone.toString())
                 sessionManager.saveGUAEMREMAIL(dataGetMember!![0].emergencyEmail.toString())
@@ -954,9 +921,30 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                 sessionManager.saveDIETARYID(dataGetMember!![0].special_med_dietry_info_id.toString())
                 sessionManager.saveSTATE_IN_INDIA(dataGetMember!![0].indianConnectionState.toString())
 
-                Log.d("Address", sessionManager.fetchADDRESS()!!)
-                Log.d("Username", sessionManager.fetchUSERNAME()!!)
-                Log.d("Shakha_tab", sessionManager.fetchSHAKHA_TAB()!!)
+                if (sessionManager.fetchFIRSTNAME()!!
+                        .isNotEmpty() && sessionManager.fetchFIRSTNAME()!!.isNotBlank()
+                ) {
+                    user_name_txt.text = sessionManager.fetchFIRSTNAME()!!
+                        .capitalize(Locale.ROOT) + " " + sessionManager.fetchSURNAME()!!
+                        .capitalize(Locale.ROOT)
+                    user_role.text = sessionManager.fetchUSERROLE()!!.capitalize(Locale.ROOT)
+
+                    val first: String = sessionManager.fetchFIRSTNAME()!!.substring(0, 1)
+                        .uppercase(Locale.getDefault()) + sessionManager.fetchFIRSTNAME()!!
+                        .substring(1)
+                    val getfirst = first
+                    First_name = getfirst.substring(0, 1)
+                }
+
+                if (sessionManager.fetchSURNAME() != "") {
+                    val second: String = sessionManager.fetchSURNAME()!!.substring(0, 1)
+                        .toUpperCase(Locale.getDefault()) + sessionManager.fetchSURNAME()!!
+                        .substring(1)
+                    val getsecond = second
+                    Last_name = getsecond.substring(0, 1)
+                    user_name.text = First_name + Last_name
+                }
+
             } else {
                 Functions.displayMessage(this@HomeActivity, response.message)
             }
