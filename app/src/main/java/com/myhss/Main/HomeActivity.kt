@@ -199,7 +199,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             receivedNotiID = receivedIntent.getStringExtra(AppParam.NOTIFIC_ID).toString()
 //            DebugLog.e("Notification Value : $receivedNotiData")
         }
-
         callApis()
         // Set the toolbar
         setSupportActionBar(activity_main_toolbar)
@@ -671,13 +670,27 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
             val devicetype = "A"
             val device_token = sessionManager.fetchFCMDEVICE_TOKEN()
 
+            if (device_token.isNullOrEmpty() || device_token.isNullOrBlank()) {
+                val alertDialog: android.app.AlertDialog.Builder =
+                    android.app.AlertDialog.Builder(this@HomeActivity)
+                alertDialog.setMessage(getString(R.string.myhss_app_regret_to_inform_you_that_the_installation_was_unsuccessful_kindly_uninstall_the_application_and_proceed_to_download_it_again_from_the_play_store_to_ensure_a_successful_installation_thank_you_for_your_understanding))
+                alertDialog.setPositiveButton(
+                    "OK"
+                ) { _, _ ->
+                    finishAffinity()
+                }
+                val alert: android.app.AlertDialog = alertDialog.create()
+                alert.setCanceledOnTouchOutside(false)
+                alert.show()
+                pd.dismiss()
+                return
+            }
 
             // Wait for both jobs to complete
             lifecycleScope.launch {
 
                 val job1 = async { myProfile(user_id!!, member_id!!, devicetype, device_token!!) }
                 val job2 = async { callNotificationTypeApi() }
-
 
                 val result1 = job1.await()
                 val result2 = job2.await()
