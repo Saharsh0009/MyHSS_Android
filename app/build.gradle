@@ -34,8 +34,8 @@ android {
         applicationId "com.uk.myhss"
         minSdkVersion 21
         targetSdk 34
-        versionCode 25
-        versionName "1.9.1"
+        versionCode 26
+        versionName "1.9.2"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
