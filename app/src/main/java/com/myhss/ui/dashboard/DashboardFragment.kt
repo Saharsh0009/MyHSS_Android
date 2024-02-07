@@ -228,20 +228,12 @@ class DashboardFragment : Fragment() {
         events_gridview.visibility = View.GONE
         news_hide_show_layout.visibility = View.GONE
         news_gridview.visibility = View.GONE
-
+        
         if (UtilCommon.isUserUnder18(sessionManager.fetchDOB().toString())) {
             guruPoojaLayout.visibility = View.GONE
         } else {
             guruPoojaLayout.visibility = View.VISIBLE
         }
-
-        /*if (sessionManager.fetchSHAKHA_TAB() == "yes") {
-            shakha_gridview.visibility = View.VISIBLE
-            shakha_hide_show_layout.visibility = View.VISIBLE
-        } else {
-            shakha_gridview.visibility = View.GONE
-            shakha_hide_show_layout.visibility = View.GONE
-        }*/
 
         /*For Membership*/
         val member_customAdapter = context?.let { Adapter_dashboard(it, memberImages, memberNames) }
@@ -260,11 +252,6 @@ class DashboardFragment : Fragment() {
         if (sessionManager.fetchSHAKHA_TAB() == "yes") {
 
             /*For News*/
-//            news_layout.visibility = View.VISIBLE
-//            news_hide_show_layout.visibility = View.VISIBLE
-//            news_gridview.visibility = View.VISIBLE
-
-            /*For News*/
             val news_customAdapter = context?.let { Adapter_dashboard(it, newsImages, newsNames) }
             news_gridview.adapter = news_customAdapter
 
@@ -281,10 +268,6 @@ class DashboardFragment : Fragment() {
 
             shakha_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
                 if (position == 0) {
-                    /*val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                    transaction.replace(R.id.activity_main_content_id, SuchanaBoardFragment())
-                    transaction.disallowAddToBackStack()
-                    transaction.commit()*/
                     val i = Intent(requireContext(), SuchanaBoardActivity::class.java)
                     startActivity(i)
                 } else if (position == 1) {
@@ -297,12 +280,6 @@ class DashboardFragment : Fragment() {
                 }
             }
         } else {
-
-            /*For News*/
-//            news_layout.visibility = View.GONE
-//            news_hide_show_layout.visibility = View.GONE
-//            news_gridview.visibility = View.GONE
-
             /*For Shakha*/
             val shakha_customAdapter =
                 context?.let { Adapter_dashboard(it, shakhaImages, shakhaNames) }
@@ -310,22 +287,10 @@ class DashboardFragment : Fragment() {
 
             shakha_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
                 if (position == 0) {
-                    /*val transaction = requireActivity().supportFragmentManager.beginTransaction()
-                    transaction.replace(R.id.activity_main_content_id, SuchanaBoardFragment())
-                    transaction.disallowAddToBackStack()
-                    transaction.commit()*/
                     val i = Intent(requireContext(), SuchanaBoardActivity::class.java)
                     startActivity(i)
-                    /*} else if (position == 1) {
-                        val i = Intent(requireContext(), LinkedFamilyFragment::class.java)
-                        i.putExtra("DashBoard", "SHAKHAVIEW")
-                        startActivity(i)*/
                 } else if (position == 1) {
                     startActivity(Intent(requireContext(), SuryaNamaskar::class.java))
-//                    val i = Intent(requireContext(), AllShakhaListActivity::class.java)
-//                    val i = Intent(requireContext(), MapsActivity::class.java)
-//                    i.putExtra("SHAKHA_LIST","SHAKHA_LIST")
-//                    startActivity(i)
                 }
             }
         }
@@ -361,11 +326,11 @@ class DashboardFragment : Fragment() {
         }
         reports_gridview.adapter = reports_customAdapter
 
-        reports_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
-            if (position == 0) {
-//                startActivity(Intent(requireContext(), SanghSandeshActivity::class.java))
-            }
-        }
+//        reports_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
+//            if (position == 0) {
+////                startActivity(Intent(requireContext(), SanghSandeshActivity::class.java))
+//            }
+//        }
 
         membership_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
             if (position == 0) {
@@ -384,11 +349,7 @@ class DashboardFragment : Fragment() {
                 i.putExtra("TYPE_SELF", "family")
 //                i.putExtra("FAMILY", "FAMILY")
                 startActivity(i)
-            } /*else if (position == 3) {
-
-            } else if (position == 4) {
-
-            }*/
+            }
         }
 
         events_gridview.onItemClickListener = OnItemClickListener { parent, v, position, id ->
@@ -508,20 +469,6 @@ class DashboardFragment : Fragment() {
                 other_hide.setImageResource(R.drawable.drop_up_icon)
             }
         })
-
-//        if (Functions.isConnectingToInternet(requireContext())) {
-//            val user_id = sessionManager.fetchUserID()
-//            val member_id = sessionManager.fetchMEMBERID()
-//            val devicetype = "A"
-//            val device_token = sessionManager.fetchFCMDEVICE_TOKEN()
-//            myProfile(user_id!!, member_id!!, devicetype, device_token!!)
-//        } else {
-//            Toast.makeText(
-//                context,
-//                resources.getString(R.string.no_connection),
-//                Toast.LENGTH_SHORT
-//            ).show()
-//        }
 
         val receivedData = arguments?.getString(AppParam.NOTIFIC_KEY)
         val receivedNotificID = arguments?.getString(AppParam.NOTIFIC_ID)
