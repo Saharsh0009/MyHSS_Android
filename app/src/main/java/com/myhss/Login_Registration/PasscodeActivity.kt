@@ -29,7 +29,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
-import com.google.gson.JsonObject
 import com.myhss.Fingerprint.BiometricCallback
 import com.myhss.Fingerprint.BiometricManager.BiometricBuilder
 import com.myhss.Fingerprint.BiometricUtils
@@ -38,7 +37,6 @@ import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
-import com.myhss.Utils.SharedPreferences_String_Name
 import com.samsung.android.sdk.SsdkUnsupportedException
 import com.samsung.android.sdk.SsdkVendorCheck
 import com.samsung.android.sdk.pass.Spass

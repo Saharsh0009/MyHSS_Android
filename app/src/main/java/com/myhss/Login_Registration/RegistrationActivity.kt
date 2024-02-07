@@ -64,7 +64,7 @@ class RegistrationActivity : AppCompatActivity() {
 
     private val apiHandler = Handler(Looper.getMainLooper())
     private var lastTypedText: String = ""
-    private var isUserNameValid = false
+    private var isUserNameValid = true
     private lateinit var userNameValidError: String
 
     @SuppressLint("MissingPermission")
@@ -293,6 +293,7 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun UserNameCheck(username: String) {
+
         val call: Call<Get_Member_Check_Username_Exist_Response> =
             MyHssApplication.instance!!.api.get_member_check_username_exist(username)
         call.enqueue(object : Callback<Get_Member_Check_Username_Exist_Response> {
@@ -302,40 +303,40 @@ class RegistrationActivity : AppCompatActivity() {
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     if (response.body()?.status!!) {
-//                        til_username.isErrorEnabled = false
-//                        til_username.error = response.body()?.message.toString()
-//                        userNameValidError = response.body()?.message.toString()
-//                        til_username.setErrorTextColor(ColorStateList.valueOf(Color.GREEN))
-//                        edit_username.setHintTextColor(ColorStateList.valueOf(Color.GREEN))
-////                        til_username.defaultHintTextColor = ColorStateList.valueOf(Color.GREEN)
-//                        til_username.defaultHintTextColor = ContextCompat.getColorStateList(baseContext, R.color.grayColorColor)
-//                        til_username.errorIconDrawable = null
                         isUserNameValid = true
                     } else {
-                        til_username.error = response.body()?.message.toString()
-                        userNameValidError = response.body()?.message.toString()
-                        til_username.setErrorTextColor(ColorStateList.valueOf(Color.RED))
-                        edit_username.setHintTextColor(ColorStateList.valueOf(Color.RED))
-                        til_username.defaultHintTextColor = ColorStateList.valueOf(Color.RED)
-                        til_username.isErrorEnabled = true
-                        til_username.errorIconDrawable = null
-                        edit_username.requestFocus()
-                        isUserNameValid = false
+                        showUsernameErrorMessage(response.body()?.message.toString())
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
-                        this@RegistrationActivity, "Message",
-                        getString(R.string.some_thing_wrong),
+                        this@RegistrationActivity,
+                        "Error Message",
+                        getString(R.string.some_thing_wrong)
                     )
+                    showUsernameErrorMessage(getString(R.string.username_error))
                 }
             }
 
             override fun onFailure(
-                call: Call<Get_Member_Check_Username_Exist_Response>, t: Throwable
+                call: Call<Get_Member_Check_Username_Exist_Response>,
+                t: Throwable
             ) {
                 Toast.makeText(this@RegistrationActivity, t.message, Toast.LENGTH_LONG).show()
+                showUsernameErrorMessage(getString(R.string.username_error))
             }
         })
+    }
+
+    fun showUsernameErrorMessage(errorMsg: String) {
+        til_username.error = errorMsg
+        userNameValidError = errorMsg
+        til_username.setErrorTextColor(ColorStateList.valueOf(Color.RED))
+        edit_username.setHintTextColor(ColorStateList.valueOf(Color.RED))
+        til_username.defaultHintTextColor = ColorStateList.valueOf(Color.RED)
+        til_username.isErrorEnabled = true
+        til_username.errorIconDrawable = null
+        edit_username.requestFocus()
+        isUserNameValid = false
     }
 
     fun CallUserNameMethod(userNameS: String) {
