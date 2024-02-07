@@ -1,7 +1,6 @@
 package com.myhss.Login_Registration
 
 
-import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
@@ -10,7 +9,6 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Build
@@ -24,8 +22,6 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics

@@ -222,7 +222,7 @@ class SplashActivity : AppCompatActivity() {
                         } catch (e: ArithmeticException) {
                             showAlertDialogforfinish(
                                 "Error Message",
-                                getString(R.string.some_thing_wrong)
+                                getString(R.string.something_went_wrong)
                             )
                         }
 
@@ -232,7 +232,7 @@ class SplashActivity : AppCompatActivity() {
                         )
                     }
                 } else {
-                    showAlertDialogforfinish("Error Message", getString(R.string.some_thing_wrong))
+                    showAlertDialogforfinish("Error Message", getString(R.string.something_went_wrong))
                 }
             }
 
