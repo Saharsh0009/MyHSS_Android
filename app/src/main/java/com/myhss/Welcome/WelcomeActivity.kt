@@ -82,19 +82,33 @@ class WelcomeActivity : AppCompatActivity() {
         welcome_txt_msg = findViewById(R.id.welcome_txt_msg)
         add_self = findViewById(R.id.add_self)
         add_self_family = findViewById(R.id.add_self_family)
-//        welcome_layout = findViewById(R.id.welcome_layout)
         add_self_layout = findViewById(R.id.add_self_layout)
         rootLayout = findViewById(R.id.rootLayout)
         btn_logOut = findViewById(R.id.info_tooltip)
-
         back_arrow.visibility = View.INVISIBLE
-
         header_title.text = getString(R.string.welocome)
         btn_logOut.setImageResource(R.drawable.ic_logout)
 
-        user_id = sessionManager.fetchUserID()!!
-        Log.d("user_id", user_id)
-        Log.d("user_id", sessionManager.fetchUserID()!!)
+
+        if (sessionManager.fetchUserID().isNullOrEmpty() || sessionManager.fetchUserID()
+                .isNullOrBlank()
+        ) {
+            val alertDialog: android.app.AlertDialog.Builder =
+                android.app.AlertDialog.Builder(this@WelcomeActivity)
+            alertDialog.setMessage(getString(R.string.myhss_app_regret_to_inform_you_that_the_installation_was_unsuccessful_kindly_uninstall_the_application_and_proceed_to_download_it_again_from_the_play_store_to_ensure_a_successful_installation_thank_you_for_your_understanding))
+            alertDialog.setPositiveButton(
+                "OK"
+            ) { _, _ ->
+                finishAffinity()
+            }
+            val alert: android.app.AlertDialog = alertDialog.create()
+            alert.setCanceledOnTouchOutside(false)
+            alert.setCancelable(false)
+            alert.show()
+            return
+        } else {
+            user_id = sessionManager.fetchUserID()!!
+        }
 
         if (Functions.isConnectingToInternet(this@WelcomeActivity)) {
             welcome(user_id)
@@ -106,73 +120,13 @@ class WelcomeActivity : AppCompatActivity() {
             ).show()
         }
 
-        /*Handler().postDelayed({
-            RetrofitClient.instance.welcome_api(user_id)
-                .enqueue(object : Callback<WelcomeResponse> {
-                    override fun onFailure(call: Call<WelcomeResponse>, t: Throwable) {
-                        Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
-                    }
-
-                    @SuppressLint("CommitPrefEdits")
-                    override fun onResponse(
-                        call: Call<WelcomeResponse>,
-                        response: Response<WelcomeResponse>
-                    ) {
-                        Log.d("status", response.body()?.getStatus().toString())
-                        if (response.body()?.getStatus()!!) {
-                            Log.d("response", response.message())
-                            Log.d("body", response.body().toString())
-
-                            val type = response.body()!!.getType().toString()
-
-                            if (type == "self") {
-                                add_self.visibility = View.VISIBLE
-                                add_self_family.visibility = View.GONE
-                                welcome_txt_msg.text = response.body()!!.getTooltip().toString()
-                                add_self.text = getString(R.string.Add_self)
-                            } else {
-                                add_self.visibility = View.GONE
-                                add_self_family.visibility = View.VISIBLE
-                                welcome_txt_msg.text = response.body()!!.getTooltip().toString()
-                                add_self_family.text = getString(R.string.Add_family_member)
-                            }
-
-                        } else {
-                            Toast.makeText(
-                                applicationContext,
-                                response.body()?.getMessage(),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-
-                    }
-                })
-        }, 500)*/
-
         if (add_self.text.toString() == getString(R.string.Add_self)) {
-//            welcome_layout.setOnClickListener {
             add_self_layout.setOnClickListener(DebouncedClickListener {
-//                Snackbar.make(rootLayout, "Add self", Snackbar.LENGTH_SHORT).show()
                 val i = Intent(this@WelcomeActivity, AddMemberFirstActivity::class.java)
                 i.putExtra("TYPE_SELF", TYPE_SELF)
-//                    i.putExtra("FAMILY", "MEMBER")
-//                val i = Intent(this@WelcomeActivity, MainActivity::class.java)
                 startActivity(i)
             })
         }
-//        else /*if (add_self_family.text.toString() == getString(R.string.Add_family_member)) {
-//            Snackbar.make(rootLayout, "Add family member", Snackbar.LENGTH_SHORT).show()
-//        }*/
-//        /*if (add_self_family.text.toString() == getString(R.string.Add_family_member))*/ {
-//            Handler().postDelayed({
-//            welcome_layout.setOnClickListener {
-//                val i = Intent(this@WelcomeActivity, MainActivity::class.java)
-//                startActivity(i)
-//                finish()
-//            }
-//            }, 500)
-//        }
-
         btn_logOut.setOnClickListener(DebouncedClickListener {
             callLogOutMethod()
         })
@@ -268,27 +222,16 @@ class WelcomeActivity : AppCompatActivity() {
     private fun welcome(user_id: String) {
         val pd = CustomProgressBar(this@WelcomeActivity)
         pd.show()
-//        val call: Call<WelcomeResponse> = MyHssApplication.instance!!.api.welcome_api(sessionManager.fetchUserID()!!, token = "Bearer ${sessionManager.fetchAuthToken()}")
-//        val call: Call<WelcomeResponse> = MyHssApplication.instance!!.api.welcome_api(//token = "Bearer ${sessionManager.fetchAuthToken()}",
-//            user_id = User_id(user_id)
-//            user_id
-//        )
         val call: Call<WelcomeResponse> = MyHssApplication.instance!!.api.welcome_api(user_id)
         call.enqueue(object : Callback<WelcomeResponse> {
             override fun onResponse(
                 call: Call<WelcomeResponse>, response: Response<WelcomeResponse>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
-                        Log.d("response", response.message())
-                        Log.d("body", response.body().toString())
-
                         val type = response.body()!!.type
-
                         try {
                             val responseBody = response.body()
-
                             if (responseBody != null && responseBody.member_id != null) {
                                 sessionManager.saveMEMBERID(responseBody.member_id!!)
                             } else {
@@ -298,22 +241,12 @@ class WelcomeActivity : AppCompatActivity() {
                             e.printStackTrace()
                         }
 
-//                        try {
-//                            val member_id = response.body()!!.member_id
-//                            sessionManager.saveMEMBERID(member_id!!)
-//                        } catch (e: Exception) {
-//                            e.printStackTrace()
-//                        }
-
-
                         val sharedPreferences = getSharedPreferences(
                             "production", Context.MODE_PRIVATE
                         )
-
                         sharedPreferences.edit().apply {
                             putString("TYPE_SELF", TYPE_SELF)
                             putString("MEMBERID", response.body()!!.member_id)
-
                         }.apply()
 
                         val editor: SharedPreferences.Editor = sharedPreferences.edit()
@@ -323,27 +256,20 @@ class WelcomeActivity : AppCompatActivity() {
                         editor.commit()
 
                         TYPE_SELF = type.toString()
-                        Log.d("TYPE_SELF", TYPE_SELF)
+//                        Log.d("TYPE_SELF", TYPE_SELF)
 
                         welcome_txt_msg.visibility = View.VISIBLE
                         add_self_layout.visibility = View.VISIBLE
-//                    welcome_layout.visibility = View.VISIBLE
 
                         if (type == "self") {
                             add_self_layout.visibility = View.VISIBLE
-//                        add_self.visibility = View.VISIBLE
                             add_self_family.visibility = View.GONE
                             welcome_txt_msg.text = response.body()!!.tooltip
-//                        add_self.text = getString(R.string.Add_self)
                             btn_logOut.visibility = View.VISIBLE
                         } else {
                             add_self_layout.visibility = View.GONE
-//                        add_self.visibility = View.GONE
                             add_self_family.visibility = View.GONE
-//                        welcome_layout.visibility = View.GONE
                             welcome_txt_msg.text = response.body()!!.tooltip
-//                        add_self_family.text = getString(R.string.Add_family_member)
-
                             welcome_txt_msg.setBackgroundResource(R.drawable.greetext_background_round)
                             welcome_txt_msg.setTextColor(getResources().getColor(R.color.greenColor))
                             btn_logOut.visibility = View.VISIBLE
@@ -356,8 +282,6 @@ class WelcomeActivity : AppCompatActivity() {
                                 val i = Intent(
                                     this@WelcomeActivity, Passcode_Activity::class.java
                                 )
-//                                    HomeActivity::class.java)
-//                                MainActivity::class.java)
                                 i.putExtra("CHANGE_BIOMETRIC", "")
                                 startActivity(i)
                                 finish()
@@ -366,7 +290,6 @@ class WelcomeActivity : AppCompatActivity() {
                     } else {
                         Functions.showAlertMessageWithOK(
                             this@WelcomeActivity, "",
-//                        "Message",
                             response.body()?.message
                         )
                     }

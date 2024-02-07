@@ -69,6 +69,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
+import kotlin.coroutines.coroutineContext
 
 
 class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSelectedListener {
@@ -649,6 +650,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                 }
                 val alert: android.app.AlertDialog = alertDialog.create()
                 alert.setCanceledOnTouchOutside(false)
+                alert.setCancelable(false)
                 alert.show()
                 pd.dismiss()
                 return
@@ -656,32 +658,18 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
             // Wait for both jobs to complete
             lifecycleScope.launch {
-
-                val job1 = async { myProfile(user_id!!, member_id!!, devicetype, device_token!!) }
-                val job2 = async { callNotificationTypeApi() }
+                var profileApiStatus = false
+                var notifiApiStatus = false
+                val job1 = async {
+                    profileApiStatus = myProfile(user_id!!, member_id!!, devicetype, device_token!!)
+                }
+                val job2 = async { notifiApiStatus = callNotificationTypeApi() }
 
                 val result1 = job1.await()
                 val result2 = job2.await()
 
-                // Update the UI with the results
                 DebugLog.d("CORO - Results await 5: $result1, $result2")
-
-                if (sessionManager.fetchSHAKHA_TAB() == "yes") {
-                    updateAdapter(0)
-                    // Set 'Home' as the default fragment when the app starts
-                    val dashboardFragment = DashboardFragment()
-                    if (UtilCommon.isNotificationTrue(receivedNotiData)) {
-                        val args = Bundle()
-                        args.putString(AppParam.NOTIFIC_KEY, receivedNotiData)
-                        args.putString(AppParam.NOTIFIC_ID, receivedNotiID)
-                        dashboardFragment.arguments = args
-                        receivedNotiData = "no"
-                        receivedNotiID = "0"
-                    }
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.activity_main_content_id, dashboardFragment)
-                        .commit()
-                } else {
+                if (profileApiStatus && notifiApiStatus) {
                     updateAdapter(0)
                     val dashboardFragment = DashboardFragment()
                     if (UtilCommon.isNotificationTrue(receivedNotiData)) {
@@ -694,7 +682,8 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                     }
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.activity_main_content_id, dashboardFragment)
-                        .commit()
+//                        .commit()
+                        .commitAllowingStateLoss()
                 }
                 pd.dismiss()
             }
@@ -821,7 +810,8 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         member_id: String,
         deviceType: String,
         device_token: String
-    ) {
+    ): Boolean {
+        var apiStatus = false
         try {
             val response = MyHssApplication.instance!!.api.get_profile(
                 user_id,
@@ -944,37 +934,64 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                     Last_name = getsecond.substring(0, 1)
                     user_name.text = First_name + Last_name
                 }
-
+                apiStatus = true
             } else {
-                Functions.displayMessage(this@HomeActivity, response.message)
+//                Functions.displayMessage(this@HomeActivity, response.message)
+                showErrorDialogForceCloseApp(response.message!!)
+                apiStatus = false
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Functions.showAlertMessageWithOK(
-                this@HomeActivity,
-                "Message",
-                getString(R.string.some_thing_wrong)
-            )
+//            Functions.showAlertMessageWithOK(
+//                this@HomeActivity,
+//                "Message",
+//                getString(R.string.something_went_wrong)
+//            )
+            showErrorDialogForceCloseApp(getString(R.string.something_went_wrong))
+            apiStatus = false
         }
+        return apiStatus
     }
 
-    private suspend fun callNotificationTypeApi() {
+    private suspend fun callNotificationTypeApi(): Boolean {
+        var apiStatus = false
         try {
             val response = MyHssApplication.instance!!.api.getNotificationType()
             if (response.status == true) {
                 val dataNotificType = response.data
                 AppParam.notificTypeData = dataNotificType
+                apiStatus = true
             } else {
-                Functions.displayMessage(this@HomeActivity, response.message)
+//                Functions.displayMessage(this@HomeActivity, response.message)
+                showErrorDialogForceCloseApp(response.message)
+                apiStatus = false
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Functions.showAlertMessageWithOK(
-                this@HomeActivity,
-                "Message",
-                getString(R.string.some_thing_wrong)
-            )
+//            Functions.showAlertMessageWithOK(
+//                this@HomeActivity,
+//                "Message",
+//                getString(R.string.something_went_wrong)
+//            )
+            showErrorDialogForceCloseApp(getString(R.string.something_went_wrong))
+            apiStatus = false
         }
+        return apiStatus
+    }
+
+    fun showErrorDialogForceCloseApp(stringmsg: String) {
+        val alertDialog: android.app.AlertDialog.Builder =
+            android.app.AlertDialog.Builder(this@HomeActivity)
+        alertDialog.setMessage(stringmsg)
+        alertDialog.setPositiveButton(
+            "OK"
+        ) { _, _ ->
+            finishAffinity()
+        }
+        val alert: android.app.AlertDialog = alertDialog.create()
+        alert.setCanceledOnTouchOutside(false)
+        alert.setCancelable(false)
+        alert.show()
     }
 
 
