@@ -222,6 +222,9 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         til_confirm_password = findViewById(R.id.til_confirm_password)
         til_dob = findViewById(R.id.til_dob)
         til_relatioship_other_name = findViewById(R.id.til_relatioship_other_name)
+        vibhag_select_default = findViewById(R.id.vibhag_select_default)
+        nagar_select_default = findViewById(R.id.nagar_select_default)
+        shakha_select_default = findViewById(R.id.shakha_select_default)
 
         Log.d("TYPE_SELF", intent.getStringExtra("TYPE_SELF")!!)
 
@@ -781,9 +784,7 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         edit_nagar_town.setTitle("Select Nagar")
         edit_shakha_branch.setTitle("Select Shakha")
 
-        vibhag_select_default = findViewById(R.id.vibhag_select_default)
-        nagar_select_default = findViewById(R.id.nagar_select_default)
-        shakha_select_default = findViewById(R.id.shakha_select_default)
+
 
         tooltip_view.setOnClickListener(DebouncedClickListener {
 
