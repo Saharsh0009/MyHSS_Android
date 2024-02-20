@@ -84,7 +84,7 @@
                 android:layout_centerVertical="true"
                 app:tint="@color/grayColorColor" />
 
-            <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinner
+            <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinnerData
                 android:theme="@style/StyleEditTextView"
                 android:id="@+id/edit_Filter"
                 android:inputType="text"

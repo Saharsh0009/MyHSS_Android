@@ -587,9 +587,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                 barchartDataModel.setValue_x(surya_namaskarlist.get(i).getcount_date())
                 barchartDataModel.setValue_y(surya_namaskarlist.get(i).getcount())
                 barchartDataModel.setValue_user(surya_namaskarlist.get(i).getmember_name())
-                barchartDataModel.setValue_ID(
-                    surya_namaskarlist.get(i).getsurya_namaskar_count_id()
-                )
+                barchartDataModel.setValue_ID(surya_namaskarlist.get(i).getsurya_namaskar_count_id())
                 listData_surya.add(barchartDataModel)
             }
         }

@@ -202,7 +202,7 @@
                         android:textColorHint="@color/grayColorColor"
                         android:theme="@style/StyleEditTextView" />
 
-                    <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinnerData
                         style="@android:style/Widget.Spinner.DropDown"
                         android:theme="@style/StyleEditTextView"
                         android:id="@+id/gift_aid_select_txt"
@@ -416,7 +416,7 @@
                         android:textColorHint="@color/grayColorColor"
                         android:theme="@style/StyleEditTextView" />
 
-                    <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinnerData
                         style="@android:style/Widget.Spinner.DropDown"
                         android:theme="@style/StyleEditTextView"
                         android:id="@+id/gift_aid_select_txt"

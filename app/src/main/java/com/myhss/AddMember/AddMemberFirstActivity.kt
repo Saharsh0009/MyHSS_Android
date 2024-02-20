@@ -23,6 +23,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import cl.jesualex.stooltip.Position
 import cl.jesualex.stooltip.Tooltip
+import com.google.android.material.dialog.InsetDialogOnTouchListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -35,6 +36,10 @@ import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
+import com.myhss.dialog.DialogSearchableSpinner
+import com.myhss.dialog.iDialogSearchableSpinner
+import com.myhss.dialog.model.SearchableSpinnerData
+import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
@@ -51,7 +56,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class AddMemberFirstActivity() : AppCompatActivity() {
+class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
 
     private lateinit var sessionManager: SessionManager
     private var year = 0
@@ -86,17 +91,18 @@ class AddMemberFirstActivity() : AppCompatActivity() {
     private lateinit var edit_occupation_name: TextInputEditText
     private lateinit var tooltip_view: ImageView
 
-    private lateinit var edit_realationship_txt: SearchableSpinner
-    private lateinit var edit_occupation_select_other: SearchableSpinner
-    private lateinit var edit_vibhag_region: SearchableSpinner
-    private lateinit var edit_nagar_town: SearchableSpinner
-    private lateinit var edit_shakha_branch: SearchableSpinner
+    private lateinit var edit_realationship_txt: TextView
+    private lateinit var edit_occupation_select_other: TextView
+    private lateinit var edit_vibhag_region: TextView
+    private lateinit var edit_nagar_town: TextView
+    private lateinit var edit_shakha_branch: TextView
 
-    private lateinit var realationship_txt: RelativeLayout
-    private lateinit var occupation_select_other: RelativeLayout
-    private lateinit var vibhag_region: RelativeLayout
-    private lateinit var nagar_town: RelativeLayout
-    private lateinit var shakha_branch: RelativeLayout
+//    private lateinit var realationship_txt: RelativeLayout
+
+    //    private lateinit var occupation_select_other: RelativeLayout
+//    private lateinit var vibhag_region: RelativeLayout
+//    private lateinit var nagar_town: RelativeLayout
+//    private lateinit var shakha_branch: RelativeLayout
 
     private lateinit var occupation_other_view: RelativeLayout
     private lateinit var realationship_other_view: RelativeLayout
@@ -178,11 +184,11 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         edit_nagar_town = findViewById(R.id.edit_nagar_town)
         edit_shakha_branch = findViewById(R.id.edit_shakha_branch)
 
-        realationship_txt = findViewById(R.id.realationship_txt)
-        occupation_select_other = findViewById(R.id.occupation_select_other)
-        vibhag_region = findViewById(R.id.vibhag_region)
-        nagar_town = findViewById(R.id.nagar_town)
-        shakha_branch = findViewById(R.id.shakha_branch)
+//        realationship_txt = findViewById(R.id.realationship_txt)
+//        occupation_select_other = findViewById(R.id.occupation_select_other)
+//        vibhag_region = findViewById(R.id.vibhag_region)
+//        nagar_town = findViewById(R.id.nagar_town)
+//        shakha_branch = findViewById(R.id.shakha_branch)
 
         occupation_other_view = findViewById(R.id.occupation_other_view)
         realationship_other_view = findViewById(R.id.realationship_other_view)
@@ -234,6 +240,13 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         val simpledateFormat = SimpleDateFormat("dd/MM/yyyy")
         strCurrentDate = simpledateFormat.format(calendar.time)
         Functions.printLog("currentDate", strCurrentDate)
+
+        //        edit_realationship_txt.setTitle("Select Relationship")
+        edit_realationship_txt.text = "Select Relationship"
+        edit_occupation_select_other.text = "Select Occupation"
+        edit_vibhag_region.text = "Select Vibhag"
+        edit_nagar_town.text = "Select Nagar"
+        edit_shakha_branch.text = "Select Shakha"
 
         if (intent.getStringExtra("TYPE_SELF") != "self") {
             header_title.text = getString(R.string.Add_family_member)
@@ -295,19 +308,10 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     edit_realationship_name.visibility = View.VISIBLE
                     edit_realationship_name.setText(sessionManager.fetchRELATIONSHIPNAME_OTHER())
                 }
-
-                edit_occupation_select_other.setSelection(OccupationName.indexOf(sessionManager.fetchOCCUPATIONNAME()))
-                edit_vibhag_region.setSelection(VibhagName.indexOf(sessionManager.fetchVIBHAGNAME()))
-                edit_nagar_town.setSelection(NagarName.indexOf(sessionManager.fetchNAGARNAME()))
-                edit_shakha_branch.setSelection(ShakhaName.indexOf(sessionManager.fetchSHAKHANAME()))
-
-//                DebugLog.e("VIBHAG " + sessionManager.fetchVIBHAGNAME())
-//                DebugLog.e("NAGAR " + sessionManager.fetchNAGARNAME())
-//                DebugLog.e("SHAKHA " + sessionManager.fetchSHAKHANAME())
-//                DebugLog.e("RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME())
-//                DebugLog.e("OTHER_RELATIONSHIP " + sessionManager.fetchRELATIONSHIPNAME_OTHER())
-//                DebugLog.e("OCCUPATION " + sessionManager.fetchOCCUPATIONNAME())
-
+                edit_occupation_select_other.text = sessionManager.fetchOCCUPATIONNAME().toString()
+                edit_vibhag_region.text = sessionManager.fetchVIBHAGNAME().toString()
+                edit_nagar_town.text = sessionManager.fetchNAGARNAME().toString()
+                edit_shakha_branch.text = sessionManager.fetchSHAKHANAME().toString()
             } else if (intent.getStringExtra("FAMILY") == "FAMILY") {
                 header_title.text = getString(R.string.family_member)
                 family_view.visibility = View.VISIBLE
@@ -544,6 +548,13 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     } else if (GENDER == "") {
                         Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT)
                             .show()
+                    } else if (RELATIONSHIP_ID == "") {
+                        Snackbar.make(
+                            rootLayout,
+                            "Please select Relationship",
+                            Snackbar.LENGTH_SHORT
+                        )
+                            .show()
                     } else if (RELATIONSHIP_ID == "5" && edit_realationship_name.text.toString()
                             .isEmpty()
                     ) {
@@ -552,6 +563,18 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         til_relatioship_other_name.isErrorEnabled = true
                         til_relatioship_other_name.setErrorIconDrawable(null)
                         edit_realationship_name.requestFocus()
+                    } else if (OCCUPATION_ID == "") {
+                        Snackbar.make(rootLayout, "Please select Occupation", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } else if (VIBHAG_ID == "") {
+                        Snackbar.make(rootLayout, "Please select Vibhag", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } else if (NAGAR_ID == "") {
+                        Snackbar.make(rootLayout, "Please select Nagar", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } else if (SHAKHA_ID == "") {
+                        Snackbar.make(rootLayout, "Please select Shakha", Snackbar.LENGTH_SHORT)
+                            .show()
                     } else {
                         CallNextMethod()
                     }
@@ -591,28 +614,27 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         til_surname.setErrorIconDrawable(null)
                         edit_surname.requestFocus()
                         return@DebouncedClickListener
-                    }
-                    /* else if (edit_username.text.toString().isEmpty()) {
-                    til_username.error = getString(R.string.user_name)
-                    til_username.isErrorEnabled = true
-                    return@setOnClickListener
-                } else if (!UtilCommon.isValidUserName(edit_username.text.toString())) {
-                    til_username.error = getString(R.string.valid_user_name)
-                    til_username.isErrorEnabled = true
-                    return@setOnClickListener
-                } else if (edit_email.text.toString().isEmpty()) {
-                    til_email.error = getString(R.string.email_id)
-                    til_email.isErrorEnabled = true
-                    return@setOnClickListener
-                } else if (!Patterns.EMAIL_ADDRESS.matcher(edit_email.text.toString()).matches()) {
-                    til_email.error = getString(R.string.valid_email)
-                    til_email.isErrorEnabled = true
-                    return@setOnClickListener
-                }*/ else if (GENDER == "") {
+                    } else if (GENDER == "") {
                         Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT)
                             .show()
                     } else if (edit_dateofbirth.text.toString().isEmpty()) {
-                        Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(
+                            rootLayout,
+                            getString(R.string.enter_dob),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    } else if (OCCUPATION_ID == "") {
+                        Snackbar.make(rootLayout, "Please select Occupation", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } else if (VIBHAG_ID == "") {
+                        Snackbar.make(rootLayout, "Please select Vibhag", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } else if (NAGAR_ID == "") {
+                        Snackbar.make(rootLayout, "Please select Nagar", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } else if (SHAKHA_ID == "") {
+                        Snackbar.make(rootLayout, "Please select Shakha", Snackbar.LENGTH_SHORT)
+                            .show()
                     } else {
                         CallNextMethod()
                     }
@@ -665,9 +687,19 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                     edit_email.requestFocus()
                     return@DebouncedClickListener
                 } else if (GENDER == "") {
-                    Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(rootLayout, "Please select Gender", Snackbar.LENGTH_SHORT).show()
                 } else if (edit_dateofbirth.text.toString().isEmpty()) {
-                    Snackbar.make(rootLayout, "Please select DOB", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(rootLayout, getString(R.string.enter_dob), Snackbar.LENGTH_SHORT)
+                        .show()
+                } else if (OCCUPATION_ID == "") {
+                    Snackbar.make(rootLayout, "Please select Occupation", Snackbar.LENGTH_SHORT)
+                        .show()
+                } else if (VIBHAG_ID == "") {
+                    Snackbar.make(rootLayout, "Please select Vibhag", Snackbar.LENGTH_SHORT).show()
+                } else if (NAGAR_ID == "") {
+                    Snackbar.make(rootLayout, "Please select Nagar", Snackbar.LENGTH_SHORT).show()
+                } else if (SHAKHA_ID == "") {
+                    Snackbar.make(rootLayout, "Please select Shakha", Snackbar.LENGTH_SHORT).show()
                 } else {
                     CallNextMethod()
                 }
@@ -770,22 +802,10 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             }
             false
         }
-
-
         edit_dateofbirth.setOnClickListener(DebouncedClickListener {
             openDatePickerForDOB()
         })
-
         occupation_other_view.visibility = View.GONE
-
-        edit_realationship_txt.setTitle("Select Relationship")
-        edit_occupation_select_other.setTitle("Select Occupation")
-        edit_vibhag_region.setTitle("Select Vibhag")
-        edit_nagar_town.setTitle("Select Nagar")
-        edit_shakha_branch.setTitle("Select Shakha")
-
-
-
         tooltip_view.setOnClickListener(DebouncedClickListener {
 
             Tooltip.on(tooltip_view).text(R.string.ageTipText)
@@ -1012,25 +1032,15 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                                 GENDER = "F"
                             }
 
-                            edit_realationship_txt.setSelection(
-                                relationshipName.indexOf(
-                                    data_getprofile[0].relationship
-                                )
-                            )
-
-//                        edit_realationship_txt.setPositiveButton(data_getprofile[0].relationship)
+                            edit_realationship_txt.text = data_getprofile[0].relationship.toString()
                             if (data_getprofile[0].otherRelationship != "") {
                                 edit_realationship_name.setText(data_getprofile[0].otherRelationship)
                             }
-                            edit_occupation_select_other.setSelection(
-                                OccupationName.indexOf(
-                                    data_getprofile[0].occupation
-                                )
-                            )
-//                        edit_occupation_name.setText(data_getprofile[0].o)
-                            edit_vibhag_region.setSelection(VibhagName.indexOf(data_getprofile[0].vibhag))
-                            edit_nagar_town.setSelection(NagarName.indexOf(data_getprofile[0].nagar))
-                            edit_shakha_branch.setSelection(ShakhaName.indexOf(data_getprofile[0].shakha))
+                            edit_occupation_select_other.text =
+                                data_getprofile[0].occupation.toString()
+                            edit_vibhag_region.text = data_getprofile[0].vibhag.toString()
+                            edit_nagar_town.text = data_getprofile[0].nagar.toString()
+                            edit_shakha_branch.text = data_getprofile[0].shakha.toString()
 
 
                         } catch (e: ArithmeticException) {
@@ -1071,34 +1081,14 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 relationshipName = data_relationship.map { it.relationshipName.toString() }
                 relationshipID = data_relationship.map { it.memberRelationshipId.toString() }
 
-                val adapter = ArrayAdapter(
-                    this@AddMemberFirstActivity,
-                    android.R.layout.simple_spinner_dropdown_item,
-                    relationshipName
-                )
-                edit_realationship_txt.adapter = adapter
-                edit_realationship_txt.onItemSelectedListener =
-                    object : AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(
-                            adapter: AdapterView<*>,
-                            v: View,
-                            position: Int,
-                            id: Long
-                        ) {
-                            (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-                            RELATIONSHIP_ID = relationshipID[position]
-
-                            if (RELATIONSHIP_ID == "5") {
-                                realationship_other_view.visibility = View.VISIBLE
-                                OTHER_RELATIONSHIP = edit_realationship_name.text.toString()
-                            } else {
-                                realationship_other_view.visibility = View.GONE
-                                OTHER_RELATIONSHIP = ""
-                            }
-                        }
-
-                        override fun onNothingSelected(arg0: AdapterView<*>?) {}
-                    }
+                edit_realationship_txt.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "2",
+                        "Select Relationship",
+                        relationshipName,
+                        relationshipID
+                    )
+                })
             } else {
                 Functions.displayMessage(
                     this@AddMemberFirstActivity,
@@ -1122,42 +1112,30 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             if (response?.status == true) {
                 val dataOccupationList = response.data.orEmpty()
 
+                DebugLog.e("Size :  ${dataOccupationList.size}")
+
                 OccupationName = dataOccupationList.map { it.occupationName.toString() }
                 OccupationID = dataOccupationList.map { it.occupationId.toString() }
                 OccupationName += "Other"
                 OccupationID += "-99"
-                val adapter = ArrayAdapter(
-                    this@AddMemberFirstActivity,
-                    android.R.layout.simple_spinner_dropdown_item,
-                    OccupationName
-                )
-                edit_occupation_select_other.adapter = adapter
+
                 if (intent.getStringExtra("TYPE_SELF") != "self" && intent.getStringExtra("FAMILY") == "PROFILE") {
                     val selectedOccupation = sessionManager.fetchOCCUPATIONNAME()
                     val selectedOccupationIndex = OccupationName.indexOf(selectedOccupation)
                     if (selectedOccupationIndex != -1) {
-                        edit_occupation_select_other.setSelection(selectedOccupationIndex)
+                        edit_occupation_select_other.text = selectedOccupation
+                        OCCUPATION_ID = OccupationID.get(selectedOccupationIndex)
                     }
                 }
-                edit_occupation_select_other.onItemSelectedListener =
-                    object : OnItemSelectedListener {
-                        override fun onItemSelected(
-                            adapter: AdapterView<*>,
-                            v: View,
-                            position: Int,
-                            id: Long
-                        ) {
-                            (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-                            Log.d("Name", OccupationName[position])
-                            Log.d("Postion", OccupationID[position])
-                            OCCUPATION_ID = OccupationID[position]
-                            OCCUPATION_NAME = OccupationName[position]
-                            occupation_other_view.visibility = View.GONE
-                        }
+                edit_occupation_select_other.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "1",
+                        "Select Occupation",
+                        OccupationName,
+                        OccupationID
+                    )
+                })
 
-                        override fun onNothingSelected(arg0: AdapterView<*>?) {
-                        }
-                    }
             } else {
                 Functions.displayMessage(
                     this@AddMemberFirstActivity,
@@ -1175,6 +1153,25 @@ class AddMemberFirstActivity() : AppCompatActivity() {
         }
     }
 
+    private fun openSearchableSpinnerDialog(
+        sType: String,
+        sTitle: String,
+        ItemName: List<String>,
+        ItemID: List<String>
+    ) {
+        val fragment = supportFragmentManager.findFragmentByTag("DialogSearchableSpinner")
+        if (fragment == null) {
+            val exitFragment = DialogSearchableSpinner.newInstance(
+                this,
+                sType,
+                sTitle,
+                ItemName,
+                ItemID
+            )
+            exitFragment.show(supportFragmentManager, "DialogSearchableSpinner")
+        }
+    }
+
     /*Vibhag API*/
     private suspend fun myVibhag() {
         try {
@@ -1185,51 +1182,27 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 VibhagName = dataVibhagList.map { it.chapterName.toString() }
                 VibhagID = dataVibhagList.map { it.orgChapterId.toString() }
 
-                val adapter = ArrayAdapter(
-                    this@AddMemberFirstActivity,
-                    android.R.layout.simple_spinner_dropdown_item,
-                    VibhagName
-                )
-                edit_vibhag_region.adapter = adapter
-
                 if (intent.getStringExtra("TYPE_SELF") != "self") {
                     val selectedVibhagName = sessionManager.fetchVIBHAGNAME()
                     val selectedVibhagIndex = VibhagName.indexOf(selectedVibhagName)
                     if (selectedVibhagIndex != -1) {
                         vibhag_select_default.visibility = View.VISIBLE
                         vibhag_select_default.text = selectedVibhagName
-                        edit_vibhag_region.setSelection(selectedVibhagIndex)
+                        edit_vibhag_region.text = selectedVibhagName
+                        VIBHAG_ID = VibhagID.get(selectedVibhagIndex)
+                        callNagarApi(VibhagID.get(selectedVibhagIndex))
                     }
                 }
 
-                edit_vibhag_region.onItemSelectedListener = object : OnItemSelectedListener {
-                    override fun onItemSelected(
-                        adapter: AdapterView<*>,
-                        v: View,
-                        position: Int,
-                        id: Long
-                    ) {
-                        (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-                        VIBHAG_ID = VibhagID[position]
+                edit_vibhag_region.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "3",
+                        "Select Vibhag",
+                        VibhagName,
+                        VibhagID
+                    )
+                })
 
-                        if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-                            lifecycleScope.launch {
-                                val job4 = async { myNagar(VIBHAG_ID) }
-                                DebugLog.d("Coro for myVibhag: ${job4.await()}")
-
-                            }
-                        } else {
-                            Toast.makeText(
-                                this@AddMemberFirstActivity,
-                                resources.getString(R.string.no_connection),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-
-                    override fun onNothingSelected(arg0: AdapterView<*>?) {
-                    }
-                }
             } else {
                 Functions.displayMessage(
                     this@AddMemberFirstActivity,
@@ -1258,51 +1231,27 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 NagarName = dataNagarList.map { it.chapterName.toString() }
                 NagarID = dataNagarList.map { it.orgChapterId.toString() }
 
-                val adapter = ArrayAdapter(
-                    this@AddMemberFirstActivity,
-                    android.R.layout.simple_spinner_dropdown_item,
-                    NagarName
-                )
-                edit_nagar_town.adapter = adapter
-
                 if (intent.getStringExtra("TYPE_SELF") != "self") {
                     val selectedNagarName = sessionManager.fetchNAGARNAME()
                     val selectedNagarIndex = NagarName.indexOf(selectedNagarName)
                     if (selectedNagarIndex != -1) {
                         nagar_select_default.visibility = View.VISIBLE
                         nagar_select_default.text = selectedNagarName
-                        edit_nagar_town.setSelection(selectedNagarIndex)
+                        edit_nagar_town.text = selectedNagarName
+                        NAGAR_ID = NagarID.get(selectedNagarIndex)
+                        callShakhaApi(NagarID.get(selectedNagarIndex))
                     }
                 }
 
-                edit_nagar_town.onItemSelectedListener = object : OnItemSelectedListener {
-                    override fun onItemSelected(
-                        adapter: AdapterView<*>,
-                        v: View,
-                        position: Int,
-                        id: Long
-                    ) {
-                        (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-                        NAGAR_ID = NagarID[position]
+                edit_nagar_town.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "4",
+                        "Select Nagar",
+                        NagarName,
+                        NagarID
+                    )
+                })
 
-                        if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
-                            lifecycleScope.launch {
-//                                val job5 = async { myShakha(NAGAR_ID) }
-//                                DebugLog.d("Coro myNagar ==>>  ${job5.await()}")
-                                myShakha(NAGAR_ID)
-                            }
-                        } else {
-                            Toast.makeText(
-                                this@AddMemberFirstActivity,
-                                resources.getString(R.string.no_connection),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-                    }
-                }
             } else {
                 Functions.displayMessage(
                     this@AddMemberFirstActivity,
@@ -1317,8 +1266,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                 getString(R.string.some_thing_wrong)
             )
         }
-
-
     }
 
     /*Shakha API*/
@@ -1331,14 +1278,6 @@ class AddMemberFirstActivity() : AppCompatActivity() {
 
                 ShakhaName = dataShakhaList.map { it.getChapterName().toString() }
                 ShakhaID = dataShakhaList.map { it.getOrgChapterId().toString() }
-
-                val adapter = ArrayAdapter(
-                    this@AddMemberFirstActivity,
-                    android.R.layout.simple_spinner_dropdown_item,
-                    ShakhaName
-                )
-                edit_shakha_branch.adapter = adapter
-
                 if (intent.getStringExtra("TYPE_SELF") != "self") {
                     val selectedShakhaName = sessionManager.fetchSHAKHANAME()
                     val selectedShakhaIndex = ShakhaName.indexOf(selectedShakhaName)
@@ -1346,24 +1285,17 @@ class AddMemberFirstActivity() : AppCompatActivity() {
                         shakha_select_default.visibility = View.VISIBLE
                         shakha_select_default.text = selectedShakhaName
                         SHAKHA_ID = sessionManager.fetchSHAKHAID()!!
-                        edit_shakha_branch.setSelection(selectedShakhaIndex)
+                        edit_shakha_branch.text = selectedShakhaName
                     }
                 }
-
-                edit_shakha_branch.onItemSelectedListener = object : OnItemSelectedListener {
-                    override fun onItemSelected(
-                        adapter: AdapterView<*>,
-                        v: View,
-                        position: Int,
-                        id: Long
-                    ) {
-                        (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
-                        SHAKHA_ID = ShakhaID[position]
-                    }
-
-                    override fun onNothingSelected(arg0: AdapterView<*>?) {
-                    }
-                }
+                edit_shakha_branch.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "5",
+                        "Select Shakha",
+                        ShakhaName,
+                        ShakhaID
+                    )
+                })
             } else {
                 Functions.displayMessage(
                     this@AddMemberFirstActivity,
@@ -1482,6 +1414,88 @@ class AddMemberFirstActivity() : AppCompatActivity() {
             i.putExtra("PARENT_MEMBER", sessionManager.fetchMEMBERID())
             i.putExtra("FAMILY", intent.getStringExtra("FAMILY"))
             startActivity(i)
+        }
+    }
+
+    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: Int) {
+        DebugLog.e("Type : $stype , ItemName : $sItemName , ItemID : $sItemID")
+        when (stype) {
+            "1" -> { // occupation
+                OCCUPATION_ID = sItemID.toString()
+                OCCUPATION_NAME = sItemName
+                occupation_other_view.visibility = View.GONE
+                edit_occupation_select_other.text = sItemName
+            }
+
+            "2" -> {//relationship
+                RELATIONSHIP_ID = sItemID.toString()
+                edit_realationship_txt.text = sItemName
+                if (RELATIONSHIP_ID == "5") {
+                    realationship_other_view.visibility = View.VISIBLE
+                    OTHER_RELATIONSHIP = edit_realationship_name.text.toString()
+                } else {
+                    realationship_other_view.visibility = View.GONE
+                    OTHER_RELATIONSHIP = ""
+                }
+            }
+
+            "3" -> {//Vibhag
+                VIBHAG_ID = sItemID.toString()
+                edit_vibhag_region.text = sItemName
+                if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
+                    callNagarApi(VIBHAG_ID)
+                } else {
+                    Toast.makeText(
+                        this@AddMemberFirstActivity,
+                        resources.getString(R.string.no_connection),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            "4" -> {//Nagar
+                NAGAR_ID = sItemID.toString()
+                edit_nagar_town.text = sItemName
+                if (Functions.isConnectingToInternet(this@AddMemberFirstActivity)) {
+                    callShakhaApi(NAGAR_ID)
+                } else {
+                    Toast.makeText(
+                        this@AddMemberFirstActivity,
+                        resources.getString(R.string.no_connection),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            "5" -> {//shakha
+                SHAKHA_ID = sItemID.toString()
+                edit_shakha_branch.text = sItemName
+            }
+        }
+    }
+
+    fun callNagarApi(sVibhagID: String) {
+        nagar_select_default.text = "Select Nagar"
+        edit_nagar_town.text = "Select Nagar"
+        NAGAR_ID = ""
+        shakha_select_default.text = "Select Shakha"
+        edit_shakha_branch.text = "Select Shakha"
+        SHAKHA_ID = ""
+
+        lifecycleScope.launch {
+            val job4 = async { myNagar(sVibhagID) }
+            DebugLog.d("Coro for myVibhag: ${job4.await()}")
+        }
+    }
+
+    fun callShakhaApi(sNagarID: String) {
+        shakha_select_default.text = "Select Shakha"
+        edit_shakha_branch.text = "Select Shakha"
+        SHAKHA_ID = ""
+
+        lifecycleScope.launch {
+            val job5 = async { myShakha(sNagarID) }
+            DebugLog.d("Coro myNagar ==>>  ${job5.await()}")
         }
     }
 }

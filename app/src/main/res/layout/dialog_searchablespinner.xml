@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:padding="@dimen/padding10">
+
+
+    <ImageView
+        android:id="@+id/img_close"
+        android:layout_width="@dimen/padding20"
+        android:layout_height="@dimen/padding20"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/padding5"
+        android:layout_marginEnd="@dimen/padding10"
+        android:src="@drawable/close_img" />
+
+    <TextView
+        android:id="@+id/txtLable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/img_close"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/sourcesanspro_bold"
+        android:text="Title"
+        android:textColor="@color/blueColor"
+        android:textSize="@dimen/font_size20" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtLable"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/padding25"
+                android:layout_height="@dimen/padding25"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/stripe_ic_search" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_searchItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:errorIconDrawable="@null">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_searchItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:cursorVisible="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/sourcesanspro_regular"
+                    android:hint="@string/stripe_address_search_content_description"
+                    android:overScrollMode="always"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/blackColor"
+                    android:textColorHint="@color/grayColorColor"
+                    android:textCursorDrawable="@null"
+                    android:theme="@style/StyleEditTextView" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvSearchSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding200" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/padding40"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/padding10"
+            android:layout_marginEnd="@dimen/padding10"
+            android:background="@drawable/button_orange_round"
+            android:text="@string/close"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size15" />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -43,7 +43,7 @@ class SupportFragment : Fragment() {
 //    private var dakshina = arrayOf("Monthly", "Quarterly", "Annually")
 
     private lateinit var occupation_select_txt: SearchableSpinner
-//    private lateinit var dashina_select_txt: SearchableSpinner
+//    private lateinit var dashina_select_txt: SearchableSpinnerData
 
     private lateinit var rootview: LinearLayout
 

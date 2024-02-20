@@ -913,7 +913,7 @@
                                     style="@style/EditText.OutlinedBox"
                                     tools:ignore="RtlSymmetry">
 
-                                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                                    <com.toptoche.searchablespinnerlibrary.SearchableSpinnerData
                                         style="@android:style/Widget.Spinner.DropDown"
                                         android:theme="@style/StyleEditTextView"
                                         android:id="@+id/edit_originating_state_in_india"

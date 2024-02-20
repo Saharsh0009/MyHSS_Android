@@ -47,7 +47,7 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
     var FamilyName: List<String> = ArrayList<String>()
     var FamilyID: List<String> = ArrayList<String>()
 
-    //    private lateinit var gift_aid_select_txt: SearchableSpinner
+    //    private lateinit var gift_aid_select_txt: SearchableSpinnerData
 //    private lateinit var gift_aid_select_view: RelativeLayout
     var gift_aid_select_txt: Spinner? = null
     var how_often_like_to_donate_txt: Spinner? = null

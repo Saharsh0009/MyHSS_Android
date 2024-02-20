@@ -406,27 +406,19 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
 
-                                    <com.google.android.material.textfield.TextInputLayout
-                                        style="@style/EditText.OutlinedBox"
+
+                                    <TextView
+                                        android:id="@+id/edit_select_address"
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="@dimen/padding80"
+                                        android:background="@android:color/transparent"
                                         android:gravity="center_vertical"
-                                        android:paddingStart="@dimen/padding10"
-                                        app:boxStrokeColor="@color/primaryColor">
+                                        android:inputType="text"
+                                        android:padding="@dimen/padding10"
+                                        android:textColor="@color/blackColor"
+                                        android:textColorHint="@color/grayColorColor"
+                                        android:textSize="@dimen/font_size25" />
 
-                                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                                            android:id="@+id/edit_select_address"
-                                            style="@android:style/Widget.Spinner.DropDown"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:background="@android:color/transparent"
-                                            android:inputType="text"
-                                            android:textColor="@color/blackColor"
-                                            android:textColorHint="@color/grayColorColor"
-                                            android:textSize="@dimen/font_size25"
-                                            android:theme="@style/MineCustomTabText" />
-
-                                    </com.google.android.material.textfield.TextInputLayout>
 
                                     <ImageView
                                         android:layout_width="@dimen/padding20"

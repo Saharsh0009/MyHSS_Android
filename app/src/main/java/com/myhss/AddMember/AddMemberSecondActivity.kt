@@ -34,6 +34,8 @@ import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.appConstants.AppParam
+import com.myhss.dialog.DialogSearchableSpinner
+import com.myhss.dialog.iDialogSearchableSpinner
 import com.uk.myhss.Utils.SessionManager
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +48,7 @@ import retrofit2.Response
 import java.util.*
 
 
-class AddMemberSecondActivity : AppCompatActivity() {
+class AddMemberSecondActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
     private lateinit var sessionManager: SessionManager
     lateinit var sharedPreferences: SharedPreferences
@@ -69,9 +71,9 @@ class AddMemberSecondActivity : AppCompatActivity() {
     private lateinit var til_edit_town_city: TextInputLayout
     private lateinit var find_address: ImageView
 
-    private lateinit var edit_select_address: SearchableSpinner
+    private lateinit var edit_select_address: TextView
 
-    private lateinit var select_address: RelativeLayout
+//    private lateinit var select_address: RelativeLayout
 
     private lateinit var next_layout: LinearLayout
     private lateinit var back_layout: LinearLayout
@@ -123,7 +125,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
         edit_building_name = findViewById(R.id.edit_building_name)
 
         edit_select_address = findViewById(R.id.edit_select_address)
-        select_address = findViewById(R.id.select_address)
+//        select_address = findViewById(R.id.select_address)
 
         find_address = findViewById(R.id.find_address)
         til_primary_number = findViewById(R.id.til_primary_number)
@@ -247,7 +249,21 @@ class AddMemberSecondActivity : AppCompatActivity() {
             if (sessionManager.fetchPOSTCODE() != "") {
                 edit_find_address.setText(sessionManager.fetchPOSTCODE())
                 Handler().postDelayed({
-                    find_address.callOnClick()
+                    if (Functions.isConnectingToInternet(this@AddMemberSecondActivity)) {
+                        lifecycleScope.launch {
+                            val pd = CustomProgressBar(this@AddMemberSecondActivity)
+                            pd.show()
+                            val job1 = async { myPincode(edit_find_address.text.toString(), "1") }
+                            DebugLog.d("Coro : Step 1 :::: ${job1.await()}")
+                            pd.dismiss()
+                        }
+                    } else {
+                        Toast.makeText(
+                            this@AddMemberSecondActivity,
+                            resources.getString(R.string.no_connection),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }, 500)
             }
             if (intent.getStringExtra("TITLENAME") == "Profile") {
@@ -389,14 +405,7 @@ class AddMemberSecondActivity : AppCompatActivity() {
             }
         })
 
-        edit_select_address.onItemSelectedListener = mOnItemSelectedListener_address
-
-        edit_select_address.setTitle("Select Address")
-
-        select_address.setOnClickListener(DebouncedClickListener {
-            SearchSpinner(Pincode.toTypedArray(), edit_select_address)
-        })
-
+        edit_select_address.text = "Select Address"
         find_address.setOnClickListener(DebouncedClickListener {
             if (edit_find_address.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please enter pin code", Snackbar.LENGTH_SHORT).show()
@@ -405,9 +414,10 @@ class AddMemberSecondActivity : AppCompatActivity() {
                     lifecycleScope.launch {
                         val pd = CustomProgressBar(this@AddMemberSecondActivity)
                         pd.show()
-                        val job1 = async { myPincode(edit_find_address.text.toString()) }
+                        val job1 = async { myPincode(edit_find_address.text.toString(), "2") }
                         DebugLog.d("Coro : Step 1 :::: ${job1.await()}")
                         pd.dismiss()
+
                     }
                 } else {
                     Toast.makeText(
@@ -420,61 +430,34 @@ class AddMemberSecondActivity : AppCompatActivity() {
         })
     }
 
-    private fun SearchSpinner(
-        spinner_search: Array<String>, edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-    }
-
-    private val mOnItemSelectedListener_address: AdapterView.OnItemSelectedListener =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-                PINCODE_ID = PincodeID[position]
-
-                if (Functions.isConnectingToInternet(this@AddMemberSecondActivity)) {
-                    lifecycleScope.launch {
-                        myPincodeAddress(PINCODE_ID)
-                    }
-
-                } else {
-                    Toast.makeText(
-                        this@AddMemberSecondActivity,
-                        resources.getString(R.string.no_connection),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-        }
-
     /*Pincode API*/
-    private suspend fun myPincode(pincode: String) {
+    private suspend fun myPincode(pincode: String, sType: String) {
         try {
             val response = MyHssApplication.instance?.api?.getPincode(pincode)
-
             if (response?.status == true) {
+                edit_select_address.text = "Select Address"
+                edit_address_line1.setText("")
+                edit_address_line2.setText("")
+                edit_building_name.setText("")
+                edit_town_city.setText("")
                 val dataPinCodeList = response.data?.summaries.orEmpty()
-
                 full_address_view.visibility = View.VISIBLE
 
-                Log.d("atheletsBeans", dataPinCodeList.toString())
-
-                Pincode = dataPinCodeList.map {
-                    "${it.streetAddress}, ${it.place}, $pincode"
-                }
+//                Pincode = dataPinCodeList.map { "${it.streetAddress}, ${it.place}, $pincode" }
+                Pincode = dataPinCodeList.map { "${it.streetAddress}" }
                 PincodeID = dataPinCodeList.map { it.id.toString() }
-
-                Log.d("Pincode==>", Pincode.toString())
-
-                SearchSpinner(Pincode.toTypedArray(), edit_select_address)
+                if (intent.getStringExtra("IS_SELF") != "self") {
+                    if (sType == "1") {
+                        if (sessionManager.fetchLineOne().toString() in Pincode) {
+                            val index = Pincode.indexOf(sessionManager.fetchLineOne().toString())
+                            edit_select_address.text = sessionManager.fetchLineOne().toString()
+                            callMyPinCodeAdressApi(PincodeID[index])
+                        }
+                    }
+                }
+                edit_select_address.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog("1", "Select Address", Pincode, PincodeID)
+                })
             } else {
                 Functions.displayMessage(
                     this@AddMemberSecondActivity,
@@ -514,4 +497,47 @@ class AddMemberSecondActivity : AppCompatActivity() {
             )
         }
     }
+
+    private fun openSearchableSpinnerDialog(
+        sType: String,
+        sTitle: String,
+        ItemName: List<String>,
+        ItemID: List<String>
+    ) {
+        val fragment = supportFragmentManager.findFragmentByTag("DialogSearchableSpinner")
+        if (fragment == null) {
+            val exitFragment = DialogSearchableSpinner.newInstance(
+                this,
+                sType,
+                sTitle,
+                ItemName,
+                ItemID
+            )
+            exitFragment.show(supportFragmentManager, "DialogSearchableSpinner")
+        }
+    }
+
+    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: Int) {
+        DebugLog.e("Type : $stype , ItemName : $sItemName , ItemID : $sItemID")
+        PINCODE_ID = sItemID.toString()
+        edit_select_address.text = sItemName
+        callMyPinCodeAdressApi(PINCODE_ID)
+    }
+
+
+    fun callMyPinCodeAdressApi(sPinCode: String) {
+        if (Functions.isConnectingToInternet(this@AddMemberSecondActivity)) {
+            lifecycleScope.launch {
+                myPincodeAddress(sPinCode)
+            }
+
+        } else {
+            Toast.makeText(
+                this@AddMemberSecondActivity,
+                resources.getString(R.string.no_connection),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
 }

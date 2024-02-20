@@ -345,25 +345,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/EditText.OutlinedBox"
+                        <TextView
+                            android:id="@+id/edit_select_address"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/padding55"
+                            android:background="@android:color/transparent"
                             android:gravity="center_vertical"
-                            app:boxStrokeColor="@color/primaryColor">
-
-                            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                                android:id="@+id/edit_select_address"
-                                style="@android:style/Widget.Spinner.DropDown"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:inputType="text"
-                                android:textColor="@color/blackColor"
-                                android:textColorHint="@color/grayColorColor"
-                                android:theme="@style/StyleEditTextView" />
-
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:inputType="text"
+                            android:padding="@dimen/padding10"
+                            android:textColor="@color/blackColor"
+                            android:textColorHint="@color/grayColorColor" />
 
                         <ImageView
                             android:layout_width="@dimen/padding10"
