@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.*
@@ -19,45 +18,31 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
-import com.uk.myhss.AddMember.Get_Relationship.Datum_Relationship
-import com.uk.myhss.AddMember.Get_Relationship.Get_Relationship_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.Utils.UtilCommon
-import com.myhss.appConstants.AppParam
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import com.myhss.dialog.DialogSearchableSpinner
+import com.myhss.dialog.iDialogSearchableSpinner
 import com.uk.myhss.Utils.SessionManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
-
-class AddMemberThirdActivity : AppCompatActivity() {
+class AddMemberThirdActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
     private lateinit var sessionManager: SessionManager
     var relationshipName: List<String> = ArrayList<String>()
     var relationshipID: List<String> = ArrayList<String>()
-
     private var REALTIONSHIP_ID: String = ""
     private var OTHER_EMERGENCY_RELATIONSHIP: String = ""
-
     private lateinit var edit_guardian_full_name: TextInputEditText
     private lateinit var edit_guardian_contact_number: TextInputEditText
     private lateinit var edit_emergency_realationship_name: TextInputEditText
     private lateinit var edit_guardian_email: TextInputEditText
-
-    private lateinit var edit_guardian_relationship: SearchableSpinner
-
-    private lateinit var guardian_relationship_txt: RelativeLayout
+    private lateinit var edit_guardian_relationship: TextView
     private lateinit var emergency_realationship_other_view: RelativeLayout
     private lateinit var back_layout: LinearLayout
     private lateinit var next_layout: LinearLayout
@@ -65,7 +50,7 @@ class AddMemberThirdActivity : AppCompatActivity() {
     private lateinit var til_guardian_number: TextInputLayout
     private lateinit var til_guardian_email: TextInputLayout
     private lateinit var til_guardian_relatives_name: TextInputLayout
-
+    private lateinit var rootLayout: LinearLayout
 
     @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +80,6 @@ class AddMemberThirdActivity : AppCompatActivity() {
         edit_guardian_email = findViewById(R.id.edit_guardian_email)
 
         edit_guardian_relationship = findViewById(R.id.edit_guardian_relationship)
-        guardian_relationship_txt = findViewById(R.id.guardian_relationship_txt)
         emergency_realationship_other_view = findViewById(R.id.emergency_realationship_other_view)
         back_layout = findViewById(R.id.back_layout)
         next_layout = findViewById(R.id.next_layout)
@@ -103,11 +87,9 @@ class AddMemberThirdActivity : AppCompatActivity() {
         til_guardian_number = findViewById(R.id.til_guardian_number)
         til_guardian_email = findViewById(R.id.til_guardian_email)
         til_guardian_relatives_name = findViewById(R.id.til_guardian_relatives_name)
-
-        val rootLayout = findViewById<LinearLayout>(R.id.rootLayout)
+        rootLayout = findViewById(R.id.rootLayout)
 
         header_title.text = intent.getStringExtra("TITLENAME")
-//        header_title.text = getString(R.string.Add_family_member)
 
         val guardian_full_title = findViewById<TextView>(R.id.guardian_full_title)
         val guardian_full_name = findViewById<TextView>(R.id.guardian_full_name)
@@ -151,7 +133,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
                 edit_guardian_full_name.setText(sessionManager.fetchGUAEMRNAME())
                 edit_guardian_contact_number.setText(sessionManager.fetchGUAEMRPHONE())
                 edit_guardian_email.setText(sessionManager.fetchGUAEMREMAIL())
-                edit_guardian_relationship.setSelection(relationshipName.indexOf(sessionManager.fetchGUAEMRRELATIONSHIP()))
+                edit_guardian_relationship.text =
+                    relationshipName.indexOf(sessionManager.fetchGUAEMRRELATIONSHIP()).toString()
 
                 if (sessionManager.fetchGUAEMRRELATIONSHIP() == "Other") {
                     emergency_realationship_other_view.visibility = View.VISIBLE
@@ -258,6 +241,9 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     til_guardian_email.error = "Please Enter the valid Guardian Email"
                     til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
+                    return@DebouncedClickListener
+                } else if (REALTIONSHIP_ID == "") {
+                    Snackbar.make(rootLayout, "Please select the Guardian relationship name", Snackbar.LENGTH_SHORT).show()
                     return@DebouncedClickListener
                 } else if (REALTIONSHIP_ID == "5" && edit_emergency_realationship_name.text.toString()
                         .isEmpty()
@@ -417,6 +403,9 @@ class AddMemberThirdActivity : AppCompatActivity() {
                     til_guardian_email.isErrorEnabled = true
                     edit_guardian_email.requestFocus()
                     return@DebouncedClickListener
+                }else if (REALTIONSHIP_ID == "") {
+                    Snackbar.make(rootLayout, "Please select the Guardian relationship name", Snackbar.LENGTH_SHORT).show()
+                    return@DebouncedClickListener
                 } else if (REALTIONSHIP_ID == "5" && edit_emergency_realationship_name.text.toString()
                         .isEmpty()
                 ) {
@@ -568,50 +557,8 @@ class AddMemberThirdActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-
-        edit_guardian_relationship.onItemSelectedListener = mOnItemSelectedListener_guardian
-
-        edit_guardian_relationship.setTitle("Select Guardian Relationship")
-
-        guardian_relationship_txt.setOnClickListener(DebouncedClickListener {
-            SearchSpinner(relationshipName.toTypedArray(), edit_guardian_relationship)
-        })
+        edit_guardian_relationship.text = "Select Guardian Relationship"
     }
-
-    private fun SearchSpinner(
-        spinner_search: Array<String>, edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-
-        if (intent.getStringExtra("TYPE_SELF") != "self") {
-            if (intent.getStringExtra("FAMILY") == "PROFILE") {
-                edit_guardian_relationship.setSelection(relationshipName.indexOf(sessionManager.fetchGUAEMRRELATIONSHIP()))
-            }
-        }
-    }
-
-    private val mOnItemSelectedListener_guardian: AdapterView.OnItemSelectedListener =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-                REALTIONSHIP_ID = relationshipID[position]
-                if (REALTIONSHIP_ID == "5") {
-                    emergency_realationship_other_view.visibility = View.VISIBLE
-                    OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
-                } else {
-                    emergency_realationship_other_view.visibility = View.GONE
-                    OTHER_EMERGENCY_RELATIONSHIP = ""
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-        }
 
     /*Relationship API*/
     private suspend fun myRelationship() {
@@ -621,11 +568,28 @@ class AddMemberThirdActivity : AppCompatActivity() {
             val response = MyHssApplication.instance?.api?.getRelationship()
             if (response?.status == true) {
                 val data_relationship = response.data.orEmpty()
-
                 relationshipName = data_relationship.map { it.relationshipName.toString() }
                 relationshipID = data_relationship.map { it.memberRelationshipId.toString() }
-
-                SearchSpinner(relationshipName.toTypedArray(), edit_guardian_relationship)
+                if (intent.getStringExtra("IS_SELF") != "self" && intent.getStringExtra("FAMILY") == "PROFILE") {
+                    if (sessionManager.fetchGUAEMRRELATIONSHIP().toString() in relationshipName) {
+                        val index = relationshipName.indexOf(
+                            sessionManager.fetchGUAEMRRELATIONSHIP().toString()
+                        )
+                        searchableItemSelectedData(
+                            "1",
+                            relationshipName[index],
+                            relationshipID[index]
+                        )
+                    }
+                }
+                edit_guardian_relationship.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "1",
+                        "Select Guardian Relationship",
+                        relationshipName,
+                        relationshipID
+                    )
+                })
             } else {
                 Functions.displayMessage(
                     this@AddMemberThirdActivity,
@@ -641,6 +605,37 @@ class AddMemberThirdActivity : AppCompatActivity() {
             )
         } finally {
             pd.dismiss()
+        }
+    }
+
+    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: String) {
+        DebugLog.e("Type : $stype , ItemName : $sItemName , ItemID : $sItemID")
+        edit_guardian_relationship.text = sItemName
+        REALTIONSHIP_ID = sItemID
+        if (REALTIONSHIP_ID == "5") {
+            emergency_realationship_other_view.visibility = View.VISIBLE
+            OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
+        } else {
+            emergency_realationship_other_view.visibility = View.GONE
+            OTHER_EMERGENCY_RELATIONSHIP = ""
+        }
+    }
+    private fun openSearchableSpinnerDialog(
+        sType: String,
+        sTitle: String,
+        ItemName: List<String>,
+        ItemID: List<String>
+    ) {
+        val fragment = supportFragmentManager.findFragmentByTag("DialogSearchableSpinner")
+        if (fragment == null) {
+            val dialogSearch = DialogSearchableSpinner.newInstance(
+                this,
+                sType,
+                sTitle,
+                ItemName,
+                ItemID
+            )
+            dialogSearch.show(supportFragmentManager, "DialogSearchableSpinner")
         }
     }
 }

@@ -16,14 +16,12 @@ import android.util.Patterns
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import cl.jesualex.stooltip.Position
 import cl.jesualex.stooltip.Tooltip
-import com.google.android.material.dialog.InsetDialogOnTouchListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -38,9 +36,6 @@ import com.myhss.Utils.Functions
 import com.myhss.Utils.UtilCommon
 import com.myhss.dialog.DialogSearchableSpinner
 import com.myhss.dialog.iDialogSearchableSpinner
-import com.myhss.dialog.model.SearchableSpinnerData
-import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
@@ -87,28 +82,17 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
     private var NAGAR_ID: String = ""
     private var SHAKHA_ID: String = ""
     private var strCurrentDate: String = ""
-
     private lateinit var edit_occupation_name: TextInputEditText
     private lateinit var tooltip_view: ImageView
-
     private lateinit var edit_realationship_txt: TextView
     private lateinit var edit_occupation_select_other: TextView
     private lateinit var edit_vibhag_region: TextView
     private lateinit var edit_nagar_town: TextView
     private lateinit var edit_shakha_branch: TextView
-
-//    private lateinit var realationship_txt: RelativeLayout
-
-    //    private lateinit var occupation_select_other: RelativeLayout
-//    private lateinit var vibhag_region: RelativeLayout
-//    private lateinit var nagar_town: RelativeLayout
-//    private lateinit var shakha_branch: RelativeLayout
-
     private lateinit var occupation_other_view: RelativeLayout
     private lateinit var realationship_other_view: RelativeLayout
     private lateinit var family_view: LinearLayout
     private lateinit var primary_member_layout: LinearLayout
-
     private lateinit var rootLayout: LinearLayout
     private lateinit var next_layout: LinearLayout
     private lateinit var password_layout: LinearLayout
@@ -131,8 +115,6 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
     private lateinit var til_confirm_password: TextInputLayout
     private lateinit var til_dob: TextInputLayout
     private lateinit var til_relatioship_other_name: TextInputLayout
-
-
     private lateinit var male_view: LinearLayout
     private lateinit var male_txt: TextView
     private lateinit var male_right_img: ImageView
@@ -144,11 +126,9 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
     private lateinit var age_layout: LinearLayout
     private lateinit var age_text: TextView
     private lateinit var header_title: TextView
-
     private lateinit var vibhag_select_default: TextView
     private lateinit var nagar_select_default: TextView
     private lateinit var shakha_select_default: TextView
-
     private val apiHandler = Handler(Looper.getMainLooper())
     private var lastTypedText: String = ""
     private var isUserNameValid = false
@@ -183,13 +163,6 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
         edit_vibhag_region = findViewById(R.id.edit_vibhag_region)
         edit_nagar_town = findViewById(R.id.edit_nagar_town)
         edit_shakha_branch = findViewById(R.id.edit_shakha_branch)
-
-//        realationship_txt = findViewById(R.id.realationship_txt)
-//        occupation_select_other = findViewById(R.id.occupation_select_other)
-//        vibhag_region = findViewById(R.id.vibhag_region)
-//        nagar_town = findViewById(R.id.nagar_town)
-//        shakha_branch = findViewById(R.id.shakha_branch)
-
         occupation_other_view = findViewById(R.id.occupation_other_view)
         realationship_other_view = findViewById(R.id.realationship_other_view)
         family_view = findViewById(R.id.family_view)
@@ -231,17 +204,10 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
         vibhag_select_default = findViewById(R.id.vibhag_select_default)
         nagar_select_default = findViewById(R.id.nagar_select_default)
         shakha_select_default = findViewById(R.id.shakha_select_default)
-
-        Log.d("TYPE_SELF", intent.getStringExtra("TYPE_SELF")!!)
-
         callApis()
-
         var calendar = Calendar.getInstance(Locale.getDefault())
         val simpledateFormat = SimpleDateFormat("dd/MM/yyyy")
         strCurrentDate = simpledateFormat.format(calendar.time)
-        Functions.printLog("currentDate", strCurrentDate)
-
-        //        edit_realationship_txt.setTitle("Select Relationship")
         edit_realationship_txt.text = "Select Relationship"
         edit_occupation_select_other.text = "Select Occupation"
         edit_vibhag_region.text = "Select Vibhag"
@@ -259,7 +225,6 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                 password_layout.visibility = View.GONE
                 confirm_password_layout.visibility = View.GONE
                 setSelfInfoFromSession()
-                DebugLog.e("edit_email" + edit_email.text.toString())
                 if (sessionManager.fetchGENDER() == "Male") {
                     male_right_img.visibility = View.VISIBLE
                     male_view.setBackgroundResource(R.drawable.edit_primery_color_round)
@@ -615,8 +580,7 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                         edit_surname.requestFocus()
                         return@DebouncedClickListener
                     } else if (GENDER == "") {
-                        Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT)
-                            .show()
+                        Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
                     } else if (edit_dateofbirth.text.toString().isEmpty()) {
                         Snackbar.make(
                             rootLayout,
@@ -829,11 +793,9 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                 val job1 = async { myRelationship() }
                 val job2 = async { myOccupation() }
                 val job3 = async { myVibhag() }
-
                 val result1 = job1.await()
                 val result2 = job2.await()
                 val result3 = job3.await()
-                // Update the UI with the results
                 DebugLog.d("CORO - Results await 5: $result1, $result2, $result3")
                 pd.dismiss()
             }
@@ -969,13 +931,7 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                             sessionManager.saveQUALIFICATION_IS_DOC(data_getprofile[0].first_aid_qualification_is_doc.toString())
                             sessionManager.saveDIETARY(data_getprofile[0].firstAidQualificationFile.toString())
                             sessionManager.saveSTATE_IN_INDIA(data_getprofile[0].indianConnectionState.toString())
-
-                            Log.d("Address", sessionManager.fetchADDRESS()!!)
-                            Log.d("Username", sessionManager.fetchUSERNAME()!!)
-                            Log.d("Shakha_tab", sessionManager.fetchSHAKHA_TAB()!!)
-
                             setSelfInfoFromSession()
-
                             if (sessionManager.fetchGENDER() == "Male") {
                                 male_right_img.visibility = View.VISIBLE
 
@@ -1111,9 +1067,6 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
             val response = MyHssApplication.instance?.api?.get_occupation()
             if (response?.status == true) {
                 val dataOccupationList = response.data.orEmpty()
-
-                DebugLog.e("Size :  ${dataOccupationList.size}")
-
                 OccupationName = dataOccupationList.map { it.occupationName.toString() }
                 OccupationID = dataOccupationList.map { it.occupationId.toString() }
                 OccupationName += "Other"
@@ -1417,8 +1370,7 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
         }
     }
 
-    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: Int) {
-        DebugLog.e("Type : $stype , ItemName : $sItemName , ItemID : $sItemID")
+    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: String) {
         when (stype) {
             "1" -> { // occupation
                 OCCUPATION_ID = sItemID.toString()

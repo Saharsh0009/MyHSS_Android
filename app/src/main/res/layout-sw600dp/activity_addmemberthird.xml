@@ -322,31 +322,19 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <com.google.android.material.textfield.TextInputLayout
-                                style="@style/EditText.OutlinedBox"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:paddingStart="@dimen/font_size15"
-                                app:boxStrokeColor="@color/primaryColor"
-                                app:errorIconDrawable="@null"
-                                tools:ignore="RtlSymmetry">
-
-                                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                                <TextView
                                     android:id="@+id/edit_guardian_relationship"
-                                    style="@android:style/Widget.Spinner.DropDown"
+                                    android:layout_height="@dimen/padding80"
+                                    android:gravity="center_vertical"
+                                    android:padding="@dimen/padding10"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
                                     android:background="@android:color/transparent"
                                     android:cursorVisible="true"
-                                    android:tag="@string/occupation_select_other"
                                     android:textColor="@color/blackColor"
                                     android:textColorHint="@color/grayColorColor"
                                     android:textCursorDrawable="@null"
-                                    android:textSize="@dimen/font_size25"
-                                    android:theme="@style/MineCustomTabText" />
+                                    android:textSize="@dimen/font_size25" />
 
-                            </com.google.android.material.textfield.TextInputLayout>
 
                             <ImageView
                                 android:layout_width="@dimen/padding20"
@@ -364,7 +352,7 @@
                         android:id="@+id/emergency_realationship_other_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:layout_width="wrap_content"

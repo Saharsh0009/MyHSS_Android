@@ -1,7 +1,5 @@
 package com.uk.myhss.AddMember
 
-//import com.uk.myhss.Login_Registration.Model.RetrofitClient
-
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -10,7 +8,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.*
@@ -24,27 +21,17 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
-import com.uk.myhss.AddMember.Pincode.Get_Pincode_Response
-import com.uk.myhss.AddMember.Pincode.Summary_Address
-import com.uk.myhss.AddMember.PincodeAddress.Get_PincodeAddress_Response
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.appConstants.AppParam
 import com.myhss.dialog.DialogSearchableSpinner
 import com.myhss.dialog.iDialogSearchableSpinner
 import com.uk.myhss.Utils.SessionManager
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 
 
@@ -52,7 +39,6 @@ class AddMemberSecondActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
     private lateinit var sessionManager: SessionManager
     lateinit var sharedPreferences: SharedPreferences
-
     private lateinit var edit_find_address: TextInputEditText
     private lateinit var edit_secondary_contact_number: TextInputEditText
     private lateinit var edit_secondary_email: TextInputEditText
@@ -70,11 +56,7 @@ class AddMemberSecondActivity : AppCompatActivity(), iDialogSearchableSpinner {
     private lateinit var til_edit_address_line2: TextInputLayout
     private lateinit var til_edit_town_city: TextInputLayout
     private lateinit var find_address: ImageView
-
     private lateinit var edit_select_address: TextView
-
-//    private lateinit var select_address: RelativeLayout
-
     private lateinit var next_layout: LinearLayout
     private lateinit var back_layout: LinearLayout
     private lateinit var rootLayout: LinearLayout
@@ -125,8 +107,6 @@ class AddMemberSecondActivity : AppCompatActivity(), iDialogSearchableSpinner {
         edit_building_name = findViewById(R.id.edit_building_name)
 
         edit_select_address = findViewById(R.id.edit_select_address)
-//        select_address = findViewById(R.id.select_address)
-
         find_address = findViewById(R.id.find_address)
         til_primary_number = findViewById(R.id.til_primary_number)
         til_second_number = findViewById(R.id.til_second_number)
@@ -249,21 +229,7 @@ class AddMemberSecondActivity : AppCompatActivity(), iDialogSearchableSpinner {
             if (sessionManager.fetchPOSTCODE() != "") {
                 edit_find_address.setText(sessionManager.fetchPOSTCODE())
                 Handler().postDelayed({
-                    if (Functions.isConnectingToInternet(this@AddMemberSecondActivity)) {
-                        lifecycleScope.launch {
-                            val pd = CustomProgressBar(this@AddMemberSecondActivity)
-                            pd.show()
-                            val job1 = async { myPincode(edit_find_address.text.toString(), "1") }
-                            DebugLog.d("Coro : Step 1 :::: ${job1.await()}")
-                            pd.dismiss()
-                        }
-                    } else {
-                        Toast.makeText(
-                            this@AddMemberSecondActivity,
-                            resources.getString(R.string.no_connection),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    find_address.callOnClick()
                 }, 500)
             }
             if (intent.getStringExtra("TITLENAME") == "Profile") {
@@ -414,7 +380,7 @@ class AddMemberSecondActivity : AppCompatActivity(), iDialogSearchableSpinner {
                     lifecycleScope.launch {
                         val pd = CustomProgressBar(this@AddMemberSecondActivity)
                         pd.show()
-                        val job1 = async { myPincode(edit_find_address.text.toString(), "2") }
+                        val job1 = async { myPincode(edit_find_address.text.toString()) }
                         DebugLog.d("Coro : Step 1 :::: ${job1.await()}")
                         pd.dismiss()
 
@@ -431,7 +397,7 @@ class AddMemberSecondActivity : AppCompatActivity(), iDialogSearchableSpinner {
     }
 
     /*Pincode API*/
-    private suspend fun myPincode(pincode: String, sType: String) {
+    private suspend fun myPincode(pincode: String) {
         try {
             val response = MyHssApplication.instance?.api?.getPincode(pincode)
             if (response?.status == true) {
@@ -443,16 +409,15 @@ class AddMemberSecondActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 val dataPinCodeList = response.data?.summaries.orEmpty()
                 full_address_view.visibility = View.VISIBLE
 
-//                Pincode = dataPinCodeList.map { "${it.streetAddress}, ${it.place}, $pincode" }
-                Pincode = dataPinCodeList.map { "${it.streetAddress}" }
+                val PinCodeListTemp: List<String> = dataPinCodeList.map { "${it.streetAddress}" }
+                Pincode = dataPinCodeList.map { "${it.streetAddress}, ${it.place}, $pincode" }
                 PincodeID = dataPinCodeList.map { it.id.toString() }
                 if (intent.getStringExtra("IS_SELF") != "self") {
-                    if (sType == "1") {
-                        if (sessionManager.fetchLineOne().toString() in Pincode) {
-                            val index = Pincode.indexOf(sessionManager.fetchLineOne().toString())
-                            edit_select_address.text = sessionManager.fetchLineOne().toString()
-                            callMyPinCodeAdressApi(PincodeID[index])
-                        }
+                    if (sessionManager.fetchLineOne().toString() in PinCodeListTemp) {
+                        val index =
+                            PinCodeListTemp.indexOf(sessionManager.fetchLineOne().toString())
+                        edit_select_address.text = Pincode[index]
+                        callMyPinCodeAdressApi(PincodeID[index])
                     }
                 }
                 edit_select_address.setOnClickListener(DebouncedClickListener {
@@ -517,8 +482,7 @@ class AddMemberSecondActivity : AppCompatActivity(), iDialogSearchableSpinner {
         }
     }
 
-    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: Int) {
-        DebugLog.e("Type : $stype , ItemName : $sItemName , ItemID : $sItemID")
+    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: String) {
         PINCODE_ID = sItemID.toString()
         edit_select_address.text = sItemName
         callMyPinCodeAdressApi(PINCODE_ID)

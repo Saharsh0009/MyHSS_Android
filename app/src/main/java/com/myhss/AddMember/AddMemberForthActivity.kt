@@ -49,6 +49,7 @@ import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.appConstants.AppParam
+import com.myhss.dialog.iDialogSearchableSpinner
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.AddMember.Get_Dietaries.Datum_Get_Dietaries
 import com.uk.myhss.AddMember.Get_Dietaries.Get_Dietaries_Response
@@ -76,7 +77,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class AddMemberForthActivity : AppCompatActivity() {
+class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
     private lateinit var sessionManager: SessionManager
     private var year = 0
     private var month = 0
@@ -1741,5 +1742,9 @@ class AddMemberForthActivity : AppCompatActivity() {
             }
         }
         return ORIGIN_ID
+    }
+
+    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: String) {
+
     }
 }

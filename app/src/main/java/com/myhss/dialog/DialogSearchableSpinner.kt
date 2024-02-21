@@ -67,10 +67,10 @@ class DialogSearchableSpinner : DialogFragment() {
         binding.txtLable.text = sTitle
 
         val adapter = SearchableSpinnerAdapter(dataList) { clickedItem ->
-            val matchedId: Int? = dataList.zip(idList)
+            val matchedId: String? = dataList.zip(idList)
                 .firstOrNull { it.first == clickedItem }
                 ?.second
-                ?.toInt()
+                ?.toString()
             iDialogSearchableSpinner.searchableItemSelectedData(sType, clickedItem, matchedId!!)
             dismiss()
         }

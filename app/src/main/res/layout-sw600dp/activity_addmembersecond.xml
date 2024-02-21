@@ -412,9 +412,11 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="@dimen/padding80"
                                         android:background="@android:color/transparent"
+                                        android:ellipsize="end"
                                         android:gravity="center_vertical"
                                         android:inputType="text"
                                         android:padding="@dimen/padding10"
+                                        android:paddingEnd="@dimen/padding70"
                                         android:textColor="@color/blackColor"
                                         android:textColorHint="@color/grayColorColor"
                                         android:textSize="@dimen/font_size25" />
