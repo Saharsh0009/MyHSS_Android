@@ -6,38 +6,26 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
-import com.google.gson.JsonParser
-import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.CustomProgressDialog
 import com.myhss.Utils.DebouncedClickListener
-import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.Utils.UtilCommon
+import com.myhss.dialog.DialogSearchableSpinner
+import com.myhss.dialog.iDialogSearchableSpinner
 import com.myhss.ui.suryanamaskar.Model.save_suryanamaskarResponse
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
-import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
-
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,22 +34,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class AddSuryaNamaskarActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
     private lateinit var sessionManager: SessionManager
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
-
     lateinit var layout_dynamic_view: LinearLayout
     lateinit var layout_spiner: LinearLayout
-    lateinit var username: TextView
     private var DATE: String = ""
     private var COUNT: String = ""
-
-    private lateinit var family_txt: SearchableSpinner
-    var UserName: ArrayList<String> = ArrayList<String>()
-    var UserCategory: ArrayList<String> = ArrayList<String>()
-
+    private lateinit var family_txt: TextView
     private var USER_NAME: String = ""
     private var USER_ID: String = ""
     lateinit var USERID: String
@@ -72,10 +54,6 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
     lateinit var START: String
     lateinit var SEARCH: String
     lateinit var CHAPTERID: String
-
-    private var athelets_Beans: List<Get_Member_Listing_Datum> =
-        ArrayList<Get_Member_Listing_Datum>()
-
     private var year = 0
     private var month = 0
     private var day = 0
@@ -108,12 +86,8 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
 
         layout_dynamic_view = findViewById(R.id.layout_dynamic_view)
         layout_spiner = findViewById(R.id.layout_spiner)
-        username = findViewById(R.id.username)
-
         header_title.text = getString(R.string.record_surya_namaskar)
-
         family_txt = findViewById(R.id.family_txt)
-
         back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
         })
@@ -139,13 +113,8 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                 Toast.LENGTH_SHORT
             ).show()
         }
-
-        val myarray = JSONArray()
-        family_txt.onItemSelectedListener = mOnItemSelectedListener_family
-        family_txt.setTitle("Select Family Member")
-
+        family_txt.text = "Select Family Member"
         val btnOk = findViewById(R.id.btnOk) as TextView
-//        val add_more_btn = findViewById(R.id.add_more_btn) as TextView
         val btn_add_more = findViewById(R.id.btn_add_more) as TextView
         val btnCancel = findViewById(R.id.btnCancel) as TextView
 
@@ -170,7 +139,13 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         btnOk.setOnClickListener(DebouncedClickListener {
             val count = layout_dynamic_view.childCount
             var view: View?
-            if (count == 0) {
+            if (USER_ID == "") {
+                Toast.makeText(
+                    this,
+                    getString(R.string.please_select_member_in_order_to_log_your_surya_namaskar_count),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (count == 0) {
                 Toast.makeText(
                     this,
                     getString(R.string.please_add_date_and_count_for_surya_namaskar_by_clicking_add_more),
@@ -248,8 +223,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
 
                 if (Functions.isConnectingToInternet(this)) {
                     if (DATE.isNotEmpty() && COUNT.isNotEmpty()) {
-                        AddSuryanamaskar(USER_ID, myarray, DATE, COUNT)
-//                        DebugLog.e("Validated")
+                        AddSuryanamaskar(USER_ID, DATE, COUNT)
                     }
                 } else {
                     Toast.makeText(
@@ -288,22 +262,6 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         manageDynamicView(layout_dynamic_view)
     }
 
-
-    private val mOnItemSelectedListener_family: AdapterView.OnItemSelectedListener =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-                Log.d("Name", UserName[position])
-                Log.d("Postion", UserCategory[position])
-                USER_NAME = UserName[position]
-                USER_ID = UserCategory[position]
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-        }
-
     private fun myMemberList(
         user_id: String,
         tab: String,
@@ -326,72 +284,41 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
                 response: Response<Get_Member_Listing_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
-                        //                    if (response.body()!!.data!!.isNullOrEmpty()) {
                         try {
-                            athelets_Beans = response.body()!!.data!!
-                            Log.d("atheletsBeans", athelets_Beans.toString())
-
-                            val mStringList = ArrayList<String>()
-                            mStringList.add(sessionManager.fetchFIRSTNAME()!! + " " + sessionManager.fetchSURNAME()!!)
+                            val athelets_Beans = response.body()!!.data!!
+                            val mStringListName = ArrayList<String>()
+                            mStringListName.add(sessionManager.fetchFIRSTNAME()!! + " " + sessionManager.fetchSURNAME()!!)
                             for (i in 0 until athelets_Beans.size) {
-                                mStringList.add(
+                                mStringListName.add(
                                     athelets_Beans[i].firstName.toString() + " " + athelets_Beans[i].lastName.toString()
                                 )
                             }
 
-                            val mStringListnew = ArrayList<String>()
-                            mStringListnew.add(sessionManager.fetchMEMBERID()!!)
+                            val mStringListID = ArrayList<String>()
+                            mStringListID.add(sessionManager.fetchMEMBERID()!!)
                             for (i in 0 until athelets_Beans.size) {
-                                mStringListnew.add(
+                                mStringListID.add(
                                     athelets_Beans[i].memberId.toString()
                                 )
                             }
-
-                            var mStringArray = mStringList.toArray()
-                            var mStringArraynew = mStringListnew.toArray()
-
-                            for (i in mStringArray.indices) {
-                                Log.d("string is", mStringArray[i] as String)
-                            }
-
-                            for (i in mStringArraynew.indices) {
-                                Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                            }
-
-                            mStringArray = mStringList.toArray(mStringArray)
-                            mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                            val list: java.util.ArrayList<String> = arrayListOf<String>()
-                            val listnew: java.util.ArrayList<String> = arrayListOf<String>()
-
-                            for (element in mStringArray) {
-                                list.add(element.toString())
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                    UserName = list
-                                }
-                            }
-
-                            for (element in mStringArraynew) {
-                                listnew.add(element.toString())
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                    UserCategory = listnew
-                                }
-                            }
-                            SearchSpinner(UserName.toTypedArray(), family_txt)
+                            family_txt.setOnClickListener(DebouncedClickListener {
+                                openSearchableSpinnerDialog(
+                                    "1",
+                                    "Select Family Member",
+                                    mStringListName,
+                                    mStringListID
+                                )
+                            })
                         } catch (e: ArithmeticException) {
                             println(e)
                         } finally {
                             println("Family")
                         }
                     } else {
-                        family_txt.visibility = View.GONE
-                        username.visibility = View.VISIBLE
-
                         USER_NAME = sessionManager.fetchUSERNAME()!!
                         USER_ID = sessionManager.fetchMEMBERID()!!
-                        username.text = USER_NAME
+                        family_txt.text = USER_NAME
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -409,41 +336,9 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         })
     }
 
-    override fun onItemSelected(arg0: AdapterView<*>, arg1: View, position: Int, id: Long) {
-        Log.e("Spinner==>", "Selected : " + UserName[position])
-        Log.e("Spinner==>", "Selected : " + UserCategory[position])
-    }
-
-    override fun onNothingSelected(arg0: AdapterView<*>) {
-
-    }
-
-    private fun SearchSpinner(
-        spinner_search: Array<String>, edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-    }
-
     private fun AddSuryanamaskar(
-        member_id: String, gsonObject: JSONArray, DATE: String, COUNT: String
+        member_id: String, DATE: String, COUNT: String
     ) {
-        val jsonString: String =
-            gsonObject.toString().replace("[{\"", "\"[{").replace("\"}]", "}]\"")
-        Log.e("jsonString", jsonString)
-
-        val paramObject = JSONObject()
-        paramObject.put("member_id", member_id)
-        paramObject.put("surynamaskar", jsonString)
-        Log.e("paramObject", paramObject.toString())
-
-        val notebookUsers = JSONArray()
-        notebookUsers.put(paramObject)
-        Log.e("notebookUsers", notebookUsers.toString())
-
         val pd = CustomProgressDialog(this)
         pd.show()
         val call: Call<save_suryanamaskarResponse> =
@@ -510,5 +405,30 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), AdapterView.OnItemSelected
         dialog.datePicker.minDate = calendar.timeInMillis
         dialog.datePicker.maxDate = System.currentTimeMillis()
         dialog.show()
+    }
+
+    private fun openSearchableSpinnerDialog(
+        sType: String,
+        sTitle: String,
+        ItemName: List<String>,
+        ItemID: List<String>
+    ) {
+        val fragment = supportFragmentManager.findFragmentByTag("DialogSearchableSpinner")
+        if (fragment == null) {
+            val dialogSearch = DialogSearchableSpinner.newInstance(
+                this,
+                sType,
+                sTitle,
+                ItemName,
+                ItemID
+            )
+            dialogSearch.show(supportFragmentManager, "DialogSearchableSpinner")
+        }
+    }
+
+    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: String) {
+        USER_NAME = sItemName
+        USER_ID = sItemID
+        family_txt.text = sItemName
     }
 }
