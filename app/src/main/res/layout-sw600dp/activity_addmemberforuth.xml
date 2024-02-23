@@ -743,7 +743,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
 
-                                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                                    <TextView
                                         android:id="@+id/edit_special_dietary_requirements"
                                         android:layout_width="match_parent"
                                         android:layout_height="@dimen/padding80"
@@ -839,75 +839,7 @@
                                     app:chipSpacing="8dp" />
 
                             </LinearLayout>
-
                         </LinearLayout>
-
-                        <!--<LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/grayColorColor"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:theme="@style/StyleTextView"
-                            android:textSize="@dimen/font_size25"
-                            android:text="@string/originating_state_in_india" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/padding10"
-                            android:layout_marginStart="@dimen/font_size15"
-                            android:layout_marginEnd="@dimen/font_size15"
-                            android:background="@drawable/edittext_round"
-                            android:orientation="horizontal" >
-
-                            <RelativeLayout
-                                android:id="@+id/originating_state_in_india_view"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" >
-
-                                <com.google.android.material.textfield.TextInputLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    app:boxStrokeColor="@color/primaryColor"
-                                    android:paddingStart="@dimen/font_size15"
-                                    style="@style/EditText.OutlinedBox"
-                                    tools:ignore="RtlSymmetry">
-
-                                    <com.toptoche.searchablespinnerlibrary.SearchableSpinnerData
-                                        style="@android:style/Widget.Spinner.DropDown"
-                                        android:theme="@style/StyleEditTextView"
-                                        android:id="@+id/edit_originating_state_in_india"
-                                        android:background="@android:color/transparent"
-                                        android:textColor="@color/blackColor"
-                                        android:layout_marginTop="-5dp"
-                                        android:textSize="@dimen/font_size25"
-                                        android:textColorHint="@color/grayColorColor"
-                                        android:layout_height="match_parent"
-                                        android:layout_width="match_parent" />
-
-                                </com.google.android.material.textfield.TextInputLayout>
-
-                                <ImageView
-                                    android:layout_width="@dimen/padding20"
-                                    android:layout_height="@dimen/padding20"
-                                    android:layout_centerVertical="true"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_marginEnd="@dimen/padding20"
-                                    android:src="@drawable/arrow_drop_down"  />
-
-                            </RelativeLayout>
-
-                        </LinearLayout>
-
-                        </LinearLayout>-->
-
                     </LinearLayout>
 
                     <LinearLayout
@@ -979,74 +911,7 @@
                                     app:chipSpacing="8dp" />
 
                             </LinearLayout>
-
                         </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:visibility="invisible">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/font_size15"
-                                android:layout_marginTop="@dimen/padding10"
-                                android:text="@string/originating_state_in_india"
-                                android:textColor="@color/grayColorColor"
-                                android:textSize="@dimen/font_size25"
-                                android:theme="@style/StyleTextView" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/font_size15"
-                                android:layout_marginTop="@dimen/padding10"
-                                android:layout_marginEnd="@dimen/font_size15"
-                                android:background="@drawable/edittext_round"
-                                android:orientation="horizontal">
-
-                                <RelativeLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
-
-                                    <com.google.android.material.textfield.TextInputLayout
-                                        style="@style/EditText.OutlinedBox"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center_vertical"
-                                        android:paddingStart="@dimen/font_size15"
-                                        app:boxStrokeColor="@color/primaryColor"
-                                        tools:ignore="RtlSymmetry">
-
-                                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                                            style="@android:style/Widget.Spinner.DropDown"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:background="@android:color/transparent"
-                                            android:textColor="@color/blackColor"
-                                            android:textColorHint="@color/grayColorColor"
-                                            android:textSize="@dimen/font_size25"
-                                            android:theme="@style/MineCustomTabText" />
-
-                                    </com.google.android.material.textfield.TextInputLayout>
-
-                                    <ImageView
-                                        android:layout_width="@dimen/padding20"
-                                        android:layout_height="@dimen/padding20"
-                                        android:layout_alignParentEnd="true"
-                                        android:layout_centerVertical="true"
-                                        android:layout_marginEnd="@dimen/padding20"
-                                        android:src="@drawable/arrow_drop_down" />
-
-                                </RelativeLayout>
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
                     </LinearLayout>
 
                 </LinearLayout>
@@ -1174,12 +1039,6 @@
                     android:layout_height="@dimen/padding20" />
 
             </LinearLayout>
-
         </ScrollView>
-
     </LinearLayout>
-
-
-    <!--    <include layout="@layout/select_galley_pdf" />-->
-
 </RelativeLayout>

@@ -218,19 +218,15 @@ class SankhyaFormDetail : AppCompatActivity() {
             finish()
         })
 
-        user_name_txt.text = intent.getStringExtra("UTSAVE_ID")!!
+        user_name_txt.text = intent.getStringExtra("UTSAV_NAME")!!
             .capitalize(Locale.ROOT) + " " + intent.getStringExtra("CURRENT_DATE")
 
         shakha_name_txt.text = intent.getStringExtra("SHAKHA_NAME")!!.capitalize(Locale.ROOT)
 
-        Log.d("CURRENT_DATE", intent.getStringExtra("CURRENT_DATE").toString())
-        Log.d("MEMBER_NAME", intent.getStringArrayListExtra("MEMBER_NAME").toString())
+//        Log.d("CURRENT_DATE", intent.getStringExtra("CURRENT_DATE").toString())
+//        Log.d("MEMBER_NAME", intent.getStringArrayListExtra("MEMBER_NAME").toString())
 //        Log.d("USER_MEMBER", intent.getStringExtra("USER_MEMBER").toString())
-        Log.d(
-            "USERNAME_LIST",
-            intent.getSerializableExtra("USERNAME_LIST").toString().replace("[", "")
-                .replace("]", "")
-        )
+//        Log.d("USERNAME_LIST", intent.getSerializableExtra("USERNAME_LIST").toString().replace("[", "").replace("]", ""))
 //        Log.d("USERID_LIST", intent.getSerializableExtra("USERID_LIST").toString())
 
 //        var demooo: ArrayList<String> = ArrayList<String>()

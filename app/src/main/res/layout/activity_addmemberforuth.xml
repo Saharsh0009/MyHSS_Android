@@ -401,9 +401,9 @@
                                 android:id="@+id/edit_aid_type"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/padding55"
+                                android:background="@android:color/transparent"
                                 android:gravity="center_vertical"
                                 android:padding="@dimen/padding10"
-                                android:background="@android:color/transparent"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor" />
 
@@ -951,11 +951,6 @@
                     android:layout_height="@dimen/padding20" />
 
             </LinearLayout>
-
         </ScrollView>
-
     </LinearLayout>
-
-    <!--    <include layout="@layout/select_galley_pdf" />-->
-
 </RelativeLayout>
