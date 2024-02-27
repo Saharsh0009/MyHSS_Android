@@ -597,7 +597,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
         edit_special_dietary_requirements.text = "Select Special Dietary"
         edit_spoken_language.text = "Select Spoken Language"
-        edit_originating_state_in_india.text = "Select Originationg State In India"
+        edit_originating_state_in_india.text = "Select Origination State In India"
         edit_aid_type.text = "Select First Aid Qualification Type"
     }
 
@@ -766,7 +766,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 edit_originating_state_in_india.setOnClickListener(DebouncedClickListener {
                     openSearchableSpinnerDialog(
                         "3",
-                        "Select Originationg State In India",
+                        "Select Origination State In India",
                         originName,
                         originID
                     )

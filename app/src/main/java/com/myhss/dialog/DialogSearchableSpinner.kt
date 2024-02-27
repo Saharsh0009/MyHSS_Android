@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
@@ -74,10 +75,17 @@ class DialogSearchableSpinner : DialogFragment() {
             iDialogSearchableSpinner.searchableItemSelectedData(sType, clickedItem, matchedId!!)
             dismiss()
         }
-
+        
+        val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.rcvSearchSpinner.adapter = adapter
-        binding.rcvSearchSpinner.layoutManager = LinearLayoutManager(context)
+        binding.rcvSearchSpinner.layoutManager = layoutManager
 
+        binding.rcvSearchSpinner.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                layoutManager.orientation
+            )
+        )
 
         binding.edtSearchItem.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/allshakha_listview"
@@ -66,112 +66,96 @@
             android:background="@color/app_background"
             android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/search_fields_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding5"
-            android:background="@drawable/edittext_round"
-            android:layout_marginStart="@dimen/padding5"
-            android:layout_marginEnd="@dimen/padding5" >
-
-            <ImageView
-                android:id="@+id/search"
-                android:layout_width="@dimen/padding20"
-                android:layout_height="@dimen/padding20"
-                android:layout_marginStart="@dimen/padding5"
-                android:src="@drawable/search_icon"
-                android:layout_centerVertical="true"
-                app:tint="@color/grayColorColor" />
-
-            <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinnerData
-                android:theme="@style/StyleEditTextView"
-                android:id="@+id/edit_Filter"
-                android:inputType="text"
-                android:hint="Search..."
-                android:tag="Search..."
-                android:padding="@dimen/padding20"
-                android:layout_marginStart="@dimen/padding30"
-                android:layout_marginEnd="@dimen/padding30"
-                android:background="@android:color/transparent"
-                android:textColor="@color/blackColor"
-                android:textColorHint="@color/grayColorColor"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent" />-->
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/search_fields"
+            <RelativeLayout
+                android:id="@+id/search_fields_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/padding10"
-                android:textColor="@color/black"
-                android:hint="Search..."
-                android:focusable="false"
-                android:gravity="left"
-                android:imeOptions="actionDone"
-                android:cursorVisible="false"
-                android:textColorHint="@color/grayColorColor"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/padding30"
-                android:layout_marginEnd="@dimen/padding30"
-                android:background="@color/white" />
+                android:layout_marginStart="@dimen/padding5"
+                android:layout_marginEnd="@dimen/padding5"
+                android:background="@drawable/edittext_round"
+                android:padding="@dimen/padding5">
 
-            <ImageView
-                android:id="@+id/filter"
-                android:layout_width="@dimen/padding20"
-                android:layout_height="@dimen/padding20"
-                android:src="@drawable/scale_miles"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                app:tint="@color/grayColorColor" />
+                <ImageView
+                    android:id="@+id/search"
+                    android:layout_width="@dimen/padding20"
+                    android:layout_height="@dimen/padding20"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/padding5"
+                    android:src="@drawable/search_icon"
+                    app:tint="@color/grayColorColor" />
 
-        </RelativeLayout>
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/search_fields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/padding30"
+                    android:layout_marginEnd="@dimen/padding30"
+                    android:background="@color/white"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:gravity="left"
+                    android:hint="Search..."
+                    android:imeOptions="actionDone"
+                    android:padding="@dimen/padding10"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grayColorColor" />
 
-        <RelativeLayout
-            android:id="@+id/zoom_fields_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding5"
-            android:layout_below="@+id/search_fields_layout"
-            android:background="@drawable/edittext_round"
-            android:layout_marginStart="@dimen/padding10"
-            android:layout_marginEnd="@dimen/padding10" >
+                <ImageView
+                    android:id="@+id/filter"
+                    android:layout_width="@dimen/padding20"
+                    android:layout_height="@dimen/padding20"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/scale_miles"
+                    app:tint="@color/grayColorColor" />
 
-        <Spinner
-            android:id="@+id/zoom_spiner"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/padding40"
-            android:visibility="gone"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"/>
+            </RelativeLayout>
 
-            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                    android:theme="@style/StyleEditTextView"
+            <RelativeLayout
+                android:id="@+id/zoom_fields_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/search_fields_layout"
+                android:layout_marginStart="@dimen/padding10"
+                android:layout_marginEnd="@dimen/padding10"
+                android:background="@drawable/edittext_round"
+                android:padding="@dimen/padding5">
+
+                <Spinner
+                    android:id="@+id/zoom_spiner"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/padding40"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone" />
+
+                <TextView
                     android:id="@+id/edit_Filter"
-                    android:inputType="text"
-                    android:visibility="gone"
-                    android:padding="@dimen/padding20"
-                    android:layout_marginTop="-5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/padding55"
                     android:background="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/padding10"
                     android:textColor="@color/blackColor"
                     android:textColorHint="@color/grayColorColor"
+                    android:visibility="visible" />
+
+                <ListView
+                    android:id="@+id/zoom_list"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_width="match_parent" />
+                    android:visibility="gone" />
 
-            <ListView
-                android:id="@+id/zoom_list"
+            </RelativeLayout>
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
-
-        </RelativeLayout>
-
-    <fragment android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/zoom_fields_layout"
-        tools:context="com.myhss.ui.ShakhaMap.MapsActivity"/>
+                android:layout_height="match_parent"
+                android:layout_below="@+id/zoom_fields_layout"
+                tools:context="com.myhss.ui.ShakhaMap.MapsActivity" />
 
         </LinearLayout>
 

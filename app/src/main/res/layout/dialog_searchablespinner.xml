@@ -29,70 +29,63 @@
 
 
     <LinearLayout
+        android:id="@+id/llrcv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtLable"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
+        <ImageView
+            android:layout_width="@dimen/padding25"
+            android:layout_height="@dimen/padding25"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/stripe_ic_search" />
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_searchItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:errorIconDrawable="@null">
 
-            <ImageView
-                android:layout_width="@dimen/padding25"
-                android:layout_height="@dimen/padding25"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/stripe_ic_search" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_searchItem"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_searchItem"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                app:errorIconDrawable="@null">
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:cursorVisible="true"
+                android:focusable="true"
+                android:fontFamily="@font/sourcesanspro_regular"
+                android:hint="@string/stripe_address_search_content_description"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
+                android:textColor="@color/blackColor"
+                android:textColorHint="@color/grayColorColor"
+                android:textCursorDrawable="@null"
+                android:theme="@style/StyleEditTextView" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edt_searchItem"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:cursorVisible="true"
-                    android:focusable="true"
-                    android:fontFamily="@font/sourcesanspro_regular"
-                    android:hint="@string/stripe_address_search_content_description"
-                    android:overScrollMode="always"
-                    android:scrollbarStyle="insideInset"
-                    android:scrollbars="vertical"
-                    android:textColor="@color/blackColor"
-                    android:textColorHint="@color/grayColorColor"
-                    android:textCursorDrawable="@null"
-                    android:theme="@style/StyleEditTextView" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcvSearchSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/padding200" />
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/padding40"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/padding10"
-            android:layout_marginEnd="@dimen/padding10"
-            android:background="@drawable/button_orange_round"
-            android:text="@string/close"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_size15" />
-
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvSearchSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding60"
+        android:layout_below="@+id/llrcv" />
+
+    <TextView
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:padding="@dimen/padding10"
+        android:layout_marginTop="-45dp"
+        android:text="@string/close"
+        android:layout_below="@+id/rcvSearchSpinner"
+        android:textColor="@color/blueColor"
+        android:textSize="@dimen/font_size15" />
 
 </RelativeLayout>
