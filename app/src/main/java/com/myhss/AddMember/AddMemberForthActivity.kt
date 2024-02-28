@@ -583,15 +583,12 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
             val dialog = DatePickerDialog(this, { _, year, month, day_of_month ->
                 calendar[Calendar.YEAR] = year
-                calendar[Calendar.MONTH] = month + 1
+                calendar[Calendar.MONTH] = month
                 calendar[Calendar.DAY_OF_MONTH] = day_of_month
                 val myFormat = "dd/MM/yyyy"
                 val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
                 edit_date_of_first_aid_qualification.text = sdf.format(calendar.time)
             }, year, month, day)
-//            dialog.datePicker.minDate = calendar.timeInMillis
-//            calendar.add(Calendar.YEAR, 0)
-//            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
         })
 

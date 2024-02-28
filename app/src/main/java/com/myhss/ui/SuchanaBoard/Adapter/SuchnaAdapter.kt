@@ -80,10 +80,7 @@ class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val notifcID: Str
 
             suchna_adapter_view.setOnClickListener(DebouncedClickListener {
                 if (eventsIsVisible) {
-//                    suchna_discription.visibility = View.GONE
-//                    redLayout.visibility = View.VISIBLE
                     eventsIsVisible = true
-
                     if (suchana.is_read == "0") {
                         if (sessionManager.fetchSHAKHAID() != "") {
                             if (Functions.isConnectingToInternet(itemView.context)) {
@@ -118,8 +115,6 @@ class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val notifcID: Str
                         itemView.context.startActivity(i)
                     }
                 } else {
-//                    suchna_discription.visibility = View.VISIBLE
-//                    redLayout.visibility = View.GONE
                     eventsIsVisible = true
                 }
             })
@@ -129,19 +124,26 @@ class SuchnaAdapter(val suchana_data: List<Get_Suchana_Datum>, val notifcID: Str
                     suchana.is_read = "1"
                     suchna_discription.setTextColor(Color.BLACK)
                     suchna_discriptionnew.setTextColor(Color.BLACK)
-
-
-                    val i = Intent(itemView.context, NotificationDetails::class.java)
-                    i.putExtra("Suchana_Type", "Suchana Detail")
-                    i.putExtra("Suchana_Title", suchna_title.text.toString())
-                    i.putExtra("Suchana_Discription", suchna_discription.text.toString())
-                    i.putExtra("Suchana_DiscriptionNew", suchna_discriptionnew.text.toString())
-                    i.putExtra("Suchana_time", suchna_time.text.toString())
-                    i.putExtra("recipientId", "")
-                    itemView.context.startActivity(i)
+                    if (Functions.isConnectingToInternet(itemView.context)) {
+                        val MEMBERID: String = sessionManager.fetchMEMBERID()!!
+                        val SUCHANAID: String = suchana.id!!
+                        mySuchanaSeen(
+                            MEMBERID,
+                            SUCHANAID,
+                            suchna_title,
+                            suchna_discription,
+                            suchna_discriptionnew,
+                            suchna_time.text.toString()
+                        )
+                    } else {
+                        Toast.makeText(
+                            itemView.context,
+                            itemView.context.resources.getString(R.string.no_connection),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
-
         }
 
         private fun mySuchanaSeen(
