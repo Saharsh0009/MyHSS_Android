@@ -450,14 +450,14 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                         til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
                         return@DebouncedClickListener
-                    } else if (!isUserNameValid) {
-                        til_username.error = userNameValidError
+                    } else if (!UtilCommon.isValidUserName(edit_username.text.toString())) {
+                        til_username.error = getString(R.string.valid_user_name)
                         til_username.isErrorEnabled = true
                         til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
                         return@DebouncedClickListener
-                    } else if (!UtilCommon.isValidUserName(edit_username.text.toString())) {
-                        til_username.error = getString(R.string.valid_user_name)
+                    } else if (!isUserNameValid) {
+                        til_username.error = userNameValidError
                         til_username.isErrorEnabled = true
                         til_username.setErrorIconDrawable(null)
                         edit_username.requestFocus()
@@ -580,7 +580,8 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                         edit_surname.requestFocus()
                         return@DebouncedClickListener
                     } else if (GENDER == "") {
-                        Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(rootLayout, "Please select gender", Snackbar.LENGTH_SHORT)
+                            .show()
                     } else if (edit_dateofbirth.text.toString().isEmpty()) {
                         Snackbar.make(
                             rootLayout,
@@ -1268,6 +1269,7 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
     }
 
     private fun UserNameCheck(username: String) {
+        isUserNameValid = true
         val call: Call<Get_Member_Check_Username_Exist_Response> =
             MyHssApplication.instance!!.api.get_member_check_username_exist(username)
         call.enqueue(object : Callback<Get_Member_Check_Username_Exist_Response> {
@@ -1297,6 +1299,7 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                         this@AddMemberFirstActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    isUserNameValid = true
                 }
             }
 
@@ -1304,6 +1307,7 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                 call: Call<Get_Member_Check_Username_Exist_Response>, t: Throwable
             ) {
                 Toast.makeText(this@AddMemberFirstActivity, t.message, Toast.LENGTH_LONG).show()
+                isUserNameValid = true
             }
         })
     }

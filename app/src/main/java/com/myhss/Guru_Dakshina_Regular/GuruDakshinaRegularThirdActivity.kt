@@ -167,16 +167,6 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            /*if (intent.getStringExtra("Amount") != "") {
-                val i =
-                    Intent(this@GuruDakshinaRegularThirdActivity, GuruDakshinaRegularFourthActivity::class.java)
-                i.putExtra("Amount", intent.getStringExtra("Amount"))
-                i.putExtra("GIFTAID_ID", intent.getStringExtra("GIFTAID_ID"))
-                i.putExtra("DONATE_ID", intent.getStringExtra("DONATE_ID"))
-                i.putExtra("AGE", intent.getStringExtra("AGE"))
-                i.putExtra("DATE", intent.getStringExtra("DATE"))
-                startActivity(i)
-            }*/
         })
     }
 
@@ -236,8 +226,8 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
         postal_code: String,
         dakshina: String
     ) {
-        val pd =
-            CustomProgressBar(this@GuruDakshinaRegularThirdActivity)
+        next_layout.isEnabled = false
+        val pd = CustomProgressBar(this@GuruDakshinaRegularThirdActivity)
         pd.show()
         val call: Call<Get_Create_Regular> =
             MyHssApplication.instance!!.api.get_create_regular(
@@ -266,13 +256,13 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                     if (response.body()?.status!!) {
 
                         val data_get = response.body()!!.data!![0]
-                        Log.d("accountName", data_get.accountName.toString())
-                        Log.d("accountNumber", data_get.accountNumber.toString())
-                        Log.d("frequency", data_get.frequency.toString())
-                        Log.d("giftAid", data_get.giftAid.toString())
-                        Log.d("paid_amount", data_get.paidAmount.toString())
-                        Log.d("referenceNo", data_get.referenceNo.toString())
-                        Log.d("sortCode", data_get.sortCode.toString())
+//                        Log.d("accountName", data_get.accountName.toString())
+//                        Log.d("accountNumber", data_get.accountNumber.toString())
+//                        Log.d("frequency", data_get.frequency.toString())
+//                        Log.d("giftAid", data_get.giftAid.toString())
+//                        Log.d("paid_amount", data_get.paidAmount.toString())
+//                        Log.d("referenceNo", data_get.referenceNo.toString())
+//                        Log.d("sortCode", data_get.sortCode.toString())
 
                         val alertBuilder =
                             AlertDialog.Builder(this@GuruDakshinaRegularThirdActivity) // , R.style.dialog_custom
@@ -297,6 +287,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                             i.putExtra("Amount", Amount)
                             startActivity(i)
                             finishAffinity()
+                            next_layout.isEnabled = true
                         }
                         val alertDialog = alertBuilder.create()
                         alertDialog.setCanceledOnTouchOutside(false)
@@ -308,12 +299,14 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                             this@GuruDakshinaRegularThirdActivity,
                             response.body()?.message
                         )
+                        next_layout.isEnabled = true
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@GuruDakshinaRegularThirdActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    next_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -322,6 +315,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                 Toast.makeText(this@GuruDakshinaRegularThirdActivity, t.message, Toast.LENGTH_LONG)
                     .show()
                 pd.dismiss()
+                next_layout.isEnabled = true
             }
         })
     }

@@ -37,6 +37,7 @@ import java.util.*
 class AddSuryaNamaskarActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
     private lateinit var sessionManager: SessionManager
+    private lateinit var btnOk: TextView
     lateinit var back_arrow: ImageView
     lateinit var header_title: TextView
     lateinit var layout_dynamic_view: LinearLayout
@@ -114,7 +115,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), iDialogSearchableSpinner {
             ).show()
         }
         family_txt.text = "Select Family Member"
-        val btnOk = findViewById(R.id.btnOk) as TextView
+        btnOk = findViewById(R.id.btnOk)
         val btn_add_more = findViewById(R.id.btn_add_more) as TextView
         val btnCancel = findViewById(R.id.btnCancel) as TextView
 
@@ -339,6 +340,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), iDialogSearchableSpinner {
     private fun AddSuryanamaskar(
         member_id: String, DATE: String, COUNT: String
     ) {
+        btnOk.isEnabled = false
         val pd = CustomProgressDialog(this)
         pd.show()
         val call: Call<save_suryanamaskarResponse> =
@@ -366,17 +368,18 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), iDialogSearchableSpinner {
                                 )
                             )
                             finishAffinity()
+                            btnOk.isEnabled = true
                         }
                         val alert: AlertDialog = alertDialog.create()
                         alert.setCanceledOnTouchOutside(false)
                         alert.show()
-
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@AddSuryaNamaskarActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    btnOk.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -384,6 +387,7 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), iDialogSearchableSpinner {
             override fun onFailure(call: Call<save_suryanamaskarResponse>, t: Throwable) {
                 Toast.makeText(this@AddSuryaNamaskarActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                btnOk.isEnabled = true
             }
         })
     }

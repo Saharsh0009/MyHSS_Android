@@ -215,7 +215,6 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
                         ) && (yAxisValue.toString()).toFloat() == u_listData[i].getValue_y()!!
                             .toFloat()
                     ) {
-                        DebugLog.e("click button ${u_listData[i].getValue_ID()}")
                         openEditOrDeleteSNDialog(u_listData[i])
                         break
                     }
@@ -260,7 +259,6 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     }
 
     override fun onNothingSelected() {
-        DebugLog.e("onNothingSelected   ")
     }
 
     override fun editSNCount(snID: String, snCount: String) {
@@ -279,15 +277,15 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
         alertDialog.setNegativeButton(
             "No"
         ) { _, _ ->
-
+            barChart.setTouchEnabled(true)
         }
         val alert: AlertDialog = alertDialog.create()
         alert.setCanceledOnTouchOutside(false)
         alert.show()
-
     }
 
     private fun callEditSnCountApi(snID: String, snCount: String) {
+        barChart.setTouchEnabled(false)
         val pd = CustomProgressDialog(this)
         pd.show()
         val call: Call<DeleteSnCount> =
@@ -322,12 +320,14 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
                             this@ViewBarchartActivity, "Error",
                             response.body()?.message,
                         )
+                        barChart.setTouchEnabled(true)
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@ViewBarchartActivity, "Error",
                         getString(R.string.some_thing_wrong),
                     )
+                    barChart.setTouchEnabled(true)
                 }
                 pd.dismiss()
 
@@ -336,12 +336,14 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
             override fun onFailure(call: Call<DeleteSnCount>, t: Throwable) {
                 Toast.makeText(this@ViewBarchartActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                barChart.setTouchEnabled(true)
             }
         })
     }
 
 
     private fun callDeleteSNCountApi(snID: String) {
+        barChart.setTouchEnabled(false)
         val pd = CustomProgressDialog(this)
         pd.show()
         val call: Call<DeleteSnCount> =
@@ -376,12 +378,14 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
                             this@ViewBarchartActivity, "Error",
                             response.body()?.message,
                         )
+                        barChart.setTouchEnabled(true)
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@ViewBarchartActivity, "Error",
                         getString(R.string.some_thing_wrong),
                     )
+                    barChart.setTouchEnabled(true)
                 }
                 pd.dismiss()
 
@@ -390,11 +394,11 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
             override fun onFailure(call: Call<DeleteSnCount>, t: Throwable) {
                 Toast.makeText(this@ViewBarchartActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                barChart.setTouchEnabled(true)
             }
         })
     }
 
     override fun onClick(v: View?) {
-        DebugLog.e("v =>>> $v")
     }
 }
