@@ -485,17 +485,17 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 return@DebouncedClickListener
 
             } else {
-                DebugLog.e("qualified_info : " + qualified_info)
+//                DebugLog.e("qualified_info : " + qualified_info)
                 if (qualified_info == "0") {// docs upload = no
                     if (intent.getStringExtra("IS_SELF") != "self") { // Profile or add family
                         if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             if (intent.getStringExtra("FAMILY") == "PROFILE") {
                                 //call Edit profile API here
                                 callEditProfileApi(false)
-                                DebugLog.e("Profile : Edit proile without Doc upload")
+//                                DebugLog.e("Profile : Edit proile without Doc upload")
                             } else {
                                 callMembershipApi("family", false)
-                                DebugLog.e("Add Family : without doc upload")
+//                                DebugLog.e("Add Family : without doc upload")
                             }
                         } else {
                             Toast.makeText(
@@ -514,7 +514,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                             return@DebouncedClickListener
                         } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             callMembershipApi("self", false)
-                            DebugLog.e("Add Self =>  Without Image")
+//                            DebugLog.e("Add Self =>  Without Image")
                         } else {
                             Toast.makeText(
                                 this@AddMemberForthActivity,
@@ -529,10 +529,10 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                         if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             if (intent.getStringExtra("FAMILY") == "PROFILE") {
                                 callEditProfileApi(true)
-                                DebugLog.e("Profile : Edit profile with doc file")
+//                                DebugLog.e("Profile : Edit profile with doc file")
                             } else {
                                 callMembershipApi("family", true)
-                                DebugLog.e("Add Family : with doc file")
+//                                DebugLog.e("Add Family : with doc file")
                             }
 
                         } else {
@@ -552,7 +552,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                             return@DebouncedClickListener
                         } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             callMembershipApi("self", true)
-                            DebugLog.e("Add Self :  with doc file")
+//                            DebugLog.e("Add Self :  with doc file")
                         } else {
                             Toast.makeText(
                                 this@AddMemberForthActivity,
@@ -842,12 +842,13 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
     }
 
     private fun callMembershipApi(sType: String, isDoc: Boolean) {
+        next_layout.isEnabled = false
         val pd = CustomProgressBar(this@AddMemberForthActivity)
         pd.show()
-        DebugLog.e(
-            sType + " , " + " isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF")
-                .toString()
-        )
+//        DebugLog.e(
+//            sType + " , " + " isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF")
+//                .toString()
+//        )
 
         var first_aid_date = edit_date_of_first_aid_qualification.text.toString()
         var first_aid_pro_body = edit_profe_body_regis_num.text.toString()
@@ -965,17 +966,17 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
         }
 
         val requestBody: MultipartBody = builderData.build()
-        for (i in 0 until requestBody.size) {
-            val part = requestBody.part(i)
-            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
-                ?.substringBefore("\"")
-            val value = part.body?.let { requestBody ->
-                val buffer = Buffer()
-                requestBody.writeTo(buffer)
-                buffer.readUtf8()
-            } ?: ""
-            DebugLog.e("$key: $value")
-        }
+//        for (i in 0 until requestBody.size) {
+//            val part = requestBody.part(i)
+//            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+//                ?.substringBefore("\"")
+//            val value = part.body?.let { requestBody ->
+//                val buffer = Buffer()
+//                requestBody.writeTo(buffer)
+//                buffer.readUtf8()
+//            } ?: ""
+//            DebugLog.e("$key: $value")
+//        }
         val call: Call<JsonObject> =
             MyHssApplication.instance!!.api.postAddOrCreateMembership(requestBody)
         call.enqueue(object : Callback<JsonObject> {
@@ -1030,6 +1031,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                                 this@AddMemberForthActivity, "Error",
                                 errorMsg
                             )
+                            next_layout.isEnabled = true
                         }
                     }
                 } else {
@@ -1037,6 +1039,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                         this@AddMemberForthActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    next_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -1044,15 +1047,16 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                next_layout.isEnabled = true
             }
         })
     }
 
     private fun callEditProfileApi(isDoc: Boolean) {
-        DebugLog.e(
-            "PROFILE, isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF").toString()
-        )
-
+//        DebugLog.e(
+//            "PROFILE, isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF").toString()
+//        )
+        next_layout.isEnabled = false
         val pd = CustomProgressBar(this@AddMemberForthActivity)
         pd.show()
 
@@ -1169,17 +1173,17 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
         }
 
         val requestBody: MultipartBody = builderData.build()
-        for (i in 0 until requestBody.size) {
-            val part = requestBody.part(i)
-            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
-                ?.substringBefore("\"")
-            val value = part.body?.let { requestBody ->
-                val buffer = Buffer()
-                requestBody.writeTo(buffer)
-                buffer.readUtf8()
-            } ?: ""
-            DebugLog.e("$key: $value")
-        }
+//        for (i in 0 until requestBody.size) {
+//            val part = requestBody.part(i)
+//            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+//                ?.substringBefore("\"")
+//            val value = part.body?.let { requestBody ->
+//                val buffer = Buffer()
+//                requestBody.writeTo(buffer)
+//                buffer.readUtf8()
+//            } ?: ""
+//            DebugLog.e("$key: $value")
+//        }
 
         val call: Call<JsonObject> =
             MyHssApplication.instance!!.api.postUpdateMembership(requestBody)
@@ -1221,6 +1225,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                                 this@AddMemberForthActivity, "Error",
                                 errorMsg
                             )
+                            next_layout.isEnabled = true
                         }
                     }
                 } else {
@@ -1228,6 +1233,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                         this@AddMemberForthActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    next_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -1235,6 +1241,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                next_layout.isEnabled = true
             }
         })
     }

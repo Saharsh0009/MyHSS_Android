@@ -238,13 +238,6 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                                     .commit()
                             }
 
-//                            1 -> {
-//                                val i = Intent(this@HomeActivity, LinkedFamilyFragment::class.java)
-//                                i.putExtra("DashBoard", "SHAKHAVIEW")
-//                                i.putExtra("headerName", getString(R.string.my_shakha))
-//                                startActivity(i)
-//                            }
-
                             1 -> {
                                 // Use package name which we want to check
                                 val isAppInstalled: Boolean =

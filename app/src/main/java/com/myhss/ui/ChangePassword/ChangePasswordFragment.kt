@@ -128,6 +128,7 @@ class ChangePasswordFragment : Fragment() {
     }
 
     private fun ChangePassword() {
+        change_btn.isEnabled = false
         val pd = CustomProgressBar(requireContext())
         pd.show()
         val call: Call<ChangePasswordResponse> =
@@ -219,12 +220,14 @@ class ChangePasswordFragment : Fragment() {
 //                            "Message"+true,
                             response.body()?.message
                         )
+                        change_btn.isEnabled = true
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         requireContext(), "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    change_btn.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -232,6 +235,7 @@ class ChangePasswordFragment : Fragment() {
             override fun onFailure(call: Call<ChangePasswordResponse>, t: Throwable) {
                 Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                change_btn.isEnabled = true
             }
         })
     }

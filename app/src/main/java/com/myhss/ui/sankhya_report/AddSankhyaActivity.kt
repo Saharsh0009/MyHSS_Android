@@ -304,9 +304,10 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
 
             EVENTDATE = EVENT_DATE
-            if (UTSAV_NAME == "") {
-                Snackbar.make(root_view, "Please select the Utsav", Snackbar.LENGTH_SHORT).show()
-            } else if (MEMBER_ID == "") {
+//            if (UTSAV_NAME == "") {
+//                Snackbar.make(root_view, "Please select the Utsav", Snackbar.LENGTH_SHORT).show()
+//            } else
+            if (MEMBER_ID == "") {
                 Snackbar.make(root_view, "Please select the Member", Snackbar.LENGTH_SHORT).show()
             } else {
                 val i = Intent(this@AddSankhyaActivity, SankhyaFormDetail::class.java)
@@ -371,9 +372,10 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
             PRODH = ""
             PRODHA = ""
             API = "yes"
-            if (UTSAV_NAME == "") {
-                Snackbar.make(root_view, "Please select the Utsav", Snackbar.LENGTH_SHORT).show()
-            } else if (MEMBER_ID == "") {
+//            if (UTSAV_NAME == "") {
+//                Snackbar.make(root_view, "Please select the Utsav", Snackbar.LENGTH_SHORT).show()
+//            } else
+            if (MEMBER_ID == "") {
                 Snackbar.make(root_view, "Please select the Member", Snackbar.LENGTH_SHORT).show()
             } else {
                 if (Functions.isConnectingToInternet(this@AddSankhyaActivity)) {
@@ -619,8 +621,7 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
         proudha: String,
         api: String
     ) {
-        DebugLog.e("member_id => $member_id")
-        DebugLog.e("event_date => $event_date")
+        submit_layout.isEnabled = false
         val pd = CustomProgressBar(this@AddSankhyaActivity)
         pd.show()
         val call: Call<Get_Sankhya_Add_Response> = MyHssApplication.instance!!.api.get_sankhya_add(
@@ -648,12 +649,9 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 call: Call<Get_Sankhya_Add_Response>, response: Response<Get_Sankhya_Add_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
-
                         val alertBuilder =
                             AlertDialog.Builder(this@AddSankhyaActivity) // , R.style.dialog_custom
-
 //                        alertBuilder.setTitle("Message")
                         alertBuilder.setMessage(response.body()?.message)
                         alertBuilder.setPositiveButton(
@@ -674,12 +672,14 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
                         Functions.showAlertMessageWithOK(
                             this@AddSankhyaActivity, "Message", response.body()?.message
                         )
+                        submit_layout.isEnabled = true
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@AddSankhyaActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    submit_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -687,6 +687,7 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
             override fun onFailure(call: Call<Get_Sankhya_Add_Response>, t: Throwable) {
                 Toast.makeText(this@AddSankhyaActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                submit_layout.isEnabled = true
             }
         })
     }

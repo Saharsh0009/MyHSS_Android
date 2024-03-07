@@ -72,6 +72,7 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
 
     /*Gmail*/
     lateinit var mGoogleSignInClient: GoogleSignInClient
+    lateinit var login_btn: TextView
     private val RC_SIGN_IN = 9001
 
 
@@ -97,7 +98,7 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
 
         Log.d("m_deviceId", m_deviceId)
 
-        val login_btn = findViewById<TextView>(R.id.login_btn)
+        login_btn = findViewById(R.id.login_btn)
         val edit_username = findViewById<TextInputEditText>(R.id.edit_username)
         val edit_password = findViewById<TextInputEditText>(R.id.edit_password)
         val registration_layout = findViewById<RelativeLayout>(R.id.registration_layout)
@@ -244,6 +245,8 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
     }
 
     private fun login(user: String, password: String, m_deviceId: String, device_type: String) {
+
+        login_btn.isEnabled = false
         val pd = CustomProgressBar(this@LoginActivity)
         pd.show()
 
@@ -300,30 +303,34 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
                         if (response.body()!!.memberId == "" || response.body()!!.memberStatus == "0") {  // && sharedPreferences.getString("MEMBERID", "") == ""
                             val i = Intent(this@LoginActivity, WelcomeActivity::class.java)
                             startActivity(i)
-                            finish()
+                            finishAffinity()
                         } else if (response.body()!!.memberId != "" && response.body()!!.memberStatus == "1") {
                             val i = Intent(this@LoginActivity, Passcode_Activity::class.java)
                             i.putExtra("CHANGE_BIOMETRIC", "")
                             startActivity(i)
-                            finish()
+                            finishAffinity()
                         } else {
                             Functions.displayMessage(
                                 this@LoginActivity, "Login Error, Please try after sometime"
                             )
+                            login_btn.isEnabled = true
                         }
                     } else {
                         Functions.displayMessage(this@LoginActivity, response.body()?.message)
+                        login_btn.isEnabled = true
                     }
                 } else if (response.code() == 404) {
                     Functions.showAlertMessageWithOK(
                         this@LoginActivity, "",
                         response.body()?.message
                     )
+                    login_btn.isEnabled = true
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@LoginActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    login_btn.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -331,6 +338,7 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Toast.makeText(this@LoginActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                login_btn.isEnabled = true
             }
         })
     }
