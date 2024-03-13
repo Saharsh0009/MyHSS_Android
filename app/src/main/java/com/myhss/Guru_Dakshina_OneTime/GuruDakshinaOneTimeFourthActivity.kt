@@ -161,17 +161,17 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         builderData.addFormDataPart("app", "1")
 
         val requestBody: MultipartBody = builderData.build()
-//        for (i in 0 until requestBody.size) {
-//            val part = requestBody.part(i)
-//            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
-//                ?.substringBefore("\"")
-//            val value = part.body?.let { requestBody ->
-//                val buffer = Buffer()
-//                requestBody.writeTo(buffer)
-//                buffer.readUtf8()
-//            } ?: ""
-//            DebugLog.e("Param : " + "$key: $value")
-//        }
+        for (i in 0 until requestBody.size) {
+            val part = requestBody.part(i)
+            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+                ?.substringBefore("\"")
+            val value = part.body?.let { requestBody ->
+                val buffer = Buffer()
+                requestBody.writeTo(buffer)
+                buffer.readUtf8()
+            } ?: ""
+            DebugLog.e("Param : " + "$key: $value")
+        }
 
         val call: Call<StripeDataModel> =
             MyHssApplication.instance!!.api.postOneTimeDakshinaStripe(requestBody)
@@ -181,7 +181,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     if (response.isSuccessful) {
-
+                        DebugLog.e("GD RESPONSE : $response")
                         val status = response.body()!!.status
                         val message = response.body()!!.message
                         if (status == true) {
@@ -348,17 +348,17 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
         builderData.addFormDataPart("app", "1")
 
         val requestBody: MultipartBody = builderData.build()
-//        for (i in 0 until requestBody.size) {
-//            val part = requestBody.part(i)
-//            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
-//                ?.substringBefore("\"")
-//            val value = part.body?.let { requestBody ->
-//                val buffer = Buffer()
-//                requestBody.writeTo(buffer)
-//                buffer.readUtf8()
-//            } ?: ""
-//            DebugLog.e("Param : $key: $value")
-//        }
+        for (i in 0 until requestBody.size) {
+            val part = requestBody.part(i)
+            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+                ?.substringBefore("\"")
+            val value = part.body?.let { requestBody ->
+                val buffer = Buffer()
+                requestBody.writeTo(buffer)
+                buffer.readUtf8()
+            } ?: ""
+            DebugLog.e("Param : $key: $value")
+        }
 
         val call: Call<OneTimeSuccess> =
             MyHssApplication.instance!!.api.postSaveStripePaymentData(requestBody)
