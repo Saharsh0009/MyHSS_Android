@@ -43,7 +43,7 @@ class AddMemberThirdActivity : AppCompatActivity(), iDialogSearchableSpinner {
     private lateinit var edit_emergency_realationship_name: TextInputEditText
     private lateinit var edit_guardian_email: TextInputEditText
     private lateinit var edit_guardian_relationship: TextView
-    private lateinit var emergency_realationship_other_view: RelativeLayout
+    private lateinit var emergency_realationship_other_view: LinearLayout
     private lateinit var back_layout: LinearLayout
     private lateinit var next_layout: LinearLayout
     private lateinit var til_guardian_full_name: TextInputLayout
@@ -104,22 +104,24 @@ class AddMemberThirdActivity : AppCompatActivity(), iDialogSearchableSpinner {
         guardian_email.text = "Contact Email"
         guardian_relationship.text = "Contact Relationship"
 
-        /*if (intent.getStringExtra("AGE") != "1") {
+        if (intent.getStringExtra("AGE") != "1") {
             edit_guardian_full_name.hint = "Emergency Name"
             guardian_full_title.text = "Emergency Information"
             guardian_full_name.text = "Emergency Name"
             guardian_contact_number.text = "Emergency Phone Number"
             guardian_email.text = "Emergency Email"
             guardian_relationship.text = "Emergency Relationship"
+            edit_guardian_relationship.text = "Select Emergency Relationship"
 
         } else {
-            edit_guardian_full_name.hint = "Guardian full name"
+            edit_guardian_full_name.hint = "Guardian name"
             guardian_full_title.text = "Guardian Information"
-            guardian_full_name.text = "Guardian Full Name"
+            guardian_full_name.text = "Guardian Name"
             guardian_contact_number.text = "Guardian Contact"
             guardian_email.text = "Guardian Email"
             guardian_relationship.text = "Guardian Relationship"
-        }*/
+            edit_guardian_relationship.text = "Select Guardian Relationship"
+        }
 
         back_arrow.setOnClickListener(DebouncedClickListener {
             finish()
@@ -128,19 +130,30 @@ class AddMemberThirdActivity : AppCompatActivity(), iDialogSearchableSpinner {
         back_layout.setOnClickListener(DebouncedClickListener {
             finish()
         })
+        DebugLog.e("TEST =>>>  "+intent.getStringExtra("IS_SELF"))
+        DebugLog.e("TEST 2=>>>  "+intent.getStringExtra("FAMILY"))
+        DebugLog.e("TEST 3=>>>  "+intent.getStringExtra("TITLENAME"))
         if (intent.getStringExtra("IS_SELF") != "self") {
             if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
                 edit_guardian_full_name.setText(sessionManager.fetchGUAEMRNAME())
                 edit_guardian_contact_number.setText(sessionManager.fetchGUAEMRPHONE())
                 edit_guardian_email.setText(sessionManager.fetchGUAEMREMAIL())
-                edit_guardian_relationship.text =
-                    relationshipName.indexOf(sessionManager.fetchGUAEMRRELATIONSHIP()).toString()
-
+                edit_guardian_relationship.text = relationshipName.indexOf(sessionManager.fetchGUAEMRRELATIONSHIP()).toString()
                 if (sessionManager.fetchGUAEMRRELATIONSHIP() == "Other") {
                     emergency_realationship_other_view.visibility = View.VISIBLE
                     edit_emergency_realationship_name.setText(sessionManager.fetchGUAEMRRELATIONSHIP_OTHER())
                     OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
                 }
+            }else{
+                edit_guardian_full_name.setText(sessionManager.fetchFIRSTNAME()+" "+ sessionManager.fetchMIDDLENAME() + " "+ sessionManager.fetchSURNAME())
+                edit_guardian_contact_number.setText(sessionManager.fetchMOBILENO())
+                edit_guardian_email.setText(sessionManager.fetchUSEREMAIL())
+//                edit_guardian_relationship.text = relationshipName.indexOf(sessionManager.fetchGUAEMRRELATIONSHIP()).toString()
+//                if (sessionManager.fetchGUAEMRRELATIONSHIP() == "Other") {
+//                    emergency_realationship_other_view.visibility = View.VISIBLE
+//                    edit_emergency_realationship_name.setText(sessionManager.fetchGUAEMRRELATIONSHIP_OTHER())
+//                    OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
+//                }
             }
         }
 
@@ -557,7 +570,6 @@ class AddMemberThirdActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 Toast.LENGTH_SHORT
             ).show()
         }
-        edit_guardian_relationship.text = "Select Guardian Relationship"
     }
 
     /*Relationship API*/

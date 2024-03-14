@@ -494,4 +494,5 @@
     <string name="username_error">Username could not be verified, please try again later.</string>
     <string name="something_went_wrong">Something went wrong! please try again later.</string>
     <string name="close">CLOSE</string>
+    <string name="type_other_relationship">Type Other Relationship</string>
 </resources>

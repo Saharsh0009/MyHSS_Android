@@ -315,10 +315,11 @@
 
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/emergency_realationship_other_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:visibility="gone">
 
                 <LinearLayout
@@ -380,6 +381,7 @@
                                 android:background="@android:color/transparent"
                                 android:cursorVisible="true"
                                 android:inputType="text"
+                                android:hint="@string/type_other_relationship"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
                                 android:textCursorDrawable="@null"
@@ -391,7 +393,7 @@
 
                 </LinearLayout>
 
-            </RelativeLayout>
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
