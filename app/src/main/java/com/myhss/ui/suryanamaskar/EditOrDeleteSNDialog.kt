@@ -1,5 +1,6 @@
 package com.myhss.ui.suryanamaskar
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +18,6 @@ class EditOrDeleteSNDialog : DialogFragment() {
     private lateinit var binding: DialogEditordeletesncountBinding
     private var editOrDeleteSNcountDialog: iEditOrDeleteSNDialog? = null
     private lateinit var barchartData: BarchartDataModel
-
     private var isAction = 1
 
     companion object {
@@ -40,19 +40,28 @@ class EditOrDeleteSNDialog : DialogFragment() {
     }
 
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).apply {
+            setCanceledOnTouchOutside(false)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.closeLayout.setOnClickListener(DebouncedClickListener {
             dismiss()
+            editOrDeleteSNcountDialog?.closeDialog()
         })
 
 
         binding.iclSnDynamicView.llDeleteSNCount.visibility = View.GONE
 
-        binding.iclSnDynamicView.selectDate.text = UtilCommon.convertDateFormatUK_S(barchartData.getValue_x()!!)
+        binding.iclSnDynamicView.selectDate.text =
+            UtilCommon.convertDateFormatUK_S(barchartData.getValue_x()!!)
         binding.iclSnDynamicView.editCount.setText(barchartData.getValue_y())
 
-        binding.txtLable.text = getString(R.string.would_you_like_to_edit_delete_the_surya_namaskar_count)
+        binding.txtLable.text =
+            getString(R.string.would_you_like_to_edit_delete_the_surya_namaskar_count)
 
         binding.rbgEditDelete.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
@@ -60,7 +69,8 @@ class EditOrDeleteSNDialog : DialogFragment() {
                     binding.btnOk.text = resources.getString(R.string.submit)
                     binding.iclSnDynamicView.editCount.isEnabled = true
                     binding.iclSnDynamicView.linearDynamicSNEntry.visibility = View.VISIBLE
-                    binding.txtLable.text = getString(R.string.would_you_like_to_edit_the_surya_namaskar_count)
+                    binding.txtLable.text =
+                        getString(R.string.would_you_like_to_edit_the_surya_namaskar_count)
                     isAction = 1 //Edit
                 }
 
@@ -68,7 +78,8 @@ class EditOrDeleteSNDialog : DialogFragment() {
                     binding.btnOk.text = resources.getString(R.string.delete_txt)
                     binding.iclSnDynamicView.editCount.isEnabled = false
                     binding.iclSnDynamicView.linearDynamicSNEntry.visibility = View.GONE
-                    binding.txtLable.text = getString(R.string.would_you_like_to_delete_the_surya_namaskar_count)
+                    binding.txtLable.text =
+                        getString(R.string.would_you_like_to_delete_the_surya_namaskar_count)
                     isAction = 2 //Delete
                 }
             }

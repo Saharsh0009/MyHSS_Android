@@ -1,6 +1,5 @@
 package com.myhss.ui.suryanamaskar
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -24,16 +23,12 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
-import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.CustomProgressDialog
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.ui.SuchanaBoard.Adapter.SuchnaAdapter
-import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Response
 import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
 import com.myhss.ui.suryanamaskar.Model.DeleteSnCount
-import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
@@ -65,9 +60,6 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     var screenName: String = "SuryaNamaskar"
     var screenNameID: String = "BarChartSuryaNamaskarVC"
     lateinit var u_listData: ArrayList<BarchartDataModel>
-
-
-    private var selectedBarIndex = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -203,7 +195,6 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        DebugLog.e("onValueSelected   ")
         val xAxisLabel = barChart.xAxis.valueFormatter.getFormattedValue(e!!.x, barChart.xAxis)
         val yAxisValue = e?.y
 
@@ -215,6 +206,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
                         ) && (yAxisValue.toString()).toFloat() == u_listData[i].getValue_y()!!
                             .toFloat()
                     ) {
+                        barChart.setTouchEnabled(false)
                         openEditOrDeleteSNDialog(u_listData[i])
                         break
                     }
@@ -224,6 +216,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
             2 -> { // Open Receipt Screen
                 for (i in 0 until guruDakshinaData.size) {
                     if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString() && (yAxisValue.toString()).toFloat() == guruDakshinaData[i].paidAmount!!.toFloat()) {
+                        barChart.setTouchEnabled(false)
                         openguruDakshinaDetails(guruDakshinaData[i])
                         break
                     }
@@ -282,6 +275,10 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
         val alert: AlertDialog = alertDialog.create()
         alert.setCanceledOnTouchOutside(false)
         alert.show()
+    }
+
+    override fun closeDialog() {
+        barChart.setTouchEnabled(true)
     }
 
     private fun callEditSnCountApi(snID: String, snCount: String) {

@@ -148,12 +148,6 @@ class AddMemberThirdActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 edit_guardian_full_name.setText(sessionManager.fetchFIRSTNAME()+" "+ sessionManager.fetchMIDDLENAME() + " "+ sessionManager.fetchSURNAME())
                 edit_guardian_contact_number.setText(sessionManager.fetchMOBILENO())
                 edit_guardian_email.setText(sessionManager.fetchUSEREMAIL())
-//                edit_guardian_relationship.text = relationshipName.indexOf(sessionManager.fetchGUAEMRRELATIONSHIP()).toString()
-//                if (sessionManager.fetchGUAEMRRELATIONSHIP() == "Other") {
-//                    emergency_realationship_other_view.visibility = View.VISIBLE
-//                    edit_emergency_realationship_name.setText(sessionManager.fetchGUAEMRRELATIONSHIP_OTHER())
-//                    OTHER_EMERGENCY_RELATIONSHIP = edit_emergency_realationship_name.text.toString()
-//                }
             }
         }
 

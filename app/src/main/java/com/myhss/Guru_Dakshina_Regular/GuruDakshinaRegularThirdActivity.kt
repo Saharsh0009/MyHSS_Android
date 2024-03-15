@@ -227,6 +227,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
         dakshina: String
     ) {
         next_layout.isEnabled = false
+        back_layout.isEnabled = false
         val pd = CustomProgressBar(this@GuruDakshinaRegularThirdActivity)
         pd.show()
         val call: Call<Get_Create_Regular> =
@@ -288,6 +289,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                             startActivity(i)
                             finishAffinity()
                             next_layout.isEnabled = true
+                            back_layout.isEnabled = true
                         }
                         val alertDialog = alertBuilder.create()
                         alertDialog.setCanceledOnTouchOutside(false)
@@ -300,6 +302,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                             response.body()?.message
                         )
                         next_layout.isEnabled = true
+                        back_layout.isEnabled = true
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -307,6 +310,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                         getString(R.string.some_thing_wrong),
                     )
                     next_layout.isEnabled = true
+                    back_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -316,6 +320,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                     .show()
                 pd.dismiss()
                 next_layout.isEnabled = true
+                back_layout.isEnabled = true
             }
         })
     }

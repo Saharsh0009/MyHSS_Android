@@ -1,15 +1,21 @@
 package com.uk.myhss.ui.policies
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.Placeholder
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -56,7 +62,6 @@ class OtherInfoFragment : Fragment() {
     lateinit var qualification_first_yes_no_layout: LinearLayout
     lateinit var layout_first_aid_qualification_file: LinearLayout
     lateinit var layout_first_aid_pro_body: LinearLayout
-    var isImageFitToScreen = false
 
     @SuppressLint("MissingPermission")
     override fun onCreateView(
@@ -121,19 +126,15 @@ class OtherInfoFragment : Fragment() {
                 qualification_first_date.text = sessionManager.fetchQUALIFICATION_DATE()
                 layout_first_aid_pro_body.visibility = View.GONE
 
-//                Glide.with(requireContext())
-//                    .load(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
-//                    .apply(Placeholder(R.drawable.ic_logout))
-//                    .into(image_file_view)
-
-                Glide.with(requireContext())
-                    .load(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
-                    .apply(
-                        RequestOptions.placeholderOf(R.drawable.ic_loading_img)
-                            .error(R.drawable.ic_error)
-                    )
-                    .into(image_file_view)
-
+                if (!sessionManager.fetchQUALIFICATION_FILE().toString().contains(".pdf")) {
+                    Glide.with(requireContext())
+                        .load(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
+                        .apply(
+                            RequestOptions.placeholderOf(R.drawable.ic_loading_img)
+                                .error(R.drawable.ic_error)
+                        )
+                        .into(image_file_view)
+                }
             } else {
                 layout_first_aid_qualification_file.visibility = View.GONE
                 layout_first_aid_pro_body.visibility = View.VISIBLE
@@ -147,7 +148,7 @@ class OtherInfoFragment : Fragment() {
         if (sessionManager.fetchQUALIFICATION_FILE() != "") {
             val f = File(sessionManager.fetchQUALIFICATION_FILE()!!)
             print(f.extension)
-            DebugLog.e(" F==> " + f.toString())
+//            DebugLog.e(" F==> " + f.toString())
 
             val fileName: String = f.toString()
             val extension = fileName.substring(fileName.lastIndexOf("."))
@@ -176,11 +177,11 @@ class OtherInfoFragment : Fragment() {
         })
 
         qualification_first_file_download.setOnClickListener(DebouncedClickListener {
-            val browserIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE())
+//            DebugLog.e("File URL : ${MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE()}")
+            downloadFile(
+                MyHssApplication.IMAGE_PDF_URL + sessionManager.fetchQUALIFICATION_FILE(),
+                "MyHSS First Aid_" + sessionManager.fetchQUALIFICATION_FILE().toString()
             )
-            startActivity(browserIntent)
         })
 
         mainedit_layout.setOnClickListener(DebouncedClickListener {
@@ -191,4 +192,31 @@ class OtherInfoFragment : Fragment() {
         })
         return root
     }
+
+
+    fun downloadFile(fileUrl: String, fileName: String) {
+        val request = DownloadManager.Request(Uri.parse(fileUrl))
+        request.setAllowedNetworkTypes(
+            DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
+        )
+            .setAllowedOverRoaming(true)
+            .setTitle(fileName)
+            .setDescription("Downloading")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+
+        val downloadManager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadId = downloadManager.enqueue(request)
+        val onComplete = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                if (id == downloadId) {
+                    Toast.makeText(context, "Download completed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        requireContext().registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    }
+
 }

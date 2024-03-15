@@ -50,7 +50,6 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
     private lateinit var next_layout: LinearLayout
     private lateinit var edit_payment: ImageView
     private lateinit var donate_amount_txt: TextView
-
     private lateinit var cardInputWidget: CardMultilineWidget
     private lateinit var stripe: Stripe
     private lateinit var paymentIntentClientSecret: String
@@ -128,6 +127,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
 
     private fun callApiForStripeData() {
         next_layout.isEnabled = false
+        back_layout.isEnabled = false
         val pd = CustomProgressBar(this@GuruDakshinaOneTimeFourthActivity)
         pd.show()
 
@@ -204,6 +204,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 this@GuruDakshinaOneTimeFourthActivity, "", message.toString()
                             )
                             next_layout.isEnabled = true
+                            back_layout.isEnabled = true
                         }
                     }
                 } else {
@@ -213,6 +214,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                         getString(R.string.some_thing_wrong),
                     )
                     next_layout.isEnabled = true
+                    back_layout.isEnabled = true
                 }
 
             }
@@ -224,6 +226,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                     t.message,
                 )
                 next_layout.isEnabled = true
+                back_layout.isEnabled = true
             }
         })
     }
@@ -400,6 +403,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 response.body()!!.message
                             )
                             next_layout.isEnabled = true
+                            back_layout.isEnabled = true
                         }
                         pd1.dismiss()
                     }
@@ -409,6 +413,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                         getString(R.string.some_thing_wrong),
                     )
                     next_layout.isEnabled = true
+                    back_layout.isEnabled = true
                 }
                 pd1.dismiss()
             }
@@ -421,6 +426,7 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                     "$t.message"
                 )
                 next_layout.isEnabled = true
+                back_layout.isEnabled = true
             }
         })
     }

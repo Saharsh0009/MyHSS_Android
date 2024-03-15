@@ -844,6 +844,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
     private fun callMembershipApi(sType: String, isDoc: Boolean) {
         next_layout.isEnabled = false
+        back_layout.isEnabled = false
         val pd = CustomProgressBar(this@AddMemberForthActivity)
         pd.show()
 //        DebugLog.e(
@@ -1033,6 +1034,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                                 errorMsg
                             )
                             next_layout.isEnabled = true
+                            back_layout.isEnabled = true
                         }
                     }
                 } else {
@@ -1041,6 +1043,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                         getString(R.string.some_thing_wrong),
                     )
                     next_layout.isEnabled = true
+                    back_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -1049,6 +1052,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
                 next_layout.isEnabled = true
+                back_layout.isEnabled = true
             }
         })
     }
@@ -1058,6 +1062,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
 //            "PROFILE, isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF").toString()
 //        )
         next_layout.isEnabled = false
+        back_layout.isEnabled = false
         val pd = CustomProgressBar(this@AddMemberForthActivity)
         pd.show()
 
@@ -1227,6 +1232,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                                 errorMsg
                             )
                             next_layout.isEnabled = true
+                            back_layout.isEnabled = true
                         }
                     }
                 } else {
@@ -1235,6 +1241,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                         getString(R.string.some_thing_wrong),
                     )
                     next_layout.isEnabled = true
+                    back_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -1243,6 +1250,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
                 next_layout.isEnabled = true
+                back_layout.isEnabled = true
             }
         })
     }
