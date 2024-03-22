@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.Placeholder
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -194,6 +196,7 @@ class OtherInfoFragment : Fragment() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun downloadFile(fileUrl: String, fileName: String) {
         val request = DownloadManager.Request(Uri.parse(fileUrl))
         request.setAllowedNetworkTypes(
@@ -215,8 +218,12 @@ class OtherInfoFragment : Fragment() {
                 }
             }
         }
-
-        requireContext().registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireContext().registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                Context.RECEIVER_EXPORTED)
+        }else{
+            requireContext().registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        }
     }
 
 }

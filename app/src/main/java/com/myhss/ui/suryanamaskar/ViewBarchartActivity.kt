@@ -60,6 +60,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     var screenName: String = "SuryaNamaskar"
     var screenNameID: String = "BarChartSuryaNamaskarVC"
     lateinit var u_listData: ArrayList<BarchartDataModel>
+    lateinit var u_case: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +72,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
         add_more = findViewById(R.id.info_tooltip)
         add_more.setImageResource(R.drawable.ic_plus)
 
-        val u_case = intent.getStringExtra("case")
+        u_case = intent.getStringExtra("case").toString()
         u_listData = intent.getSerializableExtra("list_data") as ArrayList<BarchartDataModel>
         header_title.text = u_listData.get(0).getValue_user()
         back_arrow.setOnClickListener(DebouncedClickListener {
@@ -121,8 +122,13 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
         for (i in 0 until barchartData.size) {
             barchartEntriesList.add(
                 BarEntry(
-                    (i.toFloat()), (barchartData.get(i).getValue_y())!!.toFloat()
+                    (i.toFloat()),
+                    (barchartData.get(i).getValue_y())!!.toFloat()
                 )
+            )
+            DebugLog.e(
+                "BAr Data : " + (i.toFloat()) + "   ||||  Values  " + (barchartData.get(i)
+                    .getValue_y())!!.toFloat()
             )
         }
         setupBarChartSurya(barchartData)
@@ -397,5 +403,11 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     }
 
     override fun onClick(v: View?) {
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (u_case == "2")
+            barChart.setTouchEnabled(true)
     }
 }

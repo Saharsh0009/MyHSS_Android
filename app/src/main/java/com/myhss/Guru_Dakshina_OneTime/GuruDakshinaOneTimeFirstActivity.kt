@@ -65,7 +65,7 @@ class GuruDakshinaOneTimeFirstActivity() : AppCompatActivity() {
         rootLayout = findViewById(R.id.rootLayout)
         img_payment_step_one = findViewById(R.id.img_payment_step_one)
 
-        user_name.text = sessionManager.fetchUSERNAME()!!.capitalize(Locale.ROOT)
+        user_name.text = sessionManager.fetchFIRSTNAME()!!.capitalize(Locale.ROOT) + " "+sessionManager.fetchSURNAME()!!.capitalize(Locale.ROOT)
         shakha_name.text = sessionManager.fetchSHAKHANAME()!!.capitalize(Locale.ROOT)
 
         img_payment_step_one.setImageResource(R.drawable.addmember_step1)

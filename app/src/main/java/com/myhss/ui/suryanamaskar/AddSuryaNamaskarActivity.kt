@@ -317,7 +317,8 @@ class AddSuryaNamaskarActivity : AppCompatActivity(), iDialogSearchableSpinner {
                             println("Family")
                         }
                     } else {
-                        USER_NAME = sessionManager.fetchUSERNAME()!!
+                        USER_NAME =
+                            sessionManager.fetchFIRSTNAME()!! + " " + sessionManager.fetchSURNAME()!!
                         USER_ID = sessionManager.fetchMEMBERID()!!
                         family_txt.text = USER_NAME
                     }

@@ -796,7 +796,8 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 if (member_list.elementAt(i) == guruDakshinabeans.get(j).memberId) {
 //                    DebugLog.e("paid amt : " + guruDakshinabeans.get(j).paidAmount)
                     s_count = s_count + guruDakshinabeans.get(j).paidAmount!!.toDouble()
-                    s_name = guruDakshinabeans.get(j).firstName.toString()
+                    s_name = guruDakshinabeans[0].firstName.toString()
+
                 }
             }
             t_count = t_count + s_count
@@ -865,13 +866,19 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         chip.isCheckable = false
         chip.isClickable = true
         chip.setTextColor(Color.WHITE)
-        chip.setOnClickListener(DebouncedClickListener { openBarChart(label.toString()) })
+        chip.setOnClickListener(DebouncedClickListener { memberIDForOpenBarChart(label.toString()) })
         return chip
     }
 
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        openBarChart((e as PieEntry).label.toString())
+        memberIDForOpenBarChart((e as PieEntry).label.toString())
+    }
+
+    private fun memberIDForOpenBarChart(sName: String) {
+        guru_dakshinaBeans.find { it.firstName == sName }?.let {
+            openBarChart(it.memberId!!)
+        }
     }
 
     override fun onNothingSelected() {
@@ -882,7 +889,7 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         val listData_guruDakshina: ArrayList<Datum_guru_dakshina> = ArrayList()
 
         for (i in 0 until guru_dakshinaBeans.size) {
-            if (sName == guru_dakshinaBeans[i].firstName) {
+            if (sName == guru_dakshinaBeans[i].memberId) {
                 val barchartDataModel = BarchartDataModel()
                 barchartDataModel.setValue_x(guru_dakshinaBeans[i].startDate)
                 barchartDataModel.setValue_y(guru_dakshinaBeans[i].paidAmount)

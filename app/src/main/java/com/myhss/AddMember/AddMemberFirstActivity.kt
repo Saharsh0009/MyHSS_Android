@@ -1070,8 +1070,8 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                 val dataOccupationList = response.data.orEmpty()
                 OccupationName = dataOccupationList.map { it.occupationName.toString() }
                 OccupationID = dataOccupationList.map { it.occupationId.toString() }
-                OccupationName += "Other"
-                OccupationID += "-99"
+//                OccupationName += "Other"
+//                OccupationID += "-99"
 
                 if (intent.getStringExtra("TYPE_SELF") != "self" && intent.getStringExtra("FAMILY") == "PROFILE") {
                     val selectedOccupation = sessionManager.fetchOCCUPATIONNAME()

@@ -1179,18 +1179,18 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
         }
 
         val requestBody: MultipartBody = builderData.build()
-        for (i in 0 until requestBody.size) {
-            val part = requestBody.part(i)
-            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
-                ?.substringBefore("\"")
-            val value = part.body?.let { requestBody ->
-                val buffer = Buffer()
-                requestBody.writeTo(buffer)
-                buffer.readUtf8()
-            } ?: ""
-            DebugLog.e("$key: $value")
-        }
-        
+//        for (i in 0 until requestBody.size) {
+//            val part = requestBody.part(i)
+//            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+//                ?.substringBefore("\"")
+//            val value = part.body?.let { requestBody ->
+//                val buffer = Buffer()
+//                requestBody.writeTo(buffer)
+//                buffer.readUtf8()
+//            } ?: ""
+//            DebugLog.e("$key: $value")
+//        }
+
         val call: Call<JsonObject> =
             MyHssApplication.instance!!.api.postUpdateMembership(requestBody)
         call.enqueue(object : Callback<JsonObject> {

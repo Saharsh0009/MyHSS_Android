@@ -635,7 +635,10 @@
                                 android:background="@android:color/transparent"
                                 android:gravity="left"
                                 android:inputType="text"
+                                android:paddingEnd="@dimen/padding50"
                                 android:scrollbars="none"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
                                 android:theme="@style/StyleEditTextView" />
@@ -853,14 +856,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/padding20"
+                        android:layout_marginStart="@dimen/padding20"
                         android:layout_toEndOf="@+id/checkbox"
                         android:autoLink="web"
                         android:fontFamily="@font/sourcesanspro_regular"
                         android:gravity="center_vertical"
                         android:linksClickable="true"
                         android:textColor="@color/blackColor"
-                        android:textSize="@dimen/font_size11"
+                        android:textSize="@dimen/font_size15"
                         android:textStyle="bold"
                         android:theme="@style/StyleTextView" />
 

@@ -651,17 +651,14 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 if (response.code() == 200 && response.body() != null) {
                     if (response.body()?.status!!) {
                         val alertBuilder =
-                            AlertDialog.Builder(this@AddSankhyaActivity) // , R.style.dialog_custom
-//                        alertBuilder.setTitle("Message")
+                            AlertDialog.Builder(this@AddSankhyaActivity)
                         alertBuilder.setMessage(response.body()?.message)
                         alertBuilder.setPositiveButton(
                             "OK"
                         ) { dialog, which ->
-                            startActivity(
-                                Intent(
-                                    this@AddSankhyaActivity, SankhyaActivity::class.java
-                                )
-                            )
+                            val intent = Intent(this@AddSankhyaActivity, SankhyaActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            startActivity(intent)
                             finish()
                         }
                         val alertDialog = alertBuilder.create()

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -65,6 +66,7 @@ import com.uk.myhss.ui.policies.ChangePasswordFragment
 import com.uk.myhss.ui.policies.PolicieshowFragment
 import com.uk.myhss.ui.policies.ProfileFragment
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
@@ -94,10 +96,14 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     private var receivedNotiID = "0"
 
     private lateinit var notification_img: ImageView
+    private lateinit var toolbar: Toolbar
+    private lateinit var toolbar_logo: ImageView
+    private lateinit var scan_qr_img: ImageView
 
     private lateinit var user_name: TextView
     private lateinit var user_name_txt: TextView
     private lateinit var user_role: TextView
+    private lateinit var img_logo_iguru: ImageView
 
     companion object {
         private val SCOPES = setOf<Scope>(Drive.SCOPE_FILE, Drive.SCOPE_APPFOLDER)
@@ -121,31 +127,18 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         NavigationItemModel(R.drawable.logout, "Logout")
     )
 
-//    private var itemsnew = arrayListOf(
-//        NavigationItemModel(R.drawable.home_icon, "Dashboard"),
-//        NavigationItemModel(R.drawable.khel_icon, "Khel App"),  // Pratiyogita
-//        NavigationItemModel(R.drawable.lock, "Change Password"),
-//        NavigationItemModel(R.drawable.ic_passcode, "Change Passcode"),
-//        NavigationItemModel(R.drawable.policy_icon, "Policies"),
-//        NavigationItemModel(R.drawable.logout, "Logout")
-//    )
-
-
     @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("SetTextI18n", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        val toolbar: Toolbar = findViewById(R.id.activity_main_toolbar)
-        val toolbar_logo = toolbar.findViewById<ImageView>(R.id.toolbar_logo)
-        val scan_qr_img = toolbar.findViewById<ImageView>(R.id.scan_qr_img)
-        notification_img = toolbar.findViewById<ImageView>(R.id.notification_img)
-//        val activity_main_toolbar_title = toolbar.findViewById<TextView>(R.id.activity_main_toolbar_title)
+        toolbar = findViewById(R.id.activity_main_toolbar)
+        toolbar_logo = toolbar.findViewById(R.id.toolbar_logo)
+        scan_qr_img = toolbar.findViewById(R.id.scan_qr_img)
+        notification_img = toolbar.findViewById(R.id.notification_img)
         setSupportActionBar(toolbar)
         toolbar_logo.visibility = View.VISIBLE
-//        activity_main_toolbar_title.visibility = View.INVISIBLE
-
         drawerLayout = findViewById(R.id.drawer_layout)
         val activity_main_toolbar: Toolbar = findViewById(R.id.activity_main_toolbar)
         navigation_rv = findViewById(R.id.navigation_rv)
@@ -154,6 +147,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
         user_name = findViewById(R.id.user_name)
         user_name_txt = findViewById(R.id.user_name_txt)
         user_role = findViewById(R.id.user_role)
+        img_logo_iguru = findViewById(R.id.img_logo_iguru)
         val app_version = findViewById<TextView>(R.id.app_version)
 
         toolbar.title = ""
@@ -393,18 +387,12 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                             alert.show()
                         }
                     }
-                    drawerLayout.closeDrawer(GravityCompat.START)
+                    Handler().postDelayed({
+                        drawerLayout.closeDrawer(GravityCompat.START)
+                    }, 200)
                 }
             })
         )
-
-        // Update Adapter with item data and highlight the default menu item ('Home' Fragment)
-//        updateAdapter(0)
-
-        // Set 'Home' as the default fragment when the app starts
-//        val dashboardFragment = DashboardFragment()
-//        supportFragmentManager.beginTransaction()
-//            .replace(R.id.activity_main_content_id, dashboardFragment).commit()
 
         // Close the soft keyboard when you open or close the Drawer
         val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(
@@ -443,10 +431,21 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
         try {
             val currentVersion = packageManager.getPackageInfo(packageName, 0).versionName
-            app_version.text = "App Version: $currentVersion"
+            app_version.text = "Version: $currentVersion"
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
+
+        img_logo_iguru.setOnClickListener(DebouncedClickListener {
+            val browserIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://iguru-india.com/")
+            )
+            startActivity(browserIntent)
+            Handler().postDelayed({
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }, 200)
+        })
 
         profile_view.setOnClickListener(DebouncedClickListener {
             openCloseNavigationDrawer()
@@ -523,7 +522,7 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
                 Toast.LENGTH_SHORT
             ).show()
         }
-        DebugLog.d("CORO - Afer the  API CALL, end of async 4")
+//        DebugLog.d("CORO - Afer the  API CALL, end of async 4")
     }
 
     private val googleSignInClient: GoogleSignInClient by lazy {
@@ -627,7 +626,9 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
 
     fun openCloseNavigationDrawer() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
+            Handler().postDelayed({
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }, 200)
         } else {
             drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -827,10 +828,16 @@ class HomeActivity : AppCompatActivity() { //, NavigationView.OnNavigationItemSe
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
+            Handler().postDelayed({
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }, 200)
         } else {
             if (supportFragmentManager.backStackEntryCount > 0) {
                 supportFragmentManager.popBackStack()
+                toolbar.title = ""
+                toolbar_logo.visibility = View.VISIBLE
+                scan_qr_img.visibility = View.GONE
+                notification_img.visibility = View.VISIBLE
             } else {
                 // Exit the app
                 val alertBuilder = AlertDialog.Builder(this@HomeActivity)
