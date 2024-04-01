@@ -410,7 +410,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         var pd = CustomProgressDialog(this@SuryaNamaskar)
         isProgressBar?.let { if (it) pd.show() }
 
-        DebugLog.d("member_id => $member_id")
+//        DebugLog.d("member_id => $member_id")
         try {
             val response =
                 MyHssApplication.instance!!.api.get_suryanamaskar_count(
@@ -433,7 +433,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                 memberStringArray = memberStringList.toArray(memberStringArray)
                 val list: ArrayList<String> = arrayListOf<String>()
                 for (element in memberStringArray) {
-                    DebugLog.e("element ===> $element")
+//                    DebugLog.e("element ===> $element")
                     list.add(element.toString())
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         IDMEMBER = list
@@ -498,10 +498,12 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
             for (j in 0 until suryaNamaskarlistData.size) {
                 if (member_list.elementAt(i) == suryaNamaskarlistData.get(j).getmember_id()) {
                     s_count = s_count + suryaNamaskarlistData.get(j).getcount()!!.toInt()
-                    s_name = suryaNamaskarlistData[0].getmember_name().toString()
+                    if(s_name.isEmpty()){
+                        s_name = suryaNamaskarlistData[j].getmember_name().toString()
+                    }
                 }
             }
-            t_count = t_count + s_count
+            t_count += s_count
             labelsList.add(s_name)
             pieEntries.add(PieEntry(s_count.toFloat(), s_name))
         }

@@ -126,10 +126,10 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
                     (barchartData.get(i).getValue_y())!!.toFloat()
                 )
             )
-            DebugLog.e(
-                "BAr Data : " + (i.toFloat()) + "   ||||  Values  " + (barchartData.get(i)
-                    .getValue_y())!!.toFloat()
-            )
+//            DebugLog.e(
+//                "BAr Data : " + (i.toFloat()) + "   ||||  Values  " + (barchartData.get(i)
+//                    .getValue_y())!!.toFloat()
+//            )
         }
         setupBarChartSurya(barchartData)
     }
@@ -203,15 +203,14 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     override fun onValueSelected(e: Entry?, h: Highlight?) {
         val xAxisLabel = barChart.xAxis.valueFormatter.getFormattedValue(e!!.x, barChart.xAxis)
         val yAxisValue = e?.y
+        val barId = e?.x?.toInt()
 
         when (isBarClickable) {
             1 -> { // open SN Edit or Delete Dialog
                 for (i in 0 until u_listData.size) {
-                    if (xAxisLabel.toString() == convertToDateMonthCode(
-                            u_listData[i].getValue_x().toString()
-                        ) && (yAxisValue.toString()).toFloat() == u_listData[i].getValue_y()!!
-                            .toFloat()
-                    ) {
+                    if (xAxisLabel.toString() == convertToDateMonthCode(u_listData[i].getValue_x().toString())
+                        && (yAxisValue.toString()).toFloat() == u_listData[i].getValue_y()!!.toFloat()
+                        && barId == i) {
                         barChart.setTouchEnabled(false)
                         openEditOrDeleteSNDialog(u_listData[i])
                         break
@@ -221,7 +220,9 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
 
             2 -> { // Open Receipt Screen
                 for (i in 0 until guruDakshinaData.size) {
-                    if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString() && (yAxisValue.toString()).toFloat() == guruDakshinaData[i].paidAmount!!.toFloat()) {
+                    if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString()
+                        && (yAxisValue.toString()).toFloat() == guruDakshinaData[i].paidAmount!!.toFloat()
+                        && barId == i) {
                         barChart.setTouchEnabled(false)
                         openguruDakshinaDetails(guruDakshinaData[i])
                         break

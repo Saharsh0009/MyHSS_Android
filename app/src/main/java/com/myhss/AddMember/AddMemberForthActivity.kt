@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -46,6 +47,7 @@ import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.myhss.dialog.DialogSearchableSpinner
 import com.myhss.dialog.iDialogSearchableSpinner
+import com.myhss.dialog.model.Media
 import com.uk.myhss.AddMember.Get_Dietaries.Datum_Get_Dietaries
 import com.uk.myhss.AddMember.Get_Indianstates.Datum_Get_Indianstates
 import com.uk.myhss.AddMember.Get_Language.Datum_Get_Language
@@ -54,8 +56,10 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.Welcome.WelcomeActivity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -1280,11 +1284,65 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
         dialog.show()
     }
 
+
+
     fun openGalleryForImage() {
+
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
+//
+//        }else{
+//
+//        }
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, IMAGE_PICK_CODE) // REQUEST_CODE)
     }
+
+
+    suspend fun getImages(contentResolver: ContentResolver): List<Media> = withContext(Dispatchers.IO) {
+        val projection = arrayOf(
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.DISPLAY_NAME,
+            MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media.MIME_TYPE,
+        )
+
+        val collectionUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Query all the device storage volumes instead of the primary only
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+
+        val images = mutableListOf<Media>()
+
+        contentResolver.query(
+            collectionUri,
+            projection,
+            null,
+            null,
+            "${MediaStore.Images.Media.DATE_ADDED} DESC"
+        )?.use { cursor ->
+            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+            val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+            while (cursor.moveToNext()) {
+                val uri = ContentUris.withAppendedId(collectionUri, cursor.getLong(idColumn))
+                val name = cursor.getString(displayNameColumn)
+                val size = cursor.getLong(sizeColumn)
+                val mimeType = cursor.getString(mimeTypeColumn)
+
+                val image = Media(uri, name, size, mimeType)
+                images.add(image)
+            }
+        }
+
+        return@withContext images
+    }
+
+
 
     fun showFileChooserforPDF() {
         val intent = Intent()
@@ -1398,7 +1456,7 @@ class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 inputStream?.use { input ->
                     val outputStream = file.outputStream()
                     outputStream.use { output ->
-                        val buffer = ByteArray(4 * 1024) // 4k buffer
+                        val buffer = ByteArray(4 * 1024)
                         while (true) {
                             val byteCount = input.read(buffer)
                             if (byteCount < 0) break
