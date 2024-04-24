@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings.Global.getString
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -19,6 +18,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -695,62 +695,122 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 righr_menu.visibility = View.VISIBLE
             }
 
-            if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.baal), true)) {
+            if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.baal),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.baal_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.baalika), false)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.baalika),
+                    false
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.baalika_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.male_shishu), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.male_shishu),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.male_shishu_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.female_shishu), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.female_shishu),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.female_shishu_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.kishore), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.kishore),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.kishor_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.kishori), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.kishori),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.kishori_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.tarun), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.tarun),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.tarun_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.taruni), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.taruni),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.taruni_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.yuva), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.yuva),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.yuva_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.yuvati), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.yuvati),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.yuvati_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.jyeshta), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.jyeshta),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.proudh_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.jyeshtaa), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.jyeshtaa),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.proudha_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.proudh), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.proudh),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.proudh_background)
-            } else if (my_family_DatumGurudakshina.ageCategories.equals(itemView.context.getString(R.string.proudha), true)) {
+            } else if (my_family_DatumGurudakshina.ageCategories.equals(
+                    itemView.context.getString(R.string.proudha),
+                    true
+                )
+            ) {
                 active_inactive_view.setBackgroundResource(R.drawable.proudha_background)
             }
+
+            var reject_error_msg = ""
 
             if (SHOW_HIDE == "ALLSHOW") {
                 active_txt.visibility = View.VISIBLE
                 reject_txt.visibility = View.VISIBLE
                 reject_layout.visibility = View.VISIBLE
                 active_layout.visibility = View.VISIBLE
+                reject_txt.text = itemView.context.getString(R.string.reject)
+                reject_error_msg = "Are you sure you want to reject this member?"
             } else if (SHOW_HIDE == "ACTIVE") {
                 active_txt.visibility = View.GONE
                 reject_txt.visibility = View.VISIBLE
                 reject_layout.visibility = View.VISIBLE
                 active_layout.visibility = View.GONE
+                reject_txt.text = itemView.context.getString(R.string.inactive_txt)
+                reject_error_msg = "Are you sure you want to inactive this member?"
             } else if (SHOW_HIDE == "INACTIVE") {
                 active_txt.visibility = View.VISIBLE
                 reject_txt.visibility = View.GONE
                 reject_layout.visibility = View.GONE
                 active_layout.visibility = View.VISIBLE
             } else if (SHOW_HIDE == "REJECT") {
-                active_txt.visibility = View.GONE
+                active_txt.visibility = View.VISIBLE
                 reject_txt.visibility = View.GONE
                 reject_layout.visibility = View.GONE
-                active_layout.visibility = View.GONE
+                active_layout.visibility = View.VISIBLE
             }
 
             active_txt.setOnClickListener(DebouncedClickListener {
-//                Toast.makeText(itemView.context, "Approved", Toast.LENGTH_SHORT).show()
                 val alertDialog: AlertDialog.Builder = AlertDialog.Builder(itemView.context)
-//            alertDialog.setTitle("Logout")
                 alertDialog.setMessage("Are you sure you want to approve this member?")
                 alertDialog.setPositiveButton(
                     "yes"
@@ -787,24 +847,28 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                 }*/
             })
 
-            reject_txt.text = itemView.context.getString(R.string.inactivate_txt)
+
 
             reject_txt.setOnClickListener(DebouncedClickListener {
 //                Toast.makeText(itemView.context, "Rejected", Toast.LENGTH_SHORT).show()
                 val alertDialog: AlertDialog.Builder = AlertDialog.Builder(itemView.context)
 //            alertDialog.setTitle("Logout")
-                alertDialog.setMessage("Are you sure you want to inactivate this member?")
+                alertDialog.setMessage(reject_error_msg)
                 alertDialog.setPositiveButton(
                     "yes"
                 ) { _, _ ->
                     if (Functions.isConnectingToInternet(itemView.context)) {
-                        myInactive(
-                            sessionManager.fetchUserID()!!, my_family_DatumGurudakshina.memberId!!
-                        )
-//                    myRejected(
-//                        sessionManager.fetchUserID()!!,
-//                        my_family_DatumGurudakshina.memberId!!
-//                    )
+
+                        if (reject_error_msg.contains("reject")) {
+                            openRejectDialog(my_family_DatumGurudakshina.memberId!!)
+                        } else {
+                            myInactive(
+                                sessionManager.fetchUserID()!!,
+                                my_family_DatumGurudakshina.memberId!!
+                            )
+                        }
+
+
                     } else {
                         Toast.makeText(
                             itemView.context,
@@ -919,6 +983,37 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
             })
         }
 
+        private fun openRejectDialog(memberId_param: String) {
+            val inflater = LayoutInflater.from(itemView.context)
+            val dialogBuilder = AlertDialog.Builder(itemView.context)
+            val dialogView = inflater.inflate(R.layout.dialog_reason, null)
+            val editTextReason = dialogView.findViewById<TextInputEditText>(R.id.edit_reason)
+            dialogBuilder.setTitle("Reason for Rejection")
+            dialogBuilder.setView(dialogView)
+
+            dialogBuilder.setPositiveButton("Submit") { dialog, _ ->
+                val reason = editTextReason.text.toString().trim()
+                if (reason.isEmpty() || reason.isBlank() || reason.isNullOrBlank() || reason.isNullOrEmpty()) {
+                    Toast.makeText(itemView.context, "Reason cannot be empty", Toast.LENGTH_SHORT)
+                        .show()
+                    dialog.dismiss()
+                } else {
+                    myRejected(
+                        sessionManager.fetchUserID()!!,
+                        memberId_param,
+                        reason
+                    )
+                    dialog.dismiss()
+                }
+            }
+            dialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            val dialog = dialogBuilder.create()
+            dialog.show()
+        }
+
+
         /*For Approved API*/
         private fun myApproved(
             user_id: String, member_id: String
@@ -939,10 +1034,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                         if (response.body()?.status!!) {
 
                             try {
-                                val alertBuilder =
-                                    AlertDialog.Builder(itemView.context) // , R.style.dialog_custom
-
-//                            alertBuilder.setTitle("Message")
+                                val alertBuilder = AlertDialog.Builder(itemView.context)
                                 alertBuilder.setMessage(response.body()?.message)
                                 alertBuilder.setPositiveButton(
                                     "OK"
@@ -952,19 +1044,11 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                         Intent(itemView.context, LinkedFamilyFragment::class.java)
                                     i.putExtra("DashBoard", "SHAKHAVIEW")
                                     i.putExtra(
-                                        "headerName", itemView.context.getString(R.string.my_shakha)
+                                        "headerName",
+                                        itemView.context.getString(R.string.my_shakha)
                                     )
                                     itemView.context.startActivity(i)
-
                                     (itemView.context as AppCompatActivity).finishAffinity()
-
-//                                    itemView.context.startActivity(
-//                                        Intent(
-//                                            itemView.context,
-//                                            HomeActivity::class.java
-//                                        )
-//                                    )
-//                                    MainActivity::class.java))
                                 }
                                 val alertDialog = alertBuilder.create()
                                 alertDialog.show()
@@ -975,11 +1059,6 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                             }
                         } else {
                             Functions.displayMessage(itemView.context, response.body()?.message)
-//                            Functions.showAlertMessageWithOK(
-//                                itemView.context, "",
-////                            "Message",
-//                                response.body()?.message
-//                            )
                         }
                     } else {
                         Functions.showAlertMessageWithOK(
@@ -1017,10 +1096,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                         if (response.body()?.status!!) {
 
                             try {
-                                val alertBuilder =
-                                    AlertDialog.Builder(itemView.context) // , R.style.dialog_custom
-
-//                            alertBuilder.setTitle("Message")
+                                val alertBuilder = AlertDialog.Builder(itemView.context)
                                 alertBuilder.setMessage(response.body()?.message)
                                 alertBuilder.setPositiveButton(
                                     "OK"
@@ -1033,13 +1109,6 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                     )
                                     itemView.context.startActivity(i)
                                     (itemView.context as AppCompatActivity).finishAffinity()
-//                                    itemView.context.startActivity(
-//                                        Intent(
-//                                            itemView.context,
-//                                            HomeActivity::class.java
-//                                        )
-//                                    )
-//                                    MainActivity::class.java))
                                 }
                                 val alertDialog = alertBuilder.create()
                                 alertDialog.show()
@@ -1050,11 +1119,6 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                             }
                         } else {
                             Functions.displayMessage(itemView.context, response.body()?.message)
-//                            Functions.showAlertMessageWithOK(
-//                                itemView.context, "",
-////                            "Message",
-//                                response.body()?.message
-//                            )
                         }
                     } else {
                         Functions.showAlertMessageWithOK(
@@ -1074,13 +1138,15 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
 
         /*For Reject API*/
         private fun myRejected(
-            user_id: String, member_id: String
+            user_id: String, member_id: String, reason_str: String
         ) {
             val pd = CustomProgressBar(itemView.context)
             pd.show()
             val call: Call<Get_Member_Reject_Response> =
                 MyHssApplication.instance!!.api.get_member_reject(
-                    user_id, member_id
+                    user_id,
+                    member_id,
+                    reason_str
                 )
             call.enqueue(object : Callback<Get_Member_Reject_Response> {
                 override fun onResponse(
@@ -1090,13 +1156,24 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                     if (response.code() == 200 && response.body() != null) {
                         Log.d("status", response.body()?.status.toString())
                         if (response.body()?.status!!) {
-
                             try {
-                                Functions.showAlertMessageWithOK(
-                                    itemView.context, "",
-//                                "Message",
-                                    response.body()?.message
-                                )
+                                val alertBuilder = AlertDialog.Builder(itemView.context)
+                                alertBuilder.setMessage(response.body()?.message)
+                                alertBuilder.setPositiveButton(
+                                    "OK"
+                                ) { dialog, which ->
+                                    val i =
+                                        Intent(itemView.context, LinkedFamilyFragment::class.java)
+                                    i.putExtra("DashBoard", "SHAKHAVIEW")
+                                    i.putExtra(
+                                        "headerName",
+                                        itemView.context.getString(R.string.my_shakha)
+                                    )
+                                    itemView.context.startActivity(i)
+                                    (itemView.context as AppCompatActivity).finishAffinity()
+                                }
+                                val alertDialog = alertBuilder.create()
+                                alertDialog.show()
                             } catch (e: ArithmeticException) {
                                 println(e)
                             } finally {
@@ -1105,7 +1182,6 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                         } else {
                             Functions.showAlertMessageWithOK(
                                 itemView.context, "",
-//                            "Message",
                                 response.body()?.message
                             )
                         }
@@ -1199,10 +1275,7 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                         if (response.body()?.status!!) {
 
                             try {
-                                val alertBuilder =
-                                    AlertDialog.Builder(itemView.context) // , R.style.dialog_custom
-
-//                            alertBuilder.setTitle("Message")
+                                val alertBuilder = AlertDialog.Builder(itemView.context)
                                 alertBuilder.setMessage(response.body()?.message)
                                 alertBuilder.setPositiveButton(
                                     "OK"
@@ -1215,13 +1288,6 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                                     )
                                     itemView.context.startActivity(i)
                                     (itemView.context as AppCompatActivity).finishAffinity()
-//                                    itemView.context.startActivity(
-//                                        Intent(
-//                                            itemView.context,
-//                                            HomeActivity::class.java
-//                                        )
-//                                    )
-//                                    MainActivity::class.java))
                                 }
                                 val alertDialog = alertBuilder.create()
                                 alertDialog.show()
@@ -1232,11 +1298,6 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
                             }
                         } else {
                             Functions.displayMessage(itemView.context, response.body()?.message)
-//                            Functions.showAlertMessageWithOK(
-//                                itemView.context, "",
-////                            "Message",
-//                                response.body()?.message
-//                            )
                         }
                     } else {
                         Functions.showAlertMessageWithOK(
@@ -1254,5 +1315,4 @@ class MembersCustomAdapter(var userList: List<Get_Member_Listing_Datum>, val SHO
             })
         }
     }
-
 }

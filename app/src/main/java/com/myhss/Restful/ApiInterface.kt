@@ -345,7 +345,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/member/reject")
     fun get_member_reject(
-        @Field("user_id") user_id: String, @Field("member_id") member_id: String
+        @Field("user_id") user_id: String, @Field("member_id") member_id: String, @Field("message") reject_message: String
     ): Call<Get_Member_Reject_Response>
 
     /*Post member check_username_exist*/

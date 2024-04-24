@@ -496,4 +496,6 @@
     <string name="close">CLOSE</string>
     <string name="type_other_relationship">Type Other Relationship</string>
     <string name="edit_donate_amount">Edit Donate Amount</string>
+    <string name="reason_for_rejection">Reason for Rejection</string>
+    <string name="write_here_your_reason">Write here your reason</string>
 </resources>
