@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
@@ -46,7 +45,6 @@ import com.myhss.AllShakha.ShakhaDetailsActivity
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.AddMember.Get_Shakha.Datum_Get_Shakha
 import com.uk.myhss.AddMember.Get_Shakha.Get_Shakha_Response
 import com.uk.myhss.Main.HomeActivity
@@ -101,7 +99,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
     var Chapter_Name: List<String> = java.util.ArrayList<String>()
     var Chapter_ID: List<String> = java.util.ArrayList<String>()
 
-    private lateinit var edit_Filter: SearchableSpinner
+    private lateinit var edit_Filter: TextView
 
     private var markerOptions: Marker? = null
 
@@ -464,179 +462,181 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
             popupMenu.show()
         })
 
-        edit_Filter.setTitle("Search Shakha")
+        edit_Filter.text = "Search Shakha"
 
         search_fields.setOnClickListener(DebouncedClickListener {
             edit_Filter.visibility = View.VISIBLE
-            edit_Filter.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        adapter: AdapterView<*>,
-                        v: View,
-                        position: Int,
-                        id: Long
-                    ) {
-                        // On selecting a spinner item
-                        (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
 
-                        Log.d("Address", edittextFilter[position])
-                        Log.d("LatLong", editlatlongFilter[position])
-//                    OCCUPATION_ID = OccupationID[position]
 
-                        search_fields.setText(edittextFilter[position])
-                        Log.d("Lat", editlatlongFilter[position].split(" ")[0])
-                        Log.d("Long", editlatlongFilter[position].split(" ")[1])
 
-                        mMap!!.clear()
-                        mMap!!.cameraPosition
-
-                        mMap!!.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener { marker ->
-
-                            if (shakhalist[position].getBuildingName()!!.isNotEmpty()) {
-                                Address =
-                                    shakhalist[position].getBuildingName()!! + ", " + shakhalist[position].getAddressLine1()!! + ", " +
-                                            shakhalist[position].getAddressLine2()!! + ", " + shakhalist[position].getPostalCode()!! + ", " +
-                                            shakhalist[position].getCity()!! + ", " + shakhalist[position].getCountry()!!
-                            } else {
-                                Address = shakhalist[position].getAddressLine1()!! + ", " +
-                                        shakhalist[position].getAddressLine2()!! + ", " + shakhalist[position].getPostalCode()!! + ", " +
-                                        shakhalist[position].getCity()!! + ", " + shakhalist[position].getCountry()!!
-                            }
-
-                            if (marker == markerOptions) {
-                                //handle click here
-                                val dialog = Dialog(this@MapsActivity)
-//                                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-//                                            dialog.setCancelable(false)
-                                dialog.setContentView(R.layout.mew_custom_map_marker)
-                                val body =
-                                    dialog.findViewById(R.id.txtLocMarkerName) as TextView
-                                val info_img =
-                                    dialog.findViewById(R.id.info_img) as ImageView
-                                body.text = shakhalist[position].getChapterName()
-//                                            val yesBtn = dialog.findViewById(R.id.login_btn) as TextView
-//                                            val noBtn = dialog.findViewById(R.id.noBtn) as TextView
-
-                                body.setOnClickListener(DebouncedClickListener {
-                                    dialog.dismiss()
-
-                                    val intent = Intent(
-                                        this@MapsActivity,
-                                        ShakhaDetailsActivity::class.java
-                                    )
-//                            intent.putExtra("Shakha_ID", shakhalist[position].org_chapter_id)
-                                    intent.putExtra(
-                                        "Shakha_ID",
-                                        shakhalist[position].getOrgChapterId()
-                                    )
-                                    intent.putExtra(
-                                        "Shakha_Name",
-                                        shakhalist[position].getChapterName()
-                                    )
-                                    intent.putExtra(
-                                        "Shakha_Contact_Person",
-                                        shakhalist[position].getContactPersonName()
-                                    )
-                                    intent.putExtra("Shakha_Address", Address)
-                                    intent.putExtra("Shakha_Email", shakhalist[position].getEmail())
-                                    intent.putExtra("Shakha_Phone", shakhalist[position].getPhone())
-                                    intent.putExtra("Shakha_Day", shakhalist[position].getDay())
-                                    intent.putExtra(
-                                        "Shakha_Start",
-                                        shakhalist[position].getStartTime()
-                                    )
-                                    intent.putExtra("Shakha_End", shakhalist[position].getEndTime())
-                                    intent.putExtra("Lati", shakhalist[position].getLatitude())
-                                    intent.putExtra("Longi", shakhalist[position].getLongitude())
-                                    intent.putExtra("MAP", "MAP")
-//                            intent.putExtra("Shakha_ID", relationshipID[position])
-                                    this@MapsActivity.startActivity(intent)
-                                })
-
-                                info_img.setOnClickListener(DebouncedClickListener {
-                                    dialog.dismiss()
-                                    val intent = Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse(
-                                            "http://maps.google.com/maps?daddr=" + shakhalist[position].getLatitude()!!
-                                                .toDouble() + "," + shakhalist[position].getLongitude()!!
-                                                .toDouble()
-                                        )
-                                    )
-                                    this@MapsActivity.startActivity(intent)
-                                })
-//                                            noBtn.setOnClickListener { dialog.dismiss() }
-                                dialog.show()
-                            }
-                            true
-                        })
-
-//                    mMap!!.animateCamera(CameraUpdateFactory.zoomTo(11.0f))
-
-                        mMap!!.mapType = GoogleMap.MAP_TYPE_NORMAL
-                        mMap!!.uiSettings.isZoomControlsEnabled = true
-                        mMap!!.uiSettings.isZoomGesturesEnabled = true
-                        mMap!!.uiSettings.isCompassEnabled = true
-                        mMap!!.uiSettings.setAllGesturesEnabled(true)
-                        mMap!!.uiSettings.isMyLocationButtonEnabled = true
-
-                        latitude = editlatlongFilter[position].split(" ")[0].toDouble()
-                        longitude = editlatlongFilter[position].split(" ")[1].toDouble()
-
-                        mMap!!.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                LatLng(
-                                    latitude!!,
-                                    longitude!!
-                                ), ZOOM_ID.toDouble().toFloat()
-                            )
-                        )
-
-                        distance(
-                            Currlatitude!!,  // 53.4892791,
-                            Currlongitude!!,  // -2.0997323,
-//                            shakhalist[0].latitude!!.toDouble(),
-//                            shakhalist[0].longitude!!.toDouble(),
-                            latitude!!,
-                            longitude!!
-                        )
-
-                        markerOptions = mMap!!.addMarker(
-                            MarkerOptions()
-                                .position(
-                                    LatLng(
-                                        latitude!!,
-                                        longitude!!
-                                    )
-                                )
-                                .title(edittextFilter[position])
-                                .snippet(
-                                    "Lat :-" + editlatlongFilter[position].split(" ")[0] + " Long :-" + editlatlongFilter[position].split(
-                                        " "
-                                    )[1]
-                                )
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.locationflag))
-//                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                        )
-
-//                    val markerOptions: MarkerOptions  = MarkerOptions().position(
-//                        LatLng(
-//                            latitude!!,
-//                            longitude!!
+//            edit_Filter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//                override fun onItemSelected(
+//                    adapter: AdapterView<*>,
+//                    v: View,
+//                    position: Int,
+//                    id: Long
+//                ) {
+//                    // On selecting a spinner item
+//                    (adapter.getChildAt(0) as TextView).setTextColor(Color.BLACK)
+//
+//                    Log.d("Address", edittextFilter[position])
+//                    Log.d("LatLong", editlatlongFilter[position])
+////                    OCCUPATION_ID = OccupationID[position]
+//
+//                    search_fields.setText(edittextFilter[position])
+//                    Log.d("Lat", editlatlongFilter[position].split(" ")[0])
+//                    Log.d("Long", editlatlongFilter[position].split(" ")[1])
+//
+//                    mMap!!.clear()
+//                    mMap!!.cameraPosition
+//
+//                    mMap!!.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener { marker ->
+//
+//                        if (shakhalist[position].getBuildingName()!!.isNotEmpty()) {
+//                            Address =
+//                                shakhalist[position].getBuildingName()!! + ", " + shakhalist[position].getAddressLine1()!! + ", " +
+//                                        shakhalist[position].getAddressLine2()!! + ", " + shakhalist[position].getPostalCode()!! + ", " +
+//                                        shakhalist[position].getCity()!! + ", " + shakhalist[position].getCountry()!!
+//                        } else {
+//                            Address = shakhalist[position].getAddressLine1()!! + ", " +
+//                                    shakhalist[position].getAddressLine2()!! + ", " + shakhalist[position].getPostalCode()!! + ", " +
+//                                    shakhalist[position].getCity()!! + ", " + shakhalist[position].getCountry()!!
+//                        }
+//
+//                        if (marker == markerOptions) {
+//                            //handle click here
+//                            val dialog = Dialog(this@MapsActivity)
+////                                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+////                                            dialog.setCancelable(false)
+//                            dialog.setContentView(R.layout.mew_custom_map_marker)
+//                            val body =
+//                                dialog.findViewById(R.id.txtLocMarkerName) as TextView
+//                            val info_img =
+//                                dialog.findViewById(R.id.info_img) as ImageView
+//                            body.text = shakhalist[position].getChapterName()
+////                                            val yesBtn = dialog.findViewById(R.id.login_btn) as TextView
+////                                            val noBtn = dialog.findViewById(R.id.noBtn) as TextView
+//
+//                            body.setOnClickListener(DebouncedClickListener {
+//                                dialog.dismiss()
+//
+//                                val intent = Intent(
+//                                    this@MapsActivity,
+//                                    ShakhaDetailsActivity::class.java
+//                                )
+////                            intent.putExtra("Shakha_ID", shakhalist[position].org_chapter_id)
+//                                intent.putExtra(
+//                                    "Shakha_ID",
+//                                    shakhalist[position].getOrgChapterId()
+//                                )
+//                                intent.putExtra(
+//                                    "Shakha_Name",
+//                                    shakhalist[position].getChapterName()
+//                                )
+//                                intent.putExtra(
+//                                    "Shakha_Contact_Person",
+//                                    shakhalist[position].getContactPersonName()
+//                                )
+//                                intent.putExtra("Shakha_Address", Address)
+//                                intent.putExtra("Shakha_Email", shakhalist[position].getEmail())
+//                                intent.putExtra("Shakha_Phone", shakhalist[position].getPhone())
+//                                intent.putExtra("Shakha_Day", shakhalist[position].getDay())
+//                                intent.putExtra(
+//                                    "Shakha_Start",
+//                                    shakhalist[position].getStartTime()
+//                                )
+//                                intent.putExtra("Shakha_End", shakhalist[position].getEndTime())
+//                                intent.putExtra("Lati", shakhalist[position].getLatitude())
+//                                intent.putExtra("Longi", shakhalist[position].getLongitude())
+//                                intent.putExtra("MAP", "MAP")
+////                            intent.putExtra("Shakha_ID", relationshipID[position])
+//                                this@MapsActivity.startActivity(intent)
+//                            })
+//
+//                            info_img.setOnClickListener(DebouncedClickListener {
+//                                dialog.dismiss()
+//                                val intent = Intent(
+//                                    Intent.ACTION_VIEW,
+//                                    Uri.parse(
+//                                        "http://maps.google.com/maps?daddr=" + shakhalist[position].getLatitude()!!
+//                                            .toDouble() + "," + shakhalist[position].getLongitude()!!
+//                                            .toDouble()
+//                                    )
+//                                )
+//                                this@MapsActivity.startActivity(intent)
+//                            })
+////                                            noBtn.setOnClickListener { dialog.dismiss() }
+//                            dialog.show()
+//                        }
+//                        true
+//                    })
+//
+////                    mMap!!.animateCamera(CameraUpdateFactory.zoomTo(11.0f))
+//
+//                    mMap!!.mapType = GoogleMap.MAP_TYPE_NORMAL
+//                    mMap!!.uiSettings.isZoomControlsEnabled = true
+//                    mMap!!.uiSettings.isZoomGesturesEnabled = true
+//                    mMap!!.uiSettings.isCompassEnabled = true
+//                    mMap!!.uiSettings.setAllGesturesEnabled(true)
+//                    mMap!!.uiSettings.isMyLocationButtonEnabled = true
+//
+//                    latitude = editlatlongFilter[position].split(" ")[0].toDouble()
+//                    longitude = editlatlongFilter[position].split(" ")[1].toDouble()
+//
+//                    mMap!!.moveCamera(
+//                        CameraUpdateFactory.newLatLngZoom(
+//                            LatLng(
+//                                latitude!!,
+//                                longitude!!
+//                            ), ZOOM_ID.toDouble().toFloat()
 //                        )
-//                    ).title(edittextFilter[position]).snippet("Lat :-"+editlatlongFilter[position].split(" ")[0]+" Long :-"+ editlatlongFilter[position].split(" ")[1])
+//                    )
 //
-//                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.location))
+//                    distance(
+//                        Currlatitude!!,  // 53.4892791,
+//                        Currlongitude!!,  // -2.0997323,
+////                            shakhalist[0].latitude!!.toDouble(),
+////                            shakhalist[0].longitude!!.toDouble(),
+//                        latitude!!,
+//                        longitude!!
+//                    )
 //
-//                    mMap!!.addMarker(markerOptions)
-
-                        edit_Filter.visibility = View.GONE
-                    }
-
-                    override fun onNothingSelected(arg0: AdapterView<*>?) {
-                        // TODO Auto-generated method stub
-                    }
-                }
+//                    markerOptions = mMap!!.addMarker(
+//                        MarkerOptions()
+//                            .position(
+//                                LatLng(
+//                                    latitude!!,
+//                                    longitude!!
+//                                )
+//                            )
+//                            .title(edittextFilter[position])
+//                            .snippet(
+//                                "Lat :-" + editlatlongFilter[position].split(" ")[0] + " Long :-" + editlatlongFilter[position].split(
+//                                    " "
+//                                )[1]
+//                            )
+//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.locationflag))
+////                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+//                    )
+//
+////                    val markerOptions: MarkerOptions  = MarkerOptions().position(
+////                        LatLng(
+////                            latitude!!,
+////                            longitude!!
+////                        )
+////                    ).title(edittextFilter[position]).snippet("Lat :-"+editlatlongFilter[position].split(" ")[0]+" Long :-"+ editlatlongFilter[position].split(" ")[1])
+////
+////                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.location))
+////
+////                    mMap!!.addMarker(markerOptions)
+//
+//                    edit_Filter.visibility = View.GONE
+//                }
+//
+//                override fun onNothingSelected(arg0: AdapterView<*>?) {
+//                    // TODO Auto-generated method stub
+//                }
+//            }
         })
     }
 
@@ -1025,7 +1025,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                             //selected item will look like a spinner set from XML
 //                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 //                            zoom_list.adapter = spinnerArrayAdapter
-                            edit_Filter.adapter = spinnerArrayAdapter
+//                            edit_Filter.adapter = spinnerArrayAdapter
 //                            edittextFilter = listOf(shakhalist[i].building_name.toString()+"\n"+shakhalist[i].address_line_1+
 //                                    "\n"+shakhalist[i].address_line_2+"\n"+shakhalist[i].postal_code+","+shakhalist[i].city+","+shakhalist[i].country)
 

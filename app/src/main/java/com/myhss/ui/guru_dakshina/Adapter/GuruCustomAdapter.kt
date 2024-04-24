@@ -1,13 +1,11 @@
 package com.uk.myhss.ui.my_family.Adapter
 
 import android.content.Context
-import android.content.Intent
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.myhss.Utils.DebouncedClickListener
 import com.uk.myhss.R
-import com.uk.myhss.ui.guru_dakshina.GuruDakshinaRegularDetail
 import com.uk.myhss.ui.my_family.Model.Datum_guru_dakshina
 import java.util.*
 
@@ -101,22 +99,22 @@ class GuruCustomAdapter(val userList: List<Datum_guru_dakshina>) :
                 popup.show()
             })
 
-            adapter_view.setOnClickListener(DebouncedClickListener {
-                val i = Intent(itemView.context, GuruDakshinaRegularDetail::class.java)
-                i.putExtra("username_name", username_name.text.toString())
-                i.putExtra("user_shakha_type", user_shakha_type.text.toString())
-                i.putExtra("amount_txt", amount_txt.text.toString())
-                i.putExtra("regular_onetime_type", regular_onetime_type.text.toString())
-                i.putExtra("regular_onetime_id", regular_onetime_id.text.toString())
-                i.putExtra("date_txt", date_txt.text.toString())
-                i.putExtra("status", my_family_DatumGurudakshina.status)
-                i.putExtra("txnId", my_family_DatumGurudakshina.txnId)
-                i.putExtra("giftAid", my_family_DatumGurudakshina.giftAid)
-                i.putExtra("order_id", my_family_DatumGurudakshina.orderId)
-                i.putExtra("dakshina", my_family_DatumGurudakshina.dakshina)
-                i.putExtra("recurring", my_family_DatumGurudakshina.recurring)
-                itemView.context.startActivity(i)
-            })
+//            adapter_view.setOnClickListener(DebouncedClickListener {
+//                val i = Intent(itemView.context, GuruDakshinaRegularDetail::class.java)
+//                i.putExtra("username_name", username_name.text.toString())
+//                i.putExtra("user_shakha_type", user_shakha_type.text.toString())
+//                i.putExtra("amount_txt", amount_txt.text.toString())
+//                i.putExtra("regular_onetime_type", regular_onetime_type.text.toString())
+//                i.putExtra("regular_onetime_id", regular_onetime_id.text.toString())
+//                i.putExtra("date_txt", date_txt.text.toString())
+//                i.putExtra("status", my_family_DatumGurudakshina.status)
+//                i.putExtra("txnId", my_family_DatumGurudakshina.txnId)
+//                i.putExtra("giftAid", my_family_DatumGurudakshina.giftAid)
+//                i.putExtra("order_id", my_family_DatumGurudakshina.orderId)
+//                i.putExtra("dakshina", my_family_DatumGurudakshina.dakshina)
+//                i.putExtra("recurring", my_family_DatumGurudakshina.recurring)
+//                itemView.context.startActivity(i)
+//            })
         }
     }
 }

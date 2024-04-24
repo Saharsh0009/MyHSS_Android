@@ -197,24 +197,9 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:background="@android:color/transparent"
-                        android:hint="@string/relationship_primery"
-                        android:tag="@string/occupation_select_other"
                         android:textColor="@color/blackColor"
                         android:textColorHint="@color/grayColorColor"
                         android:theme="@style/StyleEditTextView" />
-
-                    <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                        style="@android:style/Widget.Spinner.DropDown"
-                        android:theme="@style/StyleEditTextView"
-                        android:id="@+id/gift_aid_select_txt"
-                        android:hint="@string/relationship_primery"
-                        android:background="@android:color/transparent"
-                        android:textColor="@color/blackColor"
-                        android:layout_marginTop="-5dp"
-                        android:tag="@string/occupation_select_other"
-                        android:textColorHint="@color/grayColorColor"
-                        android:layout_height="match_parent"
-                        android:layout_width="match_parent" />-->
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -411,24 +396,9 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:background="@android:color/transparent"
-                        android:hint="@string/relationship_primery"
-                        android:tag="@string/occupation_select_other"
                         android:textColor="@color/blackColor"
                         android:textColorHint="@color/grayColorColor"
                         android:theme="@style/StyleEditTextView" />
-
-                    <!--<com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                        style="@android:style/Widget.Spinner.DropDown"
-                        android:theme="@style/StyleEditTextView"
-                        android:id="@+id/gift_aid_select_txt"
-                        android:hint="@string/relationship_primery"
-                        android:background="@android:color/transparent"
-                        android:textColor="@color/blackColor"
-                        android:layout_marginTop="-5dp"
-                        android:tag="@string/occupation_select_other"
-                        android:textColorHint="@color/grayColorColor"
-                        android:layout_height="match_parent"
-                        android:layout_width="match_parent" />-->
 
                 </com.google.android.material.textfield.TextInputLayout>
 

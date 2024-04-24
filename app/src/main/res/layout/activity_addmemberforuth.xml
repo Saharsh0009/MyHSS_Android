@@ -397,26 +397,15 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <com.google.android.material.textfield.TextInputLayout
-                                style="@style/EditText.OutlinedBox"
+                            <TextView
+                                android:id="@+id/edit_aid_type"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="@dimen/padding55"
+                                android:background="@android:color/transparent"
                                 android:gravity="center_vertical"
-                                android:paddingStart="@dimen/font_size15"
-                                app:boxStrokeColor="@color/primaryColor"
-                                tools:ignore="RtlSymmetry">
-
-                                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                                    android:id="@+id/edit_aid_type"
-                                    style="@android:style/Widget.Spinner.DropDown"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@android:color/transparent"
-                                    android:textColor="@color/blackColor"
-                                    android:textColorHint="@color/grayColorColor"
-                                    android:theme="@style/StyleEditTextView" />
-
-                            </com.google.android.material.textfield.TextInputLayout>
+                                android:padding="@dimen/padding10"
+                                android:textColor="@color/blackColor"
+                                android:textColorHint="@color/grayColorColor" />
 
                             <ImageView
                                 android:layout_width="@dimen/padding10"
@@ -646,7 +635,10 @@
                                 android:background="@android:color/transparent"
                                 android:gravity="left"
                                 android:inputType="text"
+                                android:paddingEnd="@dimen/padding50"
                                 android:scrollbars="none"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textColor="@color/blackColor"
                                 android:textColorHint="@color/grayColorColor"
                                 android:theme="@style/StyleEditTextView" />
@@ -699,26 +691,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/EditText.OutlinedBox"
+                        <TextView
+                            android:id="@+id/edit_special_dietary_requirements"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/padding55"
+                            android:background="@android:color/transparent"
                             android:gravity="center_vertical"
-                            android:paddingStart="@dimen/font_size15"
-                            app:boxStrokeColor="@color/primaryColor"
-                            tools:ignore="RtlSymmetry">
-
-                            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                                android:id="@+id/edit_special_dietary_requirements"
-                                style="@android:style/Widget.Spinner.DropDown"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@android:color/transparent"
-                                android:textColor="@color/blackColor"
-                                android:textColorHint="@color/grayColorColor"
-                                android:theme="@style/StyleEditTextView" />
-
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:padding="@dimen/padding10"
+                            android:textColor="@color/blackColor"
+                            android:textColorHint="@color/grayColorColor" />
 
                         <ImageView
                             android:layout_width="@dimen/padding10"
@@ -766,26 +747,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/EditText.OutlinedBox"
+                        <TextView
+                            android:id="@+id/edit_spoken_language"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/padding55"
+                            android:background="@android:color/transparent"
                             android:gravity="center_vertical"
-                            android:paddingStart="@dimen/font_size15"
-                            app:boxStrokeColor="@color/primaryColor"
-                            tools:ignore="RtlSymmetry">
-
-                            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                                android:id="@+id/edit_spoken_language"
-                                style="@android:style/Widget.Spinner.DropDown"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@android:color/transparent"
-                                android:textColor="@color/blackColor"
-                                android:textColorHint="@color/grayColorColor"
-                                android:theme="@style/StyleEditTextView" />
-
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:padding="@dimen/padding10"
+                            android:textColor="@color/blackColor"
+                            android:textColorHint="@color/grayColorColor" />
 
                         <ImageView
                             android:layout_width="@dimen/padding10"
@@ -832,26 +802,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/EditText.OutlinedBox"
+                        <TextView
+                            android:id="@+id/edit_originating_state_in_india"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/padding55"
+                            android:background="@android:color/transparent"
                             android:gravity="center_vertical"
-                            android:paddingStart="@dimen/font_size15"
-                            app:boxStrokeColor="@color/primaryColor"
-                            tools:ignore="RtlSymmetry">
-
-                            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                                android:id="@+id/edit_originating_state_in_india"
-                                style="@android:style/Widget.Spinner.DropDown"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@android:color/transparent"
-                                android:textColor="@color/blackColor"
-                                android:textColorHint="@color/grayColorColor"
-                                android:theme="@style/StyleEditTextView" />
-
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:padding="@dimen/padding10"
+                            android:textColor="@color/blackColor"
+                            android:textColorHint="@color/grayColorColor" />
 
                         <ImageView
                             android:layout_width="@dimen/padding10"
@@ -897,14 +856,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="@dimen/padding20"
+                        android:layout_marginStart="@dimen/padding20"
                         android:layout_toEndOf="@+id/checkbox"
                         android:autoLink="web"
                         android:fontFamily="@font/sourcesanspro_regular"
                         android:gravity="center_vertical"
                         android:linksClickable="true"
                         android:textColor="@color/blackColor"
-                        android:textSize="@dimen/font_size11"
+                        android:textSize="@dimen/font_size15"
                         android:textStyle="bold"
                         android:theme="@style/StyleTextView" />
 
@@ -995,11 +954,6 @@
                     android:layout_height="@dimen/padding20" />
 
             </LinearLayout>
-
         </ScrollView>
-
     </LinearLayout>
-
-    <!--    <include layout="@layout/select_galley_pdf" />-->
-
 </RelativeLayout>

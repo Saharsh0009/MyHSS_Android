@@ -38,6 +38,7 @@ import com.myhss.Fingerprint.FingerPrintPopUp
 import com.myhss.Splash.Model.Biometric.Biometric_response
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
+import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
 import com.samsung.android.sdk.SsdkUnsupportedException
 import com.samsung.android.sdk.SsdkVendorCheck
@@ -186,8 +187,6 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
             )
         })
 
-
-
         imgPass1 = root.findViewById(R.id.img1) as ImageView?
         imgPass2 = root.findViewById(R.id.img2) as ImageView
         imgPass3 = root.findViewById(R.id.img3) as ImageView
@@ -219,7 +218,7 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 val othertext: String = getColoredSpanned("Welcome \n", "#142F4D")!!
                 txtusername!!.text = Html.fromHtml("$othertext <b>$FUsername $LUsername</b>")
 
-                if (Functions.isConnectingToInternet(requireActivity())) {
+                if (Functions.isConnectingToInternet(requireActivity())) { //A
                     passcode(
                         sharedPreferences.getString("USERID", "")!!,
                         passcode.toString(),
@@ -332,14 +331,18 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
         if (strPasslock.length == 4) {
             if (isNew) {
                 if (!isRePass) {
-                    isRePass = true
-                    strRePasslock = strPasslock
-                    strPasslock = ""
-                    txtEnterPasscode!!.text = "Verify Passcode"
-                    setPointView()
+                    if(strPasslock == sharedPreferences.getString("SECURITYKEY", "")){
+                        performWrongPinAnimation("Old passcode and new passcode cannot be same.\nPlease try again.")
+                    }else{
+                        isRePass = true
+                        strRePasslock = strPasslock
+                        strPasslock = ""
+                        txtEnterPasscode!!.text = "Verify Passcode"
+                        setPointView()
+                    }
                 } else {
                     if (strPasslock == strRePasslock) {
-                        if (Functions.isConnectingToInternet(requireContext())) {
+                        if (Functions.isConnectingToInternet(requireContext())) { // b
                             passcode(
                                 sharedPreferences.getString("USERID", "")!!,
                                 strPasslock,
@@ -353,27 +356,7 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                             ).show()
                         }
                     } else {
-                        isRePass = false
-                        txtWrongPasscode!!.setVisibility(View.VISIBLE)
-                        txtWrongPasscode!!.setText("Passcode do not match.\nPlease try again.")
-                        txtEnterPasscode!!.text = "Set Passcode"
-                        ObjectAnimator.ofFloat(
-                            mainLayout,
-                            "translationX",
-                            0f,
-                            25f,
-                            -25f,
-                            25f,
-                            -25f,
-                            15f,
-                            -15f,
-                            6f,
-                            -6f,
-                            0f
-                        )
-                            .setDuration(500).start()
-                        strPasslock = ""
-                        setPointView()
+                        performWrongPinAnimation("Passcode do not match.\nPlease try again.")
                     }
                 }
             } else {
@@ -405,6 +388,29 @@ class ChangeBiomerticFragment : Fragment(), View.OnClickListener, BiometricCallb
                 }
             }
         }
+    }
+
+    private fun performWrongPinAnimation(stringMsg : String) {
+        isRePass = false
+        txtWrongPasscode!!.setVisibility(View.VISIBLE)
+        txtWrongPasscode!!.setText(stringMsg)
+        txtEnterPasscode!!.text = "Set Passcode"
+        ObjectAnimator.ofFloat(
+            mainLayout,
+            "translationX",
+            0f,
+            25f,
+            -25f,
+            25f,
+            -25f,
+            15f,
+            -15f,
+            6f,
+            -6f,
+            0f
+        ).setDuration(500).start()
+        strPasslock = ""
+        setPointView()
     }
 
     fun passcode(user_id: String, biometric_key: String, biometric_key_update: String) {

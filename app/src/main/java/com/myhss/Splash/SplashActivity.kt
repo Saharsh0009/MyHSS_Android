@@ -266,7 +266,7 @@ class SplashActivity : AppCompatActivity() {
         alertDialog.setPositiveButton(
             "Ok"
         ) { _, _ ->
-            finish()
+            finishAffinity()
         }
         val alert: AlertDialog = alertDialog.create()
         alert.setCanceledOnTouchOutside(false)

@@ -37,8 +37,6 @@ class ChangePasswordFragment : Fragment() {
 
     private lateinit var sessionManager: SessionManager
     private lateinit var rootLayout: RelativeLayout
-
-    //    private lateinit var dashboard_layout: RelativeLayout
     private lateinit var edit_old_password: TextInputEditText
     private lateinit var edit_new_password: TextInputEditText
     private lateinit var edit_confirm_password: TextInputEditText
@@ -66,7 +64,6 @@ class ChangePasswordFragment : Fragment() {
         //  Firebase crashlytics
 
         rootLayout = root.findViewById(R.id.rootLayout)
-//        dashboard_layout = root.findViewById(R.id.dashboard_layout)
         edit_old_password = root.findViewById(R.id.edit_old_password)
         edit_new_password = root.findViewById(R.id.edit_new_password)
         edit_confirm_password = root.findViewById(R.id.edit_confirm_password)
@@ -75,25 +72,20 @@ class ChangePasswordFragment : Fragment() {
         change_btn.setOnClickListener(DebouncedClickListener {
             if (edit_old_password.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Old Password", Snackbar.LENGTH_SHORT).show()
-//                edit_old_password.error = "old password required"
                 edit_old_password.requestFocus()
                 return@DebouncedClickListener
             } else if (edit_new_password.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter New Password", Snackbar.LENGTH_SHORT).show()
-//                edit_new_password.error = "new password required"
                 edit_new_password.requestFocus()
                 return@DebouncedClickListener
-//            } else if (edit_new_password.text.toString().length < 8 && reg.matches(edit_new_password.text.toString())) {
             } else if (!UtilCommon.isValidPassword(edit_new_password.text.toString())) {
                 Snackbar.make(rootLayout, getString(R.string.valid_password), Snackbar.LENGTH_SHORT)
                     .show()
-//                edit_new_password.error = "Password 8 characters required"
                 edit_new_password.requestFocus()
                 return@DebouncedClickListener
             } else if (edit_confirm_password.text.toString().isEmpty()) {
                 Snackbar.make(rootLayout, "Please Enter Confirm Password", Snackbar.LENGTH_SHORT)
                     .show()
-//                edit_confirm_password.error = "confirm password required"
                 edit_confirm_password.requestFocus()
                 return@DebouncedClickListener
             } else if (!UtilCommon.isValidPassword(edit_confirm_password.text.toString())) {
@@ -102,7 +94,6 @@ class ChangePasswordFragment : Fragment() {
                     getString(R.string.valid_confirm_password),
                     Snackbar.LENGTH_SHORT
                 ).show()
-//                edit_confirm_password.error = "Password 8 characters required"
                 edit_confirm_password.requestFocus()
                 return@DebouncedClickListener
             } else if (edit_new_password.text.toString() != edit_confirm_password.text.toString()) {
@@ -111,8 +102,13 @@ class ChangePasswordFragment : Fragment() {
                     getString(R.string.confirm_both_pass),
                     Snackbar.LENGTH_SHORT
                 ).show()
+            }else if (edit_new_password.text.toString() == edit_old_password.text.toString()) {
+                Snackbar.make(
+                    rootLayout,
+                    getString(R.string.old_new_pass_error),
+                    Snackbar.LENGTH_SHORT
+                ).show()
             } else {
-//                Snackbar.make(rootLayout, "Changed Password", Snackbar.LENGTH_SHORT).show()
                 if (Functions.isConnectingToInternet(requireContext())) {
                     ChangePassword()
                 } else {
@@ -128,6 +124,7 @@ class ChangePasswordFragment : Fragment() {
     }
 
     private fun ChangePassword() {
+        change_btn.isEnabled = false
         val pd = CustomProgressBar(requireContext())
         pd.show()
         val call: Call<ChangePasswordResponse> =
@@ -216,15 +213,16 @@ class ChangePasswordFragment : Fragment() {
                     } else {
                         Functions.showAlertMessageWithOK(
                             requireContext(), "" + true,
-//                            "Message"+true,
                             response.body()?.message
                         )
+                        change_btn.isEnabled = true
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         requireContext(), "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    change_btn.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -232,6 +230,7 @@ class ChangePasswordFragment : Fragment() {
             override fun onFailure(call: Call<ChangePasswordResponse>, t: Throwable) {
                 Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                change_btn.isEnabled = true
             }
         })
     }

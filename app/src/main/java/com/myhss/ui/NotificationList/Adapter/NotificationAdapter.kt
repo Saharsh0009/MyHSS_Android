@@ -110,23 +110,20 @@ class NotificationAdapter(
                 }
             })
 
-
-            DebugLog.e("notificID : $notificID")
-            DebugLog.e("noti_data.recipientId : ${noti_data.recipientId}")
-
             if (notificID != "0") {
                 if (notificID == noti_data.notify_id && memberID == noti_data.member_id) {
                     suchna_discriptionnew.setTextColor(Color.BLACK)
                     noti_data.is_read = "1"
 
-                    val i = Intent(itemView.context, NotificationDetails::class.java)
-                    i.putExtra("Suchana_Type", tab_type)
-                    i.putExtra("Suchana_Title", noti_data.notification_title)
-                    i.putExtra("Suchana_Discription", noti_data.notific_type_name)
-                    i.putExtra("Suchana_DiscriptionNew", noti_data.notification_message)
-                    i.putExtra("Suchana_time", noti_data.created_at)
-                    i.putExtra("recipientId", noti_data.recipientId)
-                    itemView.context.startActivity(i)
+                    if (Functions.isConnectingToInternet(itemView.context)) {
+                        callSeenNotificationApi(noti_data, suchna_discriptionnew, tab_type)
+                    } else {
+                        Toast.makeText(
+                            itemView.context,
+                            itemView.context.resources.getString(R.string.no_connection),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }

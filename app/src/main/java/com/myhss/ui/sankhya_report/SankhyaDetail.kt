@@ -178,33 +178,85 @@ class SankhyaDetail : AppCompatActivity() {
                                 active_inactive_view.setBackgroundResource(R.drawable.baal_background)
                             }*/
 
-                            if (sankhya_datum[0].baal.equals(  getString(R.string.baal), true)) {
+                            if (sankhya_datum[0].baal.equals(getString(R.string.baal), true)) {
                                 active_inactive_view.setBackgroundResource(R.drawable.baal_background)
-                            } else if (sankhya_datum[0].baalika.equals(  getString(R.string.baalika), true)) {
+                            } else if (sankhya_datum[0].baalika.equals(
+                                    getString(R.string.baalika),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.baalika_background)
-                            } else if (sankhya_datum[0].shishuMale.equals(  getString(R.string.male_shishu), true)) {
+                            } else if (sankhya_datum[0].shishuMale.equals(
+                                    getString(R.string.male_shishu),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.male_shishu_background)
-                            } else if (sankhya_datum[0].shishuFemale.equals(  getString(R.string.female_shishu), true)) {
+                            } else if (sankhya_datum[0].shishuFemale.equals(
+                                    getString(R.string.female_shishu),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.female_shishu_background)
-                            } else if (sankhya_datum[0].kishore.equals(  getString(R.string.kishore), true)) {
+                            } else if (sankhya_datum[0].kishore.equals(
+                                    getString(R.string.kishore),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.kishor_background)
-                            } else if (sankhya_datum[0].kishori.equals(  getString(R.string.kishori), true)) {
+                            } else if (sankhya_datum[0].kishori.equals(
+                                    getString(R.string.kishori),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.kishori_background)
-                            } else if (sankhya_datum[0].tarun.equals(  getString(R.string.tarun), true)) {
+                            } else if (sankhya_datum[0].tarun.equals(
+                                    getString(R.string.tarun),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.tarun_background)
-                            } else if (sankhya_datum[0].taruni.equals(  getString(R.string.taruni), true)) {
+                            } else if (sankhya_datum[0].taruni.equals(
+                                    getString(R.string.taruni),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.taruni_background)
-                            } else if (sankhya_datum[0].yuva.equals(  getString(R.string.yuva), true)) {
+                            } else if (sankhya_datum[0].yuva.equals(
+                                    getString(R.string.yuva),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.yuva_background)
-                            } else if (sankhya_datum[0].yuvati.equals(  getString(R.string.yuvati), true)) {
+                            } else if (sankhya_datum[0].yuvati.equals(
+                                    getString(R.string.yuvati),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.yuvati_background)
-                            } else if (sankhya_datum[0].proudh.equals(  getString(R.string.jyeshta), true)) {
+                            } else if (sankhya_datum[0].proudh.equals(
+                                    getString(R.string.jyeshta),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.proudh_background)
-                            } else if (sankhya_datum[0].proudha.equals(  getString(R.string.jyeshtaa), true)) {
+                            } else if (sankhya_datum[0].proudha.equals(
+                                    getString(R.string.jyeshtaa),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.proudha_background)
-                            } else if (sankhya_datum[0].proudh.equals(  getString(R.string.proudh), true)) {
+                            } else if (sankhya_datum[0].proudh.equals(
+                                    getString(R.string.proudh),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.proudh_background)
-                            } else if (sankhya_datum[0].proudha.equals(  getString(R.string.proudha), true)) {
+                            } else if (sankhya_datum[0].proudha.equals(
+                                    getString(R.string.proudha),
+                                    true
+                                )
+                            ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.proudha_background)
                             }
 
@@ -215,7 +267,7 @@ class SankhyaDetail : AppCompatActivity() {
                                     sankhya_datum[0].baal
                                 )
                                         + Integer.parseInt(sankhya_datum[0].kishore) + Integer.parseInt(
-                                    sankhya_datum[0].tarun
+                                    sankhya_datum[0].baalika
                                 )
                                         + Integer.parseInt(sankhya_datum[0].yuva) + Integer.parseInt(
                                     sankhya_datum[0].proudh
@@ -223,7 +275,7 @@ class SankhyaDetail : AppCompatActivity() {
                                         + Integer.parseInt(sankhya_datum[0].shishuFemale) + Integer.parseInt(
                                     sankhya_datum[0].kishori
                                 )
-                                        + Integer.parseInt(sankhya_datum[0].taruni) + Integer.parseInt(
+                                        + Integer.parseInt(sankhya_datum[0].tarun) + Integer.parseInt(
                                     sankhya_datum[0].taruni
                                 )
                                         + Integer.parseInt(sankhya_datum[0].yuvati) + Integer.parseInt(

@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -20,7 +21,6 @@ import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -28,8 +28,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
-import androidx.core.view.indices
-import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
@@ -43,26 +41,25 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
 import com.google.gson.JsonObject
 import com.myhss.AddMember.FirstAidInfo.DataFirstAidInfo
-import com.myhss.AddMember.FirstAidInfo.FirstAidInfo
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.appConstants.AppParam
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import com.myhss.dialog.DialogSearchableSpinner
+import com.myhss.dialog.iDialogSearchableSpinner
+import com.myhss.dialog.model.Media
 import com.uk.myhss.AddMember.Get_Dietaries.Datum_Get_Dietaries
-import com.uk.myhss.AddMember.Get_Dietaries.Get_Dietaries_Response
 import com.uk.myhss.AddMember.Get_Indianstates.Datum_Get_Indianstates
-import com.uk.myhss.AddMember.Get_Indianstates.Get_Indianstates_Response
 import com.uk.myhss.AddMember.Get_Language.Datum_Get_Language
-import com.uk.myhss.AddMember.Get_Language.Get_Language_Response
 import com.uk.myhss.Main.HomeActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.Welcome.WelcomeActivity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -76,7 +73,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class AddMemberForthActivity : AppCompatActivity() {
+class AddMemberForthActivity : AppCompatActivity(), iDialogSearchableSpinner {
     private lateinit var sessionManager: SessionManager
     private var year = 0
     private var month = 0
@@ -120,11 +117,9 @@ class AddMemberForthActivity : AppCompatActivity() {
     private lateinit var agreement_txt: TextView
 
     private lateinit var check_box_layout: RelativeLayout
-
-    private lateinit var relative_aid_type: RelativeLayout
     private lateinit var edit_profe_body_regis_num: TextInputEditText
     private lateinit var professionl_body_regi_view: LinearLayout
-    private lateinit var edit_aid_type: SearchableSpinner
+    private lateinit var edit_aid_type: TextView
     private lateinit var first_aid_type_view: LinearLayout
     private lateinit var data_firstaidInfo: List<DataFirstAidInfo>
 
@@ -143,7 +138,7 @@ class AddMemberForthActivity : AppCompatActivity() {
     private val PERMISSION_REQUEST_CODE = 200
 
     //Dietary
-    private lateinit var edit_special_dietary_requirements: SearchableSpinner
+    private lateinit var edit_special_dietary_requirements: TextView
     private lateinit var chipGroup_dietary: ChipGroup
     private lateinit var dietaryDataList: List<Datum_Get_Dietaries>
     var dietaryName: List<String> = ArrayList<String>()
@@ -152,7 +147,7 @@ class AddMemberForthActivity : AppCompatActivity() {
     var uiDietary = false
 
     //Language
-    private lateinit var edit_spoken_language: SearchableSpinner
+    private lateinit var edit_spoken_language: TextView
     private lateinit var chipGroup_language: ChipGroup
     private lateinit var spokenLanguageDataList: List<Datum_Get_Language>
     var spokenName: List<String> = ArrayList<String>()
@@ -161,7 +156,7 @@ class AddMemberForthActivity : AppCompatActivity() {
     var uiLanguage = false
 
     //state
-    private lateinit var edit_originating_state_in_india: SearchableSpinner
+    private lateinit var edit_originating_state_in_india: TextView
     private lateinit var chipGroup_state: ChipGroup
     private lateinit var stateDataList: List<Datum_Get_Indianstates>
     var originName: List<String> = ArrayList<String>()
@@ -217,7 +212,6 @@ class AddMemberForthActivity : AppCompatActivity() {
         // first aid
         first_aid_type_view = findViewById(R.id.first_air_type_view)
         edit_aid_type = findViewById(R.id.edit_aid_type)
-        relative_aid_type = findViewById(R.id.relative_aid_type)
         professionl_body_regi_view = findViewById(R.id.professionl_body_regi_view)
         edit_profe_body_regis_num = findViewById<TextInputEditText>(R.id.edit_profe_body_regis_num)
 
@@ -278,7 +272,6 @@ class AddMemberForthActivity : AppCompatActivity() {
                 edit_medical_information_details.setText(sessionManager.fetchMEDICAL_OTHER_INFO())
                 edit_date_of_first_aid_qualification.text = sessionManager.fetchQUALIFICATION_DATE()
                 edit_qualification_file.text = sessionManager.fetchQUALIFICATION_FILE()
-//                edit_aid_type.setSelection(firstAidInfoName.indexOf(sessionManager.fetchQUALIFICATION_VALUE())) // nik
                 if (sessionManager.fetchDOHAVEMEDICAL() == "1") {
                     medical_information_view.setBackgroundResource(R.drawable.edit_primery_color_round)
                     medical_information_no_view.setBackgroundResource(R.drawable.edittext_round)
@@ -320,6 +313,7 @@ class AddMemberForthActivity : AppCompatActivity() {
 //                    setFirstAidInfo(sessionManager.fetchQUALIFICATION_VALUE().toString())
 
                     qualified_info = "1"
+//                    searchableItemSelectedData("4","",sessionManager.fetchQUALIFICATION_VALUE().toString())
                 } else {
                     qualification_First_no_view.setBackgroundResource(R.drawable.edit_primery_color_round)
                     qualification_First_view.setBackgroundResource(R.drawable.edittext_round)
@@ -409,10 +403,8 @@ class AddMemberForthActivity : AppCompatActivity() {
                     visible_value = sessionManager.fetchQUALIFICATION_VALUE().toString()
                 }
             }
-            DebugLog.e("visibile value 1   " + visible_value)
             setFirstAidInfo(visible_value)
-            edit_aid_type.setTitle("Select First Aid Qualification Type")
-            edit_aid_type.setSelection(0)
+            edit_aid_type.text = "Select First Aid Qualification Type"
             qualified_info = "1"
         })
 
@@ -497,17 +489,17 @@ class AddMemberForthActivity : AppCompatActivity() {
                 return@DebouncedClickListener
 
             } else {
-                DebugLog.e("qualified_info : " + qualified_info)
+//                DebugLog.e("qualified_info : " + qualified_info)
                 if (qualified_info == "0") {// docs upload = no
                     if (intent.getStringExtra("IS_SELF") != "self") { // Profile or add family
                         if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             if (intent.getStringExtra("FAMILY") == "PROFILE") {
                                 //call Edit profile API here
                                 callEditProfileApi(false)
-                                DebugLog.e("Profile : Edit proile without Doc upload")
+//                                DebugLog.e("Profile : Edit proile without Doc upload")
                             } else {
                                 callMembershipApi("family", false)
-                                DebugLog.e("Add Family : without doc upload")
+//                                DebugLog.e("Add Family : without doc upload")
                             }
                         } else {
                             Toast.makeText(
@@ -526,7 +518,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                             return@DebouncedClickListener
                         } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             callMembershipApi("self", false)
-                            DebugLog.e("Add Self =>  Without Image")
+//                            DebugLog.e("Add Self =>  Without Image")
                         } else {
                             Toast.makeText(
                                 this@AddMemberForthActivity,
@@ -541,10 +533,10 @@ class AddMemberForthActivity : AppCompatActivity() {
                         if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             if (intent.getStringExtra("FAMILY") == "PROFILE") {
                                 callEditProfileApi(true)
-                                DebugLog.e("Profile : Edit profile with doc file")
+//                                DebugLog.e("Profile : Edit profile with doc file")
                             } else {
                                 callMembershipApi("family", true)
-                                DebugLog.e("Add Family : with doc file")
+//                                DebugLog.e("Add Family : with doc file")
                             }
 
                         } else {
@@ -564,7 +556,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                             return@DebouncedClickListener
                         } else if (Functions.isConnectingToInternet(this@AddMemberForthActivity)) {
                             callMembershipApi("self", true)
-                            DebugLog.e("Add Self :  with doc file")
+//                            DebugLog.e("Add Self :  with doc file")
                         } else {
                             Toast.makeText(
                                 this@AddMemberForthActivity,
@@ -595,32 +587,19 @@ class AddMemberForthActivity : AppCompatActivity() {
 
             val dialog = DatePickerDialog(this, { _, year, month, day_of_month ->
                 calendar[Calendar.YEAR] = year
-                calendar[Calendar.MONTH] = month + 1
+                calendar[Calendar.MONTH] = month
                 calendar[Calendar.DAY_OF_MONTH] = day_of_month
                 val myFormat = "dd/MM/yyyy"
                 val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
                 edit_date_of_first_aid_qualification.text = sdf.format(calendar.time)
             }, year, month, day)
-//            dialog.datePicker.minDate = calendar.timeInMillis
-//            calendar.add(Calendar.YEAR, 0)
-//            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
         })
 
-        edit_special_dietary_requirements.onItemSelectedListener = mOnItemSelectedListener_dietary
-        edit_spoken_language.onItemSelectedListener = mOnItemSelectedListener_spoken
-        edit_originating_state_in_india.onItemSelectedListener = mOnItemSelectedListener_origin
-        edit_aid_type.onItemSelectedListener = mOnItemSelectedListener_firstAid
-
-        edit_special_dietary_requirements.setTitle("Select Special Dietary")
-        edit_spoken_language.setTitle("Select Spoken Language")
-        edit_originating_state_in_india.setTitle("Select Originationg State In India")
-        edit_aid_type.setTitle("Select First Aid Qualification Type")
-
-        first_aid_type_view.setOnClickListener(DebouncedClickListener {
-            SearchSpinner(firstAidInfoName.toTypedArray(), edit_aid_type)
-        })
-
+        edit_special_dietary_requirements.text = "Select Special Dietary"
+        edit_spoken_language.text = "Select Spoken Language"
+        edit_originating_state_in_india.text = "Select Origination State In India"
+        edit_aid_type.text = "Select First Aid Qualification Type"
     }
 
     private fun callApis() {
@@ -646,109 +625,6 @@ class AddMemberForthActivity : AppCompatActivity() {
         }
 
     }
-
-    private fun SearchSpinner(
-        spinner_search: Array<String>, edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-
-        if (intent.getStringExtra("TYPE_SELF") != "self") {
-            if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
-                if (sessionManager.fetchDIETARY()?.isNotEmpty() == true) {
-                    val inputString = sessionManager.fetchDIETARY()
-                    val parts = inputString?.split(", ")
-                    for (part in parts!!) {
-                        addDietaryChip(part)
-                    }
-                }
-                if (sessionManager.fetchSPOKKENLANGUAGE()?.isNotEmpty() == true) {
-                    val inputString = sessionManager.fetchSPOKKENLANGUAGE()
-                    val parts = inputString?.split(", ")
-                    for (part in parts!!) {
-                        addLanguageChip(part)
-                    }
-                }
-                if (sessionManager.fetchSTATE_IN_INDIA()?.isNotEmpty() == true) {
-                    val inputString = sessionManager.fetchSTATE_IN_INDIA()
-                    val parts = inputString?.split(", ")
-                    for (part in parts!!) {
-                        addStateChip(part)
-                    }
-                }
-            }
-        }
-    }
-
-
-    private val mOnItemSelectedListener_dietary: AdapterView.OnItemSelectedListener =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-                if (uiDietary) {
-                    addDietaryChip(dietaryName[position])
-                }
-                uiDietary = true
-//                edit_special_dietary_requirements.setSelection(0)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-        }
-
-    private val mOnItemSelectedListener_spoken: AdapterView.OnItemSelectedListener =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-                if (uiLanguage) {
-                    addLanguageChip(spokenName[position])
-                }
-                uiLanguage = true
-//                edit_spoken_language.setSelection(0)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-        }
-
-    private val mOnItemSelectedListener_origin: AdapterView.OnItemSelectedListener =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-                if (uiState) {
-                    addStateChip(originName[position])
-                }
-                uiState = true
-//                edit_originating_state_in_india.setSelection(0)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-        }
-
-
-    private val mOnItemSelectedListener_firstAid: AdapterView.OnItemSelectedListener =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-                DebugLog.e("Name : " + firstAidInfoName[position])
-                DebugLog.e("Postion : " + firstAidInfoID[position])
-                FIRSTAID_ID = firstAidInfoID[position]
-                setFirstAidInfo(FIRSTAID_ID)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-            }
-        }
 
     private fun setFirstAidInfo(firstaidId: String) {
 
@@ -781,7 +657,9 @@ class AddMemberForthActivity : AppCompatActivity() {
                         isDocApload = false
                     }
                 }
-                edit_aid_type.setSelection(n)
+//                edit_aid_type.setSelection(n)
+                edit_aid_type.text = data_firstaidInfo[n].name
+                FIRSTAID_ID = data_firstaidInfo[n].id
                 break
             }
         }
@@ -794,11 +672,29 @@ class AddMemberForthActivity : AppCompatActivity() {
             val response = MyHssApplication.instance?.api?.getDietaries()
             if (response?.status == true) {
                 dietaryDataList = response.data ?: emptyList()
-
                 dietaryName = dietaryDataList.map { it.dietaryRequirementsName.toString() }
                 dietaryID = dietaryDataList.map { it.dietaryRequirementsId.toString() }
+                edit_special_dietary_requirements.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "1",
+                        "Select Special Dietary",
+                        dietaryName,
+                        dietaryID
+                    )
+                })
 
-                SearchSpinner(dietaryName.toTypedArray(), edit_special_dietary_requirements)
+                if (intent.getStringExtra("TYPE_SELF") != "self") {
+                    if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
+                        if (sessionManager.fetchDIETARY()?.isNotEmpty() == true) {
+                            val inputString = sessionManager.fetchDIETARY()
+                            val parts = inputString?.split(", ")
+                            for (part in parts!!) {
+                                addDietaryChip(part)
+                            }
+                        }
+                    }
+                }
+
             } else {
                 Functions.displayMessage(
                     this@AddMemberForthActivity,
@@ -819,14 +715,32 @@ class AddMemberForthActivity : AppCompatActivity() {
     private suspend fun mySpokenLanguage() {
         try {
             val response = MyHssApplication.instance?.api?.getLanguages()
-
             if (response?.status == true) {
                 spokenLanguageDataList = response.data ?: emptyList()
-
                 spokenName = spokenLanguageDataList.map { it.languageName.toString() }
                 spokenID = spokenLanguageDataList.map { it.languageId.toString() }
+                edit_spoken_language.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "2",
+                        "Select Spoken Language",
+                        spokenName,
+                        spokenID
+                    )
+                })
 
-                SearchSpinner(spokenName.toTypedArray(), edit_spoken_language)
+                if (intent.getStringExtra("TYPE_SELF") != "self") {
+                    if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
+                        if (sessionManager.fetchSPOKKENLANGUAGE()?.isNotEmpty() == true) {
+                            val inputString = sessionManager.fetchSPOKKENLANGUAGE()
+                            val parts = inputString?.split(", ")
+                            for (part in parts!!) {
+                                addLanguageChip(part)
+                            }
+                        }
+                    }
+                }
+
+
             } else {
                 Functions.displayMessage(
                     this@AddMemberForthActivity,
@@ -849,11 +763,27 @@ class AddMemberForthActivity : AppCompatActivity() {
             val response = MyHssApplication.instance?.api?.getIndianStates()
             if (response?.status == true) {
                 stateDataList = response.data ?: emptyList()
-
                 originName = stateDataList.map { it.stateName.toString() }
                 originID = stateDataList.map { it.indianStateListId.toString() }
-
-                SearchSpinner(originName.toTypedArray(), edit_originating_state_in_india)
+                edit_originating_state_in_india.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "3",
+                        "Select Origination State In India",
+                        originName,
+                        originID
+                    )
+                })
+                if (intent.getStringExtra("TYPE_SELF") != "self") {
+                    if (intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra("TITLENAME") == "Profile") {
+                        if (sessionManager.fetchSTATE_IN_INDIA()?.isNotEmpty() == true) {
+                            val inputString = sessionManager.fetchSTATE_IN_INDIA()
+                            val parts = inputString?.split(", ")
+                            for (part in parts!!) {
+                                addStateChip(part)
+                            }
+                        }
+                    }
+                }
             } else {
                 Functions.displayMessage(
                     this@AddMemberForthActivity,
@@ -878,7 +808,15 @@ class AddMemberForthActivity : AppCompatActivity() {
 
                 firstAidInfoName = data_firstaidInfo.map { it.name.toString() }
                 firstAidInfoID = data_firstaidInfo.map { it.id.toString() }
-                SearchSpinner(firstAidInfoName.toTypedArray(), edit_aid_type)
+
+                edit_aid_type.setOnClickListener(DebouncedClickListener {
+                    openSearchableSpinnerDialog(
+                        "4",
+                        "Select First Aid Qualification Type",
+                        firstAidInfoName,
+                        firstAidInfoID
+                    )
+                })
                 if (intent.getStringExtra("TYPE_SELF") != "self" && intent.getStringExtra("FAMILY") == "PROFILE" && intent.getStringExtra(
                         "TITLENAME"
                     ) == "Profile"
@@ -909,12 +847,14 @@ class AddMemberForthActivity : AppCompatActivity() {
     }
 
     private fun callMembershipApi(sType: String, isDoc: Boolean) {
+        next_layout.isEnabled = false
+        back_layout.isEnabled = false
         val pd = CustomProgressBar(this@AddMemberForthActivity)
         pd.show()
-        DebugLog.e(
-            sType + " , " + " isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF")
-                .toString()
-        )
+//        DebugLog.e(
+//            sType + " , " + " isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF")
+//                .toString()
+//        )
 
         var first_aid_date = edit_date_of_first_aid_qualification.text.toString()
         var first_aid_pro_body = edit_profe_body_regis_num.text.toString()
@@ -1032,17 +972,17 @@ class AddMemberForthActivity : AppCompatActivity() {
         }
 
         val requestBody: MultipartBody = builderData.build()
-        for (i in 0 until requestBody.size) {
-            val part = requestBody.part(i)
-            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
-                ?.substringBefore("\"")
-            val value = part.body?.let { requestBody ->
-                val buffer = Buffer()
-                requestBody.writeTo(buffer)
-                buffer.readUtf8()
-            } ?: ""
-            DebugLog.e("$key: $value")
-        }
+//        for (i in 0 until requestBody.size) {
+//            val part = requestBody.part(i)
+//            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+//                ?.substringBefore("\"")
+//            val value = part.body?.let { requestBody ->
+//                val buffer = Buffer()
+//                requestBody.writeTo(buffer)
+//                buffer.readUtf8()
+//            } ?: ""
+//            DebugLog.e("$key: $value")
+//        }
         val call: Call<JsonObject> =
             MyHssApplication.instance!!.api.postAddOrCreateMembership(requestBody)
         call.enqueue(object : Callback<JsonObject> {
@@ -1097,6 +1037,8 @@ class AddMemberForthActivity : AppCompatActivity() {
                                 this@AddMemberForthActivity, "Error",
                                 errorMsg
                             )
+                            next_layout.isEnabled = true
+                            back_layout.isEnabled = true
                         }
                     }
                 } else {
@@ -1104,6 +1046,8 @@ class AddMemberForthActivity : AppCompatActivity() {
                         this@AddMemberForthActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    next_layout.isEnabled = true
+                    back_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -1111,15 +1055,18 @@ class AddMemberForthActivity : AppCompatActivity() {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                next_layout.isEnabled = true
+                back_layout.isEnabled = true
             }
         })
     }
 
     private fun callEditProfileApi(isDoc: Boolean) {
-        DebugLog.e(
-            "PROFILE, isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF").toString()
-        )
-
+//        DebugLog.e(
+//            "PROFILE, isDoc : " + isDoc + "  => " + intent.getStringExtra("IS_SELF").toString()
+//        )
+        next_layout.isEnabled = false
+        back_layout.isEnabled = false
         val pd = CustomProgressBar(this@AddMemberForthActivity)
         pd.show()
 
@@ -1236,17 +1183,17 @@ class AddMemberForthActivity : AppCompatActivity() {
         }
 
         val requestBody: MultipartBody = builderData.build()
-        for (i in 0 until requestBody.size) {
-            val part = requestBody.part(i)
-            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
-                ?.substringBefore("\"")
-            val value = part.body?.let { requestBody ->
-                val buffer = Buffer()
-                requestBody.writeTo(buffer)
-                buffer.readUtf8()
-            } ?: ""
-            DebugLog.e("$key: $value")
-        }
+//        for (i in 0 until requestBody.size) {
+//            val part = requestBody.part(i)
+//            val key = part.headers?.get("Content-Disposition")?.substringAfter("name=\"")
+//                ?.substringBefore("\"")
+//            val value = part.body?.let { requestBody ->
+//                val buffer = Buffer()
+//                requestBody.writeTo(buffer)
+//                buffer.readUtf8()
+//            } ?: ""
+//            DebugLog.e("$key: $value")
+//        }
 
         val call: Call<JsonObject> =
             MyHssApplication.instance!!.api.postUpdateMembership(requestBody)
@@ -1288,6 +1235,8 @@ class AddMemberForthActivity : AppCompatActivity() {
                                 this@AddMemberForthActivity, "Error",
                                 errorMsg
                             )
+                            next_layout.isEnabled = true
+                            back_layout.isEnabled = true
                         }
                     }
                 } else {
@@ -1295,6 +1244,8 @@ class AddMemberForthActivity : AppCompatActivity() {
                         this@AddMemberForthActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    next_layout.isEnabled = true
+                    back_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -1302,6 +1253,8 @@ class AddMemberForthActivity : AppCompatActivity() {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 Toast.makeText(this@AddMemberForthActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                next_layout.isEnabled = true
+                back_layout.isEnabled = true
             }
         })
     }
@@ -1331,11 +1284,65 @@ class AddMemberForthActivity : AppCompatActivity() {
         dialog.show()
     }
 
+
+
     fun openGalleryForImage() {
+
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
+//
+//        }else{
+//
+//        }
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, IMAGE_PICK_CODE) // REQUEST_CODE)
     }
+
+
+    suspend fun getImages(contentResolver: ContentResolver): List<Media> = withContext(Dispatchers.IO) {
+        val projection = arrayOf(
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.DISPLAY_NAME,
+            MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media.MIME_TYPE,
+        )
+
+        val collectionUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Query all the device storage volumes instead of the primary only
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+
+        val images = mutableListOf<Media>()
+
+        contentResolver.query(
+            collectionUri,
+            projection,
+            null,
+            null,
+            "${MediaStore.Images.Media.DATE_ADDED} DESC"
+        )?.use { cursor ->
+            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+            val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+            while (cursor.moveToNext()) {
+                val uri = ContentUris.withAppendedId(collectionUri, cursor.getLong(idColumn))
+                val name = cursor.getString(displayNameColumn)
+                val size = cursor.getLong(sizeColumn)
+                val mimeType = cursor.getString(mimeTypeColumn)
+
+                val image = Media(uri, name, size, mimeType)
+                images.add(image)
+            }
+        }
+
+        return@withContext images
+    }
+
+
 
     fun showFileChooserforPDF() {
         val intent = Intent()
@@ -1449,7 +1456,7 @@ class AddMemberForthActivity : AppCompatActivity() {
                 inputStream?.use { input ->
                     val outputStream = file.outputStream()
                     outputStream.use { output ->
-                        val buffer = ByteArray(4 * 1024) // 4k buffer
+                        val buffer = ByteArray(4 * 1024)
                         while (true) {
                             val byteCount = input.read(buffer)
                             if (byteCount < 0) break
@@ -1741,5 +1748,45 @@ class AddMemberForthActivity : AppCompatActivity() {
             }
         }
         return ORIGIN_ID
+    }
+
+    private fun openSearchableSpinnerDialog(
+        sType: String,
+        sTitle: String,
+        ItemName: List<String>,
+        ItemID: List<String>
+    ) {
+        val fragment = supportFragmentManager.findFragmentByTag("DialogSearchableSpinner")
+        if (fragment == null) {
+            val dialogSearch = DialogSearchableSpinner.newInstance(
+                this,
+                sType,
+                sTitle,
+                ItemName,
+                ItemID
+            )
+            dialogSearch.show(supportFragmentManager, "DialogSearchableSpinner")
+        }
+    }
+
+    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: String) {
+        when (stype) {
+            "1" -> {
+                addDietaryChip(sItemName)
+            }
+
+            "2" -> {
+                addLanguageChip(sItemName)
+            }
+
+            "3" -> {
+                addStateChip(sItemName)
+            }
+
+            "4" -> {
+                FIRSTAID_ID = sItemID
+                setFirstAidInfo(FIRSTAID_ID)
+            }
+        }
     }
 }

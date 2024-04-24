@@ -11,8 +11,6 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -27,8 +25,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -52,6 +48,10 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.Welcome.WelcomeActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pro.devapp.biometric.BiometricCallback
 import pro.devapp.biometric.BiometricManager
 import retrofit2.Call
@@ -71,6 +71,9 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
 
     /*Gmail*/
     lateinit var mGoogleSignInClient: GoogleSignInClient
+    lateinit var login_btn: TextView
+    lateinit var registration_layout: RelativeLayout
+    lateinit var forgot_btn: TextView
     private val RC_SIGN_IN = 9001
 
 
@@ -96,12 +99,12 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
 
         Log.d("m_deviceId", m_deviceId)
 
-        val login_btn = findViewById<TextView>(R.id.login_btn)
+        login_btn = findViewById(R.id.login_btn)
         val edit_username = findViewById<TextInputEditText>(R.id.edit_username)
         val edit_password = findViewById<TextInputEditText>(R.id.edit_password)
-        val registration_layout = findViewById<RelativeLayout>(R.id.registration_layout)
-        val forgot_btn = findViewById<TextView>(R.id.forgot_btn)
-        val rootLayout = findViewById<RelativeLayout>(R.id.rootLayout)
+        registration_layout = findViewById(R.id.registration_layout)
+        forgot_btn = findViewById(R.id.forgot_btn)
+//        val rootLayout = findViewById<RelativeLayout>(R.id.rootLayout)
 //        val gmail_login = findViewById<ImageView>(R.id.gmail_login)
 
         val loginButton = findViewById<LoginButton>(R.id.login_button)
@@ -243,9 +246,9 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
     }
 
     private fun login(user: String, password: String, m_deviceId: String, device_type: String) {
+        disableButtons()
         val pd = CustomProgressBar(this@LoginActivity)
         pd.show()
-
         val call: Call<LoginResponse> =
             MyHssApplication.instance!!.api.userLogin(user, password, m_deviceId, device_type)
         call.enqueue(object : Callback<LoginResponse> {
@@ -267,7 +270,6 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
                         sessionManager.saveMEMBERID(response.body()!!.memberId!!)
 //                        sessionManager.saveSECURITYKEY(response.body()!!.securityKey!!)
                         sessionManager.saveAuthToken(response.body()!!.token!!)
-
 
                         sharedPreferences.edit().apply {
                             putString("DEVICE_TOKEN", m_deviceId)
@@ -299,30 +301,35 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
                         if (response.body()!!.memberId == "" || response.body()!!.memberStatus == "0") {  // && sharedPreferences.getString("MEMBERID", "") == ""
                             val i = Intent(this@LoginActivity, WelcomeActivity::class.java)
                             startActivity(i)
-                            finish()
+                            finishAffinity()
                         } else if (response.body()!!.memberId != "" && response.body()!!.memberStatus == "1") {
                             val i = Intent(this@LoginActivity, Passcode_Activity::class.java)
                             i.putExtra("CHANGE_BIOMETRIC", "")
                             startActivity(i)
-                            finish()
+                            finishAffinity()
                         } else {
                             Functions.displayMessage(
                                 this@LoginActivity, "Login Error, Please try after sometime"
                             )
+                            enableButtons()
+
                         }
                     } else {
                         Functions.displayMessage(this@LoginActivity, response.body()?.message)
+                        enableButtons()
                     }
                 } else if (response.code() == 404) {
                     Functions.showAlertMessageWithOK(
                         this@LoginActivity, "",
                         response.body()?.message
                     )
+                    enableButtons()
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@LoginActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    enableButtons()
                 }
                 pd.dismiss()
             }
@@ -330,11 +337,28 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Toast.makeText(this@LoginActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                enableButtons()
             }
         })
     }
 
+    private fun enableButtons() {
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(1000)
+            login_btn.isEnabled = true
+            registration_layout.isEnabled = true
+            forgot_btn.isEnabled = true
+        }
+    }
+
+    private fun disableButtons() {
+        login_btn.isEnabled = false
+        registration_layout.isEnabled = false
+        forgot_btn.isEnabled = false
+    }
+
     private fun forgot(forgotuser: String) {
+        disableButtons()
         val pd = CustomProgressBar(this@LoginActivity)
         pd.show()
         val call: Call<ForgotPasswordResponse> =
@@ -343,27 +367,18 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
             override fun onResponse(
                 call: Call<ForgotPasswordResponse>, response: Response<ForgotPasswordResponse>
             ) {
-
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        Functions.showAlertMessageWithOK(
-                            this@LoginActivity, "",
-//                        "Message",
-                            response.body()?.message
-                        )
-                    } else {
-                        Functions.showAlertMessageWithOK(
-                            this@LoginActivity, "",
-//                        "Message",
-                            response.body()?.message
-                        )
-                    }
+                    Functions.showAlertMessageWithOK(
+                        this@LoginActivity, "",
+                        response.body()?.message
+                    )
+                    enableButtons()
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@LoginActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    enableButtons()
                 }
                 pd.dismiss()
             }
@@ -371,6 +386,7 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
             override fun onFailure(call: Call<ForgotPasswordResponse>, t: Throwable) {
                 Toast.makeText(this@LoginActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                enableButtons()
             }
         })
     }
@@ -601,7 +617,6 @@ class LoginActivity : AppCompatActivity(), iForgotPasswordDialog {
     }
 
     override fun forgotPasswordDialog(forgotUserID: String) {
-        DebugLog.e("forgotuser name : $forgotUserID")
         if (Functions.isConnectingToInternet(this@LoginActivity)) {
             forgot(forgotUserID)
         } else {

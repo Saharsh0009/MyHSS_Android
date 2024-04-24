@@ -794,13 +794,13 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
             var s_name = ""
             for (j in 0 until guruDakshinabeans.size) {
                 if (member_list.elementAt(i) == guruDakshinabeans.get(j).memberId) {
-//                    DebugLog.e("paid amt : " + guruDakshinabeans.get(j).paidAmount)
-                    s_count = s_count + guruDakshinabeans.get(j).paidAmount!!.toDouble()
-                    s_name = guruDakshinabeans.get(j).firstName.toString()
+                    s_count += guruDakshinabeans[j].paidAmount!!.toDouble()
+                    if(s_name.isEmpty()){
+                        s_name = guruDakshinabeans[j].firstName.toString()
+                    }
                 }
             }
-            t_count = t_count + s_count
-//            DebugLog.e("Total paid amt : $s_count")
+            t_count += s_count
             labelsList.add(s_name)
             pieEntries.add(PieEntry(s_count.toFloat(), s_name))
         }
@@ -865,13 +865,19 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         chip.isCheckable = false
         chip.isClickable = true
         chip.setTextColor(Color.WHITE)
-        chip.setOnClickListener(DebouncedClickListener { openBarChart(label.toString()) })
+        chip.setOnClickListener(DebouncedClickListener { memberIDForOpenBarChart(label.toString()) })
         return chip
     }
 
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        openBarChart((e as PieEntry).label.toString())
+        memberIDForOpenBarChart((e as PieEntry).label.toString())
+    }
+
+    private fun memberIDForOpenBarChart(sName: String) {
+        guru_dakshinaBeans.find { it.firstName == sName }?.let {
+            openBarChart(it.memberId!!)
+        }
     }
 
     override fun onNothingSelected() {
@@ -882,7 +888,15 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         val listData_guruDakshina: ArrayList<Datum_guru_dakshina> = ArrayList()
 
         for (i in 0 until guru_dakshinaBeans.size) {
-            if (sName == guru_dakshinaBeans[i].firstName) {
+            if (sName == guru_dakshinaBeans[i].memberId) {
+                DebugLog.e("*************************")
+                DebugLog.e("AMT ${guru_dakshinaBeans[i].paidAmount}")
+                DebugLog.e("NAME : ${guru_dakshinaBeans[i].firstName}")
+                DebugLog.e("id : ${guru_dakshinaBeans[i].id}")
+                DebugLog.e("ord : ${guru_dakshinaBeans[i].orderId}")
+                DebugLog.e("mem : ${guru_dakshinaBeans[i].memberId}")
+                DebugLog.e("dakshina : ${guru_dakshinaBeans[i].dakshina}")
+                DebugLog.e("txnid : ${guru_dakshinaBeans[i].txnId}")
                 val barchartDataModel = BarchartDataModel()
                 barchartDataModel.setValue_x(guru_dakshinaBeans[i].startDate)
                 barchartDataModel.setValue_y(guru_dakshinaBeans[i].paidAmount)

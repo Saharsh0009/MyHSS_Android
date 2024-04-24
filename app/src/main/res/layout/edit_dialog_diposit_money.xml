@@ -8,12 +8,22 @@
     android:gravity="center"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/font_size15"
+        android:layout_marginTop="@dimen/padding10"
+        android:layout_marginEnd="@dimen/font_size15"
+        android:text="@string/edit_donate_amount"
+        android:textColor="@color/off_black"
+        android:textSize="@dimen/font_size15" />
+
     <EditText
         android:id="@+id/edit_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/font_size15"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="@dimen/padding20"
         android:layout_marginEnd="@dimen/font_size15"
         android:background="@color/light_gray_background"
         android:hint="\u00a3  Amount"

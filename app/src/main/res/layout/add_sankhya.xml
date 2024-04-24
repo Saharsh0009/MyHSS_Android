@@ -105,29 +105,19 @@
                 <RelativeLayout
                     android:id="@+id/utsav_txt_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/padding40">
+                    android:layout_height="wrap_content">
 
-                    <!--<com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/primaryColor"
-                        android:paddingStart="@dimen/font_size15"
-                        style="@style/EditText.OutlinedBox"
-                        tools:ignore="RtlSymmetry">-->
-
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    <TextView
                         android:id="@+id/utsav_txt"
-                        style="@android:style/Widget.Spinner.DropDown"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/padding40"
                         android:layout_marginTop="7dp"
                         android:background="@android:color/transparent"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/padding10"
                         android:tag="@string/relation_ship_txt"
                         android:textColor="@color/blackColor"
-                        android:textColorHint="@color/grayColorColor"
-                        android:theme="@style/StyleEditTextView" />
-
-                    <!--</com.google.android.material.textfield.TextInputLayout>-->
+                        android:textColorHint="@color/grayColorColor" />
 
                     <ImageView
                         android:layout_width="@dimen/padding10"
@@ -243,8 +233,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
-                                android:layout_marginRight="-10dp"
                                 android:layout_centerVertical="true"
+                                android:layout_marginRight="-10dp"
                                 android:visibility="visible" />
                         </RelativeLayout>
 
