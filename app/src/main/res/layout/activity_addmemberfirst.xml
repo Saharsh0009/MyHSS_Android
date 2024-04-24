@@ -895,17 +895,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                        <TextView
                             android:id="@+id/edit_realationship_txt"
-                            style="@android:style/Widget.Spinner.DropDown"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="@dimen/padding55"
                             android:layout_centerVertical="true"
                             android:background="@android:color/transparent"
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/padding10"
                             android:tag="@string/relation_ship_txt"
                             android:textColor="@color/blackColor"
-                            android:textColorHint="@color/grayColorColor"
-                            android:theme="@style/StyleEditTextView" />
+                            android:textColorHint="@color/grayColorColor" />
 
                         <ImageView
                             android:layout_width="@dimen/padding10"
@@ -1042,17 +1042,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    <TextView
                         android:id="@+id/edit_occupation_select_other"
-                        style="@android:style/Widget.Spinner.DropDown"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/padding55"
                         android:layout_centerVertical="true"
                         android:background="@android:color/transparent"
+                        android:gravity="center_vertical"
                         android:padding="@dimen/padding10"
                         android:textColor="@color/blackColor"
-                        android:textColorHint="@color/grayColorColor"
-                        android:theme="@style/StyleEditTextView" />
+                        android:textColorHint="@color/grayColorColor" />
 
                     <ImageView
                         android:layout_width="@dimen/padding10"
@@ -1197,17 +1196,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    <TextView
                         android:id="@+id/edit_vibhag_region"
-                        style="@android:style/Widget.Spinner.DropDown"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/padding55"
                         android:layout_centerVertical="true"
                         android:background="@android:color/transparent"
+                        android:gravity="center_vertical"
                         android:padding="@dimen/padding10"
                         android:textColor="@color/blackColor"
-                        android:textColorHint="@color/grayColorColor"
-                        android:theme="@style/StyleEditTextView" />
+                        android:textColorHint="@color/grayColorColor" />
 
                     <ImageView
                         android:layout_width="@dimen/padding10"
@@ -1278,17 +1276,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    <TextView
                         android:id="@+id/edit_nagar_town"
-                        style="@android:style/Widget.Spinner.DropDown"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/padding55"
                         android:layout_centerVertical="true"
                         android:background="@android:color/transparent"
+                        android:gravity="center_vertical"
                         android:padding="@dimen/padding10"
                         android:textColor="@color/blackColor"
-                        android:textColorHint="@color/grayColorColor"
-                        android:theme="@style/StyleEditTextView" />
+                        android:textColorHint="@color/grayColorColor" />
 
                     <ImageView
                         android:layout_width="@dimen/padding10"
@@ -1359,17 +1356,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    <TextView
                         android:id="@+id/edit_shakha_branch"
-                        style="@android:style/Widget.Spinner.DropDown"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/padding55"
                         android:layout_centerVertical="true"
                         android:background="@android:color/transparent"
+                        android:gravity="center_vertical"
                         android:padding="@dimen/padding10"
                         android:textColor="@color/blackColor"
-                        android:textColorHint="@color/grayColorColor"
-                        android:theme="@style/StyleEditTextView" />
+                        android:textColorHint="@color/grayColorColor" />
 
                     <ImageView
                         android:layout_width="@dimen/padding10"

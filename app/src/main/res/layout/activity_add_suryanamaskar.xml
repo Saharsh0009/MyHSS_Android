@@ -56,31 +56,31 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/padding40">
+                            android:layout_height="wrap_content">
 
-                            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            <TextView
                                 android:id="@+id/family_txt"
-                                style="@android:style/Widget.Spinner.DropDown"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="@dimen/padding40"
+                                android:gravity="center_vertical"
+                                android:padding="@dimen/padding10"
                                 android:layout_marginTop="7dp"
                                 android:background="@android:color/transparent"
                                 android:tag="@string/family_member"
                                 android:textColor="@color/blackColor"
-                                android:textColorHint="@color/grayColorColor"
-                                android:theme="@style/StyleEditTextView" />
+                                android:textColorHint="@color/grayColorColor"/>
 
-                            <TextView
-                                android:id="@+id/username"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/font_size15"
-                                android:layout_marginTop="@dimen/padding10"
-                                android:layout_marginEnd="@dimen/padding15"
-                                android:fontFamily="@font/sourcesanspro_regular"
-                                android:textColor="@color/blackColor"
-                                android:textSize="@dimen/font_size15"
-                                android:visibility="gone" />
+<!--                            <TextView-->
+<!--                                android:id="@+id/username"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="@dimen/padding40"-->
+<!--                                android:layout_marginStart="@dimen/font_size15"-->
+<!--                                android:layout_marginTop="@dimen/padding10"-->
+<!--                                android:layout_marginEnd="@dimen/padding15"-->
+<!--                                android:fontFamily="@font/sourcesanspro_regular"-->
+<!--                                android:textColor="@color/blackColor"-->
+<!--                                android:textSize="@dimen/font_size15"-->
+<!--                                android:visibility="gone" />-->
                             <!--</com.google.android.material.textfield.TextInputLayout>-->
 
                             <ImageView

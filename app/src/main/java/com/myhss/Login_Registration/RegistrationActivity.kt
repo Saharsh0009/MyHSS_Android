@@ -1,7 +1,6 @@
 package com.myhss.Login_Registration
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -18,7 +17,6 @@ import android.text.style.ClickableSpan
 import android.util.Log
 import android.util.Patterns
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -60,6 +58,7 @@ class RegistrationActivity : AppCompatActivity() {
     lateinit var edit_email: TextInputEditText
     lateinit var til_username: TextInputLayout
     lateinit var edit_username: TextInputEditText
+    lateinit var login_btn: TextView
     private lateinit var sessionManager: SessionManager
 
     private val apiHandler = Handler(Looper.getMainLooper())
@@ -87,11 +86,11 @@ class RegistrationActivity : AppCompatActivity() {
         m_deviceId = intent.getStringExtra("m_deviceId")!!
         Log.d("m_deviceId", m_deviceId)
 
-        val login_btn = findViewById<TextView>(R.id.login_btn)
+        login_btn = findViewById(R.id.login_btn)
         val registration_layout = findViewById<RelativeLayout>(R.id.registration_layout)
         val edit_firstname = findViewById<TextInputEditText>(R.id.edit_firstname)
         val edit_surname = findViewById<TextInputEditText>(R.id.edit_surname)
-        edit_username = findViewById<TextInputEditText>(R.id.edit_username)
+        edit_username = findViewById(R.id.edit_username)
         edit_email = findViewById(R.id.edit_email)
         val edit_password = findViewById<TextInputEditText>(R.id.edit_password)
         val edit_confirmpassword = findViewById<TextInputEditText>(R.id.edit_confirmpassword)
@@ -100,7 +99,7 @@ class RegistrationActivity : AppCompatActivity() {
         val checkbox = findViewById<AppCompatCheckBox>(R.id.checkbox)
         val til_firstname = findViewById<TextInputLayout>(R.id.til_firstname)
         val til_surname = findViewById<TextInputLayout>(R.id.til_surname)
-        til_username = findViewById<TextInputLayout>(R.id.til_username)
+        til_username = findViewById(R.id.til_username)
         val til_email = findViewById<TextInputLayout>(R.id.til_email)
         val til_password = findViewById<TextInputLayout>(R.id.til_password)
         val til_confirmpassword = findViewById<TextInputLayout>(R.id.til_confirmpassword)
@@ -163,6 +162,7 @@ class RegistrationActivity : AppCompatActivity() {
 
 
         login_btn.setOnClickListener(DebouncedClickListener {
+            DebugLog.e("Test Click-------------------------------------------")
             val firstname = edit_firstname.text.toString()
             val surname = edit_surname.text.toString()
             val username = edit_username.text.toString()
@@ -244,7 +244,9 @@ class RegistrationActivity : AppCompatActivity() {
                 Snackbar.make(rootLayout, getString(R.string.tnc), Snackbar.LENGTH_SHORT).show()
                 return@DebouncedClickListener
             } else {
+                login_btn.isEnabled = false
                 registration(firstname, surname, username, email, password, m_deviceId)
+
             }
         })
 
@@ -273,23 +275,10 @@ class RegistrationActivity : AppCompatActivity() {
                 startActivity(launchBrowser)
             }
         }
-
         span.setSpan(webClickSpan, 55, 55 + policy.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
         span.setSpan(webClickSpanTerms, 70, span.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
         already_terms.text = span
-
         already_terms.movementMethod = LinkMovementMethod.getInstance()
-
-        /*already_terms.setLinkTextColor(resources.getColor(R.color.primaryColor))
-        val value = "<html>Choosing Register means that you agree to the Hss (UK) <a href=\"https://dev.myhss.org.uk/page/privacy-policy/1\">Privacy Policy </a> and the <a href=\"https://dev.myhss.org.uk/page/terms-conditions/2\">MyHss Terms &amp; Conditions</a></html>"
-//        already_terms.setText("For us to reach out to you, please fill the details below or contact our customer care at  18004190899 or visit our website http://www.dupont.co.in/corporate-links/contact-dupont.html ")
-        already_terms.text = Html.fromHtml(value)
-        //"Choosing Register means that you agree to the Hss (UK) Privacy Policy and the MyHss Terms &amp; Conditions"
-        Linkify.addLinks(already_terms, Linkify.WEB_URLS)
-        Linkify.addLinks(already_terms, Linkify.ALL)*/
-
     }
 
     private fun UserNameCheck(username: String) {
@@ -364,6 +353,7 @@ class RegistrationActivity : AppCompatActivity() {
                     Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
                         dialogShow(edit_email.text.toString())
+                        pd.dismiss()
                     } else {
                         var errorMsg = ""
                         val error = response?.body()!!.error
@@ -380,20 +370,23 @@ class RegistrationActivity : AppCompatActivity() {
                             this@RegistrationActivity, "Error",
                             errorMsg
                         )
-
+                        pd.dismiss()
+                        login_btn.isEnabled = true
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@RegistrationActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    pd.dismiss()
+                    login_btn.isEnabled = true
                 }
-                pd.dismiss()
             }
 
             override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
                 Toast.makeText(this@RegistrationActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                login_btn.isEnabled = true
             }
         })
     }
@@ -430,6 +423,7 @@ class RegistrationActivity : AppCompatActivity() {
         })
         dialog.setCancelable(false)
         dialog.setContentView(view_d)
+        dialog.setCanceledOnTouchOutside(false)
         dialog.show()
     }
 
@@ -442,7 +436,7 @@ class RegistrationActivity : AppCompatActivity() {
     private fun moveToLoginScreen() {
         val i = Intent(this@RegistrationActivity, LoginActivity::class.java)
         startActivity(i)
-        finish()
+        finishAffinity()
     }
 }
 

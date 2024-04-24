@@ -1,6 +1,5 @@
 package com.myhss.ui.suryanamaskar
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -24,16 +23,12 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
-import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.CustomProgressDialog
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
-import com.myhss.ui.SuchanaBoard.Adapter.SuchnaAdapter
-import com.myhss.ui.SuchanaBoard.Model.Get_Suchana_Response
 import com.myhss.ui.suryanamaskar.Model.BarchartDataModel
 import com.myhss.ui.suryanamaskar.Model.DeleteSnCount
-import com.uk.myhss.Login_Registration.LoginActivity
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
@@ -65,9 +60,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     var screenName: String = "SuryaNamaskar"
     var screenNameID: String = "BarChartSuryaNamaskarVC"
     lateinit var u_listData: ArrayList<BarchartDataModel>
-
-
-    private var selectedBarIndex = -1
+    lateinit var u_case: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +72,7 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
         add_more = findViewById(R.id.info_tooltip)
         add_more.setImageResource(R.drawable.ic_plus)
 
-        val u_case = intent.getStringExtra("case")
+        u_case = intent.getStringExtra("case").toString()
         u_listData = intent.getSerializableExtra("list_data") as ArrayList<BarchartDataModel>
         header_title.text = u_listData.get(0).getValue_user()
         back_arrow.setOnClickListener(DebouncedClickListener {
@@ -129,9 +122,14 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
         for (i in 0 until barchartData.size) {
             barchartEntriesList.add(
                 BarEntry(
-                    (i.toFloat()), (barchartData.get(i).getValue_y())!!.toFloat()
+                    (i.toFloat()),
+                    (barchartData.get(i).getValue_y())!!.toFloat()
                 )
             )
+//            DebugLog.e(
+//                "BAr Data : " + (i.toFloat()) + "   ||||  Values  " + (barchartData.get(i)
+//                    .getValue_y())!!.toFloat()
+//            )
         }
         setupBarChartSurya(barchartData)
     }
@@ -203,19 +201,17 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        DebugLog.e("onValueSelected   ")
         val xAxisLabel = barChart.xAxis.valueFormatter.getFormattedValue(e!!.x, barChart.xAxis)
         val yAxisValue = e?.y
+        val barId = e?.x?.toInt()
 
         when (isBarClickable) {
             1 -> { // open SN Edit or Delete Dialog
                 for (i in 0 until u_listData.size) {
-                    if (xAxisLabel.toString() == convertToDateMonthCode(
-                            u_listData[i].getValue_x().toString()
-                        ) && (yAxisValue.toString()).toFloat() == u_listData[i].getValue_y()!!
-                            .toFloat()
-                    ) {
-                        DebugLog.e("click button ${u_listData[i].getValue_ID()}")
+                    if (xAxisLabel.toString() == convertToDateMonthCode(u_listData[i].getValue_x().toString())
+                        && (yAxisValue.toString()).toFloat() == u_listData[i].getValue_y()!!.toFloat()
+                        && barId == i) {
+                        barChart.setTouchEnabled(false)
                         openEditOrDeleteSNDialog(u_listData[i])
                         break
                     }
@@ -224,7 +220,10 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
 
             2 -> { // Open Receipt Screen
                 for (i in 0 until guruDakshinaData.size) {
-                    if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString() && (yAxisValue.toString()).toFloat() == guruDakshinaData[i].paidAmount!!.toFloat()) {
+                    if (xAxisLabel.toString() == guruDakshinaData[i].startDate.toString()
+                        && (yAxisValue.toString()).toFloat() == guruDakshinaData[i].paidAmount!!.toFloat()
+                        && barId == i) {
+                        barChart.setTouchEnabled(false)
                         openguruDakshinaDetails(guruDakshinaData[i])
                         break
                     }
@@ -260,7 +259,6 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
     }
 
     override fun onNothingSelected() {
-        DebugLog.e("onNothingSelected   ")
     }
 
     override fun editSNCount(snID: String, snCount: String) {
@@ -279,15 +277,19 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
         alertDialog.setNegativeButton(
             "No"
         ) { _, _ ->
-
+            barChart.setTouchEnabled(true)
         }
         val alert: AlertDialog = alertDialog.create()
         alert.setCanceledOnTouchOutside(false)
         alert.show()
+    }
 
+    override fun closeDialog() {
+        barChart.setTouchEnabled(true)
     }
 
     private fun callEditSnCountApi(snID: String, snCount: String) {
+        barChart.setTouchEnabled(false)
         val pd = CustomProgressDialog(this)
         pd.show()
         val call: Call<DeleteSnCount> =
@@ -322,12 +324,14 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
                             this@ViewBarchartActivity, "Error",
                             response.body()?.message,
                         )
+                        barChart.setTouchEnabled(true)
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@ViewBarchartActivity, "Error",
                         getString(R.string.some_thing_wrong),
                     )
+                    barChart.setTouchEnabled(true)
                 }
                 pd.dismiss()
 
@@ -336,12 +340,14 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
             override fun onFailure(call: Call<DeleteSnCount>, t: Throwable) {
                 Toast.makeText(this@ViewBarchartActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                barChart.setTouchEnabled(true)
             }
         })
     }
 
 
     private fun callDeleteSNCountApi(snID: String) {
+        barChart.setTouchEnabled(false)
         val pd = CustomProgressDialog(this)
         pd.show()
         val call: Call<DeleteSnCount> =
@@ -376,12 +382,14 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
                             this@ViewBarchartActivity, "Error",
                             response.body()?.message,
                         )
+                        barChart.setTouchEnabled(true)
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@ViewBarchartActivity, "Error",
                         getString(R.string.some_thing_wrong),
                     )
+                    barChart.setTouchEnabled(true)
                 }
                 pd.dismiss()
 
@@ -390,11 +398,17 @@ class ViewBarchartActivity : AppCompatActivity(), OnChartValueSelectedListener,
             override fun onFailure(call: Call<DeleteSnCount>, t: Throwable) {
                 Toast.makeText(this@ViewBarchartActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                barChart.setTouchEnabled(true)
             }
         })
     }
 
     override fun onClick(v: View?) {
-        DebugLog.e("v =>>> $v")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (u_case == "2")
+            barChart.setTouchEnabled(true)
     }
 }

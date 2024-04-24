@@ -410,7 +410,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         var pd = CustomProgressDialog(this@SuryaNamaskar)
         isProgressBar?.let { if (it) pd.show() }
 
-        DebugLog.d("member_id => $member_id")
+//        DebugLog.d("member_id => $member_id")
         try {
             val response =
                 MyHssApplication.instance!!.api.get_suryanamaskar_count(
@@ -433,6 +433,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
                 memberStringArray = memberStringList.toArray(memberStringArray)
                 val list: ArrayList<String> = arrayListOf<String>()
                 for (element in memberStringArray) {
+//                    DebugLog.e("element ===> $element")
                     list.add(element.toString())
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         IDMEMBER = list
@@ -489,7 +490,7 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         pieChart_surya.setEntryLabelTextSize(12f)
         val member_list = IDMEMBER.toSet()
         val pieEntries: ArrayList<PieEntry> = ArrayList()
-        val labelsList: java.util.ArrayList<String> = java.util.ArrayList()
+        val labelsList: ArrayList<String> = ArrayList()
         var t_count = 0
         for (i in 0 until member_list.size) {
             var s_count = 0
@@ -497,10 +498,12 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
             for (j in 0 until suryaNamaskarlistData.size) {
                 if (member_list.elementAt(i) == suryaNamaskarlistData.get(j).getmember_id()) {
                     s_count = s_count + suryaNamaskarlistData.get(j).getcount()!!.toInt()
-                    s_name = suryaNamaskarlistData.get(j).getmember_name().toString()
+                    if(s_name.isEmpty()){
+                        s_name = suryaNamaskarlistData[j].getmember_name().toString()
+                    }
                 }
             }
-            t_count = t_count + s_count
+            t_count += s_count
             labelsList.add(s_name)
             pieEntries.add(PieEntry(s_count.toFloat(), s_name))
         }
@@ -567,22 +570,29 @@ class SuryaNamaskar : AppCompatActivity(), OnChartValueSelectedListener {
         chip.isClickable = true
         chip.setTextColor(Color.WHITE)
         chip.setOnClickListener(DebouncedClickListener {
-            openBarChart(label.toString())
+            memberIDForOpenBarChart(label.toString())
         })
         return chip
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        openBarChart((e as PieEntry).label.toString())
+        memberIDForOpenBarChart((e as PieEntry).label.toString())
     }
 
     override fun onNothingSelected() {
     }
 
+
+    private fun memberIDForOpenBarChart(sName: String) {
+        surya_namaskarlist.find { it.getmember_name() == sName }?.let {
+            openBarChart(it.getmember_id()!!)
+        }
+    }
+
     private fun openBarChart(sName: String) {
         val listData_surya: ArrayList<BarchartDataModel> = ArrayList()
         for (i in 0 until surya_namaskarlist.size) {
-            if (sName == surya_namaskarlist.get(i).getmember_name()) {
+            if (sName == surya_namaskarlist.get(i).getmember_id()) {
                 val barchartDataModel = BarchartDataModel()
                 barchartDataModel.setValue_x(surya_namaskarlist.get(i).getcount_date())
                 barchartDataModel.setValue_y(surya_namaskarlist.get(i).getcount())

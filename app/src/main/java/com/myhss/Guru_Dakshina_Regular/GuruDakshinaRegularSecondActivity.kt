@@ -25,7 +25,6 @@ import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.Utils.SessionManager
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,8 +46,6 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
     var FamilyName: List<String> = ArrayList<String>()
     var FamilyID: List<String> = ArrayList<String>()
 
-    //    private lateinit var gift_aid_select_txt: SearchableSpinner
-//    private lateinit var gift_aid_select_view: RelativeLayout
     var gift_aid_select_txt: Spinner? = null
     var how_often_like_to_donate_txt: Spinner? = null
 
@@ -354,38 +351,6 @@ class GuruDakshinaRegularSecondActivity() : AppCompatActivity() {
         edit_payment.setOnClickListener(DebouncedClickListener {
             depositDialog()
         })
-    }
-
-    private fun SearchSpinner(
-        spinner_search: Array<String>,
-        edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item,
-            spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-    }
-
-    private val mOnItemSelectedListener_gift_aid: AdapterView.OnItemSelectedListener = object :
-        AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//            TODO("Not yet implemented")
-            Log.d("Name", gift_aid[position])
-//            GIFTAID_ID = gift_aid[position]
-
-            if (position == 0) {
-                GIFTAID_ID = "yes"
-            } else {
-                GIFTAID_ID = "no"
-            }
-            Log.d("GIFTAID_ID", GIFTAID_ID)
-        }
-
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-        }
     }
 
     fun depositDialogTooltip(message: String) {

@@ -16,16 +16,15 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.myhss.Utils.CustomProgressBar
 import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.DebugLog
 import com.myhss.Utils.Functions
+import com.myhss.dialog.DialogSearchableSpinner
+import com.myhss.dialog.iDialogSearchableSpinner
 import com.myhss.ui.sankhya_report.Adapter.ApproveRecyclerView
 import com.myhss.ui.sankhya_report.Model.sankhya.ActiveMember
 import com.myhss.ui.sankhya_report.Model.sankhya.SankhyaList
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
@@ -33,22 +32,17 @@ import com.uk.myhss.ui.guru_dakshina.Model.Get_Sankhya_Add_Response
 import com.uk.myhss.ui.my_family.Model.Datum
 import com.uk.myhss.ui.policies.SankhyaActivity
 import com.uk.myhss.ui.sankhya_report.Adapter.SankhyaAdapter
-import com.uk.myhss.ui.sankhya_report.Model.Get_Sankhya_Utsav_Datum
 import com.uk.myhss.ui.sankhya_report.Model.Get_Sankhya_Utsav_Response
 import com.uk.myhss.ui.sankhya_report.Model.Sankhya_Datum
-import com.uk.myhss.ui.sankhya_report.Model.Sankhya_List_Response
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
+class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
     private lateinit var sessionManager: SessionManager
 
@@ -57,8 +51,8 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     private var day = 0
     private lateinit var calendar: Calendar
 
-    var utsavName: List<String> = java.util.ArrayList<String>()
-    var utsavID: List<String> = java.util.ArrayList<String>()
+    //    var utsavName: List<String> = ArrayList<String>()
+//    var utsavID: List<String> = ArrayList<String>()
     var UserName: ArrayList<String> = ArrayList<String>()
     var UserCategory: ArrayList<String> = ArrayList<String>()
 
@@ -85,12 +79,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     private var PRODH: String = ""
     private var PRODHA: String = ""
     private var API: String = ""
-
-    private lateinit var utsav_txt: SearchableSpinner
-
-    private var IsVisible = true
-    private var IsVisiblenew = true
-
+    private lateinit var utsav_txt: TextView
     private var atheletsBeans: List<Sankhya_Datum> = ArrayList<Sankhya_Datum>()
     private var athelets_Beans: List<ActiveMember> = ArrayList<ActiveMember>()
     private var currentSelectedItems: List<Datum> = ArrayList<Datum>()
@@ -99,8 +88,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     private var selected_userNameAll: ArrayList<String> = ArrayList<String>()
     private var selected_userAll: ArrayList<String> = ArrayList<String>()
     private var mAdapterGuru: SankhyaAdapter? = null
-
-    //    private var mAdapterGurunew: StudentAdapter? = null
     private var approveRecyclerView: ApproveRecyclerView? = null
 
     var arrayListUser: ArrayList<String> = ArrayList()
@@ -179,29 +166,14 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         txt_sankhya_count = findViewById(R.id.txt_sankhya_count)
 
         calender_icon.visibility = View.VISIBLE
-
-        utsav_txt.onItemSelectedListener = mOnItemSelectedListener_utsav
-
-        utsav_txt.setTitle("Select Utsav")
-
+        utsav_txt.text = "Select Utsav"
         shakha_name_txt.text = sessionManager.fetchSHAKHANAME()!!.capitalize(Locale.ROOT)
-
         cbSelectAll = findViewById(R.id.cbSelectAll)
         tvSelect = findViewById(R.id.tvSelect)
-
-        /*attended_list.layoutManager = LinearLayoutManager(
-            this,
-            LinearLayout.VERTICAL,
-            false
-        )*/
-
         mLayoutManager = LinearLayoutManager(this@AddSankhyaActivity)
         attended_list.layoutManager = mLayoutManager
 
         actualDate = Calendar.getInstance()
-        val date = sdf.format(actualDate.time)
-        Log.d("cuurent Date==>", date)
-
         TODAY_DATE = sdf.format(actualDate.time)
 
         current_date_txt.text = sdfnew.format(actualDate.time)
@@ -211,13 +183,8 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         smsTime.timeInMillis = actualDate.timeInMillis
 
         previous_date.setOnClickListener(DebouncedClickListener {
-            //modify actual date, removing one day
             actualDate.add(Calendar.DAY_OF_MONTH, -1)
-            val date = sdf.format(actualDate.time)
-            Log.d("previous_date==>", date)
-
             current_date_txt.text = sdfnew.format(actualDate.time)
-
             next_date.setBackgroundResource(R.drawable.button_round)
         })
 
@@ -228,18 +195,13 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 
             next_date.setOnClickListener(DebouncedClickListener {
                 actualDate.add(Calendar.DAY_OF_MONTH, 1)
-                val date = sdf.format(actualDate.time)
-                Log.d("next_date==>", date)
-
                 current_date_txt.text = sdfnew.format(actualDate.time)
-
                 next_date.setBackgroundResource(R.drawable.button_round)
             })
         }
 
         current_date_txt.setOnClickListener(DebouncedClickListener {
             calendar = Calendar.getInstance()
-//            calendar.add(Calendar.YEAR, -3)
             year = calendar.get(Calendar.YEAR)
             month = calendar.get(Calendar.MONTH)
             day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -248,21 +210,15 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 calendar[Calendar.YEAR] = year
                 calendar[Calendar.MONTH] = month //+ 1
                 calendar[Calendar.DAY_OF_MONTH] = day_of_month
-                val myFormat = "dd/MM/yyyy"
-//                val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
                 current_date_txt.text = sdfnew.format(calendar.time)
                 EVENT_DATE = sdf.format(calendar.time)
 
             }, year, month, day)
-//            dialog.datePicker.minDate = calendar.timeInMillis
-//            calendar.add(Calendar.YEAR, 0)
-//            dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
         })
 
         calender_icon.setOnClickListener(DebouncedClickListener {
             calendar = Calendar.getInstance()
-//            calendar.add(Calendar.YEAR, -3)
             year = calendar.get(Calendar.YEAR)
             month = calendar.get(Calendar.MONTH)
             day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -271,14 +227,10 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 calendar[Calendar.YEAR] = year
                 calendar[Calendar.MONTH] = month //+ 1
                 calendar[Calendar.DAY_OF_MONTH] = day_of_month
-                val myFormat = "dd/MM/yyyy"
-//                val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
                 current_date_txt.text = sdfnew.format(calendar.time)
                 EVENT_DATE = sdf.format(calendar.time)
 
             }, year, month, day)
-//            dialog.datePicker.minDate = calendar.timeInMillis
-//            calendar.add(Calendar.YEAR, 0)
             dialog.datePicker.maxDate = calendar.timeInMillis
             dialog.show()
         })
@@ -308,14 +260,8 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             SEARCH = ""
             START_DATE = EVENT_DATE
             END_DATE = TODAY_DATE
-
-            Log.d("USERID", USERID)
-            Log.d("MEMBERID", MEMBERID)
-//            mySankhyaMemberList("151")
             mySankhyaMemberList(sessionManager.fetchSHAKHAID().toString())
-//            mySankhyaList(USERID, MEMBERID, LENGTH, START, SEARCH, START_DATE, END_DATE)
-
-            myRelationship()
+            apiUtsavList()
         } else {
             Toast.makeText(
                 this@AddSankhyaActivity,
@@ -323,130 +269,18 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 Toast.LENGTH_SHORT
             ).show()
         }
-
-        /*attended_list.setOnScrollListener(object : EndLessScroll(mLayoutManager) {
-            override fun loadMore(current_page: Int) {
-                var end:Int = 100
-                var start:Int = 0
-
-                start = end + 1
-                end += 100
-
-                if (Functions.isConnectingToInternet(this@AddSankhyaActivity)) {
-                    USERID = sessionManager.fetchUserID()!!
-                    MEMBERID = sessionManager.fetchSHAKHAID()!!
-                    LENGTH = end.toString()
-                    START = start.toString()
-                    SEARCH = ""
-                    START_DATE = EVENT_DATE
-                    END_DATE = TODAY_DATE
-
-                    Log.d("USERID", USERID)
-                    Log.d("MEMBERID", MEMBERID)
-                    myFamily(USERID)
-//            mySankhyaList(USERID, MEMBERID, LENGTH, START, SEARCH, START_DATE, END_DATE)
-
-                    myRelationship()
-                } else {
-                    Toast.makeText(
-                        this@AddSankhyaActivity,
-                        resources.getString(R.string.no_connection),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        })*/
-
         sessionManager.saveSELECTED_ALL("")
         sessionManager.saveSELECTED_TRUE("")
         sessionManager.saveSELECTED_FALSE("")
 
         cbSelectAll.visibility = View.VISIBLE
-        /*cbSelectAll.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (approveRecyclerView != null) {
-                *//*for(i in 0 until arrayListUser.size) {
-                }*//*
 
-                if(cbSelectAll.isChecked){
-                    tvSelect.text = if (isChecked) "Deselect All" else "All Attended"
-                    approveRecyclerView!!.selectAllItems()
-                }
-                else {
-                    tvSelect.text = if (isChecked) "All Attended" else "Deselect All"
-                    approveRecyclerView!!.unselectAllItems()
-                }
-                approveRecyclerView!!.notifyDataSetChanged()
-
-                *//*if (isChecked) {
-                    selectAllItems = true
-                    approveRecyclerView!!.selectAllItems(selectAllItems)
-                    approveRecyclerView!!.updateList(athelets_Beans)
-                    approveRecyclerView!!.notifyDataSetChanged()
-                } else {
-                    selectAllItems = false
-                    approveRecyclerView!!.unselectAllItems(selectAllItems)
-                    approveRecyclerView!!.updateList(athelets_Beans)
-                    approveRecyclerView!!.notifyDataSetChanged()
-                }*//*
-
-                *//*val size = athelets_Beans.size
-                for (i in 0 until size) {
-                    val dto = athelets_Beans[i]
-                    dto.setChecked(true)
-                }
-                approveRecyclerView!!.notifyDataSetChanged()*//*
-
-                *//*for (i in 0 until attended_list.childCount) {
-                    attended_list.adapter = isChecked
-                    attended_list.setItemChecked(i, true)
-                }*//*
-            }
-            *//*if (mAdapterGurunew != null) {
-                mAdapterGurunew!!.toggleSelection(isChecked)
-                mAdapterGurunew!!.getSelection()
-                tvSelect.text = if (isChecked) "Deselect All" else "All Attended"
-                Functions.printLog("mAdapterGurunew", mAdapterGurunew!!.getSelection().toString())
-            }*//*
-        }*/
-
-        /*attended_list.onItemClickListener =
-            AdapterView.OnItemClickListener { adapterView, view, itemIndex, l ->
-                // Get user selected item.
-                val itemObject = adapterView.adapter.getItem(itemIndex)
-                // Translate the selected item to DTO object.
-                val itemDto = itemObject as ListViewItemDTO
-                // Get the checkbox.
-                val itemCheckbox = view.findViewById(R.id.chbContent) as CheckBox
-                // Reverse the checkbox and clicked item check state.
-                if (itemDto.isChecked()) {
-                    itemCheckbox.isChecked = false
-                    itemDto.setChecked(false)
-                } else {
-                    itemCheckbox.isChecked = true
-                    itemDto.setChecked(true)
-                }
-                //Toast.makeText(getApplicationContext(), "select item text : " + itemDto.getItemText(), Toast.LENGTH_SHORT).show();
-            }*/
         additional_guest_layout.setOnClickListener(DebouncedClickListener {
-//            Snackbar.make(root_view, "Additional Guest Information", Snackbar.LENGTH_SHORT).show()
-//            startActivity(Intent(this@AddSankhyaActivity, SankhyaDetail::class.java))
-//            val i = Intent(this@AddSankhyaActivity, SankhyaDetail::class.java)
-
-            DebugLog.d("arrayListUser : " + arrayListUser.toString())
-            DebugLog.d("arrayListUserId : " + arrayListUserId.toString())
-            DebugLog.d("arrayData : " + arrayData)
-
-            val mergedId = arrayListUserId + arrayListUserId
-            DebugLog.d("mergedId  ==>   " + mergedId.toString())
-
             for (num in arrayListUserId) {      // iterate through the second list
                 if (!arrayListUserId.contains(num)) {   // if first list doesn't contain current element
                     arrayListUserId.add(num) // add it to the first list
                 }
             }
-
-            val mergedUser = arrayListUser + arrayListUser
-            DebugLog.d("mergedUser==> 3 :  " + mergedUser.toString())
 
             for (num in arrayListUser) {      // iterate through the second list
                 if (!arrayListUser.contains(num)) {   // if first list doesn't contain current element
@@ -454,68 +288,42 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 }
             }
 
-            val merged = selected_user + selected_userAll
-            DebugLog.d("merged==> 4 : " + merged.toString())
-
             for (x in selected_userAll) {
                 if (!selected_user.contains(x)) selected_user.add(x)
             }
-
-            val mergedname = selected_userName + selected_userNameAll
-            DebugLog.d("mergedname==> 5 : " + mergedname.toString())
 
             for (x in selected_userNameAll) {
                 if (!selected_userName.contains(x)) selected_userName.add(x)
             }
 
             USER_ID = sessionManager.fetchUserID()!!
-            /*MEMBER_ID = selected_user.toString().replace("[", "").replace("]", "")
-            MEMBER_NAME = selected_userName.toString()*/
-
             MEMBER_ID = arrayListUserId.toString().replace("[", "").replace("]", "")
             MEMBER_NAME = arrayListUser.toString()
 
             ORG_CHAPTER_ID = sessionManager.fetchSHAKHAID()!!
-            if (UTSAV_ID == "Please Select Utsav") {
-                UTSAV_NAME = ""
-            } else {
-                UTSAV_NAME = UTSAV_ID
-            }
-//            UTSAV_NAME = UTSAV_ID
+
+
             EVENTDATE = EVENT_DATE
-
-            /*if (UserName.equals("")) {
-                Snackbar.make(root_view, "User Name is Empty", Snackbar.LENGTH_SHORT).show()
-            } else if (UserCategory.equals("")) {
-                Snackbar.make(root_view, "User Type is Empty", Snackbar.LENGTH_SHORT).show()
-            } else */
+//            if (UTSAV_NAME == "") {
+//                Snackbar.make(root_view, "Please select the Utsav", Snackbar.LENGTH_SHORT).show()
+//            } else
             if (MEMBER_ID == "") {
-                Snackbar.make(root_view, "Member is Empty", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(root_view, "Please select the Member", Snackbar.LENGTH_SHORT).show()
             } else {
-
                 val i = Intent(this@AddSankhyaActivity, SankhyaFormDetail::class.java)
                 i.putExtra("SANKHYA", "SANKHYA")
                 i.putExtra("SANKHYA_ID", "")
                 i.putExtra("CURRENT_DATE", EVENTDATE)
-                if (UTSAV_ID == "Please Select Utsav") {
-                    i.putExtra("UTSAVE_ID", "")
-                    i.putExtra("UTSAV_NAME", "")
-                } else {
-                    i.putExtra("UTSAVE_ID", UTSAV_ID)
-                    i.putExtra("UTSAV_NAME", UTSAV_NAME)
-                }
-                //                i.putExtra("UTSAVE_ID", UTSAV_ID)
+                i.putExtra("UTSAVE_ID", UTSAV_ID)
+                i.putExtra("UTSAV_NAME", UTSAV_NAME)
                 i.putExtra("USER_ID", USER_ID)
                 i.putExtra("MEMBER_ID", MEMBER_ID)
                 i.putExtra("ORG_CHAPTER_ID", ORG_CHAPTER_ID)
-                //                i.putExtra("UTSAV_NAME", UTSAV_NAME)
                 i.putExtra("EVENT_DATE", EVENT_DATE)
                 i.putStringArrayListExtra("MEMBER_NAME", arrayListUser)
                 i.putStringArrayListExtra("USERNAME_LIST", UserName)
                 i.putStringArrayListExtra("USERID_LIST", UserCategory)
                 i.putExtra("SHAKHA_NAME", shakha_name_txt.text.toString())
-                //            i.putExtra("SELECTED_USER", selected_user)
-                //            i.putExtra("ALL_USER", selected_userAll)
                 startActivity(i)
             }
         })
@@ -532,51 +340,24 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
 
         submit_layout.setOnClickListener(DebouncedClickListener {
 
-            Log.d("arrayListUserId==>", arrayListUserId.toString())
-
-//            val Date = current_date_txt.text.toString()
-            val Utsav = UTSAV_ID
-            val All_user = selected_user
-            val Selected_user = selected_userAll
-
-            val mergedId = arrayListUserId + arrayListUserId
-            Log.d("mergedId==>", mergedId.toString())
-
             for (num in arrayListUserId) {      // iterate through the second list
                 if (!arrayListUserId.contains(num)) {   // if first list doesn't contain current element
                     arrayListUserId.add(num) // add it to the first list
                 }
             }
 
-            val merged = selected_user + selected_userAll
-            Log.d("merged==>", merged.toString())
-
             for (x in selected_userAll) {
                 if (!selected_user.contains(x)) selected_user.add(x)
             }
-
-            val mergedname = selected_userName + selected_userNameAll
-            Log.d("mergedname", mergedname.toString())
 
             for (x in selected_userNameAll) {
                 if (!selected_userName.contains(x)) selected_userName.add(x)
             }
 
-            Log.d("mergedselected_user==>", selected_user.toString())
-            Log.d("mergedselected_all==>", selected_userAll.toString())
-//            Snackbar.make(root_view, "Submit"+selected_user + "All" + selected_userAll, Snackbar.LENGTH_SHORT).show()
-
             USER_ID = sessionManager.fetchUserID()!!
-//            MEMBER_ID = selected_user.toString().replace("[", "").replace("]", "")
-
             MEMBER_ID = arrayListUserId.toString().replace("[", "").replace("]", "")
 
             ORG_CHAPTER_ID = sessionManager.fetchSHAKHAID()!!
-            if (UTSAV_ID == "Please Select Utsav") {
-                UTSAV_NAME = ""
-            } else {
-                UTSAV_NAME = UTSAV_ID
-            }
             EVENTDATE = EVENT_DATE
             SHISHU_MALE = ""
             SHISHU_FEMALE = ""
@@ -591,90 +372,46 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             PRODH = ""
             PRODHA = ""
             API = "yes"
-
-            /*if (UserName.equals("")) {
-                Snackbar.make(root_view, "User Name is Empty", Snackbar.LENGTH_SHORT).show()
-            } else if (UserCategory.equals("")) {
-                Snackbar.make(root_view, "User Type is Empty", Snackbar.LENGTH_SHORT).show()
-            } else*/ if (MEMBER_ID == "") {
-            Snackbar.make(root_view, "Member is Empty", Snackbar.LENGTH_SHORT).show()
-        } else {
-
-            if (Functions.isConnectingToInternet(this@AddSankhyaActivity)) {
-                AddSankhya(
-                    USER_ID,
-                    MEMBER_ID,
-                    ORG_CHAPTER_ID,
-                    UTSAV_NAME,
-                    EVENTDATE,
-                    SHISHU_MALE,
-                    SHISHU_FEMALE,
-                    BAAL,
-                    BAALIKA,
-                    KISHOR,
-                    KISHORI,
-                    TARUN,
-                    TARUNI,
-                    YUVA,
-                    YUVTI,
-                    PRODH,
-                    PRODHA,
-                    API
-                )
+//            if (UTSAV_NAME == "") {
+//                Snackbar.make(root_view, "Please select the Utsav", Snackbar.LENGTH_SHORT).show()
+//            } else
+            if (MEMBER_ID == "") {
+                Snackbar.make(root_view, "Please select the Member", Snackbar.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(
-                    this@AddSankhyaActivity,
-                    resources.getString(R.string.no_connection),
-                    Toast.LENGTH_SHORT
-                ).show()
+                if (Functions.isConnectingToInternet(this@AddSankhyaActivity)) {
+                    AddSankhya(
+                        USER_ID,
+                        MEMBER_ID,
+                        ORG_CHAPTER_ID,
+                        UTSAV_NAME,
+                        EVENTDATE,
+                        SHISHU_MALE,
+                        SHISHU_FEMALE,
+                        BAAL,
+                        BAALIKA,
+                        KISHOR,
+                        KISHORI,
+                        TARUN,
+                        TARUNI,
+                        YUVA,
+                        YUVTI,
+                        PRODH,
+                        PRODHA,
+                        API
+                    )
+                } else {
+                    Toast.makeText(
+                        this@AddSankhyaActivity,
+                        resources.getString(R.string.no_connection),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-        }
         })
-
-//        attended_list.setOnItemClickListener(object : SankhyaAdapter.ClickListener {
-//            override fun onItemClick(v: View, position: Int) {
-//
-//                Log.v("Bhanu", "onItemClick ${position}")
-//
-//                Toast.makeText(
-//                    this@AddSankhyaActivity, "Clicked: ${approveRecyclerView!!.mItems[position]}",
-////                    "Clicked: ${mAdapterGuru!!.mItems[position]}",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-//
-//        })
     }
-
-    private fun SearchSpinner(
-        spinner_search: Array<String>, edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-    }
-
-    private val mOnItemSelectedListener_utsav: AdapterView.OnItemSelectedListener =
-        object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-//            TODO("Not yet implemented")
-                Log.d("Name", utsavName[position])
-                Log.d("Postion", utsavID[position])
-                UTSAV_ID = utsavName[position]
-//            UTSAV_ID = utsavID[position]
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-            }
-        }
 
     /*Relationship API*/
-    private fun myRelationship() {
+    private fun apiUtsavList() {
         val pd = CustomProgressBar(this@AddSankhyaActivity)
         pd.show()
         val call: Call<Get_Sankhya_Utsav_Response> =
@@ -685,84 +422,26 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 response: Response<Get_Sankhya_Utsav_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
+                        var utsavBeans = response.body()!!.data!!
+                        var utsavNameList: MutableList<String> = mutableListOf()
+                        var utsavIDList: MutableList<String> = mutableListOf()
+                        for (i in utsavBeans.indices) {
+                            utsavNameList.add(utsavBeans[i].utsav.toString())
+                            utsavIDList.add(utsavBeans[i].id.toString())
+                        }
 
-                        var utsavBeans: List<Get_Sankhya_Utsav_Datum> =
-                            ArrayList<Get_Sankhya_Utsav_Datum>()
-
-                        utsavBeans = response.body()!!.data!!
-                        Log.d("atheletsBeans", utsavBeans.toString())
-
-                        utsavName = listOf(arrayOf(utsavBeans).toString())
-                        utsavID = listOf(arrayOf(utsavBeans).toString())
-
-                        val mStringList = java.util.ArrayList<String>()
-                        mStringList.add("Please Select Utsav")
-                        for (i in 0 until utsavBeans.size) {
-                            mStringList.add(
-                                utsavBeans[i].utsav.toString()
+                        utsav_txt.setOnClickListener(DebouncedClickListener {
+                            openSearchableSpinnerDialog(
+                                "1",
+                                "Select Utsav",
+                                utsavNameList,
+                                utsavIDList
                             )
-                        }
-
-                        val mStringListnew = java.util.ArrayList<String>()
-                        mStringListnew.add("-999")
-                        for (i in 0 until utsavBeans.size) {
-                            mStringListnew.add(
-                                utsavBeans[i].id.toString()
-                            )
-                        }
-
-                        var mStringArray = mStringList.toArray()
-                        var mStringArraynew = mStringListnew.toArray()
-
-                        for (i in mStringArray.indices) {
-                            Log.d("string is", mStringArray[i] as String)
-                        }
-
-                        for (i in mStringArraynew.indices) {
-                            Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                        }
-
-                        mStringArray = mStringList.toArray(mStringArray)
-                        mStringArraynew = mStringListnew.toArray(mStringArraynew)
-
-                        val list: java.util.ArrayList<String> = arrayListOf<String>()
-                        val listnew: java.util.ArrayList<String> = arrayListOf<String>()
-
-                        for (element in mStringArray) {
-                            Log.d("LIST==>", element.toString())
-                            list.add(element.toString())
-                            Log.d("list==>", list.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                utsavName = list
-                            }
-                        }
-
-                        for (element in mStringArraynew) {
-                            Log.d("LIST==>", element.toString())
-                            listnew.add(element.toString())
-                            Log.d("list==>", listnew.toString())
-
-                            val listn = arrayOf(element)
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                utsavID = listnew
-                            }
-                        }
-
-                        Log.d("relationshipName==>", utsavName.toString())
-
-                        SearchSpinner(utsavName.toTypedArray(), utsav_txt)
+                        })
 
                     } else {
                         Functions.displayMessage(this@AddSankhyaActivity, response.body()?.message)
-//                        Functions.showAlertMessageWithOK(
-//                            this@AddSankhyaActivity, "",
-////                        "Message",
-//                            response.body()?.message
-//                        )
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
@@ -780,70 +459,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         })
     }
 
-    private fun mySankhyaList(
-        user_id: String,
-        chapter_id: String,
-        length: String,
-        start: String,
-        search: String,
-        start_date: String,
-        end_date: String
-    ) {
-        val pd = CustomProgressBar(this@AddSankhyaActivity)
-        pd.show()
-        val call: Call<Sankhya_List_Response> = MyHssApplication.instance!!.api.get_sankhya_listing(
-            user_id, chapter_id, length, start, search, start_date, end_date
-        )
-        call.enqueue(object : Callback<Sankhya_List_Response> {
-            override fun onResponse(
-                call: Call<Sankhya_List_Response>, response: Response<Sankhya_List_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-
-                        try {
-                            atheletsBeans = response.body()!!.data!!
-
-//                        for (i in 1 until atheletsBeans.size) {
-//                            UserName = listOf(atheletsBeans[i].chapterName.toString())
-//                            UserCategory = listOf(atheletsBeans[i].id.toString())
-//                        }
-//
-//                        mAdapterGuru = SankhyaAdapter(atheletsBeans, selectAllItems, selected_user)
-//
-//                        attended_list.adapter = mAdapterGuru
-//
-//                        mAdapterGuru!!.notifyDataSetChanged()
-
-                        } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Family")
-                        }
-                    } else {
-                        Functions.showAlertMessageWithOK(
-                            this@AddSankhyaActivity, "",
-//                        "Message",
-                            response.body()?.message
-                        )
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@AddSankhyaActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-                pd.dismiss()
-            }
-
-            override fun onFailure(call: Call<Sankhya_List_Response>, t: Throwable) {
-                Toast.makeText(this@AddSankhyaActivity, t.message, Toast.LENGTH_LONG).show()
-                pd.dismiss()
-            }
-        })
-    }
-
     private fun mySankhyaMemberList(user_id: String) {
         val pd = CustomProgressBar(this@AddSankhyaActivity)
         pd.show()
@@ -853,40 +468,23 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 call: Call<SankhyaList>, response: Response<SankhyaList>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
-
                         try {
                             athelets_Beans = response.body()!!.active_member!!
-                            Log.d("atheletsBeans", athelets_Beans.toString())
-
-//                        UserName = listOf(arrayOf(athelets_Beans).toString())
-//                        UserCategory = listOf(arrayOf(athelets_Beans).toString())
-
                             val mStringList = java.util.ArrayList<String>()
                             for (i in 0 until athelets_Beans.size) {
                                 mStringList.add(
                                     athelets_Beans[i].first_name.toString() + " " + athelets_Beans[i].last_name.toString()
                                 )
                             }
-
                             val mStringListnew = java.util.ArrayList<String>()
                             for (i in 0 until athelets_Beans.size) {
                                 mStringListnew.add(
                                     athelets_Beans[i].member_id.toString()
                                 )
                             }
-
                             var mStringArray = mStringList.toArray()
                             var mStringArraynew = mStringListnew.toArray()
-
-                            for (i in mStringArray.indices) {
-                                Log.d("string is", mStringArray[i] as String)
-                            }
-
-                            for (i in mStringArraynew.indices) {
-                                Log.d("mStringArraynew is", mStringArraynew[i] as String)
-                            }
 
                             mStringArray = mStringList.toArray(mStringArray)
                             mStringArraynew = mStringListnew.toArray(mStringArraynew)
@@ -908,15 +506,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                                 }
                             }
 
-//                            mAdapterGurunew = StudentAdapter(
-//                                this@AddSankhyaActivity, athelets_Beans
-////                                prepareData()
-//                            )
-//
-//                            attended_list.adapter = mAdapterGurunew
-//
-//                            mAdapterGurunew!!.notifyDataSetChanged()
-
                             approveRecyclerView = ApproveRecyclerView(
                                 this@AddSankhyaActivity,
                                 athelets_Beans,
@@ -925,15 +514,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                                 selectAllItems,
                                 arrayData
                             )
-
-                            /*mAdapterGuru = SankhyaAdapter(
-                                athelets_Beans,
-                                selectAllItems,
-                                selected_user,
-                                selected_userName
-                            )
-
-                            attended_list.adapter = mAdapterGuru*/
 
                             val adapter = ArrayAdapter(
                                 this@AddSankhyaActivity,
@@ -959,9 +539,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                                         arrayListUserId.remove(UserCategory[i])
                                     }
                                 }
-                                DebugLog.d("arrayListUser=====> " + arrayListUser.toString())
-                                DebugLog.d("arrayListUser SIZE=====> " + arrayListUser.size)
-                                DebugLog.d("arrayListUserId=====> " + arrayListUserId.toString())
                                 txt_sankhya_count.text = arrayListUser.size.toString()
                             }
 
@@ -984,11 +561,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                             cbSelectAll.setOnClickListener(clickListener)
                             /** Setting a click listener for the listitem checkbox  */
                             attendedlist.onItemClickListener = itemClickListener
-
-//                            attended_list.adapter = approveRecyclerView
-//                            approveRecyclerView!!.notifyDataSetChanged()
-//                            mAdapterGuru!!.notifyDataSetChanged()
-
                         } catch (e: ArithmeticException) {
                             println(e)
                         } finally {
@@ -1028,30 +600,6 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             return cnt
         }
 
-    fun prepareData(): List<Datum?>? {
-        try {
-            var studentList: List<Datum?>? = ArrayList()
-            val stream: InputStream = assets.open("Student.json")
-            val reader = BufferedReader(InputStreamReader(stream))
-            val builder = StringBuilder()
-            var line: String? = ""
-            while (reader.readLine().also { line = it } != null) {
-                builder.append(line)
-            }
-            val data = builder.toString()
-            studentList = Gson().fromJson<List<Datum?>>(
-                data, object : TypeToken<List<Datum?>?>() {}.type
-            )
-            Functions.printLog("studentList", studentList.toString())
-            return studentList
-        } catch (e: Exception) {
-            //java.lang.IllegalStateException: Expected BEGIN_ARRAY but was BEGIN_OBJECT at line 1 column 2 path $
-            //dont keep root key...
-            e.printStackTrace()
-        }
-        return null
-    }
-
     /*Add Sankhya API*/
     private fun AddSankhya(
         user_id: String,
@@ -1073,8 +621,7 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         proudha: String,
         api: String
     ) {
-        DebugLog.e("member_id => $member_id")
-        DebugLog.e("event_date => $event_date")
+        submit_layout.isEnabled = false
         val pd = CustomProgressBar(this@AddSankhyaActivity)
         pd.show()
         val call: Call<Get_Sankhya_Add_Response> = MyHssApplication.instance!!.api.get_sankhya_add(
@@ -1102,45 +649,34 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
                 call: Call<Get_Sankhya_Add_Response>, response: Response<Get_Sankhya_Add_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
-
                         val alertBuilder =
-                            AlertDialog.Builder(this@AddSankhyaActivity) // , R.style.dialog_custom
-
-//                        alertBuilder.setTitle("Message")
+                            AlertDialog.Builder(this@AddSankhyaActivity)
                         alertBuilder.setMessage(response.body()?.message)
                         alertBuilder.setPositiveButton(
                             "OK"
                         ) { dialog, which ->
-                            startActivity(
-                                Intent(
-                                    this@AddSankhyaActivity, SankhyaActivity::class.java
-                                )
-                            )
+                            val intent = Intent(this@AddSankhyaActivity, SankhyaActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            startActivity(intent)
                             finish()
                         }
                         val alertDialog = alertBuilder.create()
                         alertDialog.show()
                         alertDialog.setCancelable(false)
                         alertDialog.setCanceledOnTouchOutside(false)
-
-//                    Functions.showAlertMessageWithOK(
-//                        this@AddSankhyaActivity,
-//                        "Message",
-//                        response.body()?.message
-//                    )
-
                     } else {
                         Functions.showAlertMessageWithOK(
                             this@AddSankhyaActivity, "Message", response.body()?.message
                         )
+                        submit_layout.isEnabled = true
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@AddSankhyaActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    submit_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -1148,19 +684,34 @@ class AddSankhyaActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             override fun onFailure(call: Call<Get_Sankhya_Add_Response>, t: Throwable) {
                 Toast.makeText(this@AddSankhyaActivity, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                submit_layout.isEnabled = true
             }
         })
     }
 
-    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//        TODO("Not yet implemented")
-        Log.v("Bhanu", "onItemClick ${position}")
+    private fun openSearchableSpinnerDialog(
+        sType: String,
+        sTitle: String,
+        ItemName: List<String>,
+        ItemID: List<String>
+    ) {
+        val fragment = supportFragmentManager.findFragmentByTag("DialogSearchableSpinner")
+        if (fragment == null) {
+            val dialogSearch = DialogSearchableSpinner.newInstance(
+                this,
+                sType,
+                sTitle,
+                ItemName,
+                ItemID
+            )
+            dialogSearch.show(supportFragmentManager, "DialogSearchableSpinner")
+        }
+    }
 
-        Toast.makeText(
-            this@AddSankhyaActivity,
-            "Clicked: ${mAdapterGuru!!.mItems[position]}",
-            Toast.LENGTH_SHORT
-        ).show()
+    override fun searchableItemSelectedData(stype: String, sItemName: String, sItemID: String) {
+        UTSAV_ID = sItemID
+        UTSAV_NAME = sItemName
+        utsav_txt.text = sItemName
     }
 
 }
