@@ -106,16 +106,6 @@ interface ApiInterface {
         @Field("username") forgotuser: String
     ): Call<ForgotPasswordResponse>
 
-    /*Address find_address_by_pincode*/
-    @POST("api/v1/chapter/find_address_by_pincode")
-    fun userfind_add_by_pincode(
-        @Field("pincode") pincode: String
-    ): Call<Find_Address_By_Pincode>
-
-    /*Address get_dietaries*/
-    @GET("api/v1/member/get_dietaries")
-    fun userfind_add_dietaries(): Call<Find_Address_dietaries>
-
     /*Welcome API*/
 //    @Headers("Content-Type:application/json; charset=UTF-8")
     @FormUrlEncoded
@@ -130,15 +120,6 @@ interface ApiInterface {
 //        @Body user_id: User_id
     ): Call<WelcomeResponse>
 
-    /*My Family List*//*
-    @Headers("Content-Type:application/json; charset=UTF-8")
-    @POST("api/v1/karyakarta/get_members")
-    fun get_members(
-        @Field("user_id") userid: String,
-        @Header("Authorization") String auth
-    ):Call<my_family_response>*/
-
-    //    @Headers("Content-Type: application/json;charset=UTF-8")
     @FormUrlEncoded
     @POST("api/v1/karyakarta/get_members")
     fun get_members(
@@ -160,10 +141,6 @@ interface ApiInterface {
         @Field("search") search: String,
         @Field("chapter_id") chapter_id: String
     ): Call<guru_dakshina_response>
-
-    /*Get Relationship*/
-    @GET("api/v1/member/get_relationship")
-    fun get_relationship(): Call<Get_Relationship_Response>
 
     /*Get Occupation*/
     @GET("api/v1/member/get_occupations")
@@ -213,101 +190,6 @@ interface ApiInterface {
     @GET("api/v1/member/get_indianstates")
     suspend fun getIndianStates(): Get_Indianstates_Response
 
-    /*Get create_membership*/
-    @FormUrlEncoded
-    @POST("api/v1/member/create_membership")
-    fun get_create_membership(
-        @Field("user_id") user_id: String,
-        @Field("first_name") first_name: String,
-        @Field("middle_name") middle_name: String,
-        @Field("last_name") last_name: String,
-        @Field("username") username: String,
-        @Field("email") email: String,
-        @Field("password") password: String,
-        @Field("gender") gender: String,
-        @Field("dob") dob: String,
-        @Field("age") age: String,
-        @Field("relationship") relationship: String,
-        @Field("other_relationship") other_relationship: String,
-        @Field("occupation") occupation: String,
-        @Field("occupation_name") occupation_name: String,
-        @Field("shakha") shakha: String,
-        @Field("mobile") mobile: String,
-        @Field("land_line") land_line: String,
-        @Field("secondary_email") secondary_email: String,
-        @Field("post_code") post_code: String,
-        @Field("building_name") building_name: String,
-        @Field("address_line_1") address_line_1: String,
-        @Field("address_line_2") address_line_2: String,
-        @Field("post_town") post_town: String,
-        @Field("county") county: String,
-        @Field("emergency_name") emergency_name: String,
-        @Field("emergency_phone") emergency_phone: String,
-        @Field("emergency_email") emergency_email: String,
-        @Field("emergency_relationship") emergency_relatioship: String,
-        @Field("other_emergency_relationship") other_emergency_relationship: String,
-        @Field("medical_information") medical_information: String,
-        @Field("provide_details") provide_details: String,
-        @Field("is_qualified_in_first_aid") is_qualified_in_first_aid: String,
-        @Field("date_of_first_aid_qualification") date_of_first_aid_qualification: String,
-        @Field("qualification_file") qualification_file: String,
-        @Field("special_med_dietry_info") special_med_dietry_info: String,
-        @Field("language") language: String,
-        @Field("state") state: String,
-        @Field("parent_member_id") parent_member_id: String,
-        @Field("type") type: String,
-        @Field("is_linked") is_linked: String,
-        @Field("is_self") is_self: String,
-        @Field("app") app: String
-    ): Call<Get_CreateMembership_Response>
-
-
-    /*Get create_self*/
-    @FormUrlEncoded
-    @POST("api/v1/member/create_membership")
-    fun get_create_self(
-        @Field("user_id") user_id: String,
-        @Field("first_name") first_name: String,
-        @Field("middle_name") middle_name: String,
-        @Field("last_name") last_name: String,
-        @Field("email") email: String,
-        @Field("gender") gender: String,
-        @Field("dob") dob: String,
-        @Field("age") age: String,
-        @Field("relationship") relationship: String,
-        @Field("other_relationship") other_relationship: String,
-        @Field("occupation") occupation: String,
-        @Field("occupation_name") occupation_name: String,
-        @Field("shakha") shakha: String,
-        @Field("mobile") mobile: String,
-        @Field("land_line") land_line: String,
-        @Field("secondary_email") secondary_email: String,
-        @Field("post_code") post_code: String,
-        @Field("building_name") building_name: String,
-        @Field("address_line_1") address_line_1: String,
-        @Field("address_line_2") address_line_2: String,
-        @Field("post_town") post_town: String,
-        @Field("county") county: String,
-        @Field("emergency_name") emergency_name: String,
-        @Field("emergency_phone") emergency_phone: String,
-        @Field("emergency_email") emergency_email: String,
-        @Field("emergency_relationship") emergency_relatioship: String,
-        @Field("other_emergency_relationship") other_emergency_relationship: String,
-        @Field("medical_information") medical_information: String,
-        @Field("provide_details") provide_details: String,
-        @Field("is_qualified_in_first_aid") is_qualified_in_first_aid: String,
-        @Field("date_of_first_aid_qualification") date_of_first_aid_qualification: String,
-        @Field("qualification_file") qualification_file: String,
-        @Field("special_med_dietry_info") special_med_dietry_info: String,
-        @Field("language") language: String,
-        @Field("state") state: String,
-        @Field("parent_member_id") parent_member_id: String,
-        @Field("type") type: String,
-        @Field("is_linked") is_linked: String,
-        @Field("is_self") is_self: String,
-        @Field("app") app: String
-    ): Call<Get_CreateMembership_Response>
-
     /*Get profile*/
     @FormUrlEncoded
     @POST("api/v1/member/profile")
@@ -326,27 +208,6 @@ interface ApiInterface {
         @Field("menu_id") menu_id: String,
         @Field("action") action: String
     ): Call<Get_Privileges_Response>
-
-//    /*Post create_onetime*/
-//    @FormUrlEncoded
-//    @POST("api/v1/guru_dakshina/create_onetime")
-//    fun get_create_onetime(
-//        @Field("user_id") user_id: String,
-//        @Field("member_id") member_id: String,
-//        @Field("amount") amount: String,
-//        @Field("is_linked_member") is_linked_member: String,
-//        @Field("gift_aid") gift_aid: String,
-//        @Field("is_purnima_dakshina") is_purnima_dakshina: String,
-//        @Field("line1") line1: String,
-//        @Field("city") city: String,
-//        @Field("country") country: String,
-//        @Field("postal_code") postal_code: String,
-//        @Field("dakshina") dakshina: String,
-//        @Field("card_number") card_number: String,
-//        @Field("name") name: String,
-//        @Field("card_expiry") card_expiry: String,
-//        @Field("card_cvv") card_cvv: String
-//    ): Call<Get_Create_Onetime>
 
     /*Post create_regular*/
     @FormUrlEncoded
@@ -426,54 +287,6 @@ interface ApiInterface {
         @Field("user_id") user_id: String, @Field("member_id") member_id: String
     ): Call<Get_Single_Member_Record_Response>
 
-
-    /*Post update_membership*/
-    @FormUrlEncoded
-    @POST("api/v1/member/record")
-    fun get_update_membership(
-        @Field("user_id") user_id: String,
-        @Field("first_name") first_name: String,
-        @Field("middle_name") middle_name: String,
-        @Field("last_name") last_name: String,
-        @Field("username") username: String,
-        @Field("email") email: String,
-        @Field("password") password: String,
-        @Field("gender") gender: String,
-        @Field("dob") dob: String,
-        @Field("age") age: String,
-        @Field("relationship") relationship: String,
-        @Field("other_relationship") other_relationship: String,
-        @Field("occupation") occupation: String,
-        @Field("occupation_name") occupation_name: String,
-        @Field("shakha") shakha: String,
-        @Field("mobile") mobile: String,
-        @Field("land_line") land_line: String,
-        @Field("post_code") post_code: String,
-        @Field("building_name") building_name: String,
-        @Field("address_line_1") address_line_1: String,
-        @Field("address_line_2") address_line_2: String,
-        @Field("post_town") post_town: String,
-        @Field("county") county: String,
-        @Field("emergency_name") emergency_name: String,
-        @Field("emergency_phone") emergency_phone: String,
-        @Field("emergency_email") emergency_email: String,
-        @Field("emergency_relationship") emergency_relatioship: String,
-        @Field("other_emergency_relationship") other_emergency_relationship: String,
-        @Field("medical_information") medical_information: String,
-        @Field("provide_details") provide_details: String,
-        @Field("is_qualified_in_first_aid") is_qualified_in_first_aid: String,
-        @Field("date_of_first_aid_qualification") date_of_first_aid_qualification: String,
-        @Field("qualification_file") qualification_file: String,
-        @Field("special_med_dietry_info") special_med_dietry_info: String,
-        @Field("language") language: String,
-        @Field("state") state: String,
-        @Field("parent_member_id") parent_member_id: String,
-        @Field("type") type: String,
-        @Field("is_linked") is_linked: String,
-        @Field("is_self") is_self: String,
-        @Field("app") app: String
-    ): Call<Get_Update_Membership_Response>
-
     /*Post member listing*/
     @FormUrlEncoded
     @POST("api/v1/member/listing")
@@ -532,7 +345,7 @@ interface ApiInterface {
     @FormUrlEncoded
     @POST("api/v1/member/reject")
     fun get_member_reject(
-        @Field("user_id") user_id: String, @Field("member_id") member_id: String
+        @Field("user_id") user_id: String, @Field("member_id") member_id: String, @Field("message") reject_message: String
     ): Call<Get_Member_Reject_Response>
 
     /*Post member check_username_exist*/
@@ -555,7 +368,6 @@ interface ApiInterface {
 
     /*Post Suchana*/
     @FormUrlEncoded
-//    @GET("api/v1/Member/member_suchana")
     @POST("api/v1/Member/get_suchana_by_member")
     fun get_suchana_board(
         @Field("user_id") user_id: String,
@@ -661,6 +473,5 @@ interface ApiInterface {
         @Field("surya_namaskar_count_id") sn_id: String,
         @Field("count") sn_count: String
     ): Call<DeleteSnCount>
-
 
 }

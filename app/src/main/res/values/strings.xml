@@ -438,6 +438,7 @@
     <string name="enter_confirm_password">Please Enter Confirm Password</string>
     <string name="valid_confirm_password"><![CDATA[Confirm password must have 8 or more characters with a mix of letters with upper and lower combination, numbers & symbols.]]></string>
     <string name="confirm_both_pass">Password and confirm password must be same</string>
+    <string name="old_new_pass_error">Old Password and New password cannot be same</string>
     <string name="tnc"><![CDATA[Please check terms & conditions]]></string>
     <string name="can_not_add_sankhya">Can\'t add Sankhya, no members are currently listed as a part of this Shakha</string>
     <string name="username_required">Username required</string>
@@ -485,10 +486,16 @@
     <string name="would_you_like_to_delete_the_surya_namaskar_count">Would you like to delete the Surya Namaskar count?</string>
     <string name="are_you_sure_you_would_like_to_delete_the_surya_namaskar_count">Are you sure you would like to delete the Surya Namaskar count?</string>
     <string name="please_fill_in_all_the_details_in_order_to_log_your_surya_namaskar_count">Please fill in all the details in order to log your Surya Namaskar count.</string>
+    <string name="please_select_member_in_order_to_log_your_surya_namaskar_count">Please select the member in order to log your Surya Namaskar count.</string>
     <string name="please_enter_diverse_dates_in_order_to_log_your_surya_namaskar_count">Please enter diverse dates in order to log your Surya Namaskar count.</string>
     <string name="please_enter_a_count_between_1_and_500">Please enter a count between 1 and 500.</string>
-    <string name="please_add_date_and_count_for_surya_namaskar_by_clicking_add_more">Please Add Date and Count for Surya Namaskar by clicking Add More.</string>
+    <string name="please_add_date_and_count_for_surya_namaskar_by_clicking_add_more">Please add Date and Count for Surya Namaskar by clicking Add Date.</string>
     <string name="myhss_app_regret_to_inform_you_that_the_installation_was_unsuccessful_kindly_uninstall_the_application_and_proceed_to_download_it_again_from_the_play_store_to_ensure_a_successful_installation_thank_you_for_your_understanding">MyHSS App regrets to inform you that the installation was unsuccessful. Kindly uninstall the application and proceed to download it again from the Play Store to ensure a successful installation.\n\nIf you have already followed these steps and are still experiencing issues, please report to your Shakha Karyawah/Karyawahika for further investigation, providing any relevant details.\n\nThank you for your understanding.</string>
     <string name="username_error">Username could not be verified, please try again later.</string>
     <string name="something_went_wrong">Something went wrong! please try again later.</string>
+    <string name="close">CLOSE</string>
+    <string name="type_other_relationship">Type Other Relationship</string>
+    <string name="edit_donate_amount">Edit Donate Amount</string>
+    <string name="reason_for_rejection">Reason for Rejection</string>
+    <string name="write_here_your_reason">Write here your reason</string>
 </resources>

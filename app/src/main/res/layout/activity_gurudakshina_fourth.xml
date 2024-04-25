@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Guru_Dakshina_OneTime.GuruDakshinaOneTimeFourthActivity"
-    tools:showIn="@layout/activity_gurudakshina_fourth">
+    tools:context=".Guru_Dakshina_OneTime.GuruDakshinaOneTimeFourthActivity">
 
     <include layout="@layout/action_bar" />
 

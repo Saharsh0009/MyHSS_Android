@@ -86,7 +86,7 @@ class GuruDakshinaRegularFirstActivity() : AppCompatActivity() {
         edit_amount = findViewById(R.id.edit_amount)
         rootLayout = findViewById(R.id.rootLayout)
 
-        user_name.text = sessionManager.fetchUSERNAME()!!.capitalize(Locale.ROOT)
+        user_name.text = sessionManager.fetchFIRSTNAME()!!.capitalize(Locale.ROOT) + " "+sessionManager.fetchSURNAME()!!.capitalize(Locale.ROOT)
         shakha_name.text = sessionManager.fetchSHAKHANAME()!!.capitalize(Locale.ROOT)
 
         back_arrow.setOnClickListener(DebouncedClickListener {

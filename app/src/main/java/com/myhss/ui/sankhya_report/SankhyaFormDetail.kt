@@ -202,8 +202,6 @@ class SankhyaFormDetail : AppCompatActivity() {
             if (Functions.isConnectingToInternet(this@SankhyaFormDetail)) {
                 USERID = sessionManager.fetchUserID()!!
                 SANKHYA_ID = intent.getStringExtra("SANKHYA_ID")!!
-                Log.d("USERID", USERID)
-                Log.d("SANKHYA_ID", SANKHYA_ID)
                 mySankhya_Record(USERID, SANKHYA_ID)
             } else {
                 Toast.makeText(
@@ -218,19 +216,15 @@ class SankhyaFormDetail : AppCompatActivity() {
             finish()
         })
 
-        user_name_txt.text = intent.getStringExtra("UTSAVE_ID")!!
+        user_name_txt.text = intent.getStringExtra("UTSAV_NAME")!!
             .capitalize(Locale.ROOT) + " " + intent.getStringExtra("CURRENT_DATE")
 
         shakha_name_txt.text = intent.getStringExtra("SHAKHA_NAME")!!.capitalize(Locale.ROOT)
 
-        Log.d("CURRENT_DATE", intent.getStringExtra("CURRENT_DATE").toString())
-        Log.d("MEMBER_NAME", intent.getStringArrayListExtra("MEMBER_NAME").toString())
+//        Log.d("CURRENT_DATE", intent.getStringExtra("CURRENT_DATE").toString())
+//        Log.d("MEMBER_NAME", intent.getStringArrayListExtra("MEMBER_NAME").toString())
 //        Log.d("USER_MEMBER", intent.getStringExtra("USER_MEMBER").toString())
-        Log.d(
-            "USERNAME_LIST",
-            intent.getSerializableExtra("USERNAME_LIST").toString().replace("[", "")
-                .replace("]", "")
-        )
+//        Log.d("USERNAME_LIST", intent.getSerializableExtra("USERNAME_LIST").toString().replace("[", "").replace("]", ""))
 //        Log.d("USERID_LIST", intent.getSerializableExtra("USERID_LIST").toString())
 
 //        var demooo: ArrayList<String> = ArrayList<String>()
@@ -620,6 +614,7 @@ class SankhyaFormDetail : AppCompatActivity() {
         proudha: String,
         api: String
     ) {
+        submit_layout.isEnabled = false
         val pd = CustomProgressBar(this@SankhyaFormDetail)
         pd.show()
         val call: Call<Get_Sankhya_Add_Response> = MyHssApplication.instance!!.api.get_sankhya_add(
@@ -647,7 +642,6 @@ class SankhyaFormDetail : AppCompatActivity() {
                 call: Call<Get_Sankhya_Add_Response>, response: Response<Get_Sankhya_Add_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
 
                         val alertBuilder =
@@ -676,12 +670,14 @@ class SankhyaFormDetail : AppCompatActivity() {
 //                        "Message",
                             response.body()?.message
                         )
+                        submit_layout.isEnabled = true
                     }
                 } else {
                     Functions.showAlertMessageWithOK(
                         this@SankhyaFormDetail, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    submit_layout.isEnabled = true
                 }
                 pd.dismiss()
             }
@@ -689,6 +685,7 @@ class SankhyaFormDetail : AppCompatActivity() {
             override fun onFailure(call: Call<Get_Sankhya_Add_Response>, t: Throwable) {
                 Toast.makeText(this@SankhyaFormDetail, t.message, Toast.LENGTH_LONG).show()
                 pd.dismiss()
+                submit_layout.isEnabled = true
             }
         })
     }
@@ -704,21 +701,15 @@ class SankhyaFormDetail : AppCompatActivity() {
                 call: Call<Sankhya_details_Response>, response: Response<Sankhya_details_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
                     if (response.body()?.status!!) {
                         var sankhya_datum: List<Sankhya_details_Datum> =
                             ArrayList<Sankhya_details_Datum>()
                         var sankhya_detail: List<Sankhya_details_member> =
                             ArrayList<Sankhya_details_member>()
-
-                        Log.d("sankhya_detail", sankhya_detail.size.toString())
-
                         total_member_count.text = sankhya_detail.size.toString()
 
                         try {
                             sankhya_datum = response.body()!!.data!!
-                            Log.d("sankhya_datum", sankhya_datum.toString())
-
                             if (sankhya_detail[0].middleName == "") {
                                 user_name_txt.text =
                                     sankhya_detail[0].firstName!!.capitalize(Locale.ROOT) + " " + sankhya_detail[0].lastName!!.capitalize(

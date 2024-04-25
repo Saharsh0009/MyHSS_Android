@@ -50,7 +50,6 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
     private lateinit var next_layout: LinearLayout
     private lateinit var edit_payment: ImageView
     private lateinit var donate_amount_txt: TextView
-
     private lateinit var cardInputWidget: CardMultilineWidget
     private lateinit var stripe: Stripe
     private lateinit var paymentIntentClientSecret: String
@@ -127,6 +126,8 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
     }
 
     private fun callApiForStripeData() {
+        next_layout.isEnabled = false
+        back_layout.isEnabled = false
         val pd = CustomProgressBar(this@GuruDakshinaOneTimeFourthActivity)
         pd.show()
 
@@ -180,11 +181,10 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     if (response.isSuccessful) {
-
+                        DebugLog.e("GD RESPONSE : $response")
                         val status = response.body()!!.status
                         val message = response.body()!!.message
                         if (status == true) {
-                            pd.dismiss()
                             Toast.makeText(
                                 this@GuruDakshinaOneTimeFourthActivity,
                                 "$message. Please wait until payment complete.",
@@ -197,11 +197,14 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 paymentIntentClientSecret,
                                 response.body()!!.info.publishableKey
                             )
+                            pd.dismiss()
                         } else {
                             pd.dismiss()
                             Functions.showAlertMessageWithOK(
                                 this@GuruDakshinaOneTimeFourthActivity, "", message.toString()
                             )
+                            next_layout.isEnabled = true
+                            back_layout.isEnabled = true
                         }
                     }
                 } else {
@@ -210,23 +213,28 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                         this@GuruDakshinaOneTimeFourthActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    next_layout.isEnabled = true
+                    back_layout.isEnabled = true
                 }
 
             }
 
             override fun onFailure(call: Call<StripeDataModel>, t: Throwable) {
-//                Toast.makeText(this@GuruDakshinaOneTimeFourthActivity, t.message, Toast.LENGTH_LONG)
-//                    .show()
                 pd.dismiss()
                 Functions.showAlertMessageWithOK(
                     this@GuruDakshinaOneTimeFourthActivity, "Message",
                     t.message,
                 )
+                next_layout.isEnabled = true
+                back_layout.isEnabled = true
             }
         })
     }
 
-    private fun makeStripePayement(paymentIntentClientSecretKey: String, sPublishableKey: String) {
+    private fun makeStripePayement(
+        paymentIntentClientSecretKey: String,
+        sPublishableKey: String
+    ) {
         PaymentConfiguration.init(
             applicationContext,
             sPublishableKey
@@ -394,6 +402,8 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                                 "",
                                 response.body()!!.message
                             )
+                            next_layout.isEnabled = true
+                            back_layout.isEnabled = true
                         }
                         pd1.dismiss()
                     }
@@ -402,6 +412,8 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                         this@GuruDakshinaOneTimeFourthActivity, "Message",
                         getString(R.string.some_thing_wrong),
                     )
+                    next_layout.isEnabled = true
+                    back_layout.isEnabled = true
                 }
                 pd1.dismiss()
             }
@@ -413,6 +425,8 @@ class GuruDakshinaOneTimeFourthActivity : ComponentActivity() {
                     "Guru Dakshina Payment Failure",
                     "$t.message"
                 )
+                next_layout.isEnabled = true
+                back_layout.isEnabled = true
             }
         })
     }

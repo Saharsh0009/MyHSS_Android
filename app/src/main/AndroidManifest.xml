@@ -8,29 +8,24 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- <uses-permission android:name="android.permission.CALL_PHONE" /> -->
-    <uses-permission android:name="android.permission.USE_BIOMETRIC" /> <!-- <uses-permission android:name="android.permission.CAMERA" /> -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- <uses-feature -->
-    <!-- android:name="android.hardware.camera.autoFocus" -->
-    <!-- android:required="false" /> -->
-    <!-- <uses-feature -->
-    <!-- android:name="android.hardware.camera" -->
-    <!-- android:required="true" /> -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+
+
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" /> <!-- <uses-permission -->
-    <!-- android:name="android.permission.CALL_PRIVILEGED" -->
-    <!-- tools:ignore="ProtectedPermissions" /> -->
-    <!-- <uses-feature android:name="android.hardware.location.gps" /> -->
+        android:maxSdkVersion="32" />
+
     <uses-feature
         android:name="android.hardware.fingerprint"
         android:required="true" /> <!-- <uses-feature -->
-    <!-- android:name="android.hardware.telephony" -->
-    <!-- android:required="false" /> -->
+
     <permission
         android:name="com.uk.myhss.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
@@ -56,6 +51,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:ignore="AllowBackup">
+
         <activity
             android:name="com.myhss.ui.events.EventRegistrationViewActivity"
             android:exported="false" />
@@ -302,13 +298,6 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".Guru_Dakshina_Regular.GuruDakshinaRegularThirdActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:hardwareAccelerated="false"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-        <activity
-            android:name=".Guru_Dakshina_Regular.GuruDakshinaRegularFourthActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="false"
             android:label="@string/app_name"

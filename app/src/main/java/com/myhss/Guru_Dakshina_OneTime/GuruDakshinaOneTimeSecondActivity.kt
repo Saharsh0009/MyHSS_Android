@@ -24,7 +24,6 @@ import com.myhss.Utils.DebouncedClickListener
 import com.myhss.Utils.Functions
 import com.myhss.Utils.InputFilterMinMax
 import com.uk.myhss.Utils.SessionManager
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,12 +39,8 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         "I am a UK Tax Payer and want to donate as Gift Aid",
         "I do not wish to donate as Gift Aid on this Occasion"
     )
-
     var FamilyName: List<String> = ArrayList<String>()
     var FamilyID: List<String> = ArrayList<String>()
-
-    //    private lateinit var gift_aid_select_txt: SearchableSpinner
-//    private lateinit var gift_aid_select_view: RelativeLayout
     var gift_aid_select_txt: Spinner? = null
 
     private var giving_dakshina: String = ""
@@ -122,20 +117,11 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
         giving_dakshina_layout = findViewById(R.id.giving_dakshina_layout)
         rootLayout = findViewById(R.id.rootLayout)
         edit_payment = findViewById(R.id.edit_payment)
-
-//        giving_dakshina_layout.text = getString(R.string.are_you_giving_dakshina)
-
-//        gift_aid_select_txt = findViewById(R.id.gift_aid_select_txt)
-//        gift_aid_select_view = findViewById(R.id.gift_aid_select_view)
-
         tooltip_view = findViewById(R.id.tooltip_view)
 
         if (intent.getStringExtra("Amount") != "") {
             donate_amount_txt.text = intent.getStringExtra("Amount")
         }
-
-//        gift_aid_select_txt.onItemSelectedListener = mOnItemSelectedListener_gift_aid
-
         gift_aid_select_txt = findViewById(R.id.gift_aid_select_txt)
 
         val spinnerArrayAdapter =
@@ -168,13 +154,6 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
 
             }
         }
-
-        /*For Selection Dasgina drop down*/
-        /*SearchSpinner(gift_aid, gift_aid_select_txt)
-
-        gift_aid_select_view.setOnClickListener {
-            SearchSpinner(gift_aid, gift_aid_select_txt)
-        }*/
 
         edit_payment.setOnClickListener(DebouncedClickListener {
             depositDialogForEditPayment()
@@ -321,38 +300,6 @@ class GuruDakshinaOneTimeSecondActivity() : AppCompatActivity() {
                 startActivity(i)
             }
         })
-    }
-
-    private fun SearchSpinner(
-        spinner_search: Array<String>,
-        edit_txt: SearchableSpinner
-    ) {
-        val searchmethod = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item,
-            spinner_search
-        )
-        searchmethod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        edit_txt.adapter = searchmethod
-    }
-
-    private val mOnItemSelectedListener_gift_aid: AdapterView.OnItemSelectedListener = object :
-        AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//            TODO("Not yet implemented")
-            Log.d("Name", gift_aid[position])
-//            GIFTAID_ID = gift_aid[position]
-
-            if (position == 0) {
-                GIFTAID_ID = "yes"
-            } else {
-                GIFTAID_ID = "no"
-            }
-            Log.d("GIFTAID_ID", GIFTAID_ID)
-        }
-
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-//            TODO("Not yet implemented")
-        }
     }
 
     fun depositDialog(message: String) {

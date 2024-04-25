@@ -26,9 +26,9 @@ class MyHssApplication private constructor() : MultiDexApplication() {
 
     private fun provideOkHttpClient(): OkHttpClient {
         val okhttpClientBuilder = OkHttpClient.Builder()
-        okhttpClientBuilder.connectTimeout(30, TimeUnit.SECONDS)
-        okhttpClientBuilder.readTimeout(30, TimeUnit.SECONDS)
-        okhttpClientBuilder.writeTimeout(30, TimeUnit.SECONDS)
+        okhttpClientBuilder.connectTimeout(100, TimeUnit.SECONDS)
+        okhttpClientBuilder.readTimeout(100, TimeUnit.SECONDS)
+        okhttpClientBuilder.writeTimeout(100, TimeUnit.SECONDS)
 
         /*sessionManager = SessionManager(this)
         Log.d("SessionToken", sessionManager.fetchAuthToken().toString())
