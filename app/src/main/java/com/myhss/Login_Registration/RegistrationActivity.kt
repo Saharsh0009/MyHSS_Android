@@ -329,7 +329,7 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     fun CallUserNameMethod(userNameS: String) {
-        UserNameCheck(userNameS)
+//        UserNameCheck(userNameS)
     }
 
     private fun registration(
