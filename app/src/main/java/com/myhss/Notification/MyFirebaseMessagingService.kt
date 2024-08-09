@@ -39,6 +39,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         var notification_type = "0"
         var notifc_id = "0"
+
+        sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
         if (remoteMessage.data.isNotEmpty()) {
             if (!remoteMessage.data.isNullOrEmpty()) {
                 DebugLog.e("remoteMessage.data => ${remoteMessage.data}")
@@ -66,7 +68,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         sessionManager = SessionManager(this)
-        sharedPreferences = getSharedPreferences("production", Context.MODE_PRIVATE)
         sessionManager.saveFCMDEVICE_TOKEN(token)
         sendRegistrationToServer(token)
     }
@@ -86,21 +87,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val isAppInForeground = UtilCommon.isAppInForeground(this, packageName)
         val isAppRunning = UtilCommon.isAppRunning(this, packageName)
 
-        val intent: Intent
-
-        if (isAppInForeground) {
-            DebugLog.e("App is in isAppInForeground")
+        val intent: Intent = if (isAppInForeground && sharedPreferences.getString("MEMBERID", "") != "") {
+            DebugLog.e("Print log A")
             if (Stype == "0") {
-                intent = Intent(this, SuchanaBoardActivity::class.java)
+                Intent(this, SuchanaBoardActivity::class.java)
             } else {
-                intent = Intent(this, NotificationList::class.java)
+                Intent(this, NotificationList::class.java)
             }
+        } else if (isAppInForeground && sharedPreferences.getString("MEMBERID", "") == "") {
+            DebugLog.e("Print log B")
+            Intent(this, SplashActivity::class.java)
         } else if (isAppRunning) {
-            DebugLog.e("App is in isAppRunning")
-            intent = Intent(this, SplashActivity::class.java)
+            DebugLog.e("Print log C")
+            Intent(this, SplashActivity::class.java)
         } else {
-            DebugLog.e("App is in Not running")
-            intent = Intent(this, SplashActivity::class.java)
+            DebugLog.e("Print log D")
+            Intent(this, SplashActivity::class.java)
         }
 
         val notID = getNotificationId()
