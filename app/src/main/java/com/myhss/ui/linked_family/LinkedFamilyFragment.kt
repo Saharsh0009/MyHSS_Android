@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.animation.Easing
@@ -51,6 +52,7 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.linked_family.MemberShipActivity
+import com.uk.myhss.ui.linked_family.MembersCustomAdapter
 
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
@@ -207,40 +209,62 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         }
 
 
-        search_fields.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                val end: Int = 100
-                val start: Int = 0
+//        search_fields.addTextChangedListener(object : TextWatcher {
+//            override fun afterTextChanged(s: Editable?) {
+//                val end: Int = 100
+//                val start: Int = 0
+//
+//                if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
+//                    USERID = sessionManager.fetchUserID()!!
+//                    Log.d("USERID", USERID)
+//                    TAB = "family"
+//                    MEMBERID = sessionManager.fetchMEMBERID()!!
+//                    STATUS = "1"
+//                    LENGTH = end.toString()
+//                    START = start.toString()
+//                    SEARCH = s.toString()
+//                    CHAPTERID = ""
+//                    mySearchMemberList(USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID)
+//                } else {
+//                    Toast.makeText(
+//                        this@LinkedFamilyFragment,
+//                        resources.getString(R.string.no_connection),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//
+//            }
+//        })
 
-                if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
-                    USERID = sessionManager.fetchUserID()!!
-                    Log.d("USERID", USERID)
-                    TAB = "family"
-                    MEMBERID = sessionManager.fetchMEMBERID()!!
-                    STATUS = "1"
-                    LENGTH = end.toString()
-                    START = start.toString()
-                    SEARCH = s.toString()
-                    CHAPTERID = ""
-                    mySearchMemberList(
-                        USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID
-                    )
-                } else {
-                    Toast.makeText(
-                        this@LinkedFamilyFragment,
-                        resources.getString(R.string.no_connection),
-                        Toast.LENGTH_SHORT
-                    ).show()
+        search_fields.doOnTextChanged { text, start, before, count ->
+            if (text?.toString()?.length!! > 0) {
+                val filteredList = atheletsBeans.filter { item ->
+                    var fullName: String = ""
+                    if (item.middleName != "") {
+                        fullName =
+                            item.firstName!!.capitalize(Locale.ROOT) + " " + item.middleName!!.capitalize(
+                                Locale.ROOT
+                            ) + " " + item.lastName!!.capitalize(Locale.ROOT)
+                    } else {
+                        fullName =
+                            item.firstName!!.capitalize(Locale.ROOT) + " " + item.lastName!!.capitalize(
+                                Locale.ROOT
+                            )
+                    }
+                    fullName.contains(text!!, ignoreCase = true)
                 }
+                updateAdapterData(filteredList)
+            } else {
+                updateAdapterData(atheletsBeans)
             }
+        }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-        })
 
 //        add_family_layout.visibility = View.GONE
 
@@ -460,6 +484,16 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                 CallGuruDakshinaAPI(start, end)
             }
         })
+    }
+
+    private fun updateAdapterData(updateData: List<Get_Member_Listing_Datum>) {
+        try {
+            mAdapterGuru = CustomAdapter(updateData)
+            my_family_list.adapter = mAdapterGuru
+            mAdapterGuru!!.notifyDataSetChanged()
+        } catch (e: ArithmeticException) {
+            println(e)
+        }
     }
 
     private fun CallGuruDakshinaAPI(start: Int, end: Int) {
@@ -682,20 +716,11 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
                         data_not_found_layout.visibility = View.GONE
                         try {
                             atheletsBeans = response.body()!!.data!!
-                            Log.d("atheletsBeans", atheletsBeans.toString())
-                            for (i in 1 until atheletsBeans.size) {
-                                Log.d("firstName", atheletsBeans[i].firstName.toString())
-                            }
-
                             mAdapterGuru = CustomAdapter(atheletsBeans)
-
                             my_family_list.adapter = mAdapterGuru
                             mAdapterGuru!!.notifyDataSetChanged()
-
                         } catch (e: ArithmeticException) {
                             println(e)
-                        } finally {
-                            println("Family")
                         }
                     } else {
                     }
