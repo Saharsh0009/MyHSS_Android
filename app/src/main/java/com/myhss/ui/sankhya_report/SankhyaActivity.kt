@@ -130,47 +130,6 @@ class SankhyaActivity : AppCompatActivity() {
             ).show()
         }
 
-//        search_fields.addTextChangedListener(object : TextWatcher {
-//            override fun afterTextChanged(s: Editable?) {
-//                val end: Int = 100
-//                val start: Int = 0
-//
-//                if (Functions.isConnectingToInternet(this@SankhyaActivity)) {
-//                    USERID = sessionManager.fetchUserID()!!
-//                    USERID = sessionManager.fetchUserID()!!
-//                    MEMBERID = sessionManager.fetchSHAKHAID()!!
-//                    LENGTH = end.toString()
-//                    START = start.toString()
-//                    SEARCH = s.toString()
-//                    START_DATE = ""  //TODAY_DATE
-//                    END_DATE = ""  //TODAY_DATE
-//
-//                    mySearchSankhyaList(
-//                        USERID,
-//                        MEMBERID,
-//                        LENGTH,
-//                        START,
-//                        SEARCH,
-//                        START_DATE,
-//                        END_DATE
-//                    )
-//                } else {
-//                    Toast.makeText(
-//                        this@SankhyaActivity,
-//                        resources.getString(R.string.no_connection),
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//            }
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//
-//            }
-//        })
-
         search_fields.doOnTextChanged { text, start, before, count ->
             if (text?.toString()?.length!! > 0) {
                 val filteredList = atheletsBeans.filter { item ->
@@ -245,49 +204,4 @@ class SankhyaActivity : AppCompatActivity() {
             }
         })
     }
-
-    private fun mySearchSankhyaList(
-        user_id: String, chapter_id: String, length: String, start: String, search: String,
-        start_date: String, end_date: String
-    ) {
-        val call: Call<Sankhya_List_Response> = MyHssApplication.instance!!.api.get_sankhya_listing(
-            user_id, chapter_id, length,
-            start, search, start_date, end_date
-        )
-        call.enqueue(object : Callback<Sankhya_List_Response> {
-            override fun onResponse(
-                call: Call<Sankhya_List_Response>,
-                response: Response<Sankhya_List_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-
-                        try {
-                            atheletsBeans = response.body()!!.data!!
-                            mAdapterGuru = SankhyaCustomAdapter(atheletsBeans)
-                            my_family_list.adapter = mAdapterGuru
-                            mAdapterGuru!!.notifyDataSetChanged()
-                        } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Family")
-                        }
-                    } else {
-                        Functions.displayMessage(this@SankhyaActivity, response.body()?.message)
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@SankhyaActivity, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-            }
-
-            override fun onFailure(call: Call<Sankhya_List_Response>, t: Throwable) {
-                Toast.makeText(this@SankhyaActivity, t.message, Toast.LENGTH_LONG).show()
-            }
-        })
-    }
-
 }
