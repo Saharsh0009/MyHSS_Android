@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.animation.Easing
@@ -51,6 +52,7 @@ import com.uk.myhss.R
 import com.uk.myhss.Restful.MyHssApplication
 import com.uk.myhss.Utils.SessionManager
 import com.uk.myhss.ui.linked_family.MemberShipActivity
+import com.uk.myhss.ui.linked_family.MembersCustomAdapter
 
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Datum
 import com.uk.myhss.ui.linked_family.Model.Get_Member_Listing_Response
@@ -205,42 +207,29 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
             val start: Int = 0
             CallAPI(start, end, false)
         }
-
-
-        search_fields.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                val end: Int = 100
-                val start: Int = 0
-
-                if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
-                    USERID = sessionManager.fetchUserID()!!
-                    Log.d("USERID", USERID)
-                    TAB = "family"
-                    MEMBERID = sessionManager.fetchMEMBERID()!!
-                    STATUS = "1"
-                    LENGTH = end.toString()
-                    START = start.toString()
-                    SEARCH = s.toString()
-                    CHAPTERID = ""
-                    mySearchMemberList(
-                        USERID, TAB, MEMBERID, STATUS, LENGTH, START, SEARCH, CHAPTERID
-                    )
-                } else {
-                    Toast.makeText(
-                        this@LinkedFamilyFragment,
-                        resources.getString(R.string.no_connection),
-                        Toast.LENGTH_SHORT
-                    ).show()
+        search_fields.doOnTextChanged { text, start, before, count ->
+            if (text?.toString()?.length!! > 0) {
+                val filteredList = atheletsBeans.filter { item ->
+                    var fullName: String = ""
+                    if (item.middleName != "") {
+                        fullName =
+                            item.firstName!!.capitalize(Locale.ROOT) + " " + item.middleName!!.capitalize(
+                                Locale.ROOT
+                            ) + " " + item.lastName!!.capitalize(Locale.ROOT)
+                    } else {
+                        fullName =
+                            item.firstName!!.capitalize(Locale.ROOT) + " " + item.lastName!!.capitalize(
+                                Locale.ROOT
+                            )
+                    }
+                    fullName.contains(text!!, ignoreCase = true)
                 }
+                updateAdapterData(filteredList)
+            } else {
+                updateAdapterData(atheletsBeans)
             }
+        }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-        })
 
 //        add_family_layout.visibility = View.GONE
 
@@ -462,6 +451,16 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         })
     }
 
+    private fun updateAdapterData(updateData: List<Get_Member_Listing_Datum>) {
+        try {
+            mAdapterGuru = CustomAdapter(updateData)
+            my_family_list.adapter = mAdapterGuru
+            mAdapterGuru!!.notifyDataSetChanged()
+        } catch (e: ArithmeticException) {
+            println(e)
+        }
+    }
+
     private fun CallGuruDakshinaAPI(start: Int, end: Int) {
         if (Functions.isConnectingToInternet(this@LinkedFamilyFragment)) {
             USERID = sessionManager.fetchUserID()!!
@@ -657,62 +656,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
         })
     }
 
-    private fun mySearchMemberList(
-        user_id: String,
-        tab: String,
-        member_id: String,
-        status: String,
-        length: String,
-        start: String,
-        search: String,
-        chapter_id: String
-    ) {
-        val call: Call<Get_Member_Listing_Response> =
-            MyHssApplication.instance!!.api.get_member_listing(
-                user_id, tab, member_id, status, length, start, search, chapter_id
-            )
-        call.enqueue(object : Callback<Get_Member_Listing_Response> {
-            override fun onResponse(
-                call: Call<Get_Member_Listing_Response>,
-                response: Response<Get_Member_Listing_Response>
-            ) {
-                if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
-                    if (response.body()?.status!!) {
-                        data_not_found_layout.visibility = View.GONE
-                        try {
-                            atheletsBeans = response.body()!!.data!!
-                            Log.d("atheletsBeans", atheletsBeans.toString())
-                            for (i in 1 until atheletsBeans.size) {
-                                Log.d("firstName", atheletsBeans[i].firstName.toString())
-                            }
-
-                            mAdapterGuru = CustomAdapter(atheletsBeans)
-
-                            my_family_list.adapter = mAdapterGuru
-                            mAdapterGuru!!.notifyDataSetChanged()
-
-                        } catch (e: ArithmeticException) {
-                            println(e)
-                        } finally {
-                            println("Family")
-                        }
-                    } else {
-                    }
-                } else {
-                    Functions.showAlertMessageWithOK(
-                        this@LinkedFamilyFragment, "Message",
-                        getString(R.string.some_thing_wrong),
-                    )
-                }
-            }
-
-            override fun onFailure(call: Call<Get_Member_Listing_Response>, t: Throwable) {
-                Toast.makeText(this@LinkedFamilyFragment, t.message, Toast.LENGTH_LONG).show()
-            }
-        })
-    }
-
     /*Guru Dakshina*/
     private fun myGuruDakshina(
         user_id: String, length: String, start: String, search: String, chapter_id: String
@@ -889,14 +832,6 @@ class LinkedFamilyFragment : AppCompatActivity(), OnChartValueSelectedListener {
 
         for (i in 0 until guru_dakshinaBeans.size) {
             if (sName == guru_dakshinaBeans[i].memberId) {
-                DebugLog.e("*************************")
-                DebugLog.e("AMT ${guru_dakshinaBeans[i].paidAmount}")
-                DebugLog.e("NAME : ${guru_dakshinaBeans[i].firstName}")
-                DebugLog.e("id : ${guru_dakshinaBeans[i].id}")
-                DebugLog.e("ord : ${guru_dakshinaBeans[i].orderId}")
-                DebugLog.e("mem : ${guru_dakshinaBeans[i].memberId}")
-                DebugLog.e("dakshina : ${guru_dakshinaBeans[i].dakshina}")
-                DebugLog.e("txnid : ${guru_dakshinaBeans[i].txnId}")
                 val barchartDataModel = BarchartDataModel()
                 barchartDataModel.setValue_x(guru_dakshinaBeans[i].startDate)
                 barchartDataModel.setValue_y(guru_dakshinaBeans[i].paidAmount)

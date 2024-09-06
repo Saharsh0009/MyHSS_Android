@@ -107,23 +107,15 @@ class SplashActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
-        Log.d("currentVersion", currentVersion)
-        Log.d(
-            "Allow_biometric", sharedPreferences.getString(
-                "Allow_biometric", ""
-            ).toString()
-        )
-
         val receivedIntent = intent
         if (receivedIntent != null && receivedIntent.hasExtra(AppParam.NOTIFIC_KEY)) {
             receivedNotiData = receivedIntent.getStringExtra(AppParam.NOTIFIC_KEY).toString()
             receivedNotiID = receivedIntent.getStringExtra(AppParam.NOTIFIC_ID).toString()
-//            DebugLog.e("Notification Value : $receivedNotiData")
+            DebugLog.e("Notification Value : $receivedNotiData")
         }
 
 
         Handler().postDelayed({
-            Log.e("TAG-SharedPref", "" + sharedPreferences.getString("USERID", ""))
             if (Functions.isConnectingToInternet(this@SplashActivity)) {
                 val OSName = "android"
                 val app_version = currentVersion
@@ -151,10 +143,7 @@ class SplashActivity : AppCompatActivity() {
 
                             if (forceUpdateRequired == "false") {
                                 Handler().postDelayed({
-                                    Log.e(
-                                        "TAG-SharedPref",
-                                        "" + sharedPreferences.getString("USERID", "")
-                                    )
+
                                     if (sharedPreferences.getString("USERID", "") != "") {
                                         try {
                                             if (sharedPreferences.getString("MEMBERID", "") != "") {
