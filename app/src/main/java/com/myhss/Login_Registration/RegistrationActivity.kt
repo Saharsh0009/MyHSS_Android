@@ -329,7 +329,7 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     fun CallUserNameMethod(userNameS: String) {
-        UserNameCheck(userNameS)
+//        UserNameCheck(userNameS)
     }
 
     private fun registration(
@@ -350,7 +350,7 @@ class RegistrationActivity : AppCompatActivity() {
                 call: Call<RegistrationResponse>, response: Response<RegistrationResponse>
             ) {
                 if (response.code() == 200 && response.body() != null) {
-                    Log.d("status", response.body()?.status.toString())
+                    DebugLog.e("status : "+ response.body()?.status.toString())
                     if (response.body()?.status!!) {
                         dialogShow(edit_email.text.toString())
                         pd.dismiss()
