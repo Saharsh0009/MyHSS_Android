@@ -153,6 +153,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/sourcesanspro_semibold"
                                 android:text=": 0"
+                                android:lines="1"
                                 android:textColor="@color/blackColor"
                                 android:textSize="@dimen/font_size15"
                                 android:textStyle="normal"

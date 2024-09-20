@@ -65,8 +65,12 @@ class AboutMeFragment : Fragment() {
         occupation_txt = root.findViewById(R.id.occupation_txt)
 
         shakha__address.text = sessionManager.fetchSHAKHANAME()
-        address_txt.text = sessionManager.fetchADDRESS() + ", " + sessionManager.fetchCITY() +
-                ", " + sessionManager.fetchPOSTCODE() + ", " + sessionManager.fetchCOUNTRY()
+
+        if(sessionManager.fetchCOUNTRY().isNullOrEmpty() || sessionManager.fetchCOUNTRY().equals("null")){
+            address_txt.text = sessionManager.fetchADDRESS() + ", " + sessionManager.fetchCITY() + ", " + sessionManager.fetchPOSTCODE()
+        }else{
+            address_txt.text = sessionManager.fetchADDRESS() + ", " + sessionManager.fetchCITY() + ", " + sessionManager.fetchPOSTCODE() + ", " + sessionManager.fetchCOUNTRY()
+        }
         spoken_lang_txt.text = sessionManager.fetchSPOKKENLANGUAGE()
         occupation_txt.text = sessionManager.fetchOCCUPATIONNAME()
 

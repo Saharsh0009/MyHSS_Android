@@ -1113,16 +1113,18 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
         ItemName: List<String>,
         ItemID: List<String>
     ) {
-        val fragment = supportFragmentManager.findFragmentByTag("DialogSearchableSpinner")
-        if (fragment == null) {
-            val exitFragment = DialogSearchableSpinner.newInstance(
-                this,
-                sType,
-                sTitle,
-                ItemName,
-                ItemID
-            )
-            exitFragment.show(supportFragmentManager, "DialogSearchableSpinner")
+        if(ItemName.size > 0){
+            val fragment = supportFragmentManager.findFragmentByTag("DialogSearchableSpinner")
+            if (fragment == null) {
+                val exitFragment = DialogSearchableSpinner.newInstance(
+                    this,
+                    sType,
+                    sTitle,
+                    ItemName,
+                    ItemID
+                )
+                exitFragment.show(supportFragmentManager, "DialogSearchableSpinner")
+            }
         }
     }
 
@@ -1156,6 +1158,10 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
                         VibhagID
                     )
                 })
+                NagarName = emptyList()
+                NagarID = emptyList()
+                ShakhaName = emptyList()
+                ShakhaID = emptyList()
 
             } else {
                 Functions.displayMessage(
@@ -1437,6 +1443,9 @@ class AddMemberFirstActivity() : AppCompatActivity(), iDialogSearchableSpinner {
         shakha_select_default.text = "Select Shakha"
         edit_shakha_branch.text = "Select Shakha"
         SHAKHA_ID = ""
+        ShakhaName = emptyList()
+        ShakhaID = emptyList()
+
 
         lifecycleScope.launch {
             val job4 = async { myNagar(sVibhagID) }
