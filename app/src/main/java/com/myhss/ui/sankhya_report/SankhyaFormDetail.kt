@@ -235,11 +235,6 @@ class SankhyaFormDetail : AppCompatActivity() {
 
         total_member_count.visibility = View.GONE
         total_member_count.text = intent.getStringExtra("MEMBER_ID").toString()
-        Functions.printLog(
-            "MEMBER_ID==>",
-            intent.getStringExtra("MEMBER_ID")!!  //.replace("[", "").replace("]", "")
-        )
-
 //        user_name_txt.text = sessionManager.fetchUSERNAME()!!.capitalize(Locale.ROOT)
 //
 //        shakha_name_txt.text = sessionManager.fetchSHAKHANAME()!!.capitalize(Locale.ROOT)
@@ -275,6 +270,8 @@ class SankhyaFormDetail : AppCompatActivity() {
 
             USER_ID = sessionManager.fetchUserID()!!
             MEMBER_ID = intent.getStringExtra("MEMBER_ID")!!  //.replace("[", "").replace("]", "")!!
+            val AGE_CATEGORY =
+                intent.getStringExtra("AGE_CATEGORY")!!  //.replace("[", "").replace("]", "")!!
             ORG_CHAPTER_ID = sessionManager.fetchSHAKHAID()!!
             UTSAV_NAME = intent.getStringExtra("UTSAV_NAME")!!
             EVENTDATE = intent.getStringExtra("EVENT_DATE")!!
@@ -311,7 +308,8 @@ class SankhyaFormDetail : AppCompatActivity() {
                     YUVTI,
                     PRODH,
                     PRODHA,
-                    API
+                    API,
+                    AGE_CATEGORY
                 )
             } else {
                 Toast.makeText(
@@ -543,11 +541,13 @@ class SankhyaFormDetail : AppCompatActivity() {
 
     private fun setSankhyaCountView() {
         val ct_guest: Int =
-            (Integer.parseInt(SHISHU_MALE) + Integer.parseInt(SHISHU_FEMALE) + Integer.parseInt(BAAL)
-                    + Integer.parseInt(BAALIKA) + Integer.parseInt(KISHOR) + Integer.parseInt(
+            (Integer.parseInt(SHISHU_MALE) + Integer.parseInt(SHISHU_FEMALE) + Integer.parseInt(BAAL) + Integer.parseInt(
+                BAALIKA
+            ) + Integer.parseInt(KISHOR) + Integer.parseInt(
                 KISHORI
-            ) + Integer.parseInt(TARUN)
-                    + Integer.parseInt(TARUNI) + Integer.parseInt(YUVA) + Integer.parseInt(YUVTI) + Integer.parseInt(
+            ) + Integer.parseInt(TARUN) + Integer.parseInt(TARUNI) + Integer.parseInt(YUVA) + Integer.parseInt(
+                YUVTI
+            ) + Integer.parseInt(
                 PRODH
             ) + Integer.parseInt(PRODHA))
         txt_guest_count.text = " : $ct_guest"
@@ -612,9 +612,11 @@ class SankhyaFormDetail : AppCompatActivity() {
         yuvati: String,
         proudh: String,
         proudha: String,
-        api: String
+        api: String,
+        age_category: String
     ) {
         submit_layout.isEnabled = false
+
         val pd = CustomProgressBar(this@SankhyaFormDetail)
         pd.show()
         val call: Call<Get_Sankhya_Add_Response> = MyHssApplication.instance!!.api.get_sankhya_add(
@@ -635,7 +637,8 @@ class SankhyaFormDetail : AppCompatActivity() {
             yuvati,
             proudh,
             proudha,
-            api
+            api,
+            age_category
         )
         call.enqueue(object : Callback<Get_Sankhya_Add_Response> {
             override fun onResponse(
@@ -652,11 +655,9 @@ class SankhyaFormDetail : AppCompatActivity() {
                         alertBuilder.setPositiveButton(
                             "OK"
                         ) { dialog, which ->
-                            startActivity(
-                                Intent(
-                                    this@SankhyaFormDetail, SankhyaActivity::class.java
-                                )
-                            )
+                            val intent = Intent(this@SankhyaFormDetail, SankhyaActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            startActivity(intent)
                             finish()
                         }
                         val alertDialog = alertBuilder.create()
@@ -731,80 +732,67 @@ class SankhyaFormDetail : AppCompatActivity() {
                             if (sankhya_datum[0].baal.equals(getString(R.string.baal), true)) {
                                 active_inactive_view.setBackgroundResource(R.drawable.baal_background)
                             } else if (sankhya_datum[0].baalika.equals(
-                                    getString(R.string.baalika),
-                                    true
+                                    getString(R.string.baalika), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.baalika_background)
                             } else if (sankhya_datum[0].shishuMale.equals(
-                                    getString(R.string.male_shishu),
-                                    true
+                                    getString(R.string.male_shishu), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.male_shishu_background)
                             } else if (sankhya_datum[0].shishuFemale.equals(
-                                    getString(R.string.female_shishu),
-                                    true
+                                    getString(R.string.female_shishu), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.female_shishu_background)
                             } else if (sankhya_datum[0].kishore.equals(
-                                    getString(R.string.kishore),
-                                    true
+                                    getString(R.string.kishore), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.kishor_background)
                             } else if (sankhya_datum[0].kishori.equals(
-                                    getString(R.string.kishori),
-                                    true
+                                    getString(R.string.kishori), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.kishori_background)
                             } else if (sankhya_datum[0].tarun.equals(
-                                    getString(R.string.tarun),
-                                    true
+                                    getString(R.string.tarun), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.tarun_background)
                             } else if (sankhya_datum[0].taruni.equals(
-                                    getString(R.string.taruni),
-                                    true
+                                    getString(R.string.taruni), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.taruni_background)
                             } else if (sankhya_datum[0].yuva.equals(
-                                    getString(R.string.yuva),
-                                    true
+                                    getString(R.string.yuva), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.yuva_background)
                             } else if (sankhya_datum[0].yuvati.equals(
-                                    getString(R.string.yuvati),
-                                    true
+                                    getString(R.string.yuvati), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.yuvati_background)
                             } else if (sankhya_datum[0].proudh.equals(
-                                    getString(R.string.jyeshta),
-                                    true
+                                    getString(R.string.jyeshta), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.proudh_background)
                             } else if (sankhya_datum[0].proudha.equals(
-                                    getString(R.string.jyeshtaa),
-                                    true
+                                    getString(R.string.jyeshtaa), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.proudha_background)
                             } else if (sankhya_datum[0].proudh.equals(
-                                    getString(R.string.proudh),
-                                    true
+                                    getString(R.string.proudh), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.proudh_background)
                             } else if (sankhya_datum[0].proudha.equals(
-                                    getString(R.string.proudha),
-                                    true
+                                    getString(R.string.proudha), true
                                 )
                             ) {
                                 active_inactive_view.setBackgroundResource(R.drawable.proudha_background)
