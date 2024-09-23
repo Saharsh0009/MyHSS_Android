@@ -101,7 +101,15 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
 
         edit_address.setText(sessionManager.fetchLineOne())
         edit_city.setText(sessionManager.fetchCITY())
-        edit_country.setText(sessionManager.fetchCOUNTRY())
+
+        if(sessionManager.fetchCOUNTRY().isNullOrEmpty() || sessionManager.fetchCOUNTRY().equals("null")){
+            edit_country.setText("NA")
+        }else{
+            edit_country.setText(sessionManager.fetchCOUNTRY())
+        }
+
+
+
         edit_postcode.setText(sessionManager.fetchPOSTCODE())
 
         back_arrow.setOnClickListener(DebouncedClickListener {
@@ -126,7 +134,7 @@ class GuruDakshinaRegularThirdActivity() : AppCompatActivity() {
                 Snackbar.make(rootLayout, "Please enter address", Snackbar.LENGTH_SHORT).show()
             } else if (edit_city.text.toString() == "") {
                 Snackbar.make(rootLayout, "Please enter city", Snackbar.LENGTH_SHORT).show()
-            } else if (edit_country.text.toString() == "") {
+            } else if (edit_country.text.toString() == "" || edit_country.text.toString().isNullOrEmpty()) {
                 Snackbar.make(rootLayout, "Please enter country", Snackbar.LENGTH_SHORT).show()
             } else if (edit_postcode.text.toString() == "") {
                 Snackbar.make(rootLayout, "Please enter post code", Snackbar.LENGTH_SHORT).show()

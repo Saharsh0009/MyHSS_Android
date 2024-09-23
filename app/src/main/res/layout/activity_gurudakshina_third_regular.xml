@@ -273,9 +273,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
-                            android:editable="false"
-                            android:focusable="false"
                             android:textColor="@color/blackColor"
+                            android:singleLine="true"
                             android:textColorHint="@color/grayColorColor"
                             android:theme="@style/StyleEditTextView" />
 

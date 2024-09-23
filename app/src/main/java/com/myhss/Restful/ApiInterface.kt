@@ -257,7 +257,8 @@ interface ApiInterface {
         @Field("yuvati") yuvati: String,
         @Field("proudh") proudh: String,
         @Field("proudha") proudha: String,
-        @Field("api") api: String
+        @Field("api") api: String,
+        @Field("age_category") age_category: String
     ): Call<Get_Sankhya_Add_Response>
 
     /*Post sankhya add*/

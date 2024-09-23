@@ -92,6 +92,7 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
     var arrayListUser: ArrayList<String> = ArrayList()
     var arrayListUserId: ArrayList<String> = ArrayList()
+    var arrayListUserAgeCategory: ArrayList<String> = ArrayList()
     var arrayData: String = ""
 
     lateinit var USERID: String
@@ -296,17 +297,25 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 if (!selected_userName.contains(x)) selected_userName.add(x)
             }
 
+            //To get categoreis
+            arrayListUserAgeCategory.clear()
+            for (i in arrayListUserId.indices) {   // iterate through the second list with index
+                val num = arrayListUserId[i]       // get the element at index i
+                for (j in  athelets_Beans.indices) {
+                    if (athelets_Beans[j].member_id == num) {
+                        arrayListUserAgeCategory.add(athelets_Beans[j].age_categories)
+                        break
+                    }
+                }
+            }
+            val AGE_CATEGORY  = arrayListUserAgeCategory.toString().replace("[", "").replace("]", "")
+
             USER_ID = sessionManager.fetchUserID()!!
             MEMBER_ID = arrayListUserId.toString().replace("[", "").replace("]", "")
             MEMBER_NAME = arrayListUser.toString()
-
             ORG_CHAPTER_ID = sessionManager.fetchSHAKHAID()!!
-
-
             EVENTDATE = EVENT_DATE
-//            if (UTSAV_NAME == "") {
-//                Snackbar.make(root_view, "Please select the Utsav", Snackbar.LENGTH_SHORT).show()
-//            } else
+
             if (MEMBER_ID == "") {
                 Snackbar.make(root_view, "Please select the Member", Snackbar.LENGTH_SHORT).show()
             } else {
@@ -318,6 +327,7 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
                 i.putExtra("UTSAV_NAME", UTSAV_NAME)
                 i.putExtra("USER_ID", USER_ID)
                 i.putExtra("MEMBER_ID", MEMBER_ID)
+                i.putExtra("AGE_CATEGORY", AGE_CATEGORY)
                 i.putExtra("ORG_CHAPTER_ID", ORG_CHAPTER_ID)
                 i.putExtra("EVENT_DATE", EVENT_DATE)
                 i.putStringArrayListExtra("MEMBER_NAME", arrayListUser)
@@ -339,13 +349,24 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
         }
 
         submit_layout.setOnClickListener(DebouncedClickListener {
-
             for (num in arrayListUserId) {      // iterate through the second list
                 if (!arrayListUserId.contains(num)) {   // if first list doesn't contain current element
                     arrayListUserId.add(num) // add it to the first list
                 }
             }
 
+            //To get categoreis
+            arrayListUserAgeCategory.clear()
+            for (i in arrayListUserId.indices) {   // iterate through the second list with index
+                val num = arrayListUserId[i]       // get the element at index i
+                for (j in  athelets_Beans.indices) {
+                    if (athelets_Beans[j].member_id == num) {
+                        arrayListUserAgeCategory.add(athelets_Beans[j].age_categories)
+                        break
+                    }
+                }
+            }
+            val AGE_CATEGORY  = arrayListUserAgeCategory.toString().replace("[", "").replace("]", "")
             for (x in selected_userAll) {
                 if (!selected_user.contains(x)) selected_user.add(x)
             }
@@ -353,10 +374,8 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
             for (x in selected_userNameAll) {
                 if (!selected_userName.contains(x)) selected_userName.add(x)
             }
-
             USER_ID = sessionManager.fetchUserID()!!
             MEMBER_ID = arrayListUserId.toString().replace("[", "").replace("]", "")
-
             ORG_CHAPTER_ID = sessionManager.fetchSHAKHAID()!!
             EVENTDATE = EVENT_DATE
             SHISHU_MALE = ""
@@ -372,9 +391,6 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
             PRODH = ""
             PRODHA = ""
             API = "yes"
-//            if (UTSAV_NAME == "") {
-//                Snackbar.make(root_view, "Please select the Utsav", Snackbar.LENGTH_SHORT).show()
-//            } else
             if (MEMBER_ID == "") {
                 Snackbar.make(root_view, "Please select the Member", Snackbar.LENGTH_SHORT).show()
             } else {
@@ -397,7 +413,8 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
                         YUVTI,
                         PRODH,
                         PRODHA,
-                        API
+                        API,
+                        AGE_CATEGORY
                     )
                 } else {
                     Toast.makeText(
@@ -433,10 +450,7 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
 
                         utsav_txt.setOnClickListener(DebouncedClickListener {
                             openSearchableSpinnerDialog(
-                                "1",
-                                "Select Utsav",
-                                utsavNameList,
-                                utsavIDList
+                                "1", "Select Utsav", utsavNameList, utsavIDList
                             )
                         })
 
@@ -619,8 +633,10 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
         yuvati: String,
         proudh: String,
         proudha: String,
-        api: String
+        api: String,
+        age_category: String
     ) {
+
         submit_layout.isEnabled = false
         val pd = CustomProgressBar(this@AddSankhyaActivity)
         pd.show()
@@ -642,16 +658,18 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
             yuvati,
             proudh,
             proudha,
-            api
+            api,
+            age_category
         )
+
+        DebugLog.e("Member id : $member_id")
         call.enqueue(object : Callback<Get_Sankhya_Add_Response> {
             override fun onResponse(
                 call: Call<Get_Sankhya_Add_Response>, response: Response<Get_Sankhya_Add_Response>
             ) {
                 if (response.code() == 200 && response.body() != null) {
                     if (response.body()?.status!!) {
-                        val alertBuilder =
-                            AlertDialog.Builder(this@AddSankhyaActivity)
+                        val alertBuilder = AlertDialog.Builder(this@AddSankhyaActivity)
                         alertBuilder.setMessage(response.body()?.message)
                         alertBuilder.setPositiveButton(
                             "OK"
@@ -690,19 +708,12 @@ class AddSankhyaActivity : AppCompatActivity(), iDialogSearchableSpinner {
     }
 
     private fun openSearchableSpinnerDialog(
-        sType: String,
-        sTitle: String,
-        ItemName: List<String>,
-        ItemID: List<String>
+        sType: String, sTitle: String, ItemName: List<String>, ItemID: List<String>
     ) {
         val fragment = supportFragmentManager.findFragmentByTag("DialogSearchableSpinner")
         if (fragment == null) {
             val dialogSearch = DialogSearchableSpinner.newInstance(
-                this,
-                sType,
-                sTitle,
-                ItemName,
-                ItemID
+                this, sType, sTitle, ItemName, ItemID
             )
             dialogSearch.show(supportFragmentManager, "DialogSearchableSpinner")
         }
