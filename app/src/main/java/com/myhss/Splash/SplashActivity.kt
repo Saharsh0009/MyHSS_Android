@@ -122,7 +122,11 @@ class SplashActivity : AppCompatActivity() {
                 val app_name = "android_hss"//getString(R.string.app_name)
                 myLatestUpdate(OSName, app_version, app_name)
             } else {
-                showAlertDialogforfinish("No Internet", "Please check your internet connection!")
+                if (!isFinishing()) {
+                    showAlertDialogforfinish("No Internet", "Please check your internet connection!")
+                }else{
+                    finishAffinity()
+                }
             }
         }, 500)
     }
@@ -209,24 +213,40 @@ class SplashActivity : AppCompatActivity() {
                                 alert.show()
                             }
                         } catch (e: ArithmeticException) {
-                            showAlertDialogforfinish(
-                                "Error Message",
-                                getString(R.string.something_went_wrong)
-                            )
+                            if (!isFinishing()) {
+                                showAlertDialogforfinish(
+                                    "Error Message",
+                                    getString(R.string.something_went_wrong)
+                                )
+                            }else{
+                                finishAffinity()
+                            }
                         }
 
                     } else {
-                        showAlertDialogforfinish(
-                            "Error Message", response.body()?.message.toString()
-                        )
+                        if (!isFinishing()) {
+                            showAlertDialogforfinish(
+                                "Error Message", response.body()?.message.toString()
+                            )
+                        }else{
+                            finishAffinity()
+                        }
                     }
                 } else {
-                    showAlertDialogforfinish("Error Message", getString(R.string.something_went_wrong))
+                    if (!isFinishing()) {
+                        showAlertDialogforfinish("Error Message", getString(R.string.something_went_wrong))
+                    }else{
+                        finishAffinity()
+                    }
                 }
             }
 
             override fun onFailure(call: Call<latest_update_response>, t: Throwable) {
-                showAlertDialogforfinish("Error Message", t.message.toString())
+                if (!isFinishing()) {
+                    showAlertDialogforfinish("Error Message", t.message.toString())
+                }else{
+                    finishAffinity()
+                }
             }
         })
     }
